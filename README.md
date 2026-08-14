@@ -3,6 +3,8 @@
 Open-source animated components for React. Weave motion into your interface,
 one file at a time.
 
+<img src="apps/www/public/demo.gif" alt="loom components in motion" width="100%" />
+
 Components are copied into your project rather than installed as a dependency,
 distributed through a [shadcn](https://ui.shadcn.com/docs/registry)-compatible
 registry:
