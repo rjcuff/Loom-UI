@@ -351,6 +351,10 @@
 
 [data-rehype-pretty-code-figure] pre {
   overflow-x: auto;
+  /* Keep a horizontal swipe inside the block. Without this, reaching the end
+     of a long line chains the scroll to the page and, on iOS, into the
+     back-navigation gesture. */
+  overscroll-behavior-x: contain;
   border-radius: var(--radius-lg);
   border: 1px solid var(--border);
   background-color: var(--code) !important;
@@ -361,6 +365,13 @@
 
 [data-rehype-pretty-code-figure] code {
   display: grid;
+  /* The grid track must size to the longest line, not to the visible box.
+     Left at `auto` it is clamped to the width of the <pre>, so every line
+     background and the highlight bar stop at the right edge and the rest of
+     the line scrolls out from under them. `min-width: 100%` keeps short
+     blocks full-bleed. */
+  width: max-content;
+  min-width: 100%;
   background-color: transparent !important;
   font-family: var(--font-mono);
   counter-reset: line;
@@ -370,6 +381,7 @@
   padding-inline: 1.25rem;
   border-left: 2px solid transparent;
 }
+
 
 [data-rehype-pretty-code-figure] [data-highlighted-line] {
   background-color: var(--code-highlight);
@@ -423,4 +435,24 @@
 
 html.dark [data-rehype-pretty-code-figure] code span {
   color: var(--shiki-dark);
+}
+
+/* Phones give the block less room, so buy some back from the gutters and the
+   type rather than starting every line already scrolled. Must come after the
+   base rules above: a media query adds no specificity, so source order is the
+   only thing deciding this. */
+@media (width < 40rem) {
+  [data-rehype-pretty-code-figure] pre {
+    font-size: 0.75rem;
+  }
+
+  [data-rehype-pretty-code-figure] [data-line] {
+    padding-inline: 0.875rem;
+  }
+
+  [data-rehype-pretty-code-figure]
+    code[data-line-numbers]
+    > [data-line]::before {
+    margin-right: 0.75rem;
+  }
 }
