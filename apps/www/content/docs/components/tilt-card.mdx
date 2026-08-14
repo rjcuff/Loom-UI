@@ -1,0 +1,92 @@
+---
+title: Tilt Card
+date: 2026-08-14
+description: A surface that leans away from the pointer in 3D and settles back on leave.
+---
+
+<ComponentPreview name="tilt-card-demo" />
+
+## Installation
+
+<Tabs defaultValue="cli">
+
+<TabsList>
+  <TabsTrigger value="cli">CLI</TabsTrigger>
+  <TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @loomui/tilt-card
+```
+
+</TabsContent>
+
+<TabsContent value="manual">
+
+<Steps>
+
+<Step>Copy the component into your project.</Step>
+
+<ComponentSource name="tilt-card" />
+
+<Step>Add the easing token to your global stylesheet.</Step>
+
+```css title="app/globals.css"
+@theme {
+  --ease-out-quart: cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+```
+
+<Step>Update the import paths to match your setup.</Step>
+
+</Steps>
+
+</TabsContent>
+
+</Tabs>
+
+## Usage
+
+```tsx
+import { TiltCard } from "@/components/ui/tilt-card"
+```
+
+```tsx
+<TiltCard className="rounded-xl">
+  <div className="bg-card rounded-xl border p-6">{children}</div>
+</TiltCard>
+```
+
+The outer element holds the perspective and the inner one holds the rotation,
+which is what keeps the tilt from flattening out as the card scales. Pointer
+position is written to custom properties inside a frame, so moving across the
+card costs no renders.
+
+Rounding is inherited by the sheen, so put a radius on the wrapper as well as
+on the surface inside it.
+
+## Props
+
+| Prop          | Type      | Default   | Description                                    |
+| ------------- | --------- | --------- | ---------------------------------------------- |
+| `max`         | `number`  | `10`      | Largest tilt in degrees, reached at a corner.  |
+| `perspective` | `string`  | `"800px"` | Depth of the perspective. Lower is stronger.   |
+| `scale`       | `number`  | `1.02`    | Scale held while the pointer is over the card. |
+| `glare`       | `boolean` | `true`    | Lay a sheen over the card that follows it.     |
+| `disabled`    | `boolean` | `false`   | Render the card flat.                          |
+| `className`   | `string`  | none      | Merged onto the perspective wrapper.           |
+
+Any other `<div>` prop is forwarded.
+
+<Callout type="tip" title="Restraint">
+  Ten degrees is already a lot on a wide card. Past about fifteen the text on
+  the far edge starts to smear, because the browser rasterises the layer once
+  and then transforms the result.
+</Callout>
+
+<Callout type="tip" title="Accessibility">
+  A tilt is the whole component, so there is nothing left to soften: under
+  `prefers-reduced-motion` the card renders flat and the sheen is not drawn.
+</Callout>

@@ -49,6 +49,21 @@ export const Index: Record<string, any> = {
       return { default: mod.default ?? mod[exportName] }
     }),
   },
+  "scramble-text": {
+    name: "scramble-text",
+    type: "registry:ui",
+    title: "Scramble Text",
+    description: "A string that resolves out of random glyphs, left to right, on mount, on scroll, or on hover.",
+    dependencies: [],
+    registryDependencies: ["utils"],
+    files: [{"path":"registry/loomui/scramble-text.tsx","type":"registry:ui","target":""}],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/loomui/scramble-text")
+      const exportName =
+        Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
+      return { default: mod.default ?? mod[exportName] }
+    }),
+  },
   "count-up": {
     name: "count-up",
     type: "registry:ui",
@@ -89,6 +104,36 @@ export const Index: Record<string, any> = {
     files: [{"path":"registry/loomui/spotlight-card.tsx","type":"registry:ui","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/loomui/spotlight-card")
+      const exportName =
+        Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
+      return { default: mod.default ?? mod[exportName] }
+    }),
+  },
+  "aurora-backdrop": {
+    name: "aurora-backdrop",
+    type: "registry:ui",
+    title: "Aurora Backdrop",
+    description: "A wash of blurred colour that drifts behind content on cycles that never line up.",
+    dependencies: [],
+    registryDependencies: ["utils"],
+    files: [{"path":"registry/loomui/aurora-backdrop.tsx","type":"registry:ui","target":""}],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/loomui/aurora-backdrop")
+      const exportName =
+        Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
+      return { default: mod.default ?? mod[exportName] }
+    }),
+  },
+  "tilt-card": {
+    name: "tilt-card",
+    type: "registry:ui",
+    title: "Tilt Card",
+    description: "A surface that leans away from the pointer in 3D and settles back on leave.",
+    dependencies: [],
+    registryDependencies: ["utils"],
+    files: [{"path":"registry/loomui/tilt-card.tsx","type":"registry:ui","target":""}],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/loomui/tilt-card")
       const exportName =
         Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
       return { default: mod.default ?? mod[exportName] }
@@ -184,6 +229,21 @@ export const Index: Record<string, any> = {
       return { default: mod.default ?? mod[exportName] }
     }),
   },
+  "scramble-text-demo": {
+    name: "scramble-text-demo",
+    type: "registry:example",
+    title: "Scramble Text Demo",
+    description: "A wordmark decoding out of noise on every hover.",
+    dependencies: [],
+    registryDependencies: ["@loomui/scramble-text"],
+    files: [{"path":"registry/example/scramble-text-demo.tsx","type":"registry:example","target":""}],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/example/scramble-text-demo")
+      const exportName =
+        Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
+      return { default: mod.default ?? mod[exportName] }
+    }),
+  },
   "count-up-demo": {
     name: "count-up-demo",
     type: "registry:example",
@@ -224,6 +284,36 @@ export const Index: Record<string, any> = {
     files: [{"path":"registry/example/spotlight-card-demo.tsx","type":"registry:example","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/example/spotlight-card-demo")
+      const exportName =
+        Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
+      return { default: mod.default ?? mod[exportName] }
+    }),
+  },
+  "aurora-backdrop-demo": {
+    name: "aurora-backdrop-demo",
+    type: "registry:example",
+    title: "Aurora Backdrop Demo",
+    description: "A drifting colour wash behind a panel of copy.",
+    dependencies: [],
+    registryDependencies: ["@loomui/aurora-backdrop"],
+    files: [{"path":"registry/example/aurora-backdrop-demo.tsx","type":"registry:example","target":""}],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/example/aurora-backdrop-demo")
+      const exportName =
+        Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
+      return { default: mod.default ?? mod[exportName] }
+    }),
+  },
+  "tilt-card-demo": {
+    name: "tilt-card-demo",
+    type: "registry:example",
+    title: "Tilt Card Demo",
+    description: "A card that leans away from the pointer with a soft sheen.",
+    dependencies: [],
+    registryDependencies: ["@loomui/tilt-card"],
+    files: [{"path":"registry/example/tilt-card-demo.tsx","type":"registry:example","target":""}],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/example/tilt-card-demo")
       const exportName =
         Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
       return { default: mod.default ?? mod[exportName] }

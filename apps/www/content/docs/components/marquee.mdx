@@ -87,28 +87,28 @@ The children are rendered twice. The track travels exactly one copy plus one
 gap, then snaps back, and because the second copy is sitting where the first one
 started the seam is invisible. Copies after the first are `aria-hidden`.
 
-Fade the edges by laying a gradient over each end:
+`fade` softens both ends. Pass a CSS length to size it:
 
 ```tsx
-<div className="relative overflow-hidden">
-  <Marquee>{/* ... */}</Marquee>
-  <div className="from-background absolute inset-y-0 left-0 w-16 bg-gradient-to-r to-transparent" />
-  <div className="from-background absolute inset-y-0 right-0 w-16 bg-gradient-to-l to-transparent" />
-</div>
+<Marquee fade="4rem">{/* ... */}</Marquee>
 ```
+
+The fade is a mask, not a gradient overlay, so it works over an image, a
+gradient, or any surface that is not a flat `background` colour.
 
 ## Props
 
-| Prop           | Type      | Default  | Description                                    |
-| -------------- | --------- | -------- | ---------------------------------------------- |
-| `vertical`     | `boolean` | `false`  | Travel bottom to top instead of right to left. |
-| `reverse`      | `boolean` | `false`  | Flip the direction of travel.                  |
-| `pauseOnHover` | `boolean` | `false`  | Stop while the pointer is over the track.      |
-| `repeat`       | `number`  | `2`      | Copies of the children. Two is the minimum.    |
-| `duration`     | `number`  | `40`     | Seconds for one full pass of a single copy.    |
-| `gap`          | `string`  | `"1rem"` | Gap between items, as a CSS length.            |
-| `paused`       | `boolean` | `false`  | Render the row static.                         |
-| `className`    | `string`  | none     | Merged onto the track.                         |
+| Prop           | Type                | Default  | Description                                    |
+| -------------- | ------------------- | -------- | ---------------------------------------------- |
+| `vertical`     | `boolean`           | `false`  | Travel bottom to top instead of right to left. |
+| `reverse`      | `boolean`           | `false`  | Flip the direction of travel.                  |
+| `pauseOnHover` | `boolean`           | `false`  | Stop while the pointer is over the track.      |
+| `repeat`       | `number`            | `2`      | Copies of the children. Two is the minimum.    |
+| `duration`     | `number`            | `40`     | Seconds for one full pass of a single copy.    |
+| `gap`          | `string`            | `"1rem"` | Gap between items, as a CSS length.            |
+| `paused`       | `boolean`           | `false`  | Render the row static.                         |
+| `fade`         | `boolean \| string` | `false`  | Fade both edges out. A string sizes it.        |
+| `className`    | `string`            | none     | Merged onto the track.                         |
 
 Any other `<div>` prop is forwarded.
 

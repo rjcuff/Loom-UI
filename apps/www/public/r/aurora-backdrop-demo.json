@@ -1,0 +1,17 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "aurora-backdrop-demo",
+  "type": "registry:example",
+  "title": "Aurora Backdrop Demo",
+  "description": "A drifting colour wash behind a panel of copy.",
+  "registryDependencies": [
+    "@loomui/aurora-backdrop"
+  ],
+  "files": [
+    {
+      "path": "registry/example/aurora-backdrop-demo.tsx",
+      "content": "import { AuroraBackdrop } from \"@/registry/loomui/aurora-backdrop\"\n\nexport default function AuroraBackdropDemo() {\n  return (\n    <div className=\"bg-background relative flex h-64 w-full items-center justify-center overflow-hidden rounded-xl border\">\n      <AuroraBackdrop seed={7} />\n      <div className=\"relative text-center\">\n        <p className=\"text-xl font-medium tracking-tight\">\n          Weather, not wallpaper\n        </p>\n        <p className=\"text-muted-foreground mt-1 text-sm\">\n          Four blobs on cycles that never line up\n        </p>\n      </div>\n    </div>\n  )\n}\n",
+      "type": "registry:example"
+    }
+  ]
+}

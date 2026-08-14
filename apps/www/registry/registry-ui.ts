@@ -101,6 +101,20 @@ export const ui: Registry["items"] = [
     },
   },
   {
+    name: "scramble-text",
+    type: "registry:ui",
+    title: "Scramble Text",
+    description:
+      "A string that resolves out of random glyphs, left to right, on mount, on scroll, or on hover.",
+    registryDependencies: ["utils"],
+    files: [
+      {
+        path: "loomui/scramble-text.tsx",
+        type: "registry:ui",
+      },
+    ],
+  },
+  {
     name: "count-up",
     type: "registry:ui",
     title: "Count Up",
@@ -154,6 +168,59 @@ export const ui: Registry["items"] = [
     files: [
       {
         path: "loomui/spotlight-card.tsx",
+        type: "registry:ui",
+      },
+    ],
+    cssVars: {
+      theme: {
+        "ease-out-quart": EASE_OUT_QUART,
+      },
+    },
+  },
+  {
+    name: "aurora-backdrop",
+    type: "registry:ui",
+    title: "Aurora Backdrop",
+    description:
+      "A wash of blurred colour that drifts behind content on cycles that never line up.",
+    registryDependencies: ["utils"],
+    files: [
+      {
+        path: "loomui/aurora-backdrop.tsx",
+        type: "registry:ui",
+      },
+    ],
+    cssVars: {
+      theme: {
+        "ease-in-out-cubic": EASE_IN_OUT_CUBIC,
+        "animate-aurora-drift":
+          "aurora-drift 18s var(--ease-in-out-cubic) infinite",
+      },
+    },
+    css: {
+      "@keyframes aurora-drift": {
+        "0%, 100%": {
+          transform: "translate(0%, 0%) scale(1)",
+        },
+        "33%": {
+          transform: "translate(26%, -22%) scale(1.35)",
+        },
+        "66%": {
+          transform: "translate(-24%, 18%) scale(0.75)",
+        },
+      },
+    },
+  },
+  {
+    name: "tilt-card",
+    type: "registry:ui",
+    title: "Tilt Card",
+    description:
+      "A surface that leans away from the pointer in 3D and settles back on leave.",
+    registryDependencies: ["utils"],
+    files: [
+      {
+        path: "loomui/tilt-card.tsx",
         type: "registry:ui",
       },
     ],

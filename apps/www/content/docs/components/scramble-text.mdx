@@ -1,0 +1,87 @@
+---
+title: Scramble Text
+date: 2026-08-14
+description: A string that resolves out of random glyphs, left to right, on mount, on scroll, or on hover.
+---
+
+<ComponentPreview name="scramble-text-demo" />
+
+## Installation
+
+<Tabs defaultValue="cli">
+
+<TabsList>
+  <TabsTrigger value="cli">CLI</TabsTrigger>
+  <TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @loomui/scramble-text
+```
+
+</TabsContent>
+
+<TabsContent value="manual">
+
+<Steps>
+
+<Step>Copy the component into your project.</Step>
+
+<ComponentSource name="scramble-text" />
+
+<Step>Update the import paths to match your setup.</Step>
+
+</Steps>
+
+</TabsContent>
+
+</Tabs>
+
+## Usage
+
+```tsx
+import { ScrambleText } from "@/components/ui/scramble-text"
+```
+
+```tsx
+<ScrambleText text="Loom UI" trigger="view" />
+```
+
+Every slot holds a random glyph until its own settle frame arrives, and the
+settle frames run left to right, `stagger` frames apart. Whitespace never
+scrambles, so a half-resolved line still breaks into words.
+
+Set the pool to change the character of the noise:
+
+```tsx
+<ScrambleText text="01100110" characters="01" cycles={14} />
+```
+
+## Props
+
+| Prop         | Type                           | Default    | Description                                    |
+| ------------ | ------------------------------ | ---------- | ---------------------------------------------- |
+| `text`       | `string`                       | required   | The string the run resolves to.                |
+| `characters` | `string`                       | `A–Z 0–9…` | Glyphs drawn in an unresolved slot.            |
+| `speed`      | `number`                       | `45`       | Milliseconds per scramble frame.               |
+| `cycles`     | `number`                       | `8`        | Frames a slot scrambles before it settles.     |
+| `stagger`    | `number`                       | `2`        | Frames between one slot settling and the next. |
+| `trigger`    | `"mount" \| "view" \| "hover"` | `"mount"`  | What starts a run.                             |
+| `disabled`   | `boolean`                      | `false`    | Render the finished text with no scramble.     |
+| `className`  | `string`                       | none       | Merged onto the wrapper.                       |
+
+Any other `<span>` prop is forwarded.
+
+<Callout type="tip" title="Keep it still">
+  The finished text is rendered invisibly underneath to reserve the width, so
+  nothing beside the component reflows. Glyph widths still differ in a
+  proportional face, so `font-mono` is what makes a run perfectly steady.
+</Callout>
+
+<Callout type="tip" title="Accessibility">
+  The real string is exposed once to assistive technology and the scrambling
+  copy is `aria-hidden`, so a run is never announced letter by letter. Under
+  `prefers-reduced-motion` the text renders finished.
+</Callout>

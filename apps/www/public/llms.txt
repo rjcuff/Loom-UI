@@ -6,13 +6,16 @@ Install any component with `npx shadcn@latest add @loomui/<name>`.
 
 ## Components
 
+- [Aurora Backdrop](https://loomui.design/docs/components/aurora-backdrop): A wash of blurred colour that drifts behind content on cycles that never line up.
 - [Count Up](https://loomui.design/docs/components/count-up): A number that counts to its value when it scrolls into view, without a render per frame.
 - [Grid Backdrop](https://loomui.design/docs/components/grid-backdrop): An SVG grid with cells that fade in and out at a deterministic, seeded scatter.
 - [Magnetic](https://loomui.design/docs/components/magnetic): A wrapper that pulls its child toward the pointer as the pointer gets close.
 - [Marquee](https://loomui.design/docs/components/marquee): A seamless scrolling row or column, in either direction, that pauses on hover.
 - [Reading Progress](https://loomui.design/docs/components/reading-progress): A pinned bar that tracks how far through the page, or a chosen element, the reader is.
+- [Scramble Text](https://loomui.design/docs/components/scramble-text): A string that resolves out of random glyphs, left to right, on mount, on scroll, or on hover.
 - [Spotlight Card](https://loomui.design/docs/components/spotlight-card): A surface with a soft highlight that follows the pointer and fades out on leave.
 - [Stagger Text](https://loomui.design/docs/components/stagger-text): Words or characters that rise into place one after another, on mount or on scroll.
+- [Tilt Card](https://loomui.design/docs/components/tilt-card): A surface that leans away from the pointer in 3D and settles back on leave.
 - [Typewriter](https://loomui.design/docs/components/typewriter): Phrases typed out and deleted in a loop, with a caret and no layout shift.
 - [Weave Text](https://loomui.design/docs/components/weave-text): Text filled with a slow-drifting gradient, woven from a palette you control.
 

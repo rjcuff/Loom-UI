@@ -44,6 +44,19 @@ export const examples: Registry["items"] = [
     ],
   },
   {
+    name: "scramble-text-demo",
+    type: "registry:example",
+    title: "Scramble Text Demo",
+    description: "A wordmark decoding out of noise on every hover.",
+    registryDependencies: ["@loomui/scramble-text"],
+    files: [
+      {
+        path: "example/scramble-text-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "count-up-demo",
     type: "registry:example",
     title: "Count Up Demo",
@@ -78,6 +91,32 @@ export const examples: Registry["items"] = [
     files: [
       {
         path: "example/spotlight-card-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "aurora-backdrop-demo",
+    type: "registry:example",
+    title: "Aurora Backdrop Demo",
+    description: "A drifting colour wash behind a panel of copy.",
+    registryDependencies: ["@loomui/aurora-backdrop"],
+    files: [
+      {
+        path: "example/aurora-backdrop-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "tilt-card-demo",
+    type: "registry:example",
+    title: "Tilt Card Demo",
+    description: "A card that leans away from the pointer with a soft sheen.",
+    registryDependencies: ["@loomui/tilt-card"],
+    files: [
+      {
+        path: "example/tilt-card-demo.tsx",
         type: "registry:example",
       },
     ],

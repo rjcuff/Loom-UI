@@ -1,0 +1,17 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "tilt-card-demo",
+  "type": "registry:example",
+  "title": "Tilt Card Demo",
+  "description": "A card that leans away from the pointer with a soft sheen.",
+  "registryDependencies": [
+    "@loomui/tilt-card"
+  ],
+  "files": [
+    {
+      "path": "registry/example/tilt-card-demo.tsx",
+      "content": "import { TiltCard } from \"@/registry/loomui/tilt-card\"\n\nexport default function TiltCardDemo() {\n  return (\n    <TiltCard className=\"w-72 rounded-xl\">\n      <div className=\"bg-card rounded-xl border p-6\">\n        <p className=\"text-muted-foreground text-xs tracking-widest uppercase\">\n          Loom UI\n        </p>\n        <h3 className=\"mt-3 text-lg font-medium tracking-tight\">\n          Pick it up and look at it\n        </h3>\n        <p className=\"text-muted-foreground mt-2 text-sm\">\n          The card leans away from the pointer and settles back on its own.\n        </p>\n      </div>\n    </TiltCard>\n  )\n}\n",
+      "type": "registry:example"
+    }
+  ]
+}

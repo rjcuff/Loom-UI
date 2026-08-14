@@ -19,6 +19,33 @@ export interface MarqueeProps extends React.ComponentProps<"div"> {
   gap?: string
   /** Render the row static. */
   paused?: boolean
+  /** Fade both edges out. Pass a CSS length to size the fade. */
+  fade?: boolean | string
+}
+
+/**
+ * Alpha sampled off a smoothstep curve. A two-stop gradient ramps its alpha
+ * linearly, and the eye reads the point where that ramp meets full opacity as a
+ * hard diagonal line. Sampling the curve rounds both ends of the ramp off, so
+ * the fade runs out instead of stopping.
+ */
+const FADE_STOPS = [0, 0.0608, 0.216, 0.5, 0.784, 0.939, 1]
+
+function fadeMask(axis: "to right" | "to bottom", size: string) {
+  const last = FADE_STOPS.length - 1
+  const ratio = (index: number) => (index / last).toFixed(4)
+
+  const leading = FADE_STOPS.map(
+    (alpha, index) => `rgb(0 0 0 / ${alpha}) calc(${size} * ${ratio(index)})`
+  )
+  const trailing = FADE_STOPS.map(
+    (_, index) =>
+      `rgb(0 0 0 / ${FADE_STOPS[last - index]}) calc(100% - ${size} * ${ratio(
+        last - index
+      )})`
+  )
+
+  return `linear-gradient(${axis}, ${[...leading, ...trailing].join(", ")})`
 }
 
 export function Marquee({
@@ -31,9 +58,17 @@ export function Marquee({
   duration = 40,
   gap = "1rem",
   paused = false,
+  fade = false,
   style,
   ...props
 }: MarqueeProps) {
+  const mask = fade
+    ? fadeMask(
+        vertical ? "to bottom" : "to right",
+        fade === true ? "12%" : fade
+      )
+    : undefined
+
   return (
     <div
       data-slot="marquee"
@@ -49,6 +84,8 @@ export function Marquee({
           // makes the seam invisible.
           "--marquee-gap": gap,
           "--marquee-duration": `${duration}s`,
+          WebkitMaskImage: mask,
+          maskImage: mask,
           ...style,
         } as React.CSSProperties
       }

@@ -34,22 +34,23 @@ export const docsConfig: DocsConfig = {
         {
           title: "Weave Text",
           href: "/docs/components/weave-text",
-          badge: { text: "New", variant: "new" },
         },
         {
           title: "Stagger Text",
           href: "/docs/components/stagger-text",
-          badge: { text: "New", variant: "new" },
         },
         {
           title: "Typewriter",
           href: "/docs/components/typewriter",
+        },
+        {
+          title: "Scramble Text",
+          href: "/docs/components/scramble-text",
           badge: { text: "New", variant: "new" },
         },
         {
           title: "Count Up",
           href: "/docs/components/count-up",
-          badge: { text: "New", variant: "new" },
         },
       ],
     },
@@ -59,11 +60,14 @@ export const docsConfig: DocsConfig = {
         {
           title: "Grid Backdrop",
           href: "/docs/components/grid-backdrop",
-          badge: { text: "New", variant: "new" },
         },
         {
           title: "Spotlight Card",
           href: "/docs/components/spotlight-card",
+        },
+        {
+          title: "Aurora Backdrop",
+          href: "/docs/components/aurora-backdrop",
           badge: { text: "New", variant: "new" },
         },
       ],
@@ -72,19 +76,21 @@ export const docsConfig: DocsConfig = {
       title: "Interaction",
       items: [
         {
+          title: "Tilt Card",
+          href: "/docs/components/tilt-card",
+          badge: { text: "New", variant: "new" },
+        },
+        {
           title: "Magnetic",
           href: "/docs/components/magnetic",
-          badge: { text: "New", variant: "new" },
         },
         {
           title: "Marquee",
           href: "/docs/components/marquee",
-          badge: { text: "New", variant: "new" },
         },
         {
           title: "Reading Progress",
           href: "/docs/components/reading-progress",
-          badge: { text: "New", variant: "new" },
         },
       ],
     },

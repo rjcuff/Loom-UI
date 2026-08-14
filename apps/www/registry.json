@@ -96,6 +96,21 @@
       }
     },
     {
+      "name": "scramble-text",
+      "type": "registry:ui",
+      "title": "Scramble Text",
+      "description": "A string that resolves out of random glyphs, left to right, on mount, on scroll, or on hover.",
+      "registryDependencies": [
+        "utils"
+      ],
+      "files": [
+        {
+          "path": "registry/loomui/scramble-text.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "count-up",
       "type": "registry:ui",
       "title": "Count Up",
@@ -152,6 +167,60 @@
       "files": [
         {
           "path": "registry/loomui/spotlight-card.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "cssVars": {
+        "theme": {
+          "ease-out-quart": "cubic-bezier(0.165, 0.84, 0.44, 1)"
+        }
+      }
+    },
+    {
+      "name": "aurora-backdrop",
+      "type": "registry:ui",
+      "title": "Aurora Backdrop",
+      "description": "A wash of blurred colour that drifts behind content on cycles that never line up.",
+      "registryDependencies": [
+        "utils"
+      ],
+      "files": [
+        {
+          "path": "registry/loomui/aurora-backdrop.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "cssVars": {
+        "theme": {
+          "ease-in-out-cubic": "cubic-bezier(0.645, 0.045, 0.355, 1)",
+          "animate-aurora-drift": "aurora-drift 18s var(--ease-in-out-cubic) infinite"
+        }
+      },
+      "css": {
+        "@keyframes aurora-drift": {
+          "0%, 100%": {
+            "transform": "translate(0%, 0%) scale(1)"
+          },
+          "33%": {
+            "transform": "translate(26%, -22%) scale(1.35)"
+          },
+          "66%": {
+            "transform": "translate(-24%, 18%) scale(0.75)"
+          }
+        }
+      }
+    },
+    {
+      "name": "tilt-card",
+      "type": "registry:ui",
+      "title": "Tilt Card",
+      "description": "A surface that leans away from the pointer in 3D and settles back on leave.",
+      "registryDependencies": [
+        "utils"
+      ],
+      "files": [
+        {
+          "path": "registry/loomui/tilt-card.tsx",
           "type": "registry:ui"
         }
       ],
@@ -284,6 +353,21 @@
       ]
     },
     {
+      "name": "scramble-text-demo",
+      "type": "registry:example",
+      "title": "Scramble Text Demo",
+      "description": "A wordmark decoding out of noise on every hover.",
+      "registryDependencies": [
+        "@loomui/scramble-text"
+      ],
+      "files": [
+        {
+          "path": "registry/example/scramble-text-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
       "name": "count-up-demo",
       "type": "registry:example",
       "title": "Count Up Demo",
@@ -324,6 +408,36 @@
       "files": [
         {
           "path": "registry/example/spotlight-card-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "aurora-backdrop-demo",
+      "type": "registry:example",
+      "title": "Aurora Backdrop Demo",
+      "description": "A drifting colour wash behind a panel of copy.",
+      "registryDependencies": [
+        "@loomui/aurora-backdrop"
+      ],
+      "files": [
+        {
+          "path": "registry/example/aurora-backdrop-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "tilt-card-demo",
+      "type": "registry:example",
+      "title": "Tilt Card Demo",
+      "description": "A card that leans away from the pointer with a soft sheen.",
+      "registryDependencies": [
+        "@loomui/tilt-card"
+      ],
+      "files": [
+        {
+          "path": "registry/example/tilt-card-demo.tsx",
           "type": "registry:example"
         }
       ]

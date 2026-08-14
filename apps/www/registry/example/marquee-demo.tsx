@@ -9,8 +9,8 @@ const QUOTES = [
 
 export default function MarqueeDemo() {
   return (
-    <div className="relative w-full max-w-2xl overflow-hidden">
-      <Marquee pauseOnHover duration={28} gap="1rem">
+    <div className="w-full max-w-2xl">
+      <Marquee fade pauseOnHover duration={28} gap="1rem">
         {QUOTES.map((quote) => (
           <figure
             key={quote}
@@ -20,8 +20,6 @@ export default function MarqueeDemo() {
           </figure>
         ))}
       </Marquee>
-      <div className="from-background pointer-events-none absolute inset-y-0 left-0 w-16 bg-gradient-to-r to-transparent" />
-      <div className="from-background pointer-events-none absolute inset-y-0 right-0 w-16 bg-gradient-to-l to-transparent" />
     </div>
   )
 }

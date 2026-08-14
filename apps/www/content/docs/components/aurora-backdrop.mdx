@@ -1,0 +1,114 @@
+---
+title: Aurora Backdrop
+date: 2026-08-14
+description: A wash of blurred colour that drifts behind content on cycles that never line up.
+---
+
+<ComponentPreview name="aurora-backdrop-demo" />
+
+## Installation
+
+<Tabs defaultValue="cli">
+
+<TabsList>
+  <TabsTrigger value="cli">CLI</TabsTrigger>
+  <TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @loomui/aurora-backdrop
+```
+
+</TabsContent>
+
+<TabsContent value="manual">
+
+<Steps>
+
+<Step>Copy the component into your project.</Step>
+
+<ComponentSource name="aurora-backdrop" />
+
+<Step>Add the keyframes to your global stylesheet.</Step>
+
+```css title="app/globals.css"
+@theme {
+  --ease-in-out-cubic: cubic-bezier(0.645, 0.045, 0.355, 1);
+  --animate-aurora-drift: aurora-drift 18s var(--ease-in-out-cubic) infinite;
+}
+
+@keyframes aurora-drift {
+  0%,
+  100% {
+    transform: translate(0%, 0%) scale(1);
+  }
+  33% {
+    transform: translate(26%, -22%) scale(1.35);
+  }
+  66% {
+    transform: translate(-24%, 18%) scale(0.75);
+  }
+}
+```
+
+<Step>Update the import paths to match your setup.</Step>
+
+</Steps>
+
+</TabsContent>
+
+</Tabs>
+
+## Usage
+
+```tsx
+import { AuroraBackdrop } from "@/components/ui/aurora-backdrop"
+```
+
+The layer is absolutely positioned, so it wants a positioned parent that clips:
+
+```tsx
+<section className="relative overflow-hidden">
+  <AuroraBackdrop />
+  <div className="relative">{children}</div>
+</section>
+```
+
+One blob is drawn per colour. Each runs the same keyframes at its own length
+and its own phase, so nothing about the wash repeats on a schedule the eye can
+pick up. `seed` chooses where they sit and is deterministic, so the server and
+the client render the same layout.
+
+```tsx
+<AuroraBackdrop
+  colors={["#f472b6", "#c084fc", "#60a5fa"]}
+  intensity={0.35}
+  blur="96px"
+/>
+```
+
+## Props
+
+| Prop        | Type       | Default    | Description                                  |
+| ----------- | ---------- | ---------- | -------------------------------------------- |
+| `colors`    | `string[]` | four blues | Colours of the blobs. One blob per colour.   |
+| `blur`      | `string`   | `"72px"`   | Blur applied to the wash, as a CSS length.   |
+| `duration`  | `number`   | `18`       | Seconds for one full drift of a single blob. |
+| `intensity` | `number`   | `0.5`      | Opacity of the layer, from `0` to `1`.       |
+| `seed`      | `number`   | `1`        | Changes where the blobs sit.                 |
+| `disabled`  | `boolean`  | `false`    | Render the wash static.                      |
+| `className` | `string`   | none       | Merged onto the layer.                       |
+
+Any other `<div>` prop is forwarded.
+
+<Callout type="tip" title="Cost">
+  A large blur is not free. Keep the layer behind content that does not repaint,
+  and prefer a lower `intensity` over more blobs when the wash reads too strong.
+</Callout>
+
+<Callout type="tip" title="Accessibility">
+  The layer is `aria-hidden` and never takes pointer events. Motion stops under
+  `prefers-reduced-motion`, leaving a still gradient.
+</Callout>
