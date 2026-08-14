@@ -20,7 +20,8 @@ export const siteConfig = {
     url: "https://loomui.design/r",
   },
   links: {
-    // TODO: point this at the real repo once it exists on GitHub.
+    // Also baked into public/llms.txt. Run `pnpm build:registry` after
+    // changing anything in this object that the generator reads.
     github: "https://github.com/rjcuff/Loom-UI",
     twitter: "https://x.com/ryancuff_",
   },

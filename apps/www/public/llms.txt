@@ -19,4 +19,4 @@ Install any component with `npx shadcn@latest add @loomui/<name>`.
 ## Links
 
 - [Registry](https://loomui.design/r/registry.json): Machine-readable index
-- [Repository](https://github.com/ryancuff/loomui): Source and issues
+- [Repository](https://github.com/rjcuff/Loom-UI): Source and issues
