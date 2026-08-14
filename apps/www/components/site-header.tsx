@@ -3,6 +3,7 @@ import Link from "next/link"
 import { docsConfig } from "@/config/docs"
 import { siteConfig } from "@/config/site"
 import { Button } from "@/components/ui/button"
+import { GitHubStars } from "@/components/github-stars"
 import { Logo } from "@/components/logo"
 import { ModeToggle } from "@/components/mode-toggle"
 
@@ -34,6 +35,7 @@ export function SiteHeader() {
           <Button variant="ghost" size="sm" asChild>
             <a href={siteConfig.links.github} target="_blank" rel="noreferrer">
               GitHub
+              <GitHubStars />
             </a>
           </Button>
           <ModeToggle />
