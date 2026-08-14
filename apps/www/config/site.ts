@@ -21,7 +21,7 @@ export const siteConfig = {
   },
   links: {
     // TODO: point this at the real repo once it exists on GitHub.
-    github: "https://github.com/ryancuff/loomui",
+    github: "https://github.com/rjcuff/Loom-UI",
     twitter: "https://x.com/ryancuff_",
   },
   keywords: [
