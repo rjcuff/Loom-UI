@@ -4,10 +4,7 @@ import * as React from "react"
 
 import { cn } from "@/lib/utils"
 
-const format = new Intl.NumberFormat("en", {
-  notation: "compact",
-  maximumFractionDigits: 1,
-})
+const format = new Intl.NumberFormat("en")
 
 export function GitHubStars({ className }: { className?: string }) {
   const [stars, setStars] = React.useState<number | null>(null)
@@ -35,13 +32,12 @@ export function GitHubStars({ className }: { className?: string }) {
   return (
     <span
       className={cn(
-        "text-muted-foreground inline-flex min-w-[4.5ch] items-center gap-1 text-xs tabular-nums",
+        "text-muted-foreground inline-flex min-w-[2ch] items-center justify-center text-xs tabular-nums",
         className
       )}
     >
       {stars === null ? null : (
-        <span className="animate-in fade-in inline-flex items-center gap-1 duration-300">
-          <span aria-hidden="true">⭐</span>
+        <span className="animate-in fade-in duration-300">
           {format.format(stars)}
           <span className="sr-only"> stars on GitHub</span>
         </span>
