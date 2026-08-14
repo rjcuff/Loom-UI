@@ -45,7 +45,7 @@ export default function HomePage() {
             size="lg"
             className="w-full sm:w-auto"
           >
-            <Link href="/docs/components/weave-text">Browse components</Link>
+            <Link href="/docs/components">Browse components</Link>
           </Button>
         </div>
 

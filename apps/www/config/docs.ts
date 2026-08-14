@@ -1,4 +1,4 @@
-import type { NavItem, NavItemWithChildren } from "@/types"
+import type { NavBadge, NavItem, NavItemWithChildren } from "@/types"
 
 interface DocsConfig {
   mainNav: NavItem[]
@@ -16,7 +16,7 @@ export interface DocNavLink {
  * alphabetical order.
  */
 /** Where `/docs` sends people, since there is no docs landing page. */
-export const DOCS_ENTRY = "/docs/components/weave-text"
+export const DOCS_ENTRY = "/docs/components"
 
 export const docsConfig: DocsConfig = {
   mainNav: [
@@ -26,7 +26,10 @@ export const docsConfig: DocsConfig = {
   sidebarNav: [
     {
       title: "Getting Started",
-      items: [{ title: "Installation", href: "/docs/installation" }],
+      items: [
+        { title: "Installation", href: "/docs/installation" },
+        { title: "All Components", href: DOCS_ENTRY },
+      ],
     },
     {
       title: "Text",
@@ -129,6 +132,24 @@ function getFlattenedDocsNav(): DocNavLink[] {
 
 function normalize(url: string) {
   return url.replace(/\/$/, "") || "/"
+}
+
+/**
+ * Badges live in the sidebar config so there is one place to mark a component
+ * "New". The components index reads them back out by href.
+ */
+export function getNavBadge(url: string): NavBadge | undefined {
+  const target = normalize(url)
+
+  for (const section of docsConfig.sidebarNav) {
+    for (const item of section.items ?? []) {
+      if (item.href && normalize(item.href) === target) {
+        return item.badge
+      }
+    }
+  }
+
+  return undefined
 }
 
 export function getNeighboursFromConfig(currentUrl: string): {

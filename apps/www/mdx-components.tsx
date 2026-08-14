@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Callout } from "@/components/callout"
 import { CodeBlock } from "@/components/code-block"
+import { ComponentGrid } from "@/components/component-grid"
 import { ComponentPreview } from "@/components/component-preview"
 import { ComponentSource } from "@/components/component-source"
 
@@ -160,6 +161,7 @@ export const mdxComponents: MDXComponents = {
     <TabsContent className={cn("mt-1", className)} {...props} />
   ),
   Callout,
+  ComponentGrid,
   ComponentPreview,
   ComponentSource,
 }
