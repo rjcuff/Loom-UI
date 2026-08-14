@@ -1,0 +1,17 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "grid-beams-demo",
+  "type": "registry:example",
+  "title": "Grid Beams Demo",
+  "description": "Neon beams running down a ruled grid behind a panel of copy.",
+  "registryDependencies": [
+    "@loomui/grid-beams"
+  ],
+  "files": [
+    {
+      "path": "registry/example/grid-beams-demo.tsx",
+      "content": "import { GridBeams } from \"@/registry/loomui/grid-beams\"\n\nexport default function GridBeamsDemo() {\n  return (\n    <div className=\"bg-background relative flex h-72 w-full items-center justify-center overflow-hidden rounded-xl border\">\n      <GridBeams />\n      <div className=\"relative text-center\">\n        <p className=\"text-xl font-medium tracking-tight\">Signal on the wire</p>\n        <p className=\"text-muted-foreground mt-1 text-sm\">\n          Seven beams, seeded onto random columns\n        </p>\n      </div>\n    </div>\n  )\n}\n",
+      "type": "registry:example"
+    }
+  ]
+}

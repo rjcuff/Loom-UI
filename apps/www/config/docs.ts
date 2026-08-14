@@ -66,6 +66,11 @@ export const docsConfig: DocsConfig = {
           href: "/docs/components/spotlight-card",
         },
         {
+          title: "Grid Beams",
+          href: "/docs/components/grid-beams",
+          badge: { text: "New", variant: "new" },
+        },
+        {
           title: "Aurora Backdrop",
           href: "/docs/components/aurora-backdrop",
           badge: { text: "New", variant: "new" },

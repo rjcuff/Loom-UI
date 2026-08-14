@@ -178,6 +178,44 @@ export const ui: Registry["items"] = [
     },
   },
   {
+    name: "grid-beams",
+    type: "registry:ui",
+    title: "Grid Beams",
+    description:
+      "A ruled grid with neon beams running down random lines, fading out toward the edges.",
+    registryDependencies: ["utils"],
+    files: [
+      {
+        path: "loomui/grid-beams.tsx",
+        type: "registry:ui",
+      },
+    ],
+    cssVars: {
+      theme: {
+        "animate-grid-beam": "grid-beam 4s linear infinite",
+        "animate-grid-beam-x": "grid-beam-x 4s linear infinite",
+      },
+    },
+    css: {
+      "@keyframes grid-beam": {
+        from: {
+          transform: "translateY(calc(-1 * var(--beam-length, 24%)))",
+        },
+        to: {
+          transform: "translateY(100%)",
+        },
+      },
+      "@keyframes grid-beam-x": {
+        from: {
+          transform: "translateX(calc(-1 * var(--beam-length, 24%)))",
+        },
+        to: {
+          transform: "translateX(100%)",
+        },
+      },
+    },
+  },
+  {
     name: "aurora-backdrop",
     type: "registry:ui",
     title: "Aurora Backdrop",

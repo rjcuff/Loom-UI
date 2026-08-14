@@ -96,6 +96,19 @@ export const examples: Registry["items"] = [
     ],
   },
   {
+    name: "grid-beams-demo",
+    type: "registry:example",
+    title: "Grid Beams Demo",
+    description: "Neon beams running down a ruled grid behind a panel of copy.",
+    registryDependencies: ["@loomui/grid-beams"],
+    files: [
+      {
+        path: "example/grid-beams-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "aurora-backdrop-demo",
     type: "registry:example",
     title: "Aurora Backdrop Demo",

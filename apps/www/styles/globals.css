@@ -175,6 +175,8 @@
   --animate-marquee-vertical: marquee-vertical var(--marquee-duration, 40s)
     linear infinite;
   --animate-aurora-drift: aurora-drift 18s var(--ease-in-out-cubic) infinite;
+  --animate-grid-beam: grid-beam 4s linear infinite;
+  --animate-grid-beam-x: grid-beam-x 4s linear infinite;
 }
 
 @keyframes weave {
@@ -245,6 +247,27 @@
   }
   66% {
     transform: translate(-24%, 18%) scale(0.75);
+  }
+}
+
+/* A beam spans the whole axis it travels, with the streak painted into the
+   leading slice of it, so translating by a percentage travels a percentage of
+   the container and nothing has to measure the box. */
+@keyframes grid-beam {
+  from {
+    transform: translateY(calc(-1 * var(--beam-length, 24%)));
+  }
+  to {
+    transform: translateY(100%);
+  }
+}
+
+@keyframes grid-beam-x {
+  from {
+    transform: translateX(calc(-1 * var(--beam-length, 24%)));
+  }
+  to {
+    transform: translateX(100%);
   }
 }
 

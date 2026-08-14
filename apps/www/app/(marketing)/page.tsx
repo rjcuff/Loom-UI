@@ -4,6 +4,7 @@ import Link from "next/link"
 import { siteConfig } from "@/config/site"
 import { Button } from "@/components/ui/button"
 import { InstallCommand } from "@/components/install-command"
+import { GridBeams } from "@/registry/loomui/grid-beams"
 import { WeaveText } from "@/registry/loomui/weave-text"
 
 // The home page is the one place the tab shows the bare brand name.
@@ -16,12 +17,9 @@ export const metadata: Metadata = {
 export default function HomePage() {
   return (
     <section className="relative overflow-hidden">
-      {/* A woven grid, fading out toward the edges. Static, so nothing here
-          animates on a loop. */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 -z-10 [background-image:linear-gradient(to_right,currentColor_1px,transparent_1px),linear-gradient(to_bottom,currentColor_1px,transparent_1px)] [mask-image:radial-gradient(ellipse_70%_50%_at_50%_0%,black,transparent)] [background-size:48px_48px] opacity-[0.035] sm:[background-size:64px_64px]"
-      />
+      {/* The same woven grid as before, now with beams running down it. The
+          site's own hero is the best argument for a component. */}
+      <GridBeams className="-z-10" lineOpacity={0.035} />
 
       <div className="mx-auto flex w-full max-w-3xl flex-col items-center px-5 pt-24 pb-20 text-center sm:pt-40 sm:pb-28">
         <span className="animate-rise border-border bg-surface/60 text-muted-foreground rounded-full border px-3 py-1 text-xs backdrop-blur">

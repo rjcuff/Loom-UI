@@ -1,0 +1,132 @@
+---
+title: Grid Beams
+date: 2026-08-14
+description: A ruled grid with neon beams running down random lines, fading out toward the edges.
+---
+
+<ComponentPreview name="grid-beams-demo" />
+
+## Installation
+
+<Tabs defaultValue="cli">
+
+<TabsList>
+  <TabsTrigger value="cli">CLI</TabsTrigger>
+  <TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @loomui/grid-beams
+```
+
+</TabsContent>
+
+<TabsContent value="manual">
+
+<Steps>
+
+<Step>Copy the component into your project.</Step>
+
+<ComponentSource name="grid-beams" />
+
+<Step>Add the keyframes to your global stylesheet.</Step>
+
+```css title="app/globals.css"
+@theme {
+  --animate-grid-beam: grid-beam 4s linear infinite;
+}
+
+@keyframes grid-beam {
+  from {
+    transform: translateY(calc(-1 * var(--beam-length, 24%)));
+  }
+  to {
+    transform: translateY(100%);
+  }
+}
+```
+
+<Step>Update the import paths to match your setup.</Step>
+
+</Steps>
+
+</TabsContent>
+
+</Tabs>
+
+## Usage
+
+```tsx
+import { GridBeams } from "@/components/ui/grid-beams"
+```
+
+The layer is absolutely positioned, so it wants a positioned parent that clips:
+
+```tsx
+<section className="relative overflow-hidden">
+  <GridBeams />
+  <div className="relative">{children}</div>
+</section>
+```
+
+The grid lines are drawn with `currentColor`, so they take their ink from the
+surface rather than carrying a colour that only reads on one theme. The beams
+are the opposite: they are meant to be loud, and they keep their own colours in
+both themes.
+
+```tsx
+<GridBeams
+  cellSize={48}
+  beams={12}
+  colors={["#22d3ee", "#a855f7"]}
+  duration={3}
+/>
+```
+
+## How the travel works
+
+Each beam spans the whole axis it travels, with the streak painted into the
+leading slice of it, sized by `length`. Translating that element by a
+percentage is therefore a percentage of the container, so a beam crosses a box
+of any size with no per-frame work at all. Once the beams are placed the whole
+effect is on the compositor.
+
+Beams sit on real grid lines, at multiples of `cellSize` from the edge, so they
+line up with the ruling exactly. Which lines exist depends on how big the
+container is, so the layer measures itself once with a `ResizeObserver` and
+picks from the lines that are actually on screen. The first and last are
+skipped, because the layer clips and a beam on either would be sliced in half
+against the edge.
+
+## Props
+
+| Prop          | Type                                   | Default    | Description                                  |
+| ------------- | -------------------------------------- | ---------- | -------------------------------------------- |
+| `cellSize`    | `number`                               | `64`       | Grid cell size in pixels.                    |
+| `beams`       | `number`                               | `7`        | How many beams travel at once.               |
+| `colors`      | `string[]`                             | four neons | Colours a beam is picked from.               |
+| `duration`    | `number`                               | `4`        | Seconds for one beam to cross the container. |
+| `length`      | `string`                               | `"24%"`    | Beam length, as a share of container height. |
+| `thickness`   | `number`                               | `2`        | Beam thickness in pixels.                    |
+| `lineOpacity` | `number`                               | `0.05`     | Opacity of the static grid lines.            |
+| `axis`        | `"vertical" \| "horizontal" \| "both"` | `"both"`   | Which way beams travel.                      |
+| `fade`        | `boolean \| string`                    | `true`     | Fade the layer. A string is a raw CSS mask.  |
+| `seed`        | `number`                               | `1`        | Changes which lines are chosen.              |
+| `disabled`    | `boolean`                              | `false`    | Render the grid with no beams.               |
+| `className`   | `string`                               | none       | Merged onto the layer.                       |
+
+Any other `<div>` prop is forwarded.
+
+<Callout type="tip" title="Restraint">
+  Seven beams on a hero is a texture. Twenty is a screensaver. If you want more
+  going on, raise `beams` a little and lower `duration` instead, so the eye
+  reads speed rather than clutter.
+</Callout>
+
+<Callout type="tip" title="Accessibility">
+  The layer is `aria-hidden` and never takes pointer events. Under
+  `prefers-reduced-motion` the beams are not drawn at all and the ruled grid is
+  left in place, which is the part that was never moving.
+</Callout>

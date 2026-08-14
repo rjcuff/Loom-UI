@@ -109,6 +109,21 @@ export const Index: Record<string, any> = {
       return { default: mod.default ?? mod[exportName] }
     }),
   },
+  "grid-beams": {
+    name: "grid-beams",
+    type: "registry:ui",
+    title: "Grid Beams",
+    description: "A ruled grid with neon beams running down random lines, fading out toward the edges.",
+    dependencies: [],
+    registryDependencies: ["utils"],
+    files: [{"path":"registry/loomui/grid-beams.tsx","type":"registry:ui","target":""}],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/loomui/grid-beams")
+      const exportName =
+        Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
+      return { default: mod.default ?? mod[exportName] }
+    }),
+  },
   "aurora-backdrop": {
     name: "aurora-backdrop",
     type: "registry:ui",
@@ -284,6 +299,21 @@ export const Index: Record<string, any> = {
     files: [{"path":"registry/example/spotlight-card-demo.tsx","type":"registry:example","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/example/spotlight-card-demo")
+      const exportName =
+        Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
+      return { default: mod.default ?? mod[exportName] }
+    }),
+  },
+  "grid-beams-demo": {
+    name: "grid-beams-demo",
+    type: "registry:example",
+    title: "Grid Beams Demo",
+    description: "Neon beams running down a ruled grid behind a panel of copy.",
+    dependencies: [],
+    registryDependencies: ["@loomui/grid-beams"],
+    files: [{"path":"registry/example/grid-beams-demo.tsx","type":"registry:example","target":""}],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/example/grid-beams-demo")
       const exportName =
         Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
       return { default: mod.default ?? mod[exportName] }

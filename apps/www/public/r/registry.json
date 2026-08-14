@@ -177,6 +177,45 @@
       }
     },
     {
+      "name": "grid-beams",
+      "type": "registry:ui",
+      "title": "Grid Beams",
+      "description": "A ruled grid with neon beams running down random lines, fading out toward the edges.",
+      "registryDependencies": [
+        "utils"
+      ],
+      "files": [
+        {
+          "path": "registry/loomui/grid-beams.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "cssVars": {
+        "theme": {
+          "animate-grid-beam": "grid-beam 4s linear infinite",
+          "animate-grid-beam-x": "grid-beam-x 4s linear infinite"
+        }
+      },
+      "css": {
+        "@keyframes grid-beam": {
+          "from": {
+            "transform": "translateY(calc(-1 * var(--beam-length, 24%)))"
+          },
+          "to": {
+            "transform": "translateY(100%)"
+          }
+        },
+        "@keyframes grid-beam-x": {
+          "from": {
+            "transform": "translateX(calc(-1 * var(--beam-length, 24%)))"
+          },
+          "to": {
+            "transform": "translateX(100%)"
+          }
+        }
+      }
+    },
+    {
       "name": "aurora-backdrop",
       "type": "registry:ui",
       "title": "Aurora Backdrop",
@@ -408,6 +447,21 @@
       "files": [
         {
           "path": "registry/example/spotlight-card-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "grid-beams-demo",
+      "type": "registry:example",
+      "title": "Grid Beams Demo",
+      "description": "Neon beams running down a ruled grid behind a panel of copy.",
+      "registryDependencies": [
+        "@loomui/grid-beams"
+      ],
+      "files": [
+        {
+          "path": "registry/example/grid-beams-demo.tsx",
           "type": "registry:example"
         }
       ]
