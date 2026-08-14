@@ -1,0 +1,90 @@
+---
+title: Reading Progress
+date: 2026-08-13
+description: A pinned bar that tracks how far through the page, or a chosen element, the reader is.
+---
+
+<ComponentPreview name="reading-progress-demo" />
+
+## Installation
+
+<Tabs defaultValue="cli">
+
+<TabsList>
+  <TabsTrigger value="cli">CLI</TabsTrigger>
+  <TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @loomui/reading-progress
+```
+
+</TabsContent>
+
+<TabsContent value="manual">
+
+<Steps>
+
+<Step>Copy the component into your project.</Step>
+
+<ComponentSource name="reading-progress" />
+
+<Step>Update the import paths to match your setup.</Step>
+
+</Steps>
+
+</TabsContent>
+
+</Tabs>
+
+No keyframes to add. The bar is driven by a passive scroll listener.
+
+## Usage
+
+```tsx
+import { ReadingProgress } from "@/components/ui/reading-progress"
+```
+
+```tsx
+<ReadingProgress />
+```
+
+Measure one article rather than the whole document by passing a ref:
+
+```tsx
+const article = React.useRef<HTMLElement>(null)
+
+return (
+  <>
+    <ReadingProgress target={article} />
+    <article ref={article}>{/* ... */}</article>
+  </>
+)
+```
+
+The bar scales on the `x` axis from its left edge, so nothing about it touches
+layout. There is no transition on it at all: scrolling is the highest-frequency
+input a page has, and a bar that eases toward the scroll position reads as the
+page lagging.
+
+## Props
+
+| Prop        | Type                             | Default | Description                              |
+| ----------- | -------------------------------- | ------- | ---------------------------------------- |
+| `position`  | `"top" \| "bottom"`              | `"top"` | Which edge the bar pins to.              |
+| `thickness` | `number`                         | `2`     | Bar thickness in pixels.                 |
+| `target`    | `RefObject<HTMLElement \| null>` | none    | Measure this element, not the document.  |
+| `disabled`  | `boolean`                        | `false` | Render nothing.                          |
+| `className` | `string`                         | none    | Merged onto the track. Colour goes here. |
+
+Any other `<div>` prop is forwarded.
+
+<Callout type="tip" title="Accessibility">
+  The bar is `aria-hidden` and `pointer-events-none`. It duplicates what the
+  scrollbar already conveys, and a `progressbar` role whose `aria-valuenow`
+  cannot update on every frame announces worse than nothing. There is also
+  nothing to disable for reduced motion, because nothing is animated: the bar
+  follows the scroll position exactly.
+</Callout>

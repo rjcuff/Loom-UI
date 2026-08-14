@@ -1,0 +1,100 @@
+---
+title: Magnetic
+date: 2026-08-13
+description: A wrapper that pulls its child toward the pointer as the pointer gets close.
+---
+
+<ComponentPreview name="magnetic-demo" />
+
+## Installation
+
+<Tabs defaultValue="cli">
+
+<TabsList>
+  <TabsTrigger value="cli">CLI</TabsTrigger>
+  <TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @loomui/magnetic
+```
+
+</TabsContent>
+
+<TabsContent value="manual">
+
+<Steps>
+
+<Step>Install the dependency.</Step>
+
+```bash
+npm install @radix-ui/react-slot
+```
+
+<Step>Copy the component into your project.</Step>
+
+<ComponentSource name="magnetic" />
+
+<Step>Add the easing token to your global stylesheet.</Step>
+
+```css title="app/globals.css"
+@theme {
+  --ease-out-quart: cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+```
+
+<Step>Update the import paths to match your setup.</Step>
+
+</Steps>
+
+</TabsContent>
+
+</Tabs>
+
+## Usage
+
+```tsx
+import { Magnetic } from "@/components/ui/magnetic"
+```
+
+```tsx
+<Magnetic asChild strength={0.4} radius={90}>
+  <button className="rounded-full px-6 py-2.5">Hover near me</button>
+</Magnetic>
+```
+
+With `asChild` the styles and the pull merge onto your own element, so the
+button keeps its own hit target instead of gaining a wrapper that changes
+layout.
+
+The pointer listener sits on `window`, not on the element. That is deliberate:
+the pull has to begin before the cursor arrives, or there is no effect to
+notice.
+
+<Callout type="warning" title="Use this once per screen">
+  This is a marketing flourish. A page where six things lean at the cursor reads
+  as noise, and every one of them is running a listener. One hero call to action
+  is the right dose.
+</Callout>
+
+## Props
+
+| Prop        | Type      | Default | Description                                             |
+| ----------- | --------- | ------- | ------------------------------------------------------- |
+| `strength`  | `number`  | `0.35`  | How far the child follows, as a fraction of the offset. |
+| `radius`    | `number`  | `80`    | Pixels of slack around the element that count as near.  |
+| `max`       | `number`  | `16`    | Largest pull in pixels, whatever the radius says.       |
+| `asChild`   | `boolean` | `false` | Merge onto the single child instead of wrapping it.     |
+| `disabled`  | `boolean` | `false` | Render the child with no pull.                          |
+| `className` | `string`  | none    | Merged onto the element.                                |
+
+Any other `<div>` prop is forwarded.
+
+<Callout type="tip" title="Accessibility">
+  The pull is skipped entirely under `prefers-reduced-motion`, and the element
+  snaps back to centre on `blur` so a keyboard user never lands on a target that
+  has drifted. Movement uses the `translate` property, which stays on the
+  compositor.
+</Callout>

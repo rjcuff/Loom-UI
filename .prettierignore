@@ -1,0 +1,8 @@
+node_modules
+.next
+.source
+.turbo
+pnpm-lock.yaml
+apps/www/public
+apps/www/registry/__index__.tsx
+apps/www/registry.json

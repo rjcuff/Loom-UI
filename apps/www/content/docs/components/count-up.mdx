@@ -1,0 +1,85 @@
+---
+title: Count Up
+date: 2026-08-13
+description: A number that counts to its value when it scrolls into view, without a render per frame.
+---
+
+<ComponentPreview name="count-up-demo" />
+
+## Installation
+
+<Tabs defaultValue="cli">
+
+<TabsList>
+  <TabsTrigger value="cli">CLI</TabsTrigger>
+  <TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @loomui/count-up
+```
+
+</TabsContent>
+
+<TabsContent value="manual">
+
+<Steps>
+
+<Step>Copy the component into your project.</Step>
+
+<ComponentSource name="count-up" />
+
+<Step>Update the import paths to match your setup.</Step>
+
+</Steps>
+
+</TabsContent>
+
+</Tabs>
+
+No keyframes to add. The count runs on `requestAnimationFrame` and writes
+straight to the DOM node.
+
+## Usage
+
+```tsx
+import { CountUp } from "@/components/ui/count-up"
+```
+
+```tsx
+<CountUp value={48291} className="text-3xl font-semibold" />
+<CountUp value={99.9} decimals={1} suffix="%" />
+<CountUp value={12} prefix="$" suffix="M" />
+```
+
+The value is written with `textContent` rather than through React state. A
+1400ms count is one render, not eighty-four. That matters when a stats row has
+six of these on screen at once.
+
+Numbers are formatted with `Intl.NumberFormat`, so grouping and decimal
+separators follow the reader's locale unless you pin one.
+
+## Props
+
+| Prop          | Type      | Default | Description                                         |
+| ------------- | --------- | ------- | --------------------------------------------------- |
+| `value`       | `number`  | none    | The number to land on.                              |
+| `from`        | `number`  | `0`     | The number to start from.                           |
+| `duration`    | `number`  | `1400`  | Milliseconds for the whole count.                   |
+| `decimals`    | `number`  | `0`     | Decimal places held throughout the count.           |
+| `locale`      | `string`  | none    | Passed to `Intl.NumberFormat`.                      |
+| `prefix`      | `string`  | none    | Rendered before the number.                         |
+| `suffix`      | `string`  | none    | Rendered after the number.                          |
+| `startOnView` | `boolean` | `true`  | Wait until the number scrolls into view.            |
+| `disabled`    | `boolean` | `false` | Render the final value with no count.               |
+| `className`   | `string`  | none    | Merged onto the wrapper. `tabular-nums` by default. |
+
+Any other `<span>` prop is forwarded to the counting element.
+
+<Callout type="tip" title="Accessibility">
+  The wrapper carries `tabular-nums` so digits keep a fixed width and the number
+  does not jitter as it counts. Under `prefers-reduced-motion` the final value
+  is rendered immediately with no count at all.
+</Callout>

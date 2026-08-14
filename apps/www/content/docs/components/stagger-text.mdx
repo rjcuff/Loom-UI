@@ -1,0 +1,102 @@
+---
+title: Stagger Text
+date: 2026-08-13
+description: Words or characters that rise into place one after another, on mount or on scroll.
+---
+
+<ComponentPreview name="stagger-text-demo" />
+
+## Installation
+
+<Tabs defaultValue="cli">
+
+<TabsList>
+  <TabsTrigger value="cli">CLI</TabsTrigger>
+  <TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @loomui/stagger-text
+```
+
+</TabsContent>
+
+<TabsContent value="manual">
+
+<Steps>
+
+<Step>Copy the component into your project.</Step>
+
+<ComponentSource name="stagger-text" />
+
+<Step>Add the keyframes to your global stylesheet.</Step>
+
+```css title="app/globals.css"
+@theme {
+  --ease-out-quart: cubic-bezier(0.165, 0.84, 0.44, 1);
+  --animate-stagger-reveal: stagger-reveal 500ms var(--ease-out-quart) both;
+}
+
+@keyframes stagger-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(0.4em);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+```
+
+<Step>Update the import paths to match your setup.</Step>
+
+</Steps>
+
+</TabsContent>
+
+</Tabs>
+
+## Usage
+
+```tsx
+import { StaggerText } from "@/components/ui/stagger-text"
+```
+
+```tsx
+<h1 className="text-4xl font-semibold">
+  <StaggerText startOnView>Every word arrives on its own beat.</StaggerText>
+</h1>
+```
+
+`children` must be a plain string. The component splits it, wraps each piece in
+its own span, and hands each span an `animation-delay`. The animation itself is
+pure CSS, so a hundred words cost one render.
+
+Splitting by character multiplies the element count. Keep `by="character"` for
+short strings, headlines rather than paragraphs.
+
+## Props
+
+| Prop          | Type                    | Default  | Description                                       |
+| ------------- | ----------------------- | -------- | ------------------------------------------------- |
+| `children`    | `string`                | none     | The text to reveal. Plain text only.              |
+| `by`          | `"word" \| "character"` | `"word"` | How the string is split.                          |
+| `stagger`     | `number`                | `0.04`   | Seconds between one unit starting and the next.   |
+| `duration`    | `number`                | `0.5`    | Seconds for a single unit to arrive.              |
+| `delay`       | `number`                | `0`      | Seconds before the first unit starts.             |
+| `startOnView` | `boolean`               | `false`  | Wait until the text scrolls into view.            |
+| `repeat`      | `boolean`               | `false`  | Replay on every re-entry. Requires `startOnView`. |
+| `disabled`    | `boolean`               | `false`  | Render the finished state with no animation.      |
+| `className`   | `string`                | none     | Merged onto the outer span.                       |
+
+Any other `<span>` prop is forwarded.
+
+<Callout type="tip" title="Accessibility">
+  The full string is rendered once in a visually hidden span and announced as
+  one phrase, so screen readers never hear it letter by letter. The split copy
+  is `aria-hidden`. Under `prefers-reduced-motion` every unit is visible
+  immediately.
+</Callout>

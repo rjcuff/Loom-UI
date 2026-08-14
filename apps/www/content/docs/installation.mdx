@@ -1,0 +1,68 @@
+---
+title: Installation
+description: Point the shadcn CLI at the loom registry once, then install any component by name.
+---
+
+loom assumes a React project running Tailwind CSS v4 with the shadcn/ui
+conventions in place. If you already have a `components.json`, you are two
+lines away from done.
+
+## Requirements
+
+| Requirement  | Version                                |
+| ------------ | -------------------------------------- |
+| React        | 18 or 19                               |
+| Tailwind CSS | 4.x                                    |
+| TypeScript   | 5.x (optional but assumed by the docs) |
+
+## Set up
+
+<Steps>
+
+<Step>Initialise shadcn/ui, if you have not already.</Step>
+
+```bash
+npx shadcn@latest init
+```
+
+This creates `components.json` and the `cn()` helper at `lib/utils.ts`, which
+every loom component imports.
+
+<Step>Register the loom namespace.</Step>
+
+Add a `registries` entry to `components.json`:
+
+```json title="components.json"
+{
+  "registries": {
+    "@loomui": "https://loomui.design/r/{name}.json"
+  }
+}
+```
+
+<Step>Install a component.</Step>
+
+```bash
+npx shadcn@latest add @loomui/weave-text
+```
+
+</Steps>
+
+## Installing without the CLI
+
+Every component page has a **Manual** tab containing the complete source. Copy
+it into `components/ui/<name>.tsx`, install the npm dependencies listed on that
+page, and add any keyframes shown under its Installation section to your
+`globals.css`.
+
+## Dark mode
+
+loom components read the same CSS variables shadcn/ui defines, so whatever you
+already use to toggle `.dark`, whether that is `next-themes` or something
+else, works unchanged.
+
+<Callout type="warning" title="Tailwind v3">
+  The components use v4 syntax (`@theme`, `@custom-variant`, arbitrary
+  `bg-[length:...]` values). On Tailwind v3 you will need to move the animation
+  definitions into `tailwind.config.js` by hand.
+</Callout>

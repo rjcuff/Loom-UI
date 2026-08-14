@@ -1,0 +1,41 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "marquee",
+  "type": "registry:ui",
+  "title": "Marquee",
+  "description": "A seamless scrolling row or column, in either direction, that pauses on hover.",
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "path": "registry/loomui/marquee.tsx",
+      "content": "\"use client\"\n\nimport * as React from \"react\"\n\nimport { cn } from \"@/lib/utils\"\n\nexport interface MarqueeProps extends React.ComponentProps<\"div\"> {\n  /** Travel bottom to top instead of right to left. */\n  vertical?: boolean\n  /** Flip the direction of travel. */\n  reverse?: boolean\n  /** Stop while the pointer is over the track. */\n  pauseOnHover?: boolean\n  /** Copies of the children. Two is the minimum for a seamless loop. */\n  repeat?: number\n  /** Seconds for one full pass of a single copy. */\n  duration?: number\n  /** Gap between items, as a CSS length. */\n  gap?: string\n  /** Render the row static. */\n  paused?: boolean\n}\n\nexport function Marquee({\n  children,\n  className,\n  vertical = false,\n  reverse = false,\n  pauseOnHover = false,\n  repeat = 2,\n  duration = 40,\n  gap = \"1rem\",\n  paused = false,\n  style,\n  ...props\n}: MarqueeProps) {\n  return (\n    <div\n      data-slot=\"marquee\"\n      className={cn(\n        \"group flex overflow-hidden\",\n        vertical ? \"flex-col\" : \"flex-row\",\n        className\n      )}\n      style={\n        {\n          gap,\n          // The keyframes travel exactly one copy plus one gap, which is what\n          // makes the seam invisible.\n          \"--marquee-gap\": gap,\n          \"--marquee-duration\": `${duration}s`,\n          ...style,\n        } as React.CSSProperties\n      }\n      {...props}\n    >\n      {Array.from({ length: Math.max(repeat, 2) }, (_, index) => (\n        <div\n          key={index}\n          aria-hidden={index > 0 ? \"true\" : undefined}\n          className={cn(\n            \"flex shrink-0 justify-around\",\n            vertical\n              ? \"animate-marquee-vertical flex-col\"\n              : \"animate-marquee flex-row\",\n            reverse && \"[animation-direction:reverse]\",\n            paused && \"[animation-play-state:paused]\",\n            pauseOnHover && \"group-hover:[animation-play-state:paused]\",\n            // A marquee that stops dead for reduced motion leaves half a row\n            // cut off, so the whole track is frozen at its start instead.\n            \"motion-reduce:animate-none\"\n          )}\n          style={{ gap }}\n        >\n          {children}\n        </div>\n      ))}\n    </div>\n  )\n}\n",
+      "type": "registry:ui"
+    }
+  ],
+  "cssVars": {
+    "theme": {
+      "animate-marquee": "marquee var(--marquee-duration, 40s) linear infinite",
+      "animate-marquee-vertical": "marquee-vertical var(--marquee-duration, 40s) linear infinite"
+    }
+  },
+  "css": {
+    "@keyframes marquee": {
+      "from": {
+        "transform": "translateX(0)"
+      },
+      "to": {
+        "transform": "translateX(calc(-100% - var(--marquee-gap, 1rem)))"
+      }
+    },
+    "@keyframes marquee-vertical": {
+      "from": {
+        "transform": "translateY(0)"
+      },
+      "to": {
+        "transform": "translateY(calc(-100% - var(--marquee-gap, 1rem)))"
+      }
+    }
+  }
+}

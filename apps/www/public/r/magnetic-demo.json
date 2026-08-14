@@ -1,0 +1,17 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "magnetic-demo",
+  "type": "registry:example",
+  "title": "Magnetic Demo",
+  "description": "A button that leans toward the pointer.",
+  "registryDependencies": [
+    "@loomui/magnetic"
+  ],
+  "files": [
+    {
+      "path": "registry/example/magnetic-demo.tsx",
+      "content": "import { Magnetic } from \"@/registry/loomui/magnetic\"\n\nexport default function MagneticDemo() {\n  return (\n    <Magnetic asChild strength={0.4} radius={90}>\n      <button className=\"bg-primary text-primary-foreground rounded-full px-6 py-2.5 text-sm font-medium\">\n        Hover near me\n      </button>\n    </Magnetic>\n  )\n}\n",
+      "type": "registry:example"
+    }
+  ]
+}

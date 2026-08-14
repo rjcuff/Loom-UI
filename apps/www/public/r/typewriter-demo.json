@@ -1,0 +1,17 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "typewriter-demo",
+  "type": "registry:example",
+  "title": "Typewriter Demo",
+  "description": "A rotating list of phrases typed into a fixed-width slot.",
+  "registryDependencies": [
+    "@loomui/typewriter"
+  ],
+  "files": [
+    {
+      "path": "registry/example/typewriter-demo.tsx",
+      "content": "import { Typewriter } from \"@/registry/loomui/typewriter\"\n\nexport default function TypewriterDemo() {\n  return (\n    <p className=\"text-2xl font-medium tracking-tight\">\n      Built for{\" \"}\n      <Typewriter\n        className=\"text-primary\"\n        words={[\"landing pages\", \"dashboards\", \"docs sites\", \"changelogs\"]}\n      />\n    </p>\n  )\n}\n",
+      "type": "registry:example"
+    }
+  ]
+}

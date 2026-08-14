@@ -1,0 +1,24 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "ui": "tui",
+  "envMode": "strict",
+  "globalEnv": ["NODE_ENV"],
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "env": ["NEXT_PUBLIC_APP_URL"],
+      "outputs": [".next/**", "!.next/cache/**"]
+    },
+    "start": {
+      "dependsOn": ["^build"]
+    },
+    "dev": { "cache": false, "persistent": true },
+    "typecheck": {},
+    "format:check": { "cache": false, "outputs": [] },
+    "format:fix": { "cache": false, "outputs": [] },
+    "build:registry": { "cache": false, "outputs": [] },
+    "registry-deps:check": { "cache": false, "outputs": [] },
+    "registry-deps:fix": { "cache": false, "outputs": [] },
+    "check": { "cache": false }
+  }
+}

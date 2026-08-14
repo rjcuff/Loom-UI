@@ -1,0 +1,17 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "reading-progress",
+  "type": "registry:ui",
+  "title": "Reading Progress",
+  "description": "A pinned bar that tracks how far through the page, or a chosen element, the reader is.",
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "path": "registry/loomui/reading-progress.tsx",
+      "content": "\"use client\"\n\nimport * as React from \"react\"\n\nimport { cn } from \"@/lib/utils\"\n\nexport interface ReadingProgressProps extends React.ComponentProps<\"div\"> {\n  /** Which edge the bar pins to. */\n  position?: \"top\" | \"bottom\"\n  /** Bar thickness in pixels. */\n  thickness?: number\n  /** Measure this element instead of the whole document. */\n  target?: React.RefObject<HTMLElement | null>\n  /** Render nothing. Useful for pages that should not have a bar. */\n  disabled?: boolean\n}\n\nexport function ReadingProgress({\n  className,\n  position = \"top\",\n  thickness = 2,\n  target,\n  disabled = false,\n  style,\n  ...props\n}: ReadingProgressProps) {\n  const ref = React.useRef<HTMLDivElement>(null)\n\n  React.useEffect(() => {\n    if (disabled) {\n      return\n    }\n\n    let frame = 0\n\n    const measure = () => {\n      const node = ref.current\n      if (!node) {\n        return\n      }\n\n      let progress: number\n\n      if (target?.current) {\n        const rect = target.current.getBoundingClientRect()\n        const scrollable = rect.height - window.innerHeight\n        progress = scrollable > 0 ? -rect.top / scrollable : 1\n      } else {\n        const scrollable =\n          document.documentElement.scrollHeight - window.innerHeight\n        progress = scrollable > 0 ? window.scrollY / scrollable : 1\n      }\n\n      // Scrolling is the highest-frequency input there is, so the bar tracks\n      // it exactly. No transition, no easing, no perceived lag.\n      node.style.scale = `${Math.min(Math.max(progress, 0), 1)} 1`\n    }\n\n    const onScroll = () => {\n      cancelAnimationFrame(frame)\n      frame = requestAnimationFrame(measure)\n    }\n\n    measure()\n    window.addEventListener(\"scroll\", onScroll, { passive: true })\n    window.addEventListener(\"resize\", onScroll, { passive: true })\n    return () => {\n      window.removeEventListener(\"scroll\", onScroll)\n      window.removeEventListener(\"resize\", onScroll)\n      cancelAnimationFrame(frame)\n    }\n  }, [disabled, target])\n\n  if (disabled) {\n    return null\n  }\n\n  return (\n    <div\n      data-slot=\"reading-progress\"\n      // Decorative. The scrollbar already carries this information, and a\n      // `progressbar` role without a live `aria-valuenow` announces worse than\n      // nothing at all.\n      aria-hidden=\"true\"\n      className={cn(\n        \"pointer-events-none fixed inset-x-0 z-50\",\n        position === \"top\" ? \"top-0\" : \"bottom-0\",\n        className\n      )}\n      style={{ height: thickness, ...style }}\n      {...props}\n    >\n      <div\n        ref={ref}\n        className=\"bg-primary h-full w-full origin-left will-change-transform\"\n        style={{ scale: \"0 1\" }}\n      />\n    </div>\n  )\n}\n",
+      "type": "registry:ui"
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "count-up-demo",
+  "type": "registry:example",
+  "title": "Count Up Demo",
+  "description": "Three statistics counting to their values in step.",
+  "registryDependencies": [
+    "@loomui/count-up"
+  ],
+  "files": [
+    {
+      "path": "registry/example/count-up-demo.tsx",
+      "content": "import { CountUp } from \"@/registry/loomui/count-up\"\n\nexport default function CountUpDemo() {\n  return (\n    <div className=\"grid w-full max-w-md grid-cols-3 gap-6 text-center\">\n      <div>\n        <CountUp\n          value={48291}\n          className=\"text-3xl font-semibold tracking-tight\"\n        />\n        <p className=\"text-muted-foreground mt-1 text-xs\">Installs</p>\n      </div>\n      <div>\n        <CountUp\n          value={99.9}\n          decimals={1}\n          suffix=\"%\"\n          className=\"text-3xl font-semibold tracking-tight\"\n        />\n        <p className=\"text-muted-foreground mt-1 text-xs\">Uptime</p>\n      </div>\n      <div>\n        <CountUp\n          value={12}\n          prefix=\"$\"\n          suffix=\"M\"\n          className=\"text-3xl font-semibold tracking-tight\"\n        />\n        <p className=\"text-muted-foreground mt-1 text-xs\">Processed</p>\n      </div>\n    </div>\n  )\n}\n",
+      "type": "registry:example"
+    }
+  ]
+}

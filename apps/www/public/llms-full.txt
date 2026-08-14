@@ -1,0 +1,1250 @@
+===== COMPONENT: count-up =====
+Title: Count Up
+Description: A number that counts to its value when it scrolls into view, without a render per frame.
+Install: npx shadcn@latest add @loomui/count-up
+
+--- file: loomui/count-up.tsx ---
+"use client"
+
+import * as React from "react"
+
+import { cn } from "@/lib/utils"
+
+export interface CountUpProps extends Omit<
+  React.ComponentProps<"span">,
+  "children"
+> {
+  /** The number to land on. */
+  value: number
+  /** The number to start from. */
+  from?: number
+  /** Milliseconds for the whole count. */
+  duration?: number
+  /** Decimal places to hold throughout the count. */
+  decimals?: number
+  /** Locale passed to Intl.NumberFormat, so grouping matches the reader. */
+  locale?: string
+  /** Rendered before the number, inside the same element. */
+  prefix?: string
+  /** Rendered after the number. */
+  suffix?: string
+  /** Hold until the number scrolls into view instead of counting on mount. */
+  startOnView?: boolean
+  /** Render the final value with no count. */
+  disabled?: boolean
+}
+
+/** --ease-out-quart, expressed as a function so JS and CSS agree. */
+function easeOutQuart(t: number) {
+  return 1 - Math.pow(1 - t, 4)
+}
+
+export function CountUp({
+  value,
+  from = 0,
+  duration = 1400,
+  decimals = 0,
+  locale,
+  prefix,
+  suffix,
+  startOnView = true,
+  disabled = false,
+  className,
+  ...props
+}: CountUpProps) {
+  const ref = React.useRef<HTMLSpanElement>(null)
+  const [active, setActive] = React.useState(!startOnView)
+
+  const format = React.useMemo(
+    () =>
+      new Intl.NumberFormat(locale, {
+        minimumFractionDigits: decimals,
+        maximumFractionDigits: decimals,
+      }),
+    [locale, decimals]
+  )
+
+  React.useEffect(() => {
+    if (!startOnView || disabled) {
+      return
+    }
+
+    const node = ref.current
+    if (!node || typeof IntersectionObserver === "undefined") {
+      setActive(true)
+      return
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setActive(true)
+          observer.disconnect()
+        }
+      },
+      { threshold: 0.4 }
+    )
+
+    observer.observe(node)
+    return () => observer.disconnect()
+  }, [startOnView, disabled])
+
+  React.useEffect(() => {
+    const node = ref.current
+    if (!node) {
+      return
+    }
+
+    const reduced =
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+
+    if (disabled || !active || reduced || duration <= 0) {
+      node.textContent = format.format(value)
+      return
+    }
+
+    let frame = 0
+    let start: number | null = null
+
+    // The value is written straight to the DOM rather than through state, so a
+    // 1400ms count is one render instead of eighty-four.
+    const tick = (now: number) => {
+      start ??= now
+      const progress = Math.min((now - start) / duration, 1)
+      node.textContent = format.format(
+        from + (value - from) * easeOutQuart(progress)
+      )
+
+      if (progress < 1) {
+        frame = requestAnimationFrame(tick)
+      }
+    }
+
+    node.textContent = format.format(from)
+    frame = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(frame)
+  }, [active, disabled, duration, format, from, value])
+
+  return (
+    <span data-slot="count-up" className={cn("tabular-nums", className)}>
+      {prefix}
+      <span ref={ref} {...props}>
+        {format.format(disabled ? value : from)}
+      </span>
+      {suffix}
+    </span>
+  )
+}
+
+
+===== EXAMPLE: count-up-demo =====
+Title: Count Up Demo
+
+--- file: example/count-up-demo.tsx ---
+import { CountUp } from "@/registry/loomui/count-up"
+
+export default function CountUpDemo() {
+  return (
+    <div className="grid w-full max-w-md grid-cols-3 gap-6 text-center">
+      <div>
+        <CountUp
+          value={48291}
+          className="text-3xl font-semibold tracking-tight"
+        />
+        <p className="text-muted-foreground mt-1 text-xs">Installs</p>
+      </div>
+      <div>
+        <CountUp
+          value={99.9}
+          decimals={1}
+          suffix="%"
+          className="text-3xl font-semibold tracking-tight"
+        />
+        <p className="text-muted-foreground mt-1 text-xs">Uptime</p>
+      </div>
+      <div>
+        <CountUp
+          value={12}
+          prefix="$"
+          suffix="M"
+          className="text-3xl font-semibold tracking-tight"
+        />
+        <p className="text-muted-foreground mt-1 text-xs">Processed</p>
+      </div>
+    </div>
+  )
+}
+
+
+===== COMPONENT: grid-backdrop =====
+Title: Grid Backdrop
+Description: An SVG grid with cells that fade in and out at a deterministic, seeded scatter.
+Install: npx shadcn@latest add @loomui/grid-backdrop
+
+--- file: loomui/grid-backdrop.tsx ---
+"use client"
+
+import * as React from "react"
+
+import { cn } from "@/lib/utils"
+
+export interface GridBackdropProps extends React.ComponentProps<"svg"> {
+  /** Cell width in pixels. */
+  width?: number
+  /** Cell height in pixels. */
+  height?: number
+  /** Dash pattern for the grid lines. `0` draws them solid. */
+  strokeDasharray?: string | number
+  /** How many cells light up. Set to `0` for a plain static grid. */
+  squares?: number
+  /** Seconds for one full fade in and out of a single cell. */
+  duration?: number
+  /** Changes which cells are chosen. Same seed, same layout, every render. */
+  seed?: number
+  /** Render the grid with no pulsing cells. */
+  disabled?: boolean
+}
+
+/** Mulberry32. Deterministic so the server and the client agree. */
+function createRandom(seed: number) {
+  let state = seed >>> 0
+  return () => {
+    state = (state + 0x6d2b79f5) >>> 0
+    let t = state
+    t = Math.imul(t ^ (t >>> 15), t | 1)
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61)
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296
+  }
+}
+
+export function GridBackdrop({
+  width = 40,
+  height = 40,
+  strokeDasharray = 0,
+  squares = 14,
+  duration = 5,
+  seed = 1,
+  disabled = false,
+  className,
+  ...props
+}: GridBackdropProps) {
+  const id = React.useId()
+
+  const cells = React.useMemo(() => {
+    if (disabled || squares <= 0) {
+      return []
+    }
+    const random = createRandom(seed)
+    return Array.from({ length: squares }, (_, index) => ({
+      key: index,
+      x: Math.floor(random() * 30) * width,
+      y: Math.floor(random() * 20) * height,
+      delay: random() * duration * 2,
+    }))
+  }, [disabled, squares, seed, width, height, duration])
+
+  return (
+    <svg
+      data-slot="grid-backdrop"
+      aria-hidden="true"
+      className={cn(
+        "pointer-events-none absolute inset-0 size-full fill-current/[0.04] stroke-current/[0.08]",
+        className
+      )}
+      {...props}
+    >
+      <defs>
+        <pattern
+          id={id}
+          width={width}
+          height={height}
+          patternUnits="userSpaceOnUse"
+        >
+          <path
+            d={`M ${width} 0 L 0 0 0 ${height}`}
+            fill="none"
+            strokeDasharray={strokeDasharray}
+          />
+        </pattern>
+      </defs>
+
+      <rect width="100%" height="100%" fill={`url(#${id})`} stroke="none" />
+
+      {/* Opacity is the only thing that moves. The cells never change size or
+          position, so this stays on the compositor. */}
+      <g stroke="none">
+        {cells.map((cell) => (
+          <rect
+            key={cell.key}
+            width={width - 1}
+            height={height - 1}
+            x={cell.x + 1}
+            y={cell.y + 1}
+            className="animate-grid-pulse opacity-0 motion-reduce:animate-none"
+            style={{
+              animationDuration: `${duration}s`,
+              animationDelay: `${cell.delay}s`,
+            }}
+          />
+        ))}
+      </g>
+    </svg>
+  )
+}
+
+
+===== EXAMPLE: grid-backdrop-demo =====
+Title: Grid Backdrop Demo
+
+--- file: example/grid-backdrop-demo.tsx ---
+import { GridBackdrop } from "@/registry/loomui/grid-backdrop"
+
+export default function GridBackdropDemo() {
+  return (
+    <div className="relative flex h-64 w-full items-center justify-center overflow-hidden rounded-xl border">
+      <GridBackdrop width={32} height={32} squares={18} />
+      <p className="relative text-xl font-medium tracking-tight">
+        Quiet behind the content
+      </p>
+    </div>
+  )
+}
+
+
+===== COMPONENT: magnetic =====
+Title: Magnetic
+Description: A wrapper that pulls its child toward the pointer as the pointer gets close.
+Install: npx shadcn@latest add @loomui/magnetic
+
+--- file: loomui/magnetic.tsx ---
+"use client"
+
+import * as React from "react"
+import { Slot } from "@radix-ui/react-slot"
+
+import { cn } from "@/lib/utils"
+
+export interface MagneticProps extends React.ComponentProps<"div"> {
+  /** How far the child follows the pointer, as a fraction of the offset. */
+  strength?: number
+  /** Pixels of slack around the element that still count as near. */
+  radius?: number
+  /** Largest pull in pixels, whatever the radius says. */
+  max?: number
+  /** Merge onto the single child instead of rendering a wrapper div. */
+  asChild?: boolean
+  /** Render the child with no pull. */
+  disabled?: boolean
+}
+
+export function Magnetic({
+  children,
+  className,
+  strength = 0.35,
+  radius = 80,
+  max = 16,
+  asChild = false,
+  disabled = false,
+  style,
+  ...props
+}: MagneticProps) {
+  const ref = React.useRef<HTMLDivElement>(null)
+  const frame = React.useRef(0)
+  const Comp = asChild ? Slot : "div"
+
+  const reset = React.useCallback(() => {
+    cancelAnimationFrame(frame.current)
+    const node = ref.current
+    if (node) {
+      node.style.translate = "0px 0px"
+    }
+  }, [])
+
+  React.useEffect(() => {
+    if (disabled) {
+      reset()
+      return
+    }
+
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)")
+    if (reduced.matches) {
+      return
+    }
+
+    // Listening on the window rather than the element itself means the pull
+    // starts before the pointer arrives, which is the whole effect.
+    const onPointerMove = (event: PointerEvent) => {
+      cancelAnimationFrame(frame.current)
+      frame.current = requestAnimationFrame(() => {
+        const node = ref.current
+        if (!node) {
+          return
+        }
+
+        const rect = node.getBoundingClientRect()
+        const dx = event.clientX - (rect.left + rect.width / 2)
+        const dy = event.clientY - (rect.top + rect.height / 2)
+        const near =
+          Math.abs(dx) < rect.width / 2 + radius &&
+          Math.abs(dy) < rect.height / 2 + radius
+
+        if (!near) {
+          node.style.translate = "0px 0px"
+          return
+        }
+
+        const clamp = (value: number) =>
+          Math.max(-max, Math.min(max, value * strength))
+        node.style.translate = `${clamp(dx)}px ${clamp(dy)}px`
+      })
+    }
+
+    window.addEventListener("pointermove", onPointerMove, { passive: true })
+    return () => {
+      window.removeEventListener("pointermove", onPointerMove)
+      cancelAnimationFrame(frame.current)
+    }
+  }, [disabled, radius, max, strength, reset])
+
+  return (
+    <Comp
+      ref={ref}
+      data-slot="magnetic"
+      onBlur={reset}
+      className={cn(
+        "inline-block will-change-transform",
+        // v4 compiles translate utilities to the `translate` property, so the
+        // transition has to name `translate`, not `transform`.
+        !disabled &&
+          "transition-[translate] duration-[240ms] ease-[var(--ease-out-quart)] motion-reduce:transition-none",
+        className
+      )}
+      style={style}
+      {...props}
+    >
+      {children}
+    </Comp>
+  )
+}
+
+
+===== EXAMPLE: magnetic-demo =====
+Title: Magnetic Demo
+
+--- file: example/magnetic-demo.tsx ---
+import { Magnetic } from "@/registry/loomui/magnetic"
+
+export default function MagneticDemo() {
+  return (
+    <Magnetic asChild strength={0.4} radius={90}>
+      <button className="bg-primary text-primary-foreground rounded-full px-6 py-2.5 text-sm font-medium">
+        Hover near me
+      </button>
+    </Magnetic>
+  )
+}
+
+
+===== COMPONENT: marquee =====
+Title: Marquee
+Description: A seamless scrolling row or column, in either direction, that pauses on hover.
+Install: npx shadcn@latest add @loomui/marquee
+
+--- file: loomui/marquee.tsx ---
+"use client"
+
+import * as React from "react"
+
+import { cn } from "@/lib/utils"
+
+export interface MarqueeProps extends React.ComponentProps<"div"> {
+  /** Travel bottom to top instead of right to left. */
+  vertical?: boolean
+  /** Flip the direction of travel. */
+  reverse?: boolean
+  /** Stop while the pointer is over the track. */
+  pauseOnHover?: boolean
+  /** Copies of the children. Two is the minimum for a seamless loop. */
+  repeat?: number
+  /** Seconds for one full pass of a single copy. */
+  duration?: number
+  /** Gap between items, as a CSS length. */
+  gap?: string
+  /** Render the row static. */
+  paused?: boolean
+}
+
+export function Marquee({
+  children,
+  className,
+  vertical = false,
+  reverse = false,
+  pauseOnHover = false,
+  repeat = 2,
+  duration = 40,
+  gap = "1rem",
+  paused = false,
+  style,
+  ...props
+}: MarqueeProps) {
+  return (
+    <div
+      data-slot="marquee"
+      className={cn(
+        "group flex overflow-hidden",
+        vertical ? "flex-col" : "flex-row",
+        className
+      )}
+      style={
+        {
+          gap,
+          // The keyframes travel exactly one copy plus one gap, which is what
+          // makes the seam invisible.
+          "--marquee-gap": gap,
+          "--marquee-duration": `${duration}s`,
+          ...style,
+        } as React.CSSProperties
+      }
+      {...props}
+    >
+      {Array.from({ length: Math.max(repeat, 2) }, (_, index) => (
+        <div
+          key={index}
+          aria-hidden={index > 0 ? "true" : undefined}
+          className={cn(
+            "flex shrink-0 justify-around",
+            vertical
+              ? "animate-marquee-vertical flex-col"
+              : "animate-marquee flex-row",
+            reverse && "[animation-direction:reverse]",
+            paused && "[animation-play-state:paused]",
+            pauseOnHover && "group-hover:[animation-play-state:paused]",
+            // A marquee that stops dead for reduced motion leaves half a row
+            // cut off, so the whole track is frozen at its start instead.
+            "motion-reduce:animate-none"
+          )}
+          style={{ gap }}
+        >
+          {children}
+        </div>
+      ))}
+    </div>
+  )
+}
+
+
+===== EXAMPLE: marquee-demo =====
+Title: Marquee Demo
+
+--- file: example/marquee-demo.tsx ---
+import { Marquee } from "@/registry/loomui/marquee"
+
+const QUOTES = [
+  "Shipped it in an afternoon.",
+  "Finally, motion I can hand to a designer.",
+  "The off switch is why I kept it.",
+  "Reads like code I would have written.",
+]
+
+export default function MarqueeDemo() {
+  return (
+    <div className="relative w-full max-w-2xl overflow-hidden">
+      <Marquee pauseOnHover duration={28} gap="1rem">
+        {QUOTES.map((quote) => (
+          <figure
+            key={quote}
+            className="bg-card w-64 shrink-0 rounded-xl border p-4"
+          >
+            <blockquote className="text-sm">{quote}</blockquote>
+          </figure>
+        ))}
+      </Marquee>
+      <div className="from-background pointer-events-none absolute inset-y-0 left-0 w-16 bg-gradient-to-r to-transparent" />
+      <div className="from-background pointer-events-none absolute inset-y-0 right-0 w-16 bg-gradient-to-l to-transparent" />
+    </div>
+  )
+}
+
+
+===== COMPONENT: reading-progress =====
+Title: Reading Progress
+Description: A pinned bar that tracks how far through the page, or a chosen element, the reader is.
+Install: npx shadcn@latest add @loomui/reading-progress
+
+--- file: loomui/reading-progress.tsx ---
+"use client"
+
+import * as React from "react"
+
+import { cn } from "@/lib/utils"
+
+export interface ReadingProgressProps extends React.ComponentProps<"div"> {
+  /** Which edge the bar pins to. */
+  position?: "top" | "bottom"
+  /** Bar thickness in pixels. */
+  thickness?: number
+  /** Measure this element instead of the whole document. */
+  target?: React.RefObject<HTMLElement | null>
+  /** Render nothing. Useful for pages that should not have a bar. */
+  disabled?: boolean
+}
+
+export function ReadingProgress({
+  className,
+  position = "top",
+  thickness = 2,
+  target,
+  disabled = false,
+  style,
+  ...props
+}: ReadingProgressProps) {
+  const ref = React.useRef<HTMLDivElement>(null)
+
+  React.useEffect(() => {
+    if (disabled) {
+      return
+    }
+
+    let frame = 0
+
+    const measure = () => {
+      const node = ref.current
+      if (!node) {
+        return
+      }
+
+      let progress: number
+
+      if (target?.current) {
+        const rect = target.current.getBoundingClientRect()
+        const scrollable = rect.height - window.innerHeight
+        progress = scrollable > 0 ? -rect.top / scrollable : 1
+      } else {
+        const scrollable =
+          document.documentElement.scrollHeight - window.innerHeight
+        progress = scrollable > 0 ? window.scrollY / scrollable : 1
+      }
+
+      // Scrolling is the highest-frequency input there is, so the bar tracks
+      // it exactly. No transition, no easing, no perceived lag.
+      node.style.scale = `${Math.min(Math.max(progress, 0), 1)} 1`
+    }
+
+    const onScroll = () => {
+      cancelAnimationFrame(frame)
+      frame = requestAnimationFrame(measure)
+    }
+
+    measure()
+    window.addEventListener("scroll", onScroll, { passive: true })
+    window.addEventListener("resize", onScroll, { passive: true })
+    return () => {
+      window.removeEventListener("scroll", onScroll)
+      window.removeEventListener("resize", onScroll)
+      cancelAnimationFrame(frame)
+    }
+  }, [disabled, target])
+
+  if (disabled) {
+    return null
+  }
+
+  return (
+    <div
+      data-slot="reading-progress"
+      // Decorative. The scrollbar already carries this information, and a
+      // `progressbar` role without a live `aria-valuenow` announces worse than
+      // nothing at all.
+      aria-hidden="true"
+      className={cn(
+        "pointer-events-none fixed inset-x-0 z-50",
+        position === "top" ? "top-0" : "bottom-0",
+        className
+      )}
+      style={{ height: thickness, ...style }}
+      {...props}
+    >
+      <div
+        ref={ref}
+        className="bg-primary h-full w-full origin-left will-change-transform"
+        style={{ scale: "0 1" }}
+      />
+    </div>
+  )
+}
+
+
+===== EXAMPLE: reading-progress-demo =====
+Title: Reading Progress Demo
+
+--- file: example/reading-progress-demo.tsx ---
+import { ReadingProgress } from "@/registry/loomui/reading-progress"
+
+export default function ReadingProgressDemo() {
+  return (
+    <div className="w-full max-w-md text-center">
+      {/* Really pinned to the top of the viewport, not to this preview. */}
+      <ReadingProgress thickness={3} />
+      <p className="text-muted-foreground text-sm">
+        The bar is live at the very top of this page. Scroll and it fills.
+      </p>
+    </div>
+  )
+}
+
+
+===== COMPONENT: spotlight-card =====
+Title: Spotlight Card
+Description: A surface with a soft highlight that follows the pointer and fades out on leave.
+Install: npx shadcn@latest add @loomui/spotlight-card
+
+--- file: loomui/spotlight-card.tsx ---
+"use client"
+
+import * as React from "react"
+
+import { cn } from "@/lib/utils"
+
+export interface SpotlightCardProps extends React.ComponentProps<"div"> {
+  /** Diameter of the surface highlight in pixels. */
+  size?: number
+  /** Fill of the surface wash. Any CSS colour. Keep the alpha low. */
+  color?: string
+  /** Fill of the border highlight. Brighter than `color` on purpose. */
+  borderColor?: string
+  /** Mark the whole card as a target: pointer cursor and a focus ring. */
+  interactive?: boolean
+  /** Render a plain card with no highlight. */
+  disabled?: boolean
+}
+
+/** Shows only the 1px ring of a layer, hiding the fill inside it. */
+const RING_MASK: React.CSSProperties = {
+  padding: 1,
+  WebkitMask:
+    "linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)",
+  WebkitMaskComposite: "xor",
+  mask: "linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)",
+  maskComposite: "exclude",
+}
+
+export function SpotlightCard({
+  children,
+  className,
+  size = 320,
+  color = "color-mix(in oklch, currentColor 10%, transparent)",
+  borderColor = "color-mix(in oklch, var(--primary, currentColor) 60%, transparent)",
+  interactive = false,
+  disabled = false,
+  style,
+  ...props
+}: SpotlightCardProps) {
+  const ref = React.useRef<HTMLDivElement>(null)
+  const frame = React.useRef(0)
+
+  // Pointer position is written to CSS custom properties on the next frame.
+  // Nothing here goes through state, so moving the mouse costs no renders.
+  const handlePointerMove = React.useCallback(
+    (event: React.PointerEvent<HTMLDivElement>) => {
+      if (disabled) {
+        return
+      }
+      const node = ref.current
+      if (!node) {
+        return
+      }
+
+      const { clientX, clientY } = event
+      cancelAnimationFrame(frame.current)
+      frame.current = requestAnimationFrame(() => {
+        const rect = node.getBoundingClientRect()
+        node.style.setProperty("--spotlight-x", `${clientX - rect.left}px`)
+        node.style.setProperty("--spotlight-y", `${clientY - rect.top}px`)
+      })
+    },
+    [disabled]
+  )
+
+  React.useEffect(() => () => cancelAnimationFrame(frame.current), [])
+
+  const highlight = (fill: string) =>
+    `radial-gradient(var(--spotlight-size) circle at var(--spotlight-x, 50%) var(--spotlight-y, 50%), ${fill}, transparent 70%)`
+
+  const layer =
+    "pointer-events-none absolute inset-0 rounded-[inherit] opacity-0 transition-opacity duration-[180ms] ease-[var(--ease-out-quart)] group-hover:opacity-100 group-focus-within:opacity-100 motion-reduce:transition-none"
+
+  return (
+    <div
+      ref={ref}
+      data-slot="spotlight-card"
+      onPointerMove={handlePointerMove}
+      className={cn(
+        "group relative isolate overflow-hidden rounded-xl border",
+        interactive &&
+          "focus-within:ring-ring/50 cursor-pointer focus-within:ring-2",
+        className
+      )}
+      style={
+        {
+          "--spotlight-size": `${size}px`,
+          ...style,
+        } as React.CSSProperties
+      }
+      {...props}
+    >
+      {!disabled ? (
+        <>
+          {/* The lit edge is what makes the card read as live. The surface
+              wash on its own is too soft to register. */}
+          <span
+            aria-hidden="true"
+            className={layer}
+            style={{ ...RING_MASK, background: highlight(borderColor) }}
+          />
+          <span
+            aria-hidden="true"
+            className={layer}
+            style={{ background: highlight(color) }}
+          />
+        </>
+      ) : null}
+
+      <div className="relative">{children}</div>
+    </div>
+  )
+}
+
+
+===== EXAMPLE: spotlight-card-demo =====
+Title: Spotlight Card Demo
+
+--- file: example/spotlight-card-demo.tsx ---
+import { SpotlightCard } from "@/registry/loomui/spotlight-card"
+
+const CARDS = [
+  {
+    title: "Copy, do not install",
+    body: "The source lands in your repo. Change it, delete half of it, rename it.",
+    href: "/docs/installation",
+  },
+  {
+    title: "Motion with a contract",
+    body: "Every component ships an off switch and respects reduced motion.",
+    href: "/docs/components/weave-text",
+  },
+]
+
+export default function SpotlightCardDemo() {
+  return (
+    <div className="grid w-full max-w-2xl gap-4 sm:grid-cols-2">
+      {CARDS.map((card) => (
+        <SpotlightCard key={card.title} interactive className="bg-card p-5">
+          <h3 className="text-sm font-medium">
+            {/* Stretched link: the whole card is the hit target, but the
+                accessible name and the href stay on a real anchor. */}
+            <a href={card.href} className="after:absolute after:inset-0">
+              {card.title}
+            </a>
+          </h3>
+          <p className="text-muted-foreground mt-2 text-sm">{card.body}</p>
+        </SpotlightCard>
+      ))}
+    </div>
+  )
+}
+
+
+===== COMPONENT: stagger-text =====
+Title: Stagger Text
+Description: Words or characters that rise into place one after another, on mount or on scroll.
+Install: npx shadcn@latest add @loomui/stagger-text
+
+--- file: loomui/stagger-text.tsx ---
+"use client"
+
+import * as React from "react"
+
+import { cn } from "@/lib/utils"
+
+export interface StaggerTextProps extends Omit<
+  React.ComponentProps<"span">,
+  "children"
+> {
+  /** The text to reveal. Only plain text, so the split stays predictable. */
+  children: string
+  /** Split the text into words or into single characters. */
+  by?: "word" | "character"
+  /** Seconds between one unit starting and the next. */
+  stagger?: number
+  /** Seconds for a single unit to finish arriving. */
+  duration?: number
+  /** Seconds to wait before the first unit starts. */
+  delay?: number
+  /** Hold until the text scrolls into view instead of running on mount. */
+  startOnView?: boolean
+  /** Replay every time the text re-enters the viewport. */
+  repeat?: boolean
+  /** Render the finished state with no animation. */
+  disabled?: boolean
+}
+
+/** Splits on whitespace but keeps the separators so spacing survives. */
+function split(text: string, by: "word" | "character") {
+  if (by === "character") {
+    return Array.from(text)
+  }
+  return text.split(/(\s+)/)
+}
+
+export function StaggerText({
+  children,
+  className,
+  by = "word",
+  stagger = 0.04,
+  duration = 0.5,
+  delay = 0,
+  startOnView = false,
+  repeat = false,
+  disabled = false,
+  ...props
+}: StaggerTextProps) {
+  const ref = React.useRef<HTMLSpanElement>(null)
+  const [active, setActive] = React.useState(!startOnView)
+
+  React.useEffect(() => {
+    if (!startOnView || disabled) {
+      return
+    }
+
+    const node = ref.current
+    if (!node || typeof IntersectionObserver === "undefined") {
+      setActive(true)
+      return
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setActive(true)
+          if (!repeat) {
+            observer.disconnect()
+          }
+        } else if (repeat) {
+          setActive(false)
+        }
+      },
+      { threshold: 0.2 }
+    )
+
+    observer.observe(node)
+    return () => observer.disconnect()
+  }, [startOnView, repeat, disabled])
+
+  const units = React.useMemo(() => split(children, by), [children, by])
+
+  return (
+    <span
+      ref={ref}
+      data-slot="stagger-text"
+      className={cn("inline-block", className)}
+      {...props}
+    >
+      {/* The whole string is announced once; the pieces are decoration. */}
+      <span className="sr-only">{children}</span>
+      <span aria-hidden="true">
+        {units.map((unit, index) => {
+          if (/^\s+$/.test(unit)) {
+            return <span key={index}>{unit}</span>
+          }
+
+          return (
+            <span
+              key={index}
+              className={cn(
+                "inline-block will-change-[opacity,transform]",
+                !disabled && active && "animate-stagger-reveal",
+                !disabled && !active && "opacity-0",
+                "motion-reduce:animate-none motion-reduce:opacity-100"
+              )}
+              style={
+                disabled || !active
+                  ? undefined
+                  : {
+                      animationDuration: `${duration}s`,
+                      animationDelay: `${delay + index * stagger}s`,
+                    }
+              }
+            >
+              {unit}
+            </span>
+          )
+        })}
+      </span>
+    </span>
+  )
+}
+
+
+===== EXAMPLE: stagger-text-demo =====
+Title: Stagger Text Demo
+
+--- file: example/stagger-text-demo.tsx ---
+import { StaggerText } from "@/registry/loomui/stagger-text"
+
+export default function StaggerTextDemo() {
+  return (
+    <p className="max-w-md text-center text-2xl font-medium tracking-tight text-balance">
+      <StaggerText startOnView repeat>
+        Every word arrives on its own beat.
+      </StaggerText>
+    </p>
+  )
+}
+
+
+===== COMPONENT: typewriter =====
+Title: Typewriter
+Description: Phrases typed out and deleted in a loop, with a caret and no layout shift.
+Install: npx shadcn@latest add @loomui/typewriter
+
+--- file: loomui/typewriter.tsx ---
+"use client"
+
+import * as React from "react"
+
+import { cn } from "@/lib/utils"
+
+export interface TypewriterProps extends Omit<
+  React.ComponentProps<"span">,
+  "children"
+> {
+  /** Phrases typed in order. A single phrase types once and stops. */
+  words: string[]
+  /** Milliseconds per character while typing. */
+  typingSpeed?: number
+  /** Milliseconds per character while deleting. Deletes read faster. */
+  deletingSpeed?: number
+  /** Milliseconds held on a finished phrase before it deletes. */
+  holdDelay?: number
+  /** Start over after the last phrase. */
+  loop?: boolean
+  /** Show the blinking caret. */
+  caret?: boolean
+  /** Render the first phrase in full with no typing. */
+  disabled?: boolean
+}
+
+export function Typewriter({
+  words,
+  typingSpeed = 70,
+  deletingSpeed = 40,
+  holdDelay = 1600,
+  loop = true,
+  caret = true,
+  disabled = false,
+  className,
+  ...props
+}: TypewriterProps) {
+  const phrases = words.length > 0 ? words : [""]
+  const longest = React.useMemo(
+    () => phrases.reduce((a, b) => (a.length >= b.length ? a : b), ""),
+    [phrases]
+  )
+
+  const [index, setIndex] = React.useState(0)
+  const [text, setText] = React.useState("")
+  const [deleting, setDeleting] = React.useState(false)
+  const [enabled, setEnabled] = React.useState(false)
+
+  // Typing is a text change, not a motion effect, but it is still motion to
+  // anyone who asked for less of it.
+  React.useEffect(() => {
+    if (disabled) {
+      return
+    }
+    const query = window.matchMedia("(prefers-reduced-motion: reduce)")
+    setEnabled(!query.matches)
+
+    const onChange = (event: MediaQueryListEvent) => setEnabled(!event.matches)
+    query.addEventListener("change", onChange)
+    return () => query.removeEventListener("change", onChange)
+  }, [disabled])
+
+  React.useEffect(() => {
+    if (!enabled) {
+      return
+    }
+
+    const current = phrases[index % phrases.length]
+    const done = text === current
+    const atLast = index === phrases.length - 1
+
+    if (done && !deleting) {
+      if (!loop && atLast) {
+        return
+      }
+      const timer = setTimeout(() => setDeleting(true), holdDelay)
+      return () => clearTimeout(timer)
+    }
+
+    if (deleting && text === "") {
+      setDeleting(false)
+      setIndex((previous) => (previous + 1) % phrases.length)
+      return
+    }
+
+    const timer = setTimeout(
+      () => {
+        setText((previous) =>
+          deleting
+            ? current.slice(0, previous.length - 1)
+            : current.slice(0, previous.length + 1)
+        )
+      },
+      deleting ? deletingSpeed : typingSpeed
+    )
+
+    return () => clearTimeout(timer)
+  }, [
+    enabled,
+    text,
+    deleting,
+    index,
+    phrases,
+    loop,
+    holdDelay,
+    typingSpeed,
+    deletingSpeed,
+  ])
+
+  const visible = enabled ? text : phrases[0]
+
+  return (
+    <span
+      data-slot="typewriter"
+      className={cn("inline-grid", className)}
+      {...props}
+    >
+      {/* The longest phrase reserves the width, so nothing around the
+          typewriter reflows while it types. */}
+      <span
+        aria-hidden="true"
+        className="invisible col-start-1 row-start-1 whitespace-pre"
+      >
+        {longest}
+      </span>
+      {/* A live region here would announce every keystroke, so the phrases are
+          read once as static text and the typing itself is decoration. */}
+      <span className="sr-only">{phrases.join(", ")}</span>
+      <span
+        aria-hidden="true"
+        className="col-start-1 row-start-1 whitespace-pre"
+      >
+        {visible}
+        {caret ? (
+          <span
+            aria-hidden="true"
+            className="animate-caret-blink ml-0.5 inline-block w-px translate-y-[0.1em] self-stretch bg-current align-middle motion-reduce:animate-none"
+            style={{ height: "1em" }}
+          />
+        ) : null}
+      </span>
+    </span>
+  )
+}
+
+
+===== EXAMPLE: typewriter-demo =====
+Title: Typewriter Demo
+
+--- file: example/typewriter-demo.tsx ---
+import { Typewriter } from "@/registry/loomui/typewriter"
+
+export default function TypewriterDemo() {
+  return (
+    <p className="text-2xl font-medium tracking-tight">
+      Built for{" "}
+      <Typewriter
+        className="text-primary"
+        words={["landing pages", "dashboards", "docs sites", "changelogs"]}
+      />
+    </p>
+  )
+}
+
+
+===== COMPONENT: weave-text =====
+Title: Weave Text
+Description: Text filled with a slow-drifting gradient, woven from a palette you control.
+Install: npx shadcn@latest add @loomui/weave-text
+
+--- file: loomui/weave-text.tsx ---
+"use client"
+
+import * as React from "react"
+
+import { cn } from "@/lib/utils"
+
+export interface WeaveTextProps extends React.ComponentProps<"span"> {
+  /**
+   * Colors woven through the gradient, left to right. The first color is
+   * repeated at the end so the loop is seamless.
+   */
+  colors?: string[]
+  /** Seconds for one full pass. Lower is faster. */
+  duration?: number
+  /** Render a static gradient with no animation. */
+  paused?: boolean
+}
+
+const DEFAULT_COLORS = ["#2dd4bf", "#38bdf8", "#3b82f6", "#67e8f9"]
+
+export function WeaveText({
+  children,
+  className,
+  colors = DEFAULT_COLORS,
+  duration = 8,
+  paused = false,
+  style,
+  ...props
+}: WeaveTextProps) {
+  const backgroundImage = React.useMemo(() => {
+    const stops = colors.length > 0 ? colors : DEFAULT_COLORS
+    return `linear-gradient(90deg, ${[...stops, stops[0]].join(", ")})`
+  }, [colors])
+
+  return (
+    <span
+      data-slot="weave-text"
+      className={cn(
+        "inline-block bg-[length:200%_auto] bg-clip-text text-transparent",
+        !paused && "animate-weave motion-reduce:animate-none",
+        className
+      )}
+      style={{
+        backgroundImage,
+        animationDuration: `${duration}s`,
+        ...style,
+      }}
+      {...props}
+    >
+      {children}
+    </span>
+  )
+}
+
+
+===== EXAMPLE: weave-text-demo =====
+Title: Weave Text Demo
+
+--- file: example/weave-text-demo.tsx ---
+import { WeaveText } from "@/registry/loomui/weave-text"
+
+export default function WeaveTextDemo() {
+  return (
+    <h1 className="text-center text-4xl font-semibold tracking-tight sm:text-5xl">
+      Interfaces that <WeaveText>move</WeaveText>.
+    </h1>
+  )
+}

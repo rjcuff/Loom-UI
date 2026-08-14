@@ -1,0 +1,17 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "spotlight-card-demo",
+  "type": "registry:example",
+  "title": "Spotlight Card Demo",
+  "description": "Two cards lit by the pointer as it crosses them.",
+  "registryDependencies": [
+    "@loomui/spotlight-card"
+  ],
+  "files": [
+    {
+      "path": "registry/example/spotlight-card-demo.tsx",
+      "content": "import { SpotlightCard } from \"@/registry/loomui/spotlight-card\"\n\nconst CARDS = [\n  {\n    title: \"Copy, do not install\",\n    body: \"The source lands in your repo. Change it, delete half of it, rename it.\",\n    href: \"/docs/installation\",\n  },\n  {\n    title: \"Motion with a contract\",\n    body: \"Every component ships an off switch and respects reduced motion.\",\n    href: \"/docs/components/weave-text\",\n  },\n]\n\nexport default function SpotlightCardDemo() {\n  return (\n    <div className=\"grid w-full max-w-2xl gap-4 sm:grid-cols-2\">\n      {CARDS.map((card) => (\n        <SpotlightCard key={card.title} interactive className=\"bg-card p-5\">\n          <h3 className=\"text-sm font-medium\">\n            {/* Stretched link: the whole card is the hit target, but the\n                accessible name and the href stay on a real anchor. */}\n            <a href={card.href} className=\"after:absolute after:inset-0\">\n              {card.title}\n            </a>\n          </h3>\n          <p className=\"text-muted-foreground mt-2 text-sm\">{card.body}</p>\n        </SpotlightCard>\n      ))}\n    </div>\n  )\n}\n",
+      "type": "registry:example"
+    }
+  ]
+}

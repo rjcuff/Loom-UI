@@ -1,0 +1,17 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "stagger-text-demo",
+  "type": "registry:example",
+  "title": "Stagger Text Demo",
+  "description": "A sentence revealed word by word when it scrolls into view.",
+  "registryDependencies": [
+    "@loomui/stagger-text"
+  ],
+  "files": [
+    {
+      "path": "registry/example/stagger-text-demo.tsx",
+      "content": "import { StaggerText } from \"@/registry/loomui/stagger-text\"\n\nexport default function StaggerTextDemo() {\n  return (\n    <p className=\"max-w-md text-center text-2xl font-medium tracking-tight text-balance\">\n      <StaggerText startOnView repeat>\n        Every word arrives on its own beat.\n      </StaggerText>\n    </p>\n  )\n}\n",
+      "type": "registry:example"
+    }
+  ]
+}

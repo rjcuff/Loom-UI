@@ -1,0 +1,107 @@
+---
+title: Grid Backdrop
+date: 2026-08-13
+description: An SVG grid with cells that fade in and out at a deterministic, seeded scatter.
+---
+
+<ComponentPreview name="grid-backdrop-demo" />
+
+## Installation
+
+<Tabs defaultValue="cli">
+
+<TabsList>
+  <TabsTrigger value="cli">CLI</TabsTrigger>
+  <TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @loomui/grid-backdrop
+```
+
+</TabsContent>
+
+<TabsContent value="manual">
+
+<Steps>
+
+<Step>Copy the component into your project.</Step>
+
+<ComponentSource name="grid-backdrop" />
+
+<Step>Add the keyframes to your global stylesheet.</Step>
+
+```css title="app/globals.css"
+@theme {
+  --ease-in-out-cubic: cubic-bezier(0.645, 0.045, 0.355, 1);
+  --animate-grid-pulse: grid-pulse 5s var(--ease-in-out-cubic) infinite;
+}
+
+@keyframes grid-pulse {
+  0%,
+  100% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+```
+
+<Step>Update the import paths to match your setup.</Step>
+
+</Steps>
+
+</TabsContent>
+
+</Tabs>
+
+## Usage
+
+```tsx
+import { GridBackdrop } from "@/components/ui/grid-backdrop"
+```
+
+```tsx
+<section className="relative overflow-hidden">
+  <GridBackdrop width={32} height={32} squares={18} />
+  <div className="relative">{/* your content */}</div>
+</section>
+```
+
+The element is absolutely positioned, so the parent needs `position: relative`
+and usually `overflow: hidden`. Content that sits on top needs its own stacking
+context, which `relative` gives it.
+
+Colour comes from `currentColor` at low alpha, so the grid picks up the text
+colour of whatever it is placed inside and works in both themes without a
+second set of classes. Override with `stroke-*` and `fill-*` utilities.
+
+## Props
+
+| Prop              | Type               | Default | Description                                       |
+| ----------------- | ------------------ | ------- | ------------------------------------------------- |
+| `width`           | `number`           | `40`    | Cell width in pixels.                             |
+| `height`          | `number`           | `40`    | Cell height in pixels.                            |
+| `strokeDasharray` | `string \| number` | `0`     | Dash pattern for the lines. `0` draws them solid. |
+| `squares`         | `number`           | `14`    | How many cells pulse. `0` gives a static grid.    |
+| `duration`        | `number`           | `5`     | Seconds for one fade in and out.                  |
+| `seed`            | `number`           | `1`     | Changes which cells are chosen.                   |
+| `disabled`        | `boolean`          | `false` | Static grid, no pulsing cells.                    |
+| `className`       | `string`           | none    | Merged onto the svg.                              |
+
+Any other `<svg>` prop is forwarded.
+
+<Callout type="tip" title="Why a seed">
+  The scatter comes from a seeded generator rather than `Math.random`, so the
+  server and the client produce the same layout and React does not throw a
+  hydration mismatch. Change `seed` to get a different arrangement.
+</Callout>
+
+<Callout type="tip" title="Accessibility">
+  The svg is `aria-hidden` and `pointer-events-none`, so it never intercepts a
+  click or reaches the accessibility tree. Only `opacity` animates, and it stops
+  under `prefers-reduced-motion`.
+</Callout>

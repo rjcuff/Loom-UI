@@ -1,0 +1,35 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "stagger-text",
+  "type": "registry:ui",
+  "title": "Stagger Text",
+  "description": "Words or characters that rise into place one after another, on mount or on scroll.",
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "path": "registry/loomui/stagger-text.tsx",
+      "content": "\"use client\"\n\nimport * as React from \"react\"\n\nimport { cn } from \"@/lib/utils\"\n\nexport interface StaggerTextProps extends Omit<\n  React.ComponentProps<\"span\">,\n  \"children\"\n> {\n  /** The text to reveal. Only plain text, so the split stays predictable. */\n  children: string\n  /** Split the text into words or into single characters. */\n  by?: \"word\" | \"character\"\n  /** Seconds between one unit starting and the next. */\n  stagger?: number\n  /** Seconds for a single unit to finish arriving. */\n  duration?: number\n  /** Seconds to wait before the first unit starts. */\n  delay?: number\n  /** Hold until the text scrolls into view instead of running on mount. */\n  startOnView?: boolean\n  /** Replay every time the text re-enters the viewport. */\n  repeat?: boolean\n  /** Render the finished state with no animation. */\n  disabled?: boolean\n}\n\n/** Splits on whitespace but keeps the separators so spacing survives. */\nfunction split(text: string, by: \"word\" | \"character\") {\n  if (by === \"character\") {\n    return Array.from(text)\n  }\n  return text.split(/(\\s+)/)\n}\n\nexport function StaggerText({\n  children,\n  className,\n  by = \"word\",\n  stagger = 0.04,\n  duration = 0.5,\n  delay = 0,\n  startOnView = false,\n  repeat = false,\n  disabled = false,\n  ...props\n}: StaggerTextProps) {\n  const ref = React.useRef<HTMLSpanElement>(null)\n  const [active, setActive] = React.useState(!startOnView)\n\n  React.useEffect(() => {\n    if (!startOnView || disabled) {\n      return\n    }\n\n    const node = ref.current\n    if (!node || typeof IntersectionObserver === \"undefined\") {\n      setActive(true)\n      return\n    }\n\n    const observer = new IntersectionObserver(\n      ([entry]) => {\n        if (entry.isIntersecting) {\n          setActive(true)\n          if (!repeat) {\n            observer.disconnect()\n          }\n        } else if (repeat) {\n          setActive(false)\n        }\n      },\n      { threshold: 0.2 }\n    )\n\n    observer.observe(node)\n    return () => observer.disconnect()\n  }, [startOnView, repeat, disabled])\n\n  const units = React.useMemo(() => split(children, by), [children, by])\n\n  return (\n    <span\n      ref={ref}\n      data-slot=\"stagger-text\"\n      className={cn(\"inline-block\", className)}\n      {...props}\n    >\n      {/* The whole string is announced once; the pieces are decoration. */}\n      <span className=\"sr-only\">{children}</span>\n      <span aria-hidden=\"true\">\n        {units.map((unit, index) => {\n          if (/^\\s+$/.test(unit)) {\n            return <span key={index}>{unit}</span>\n          }\n\n          return (\n            <span\n              key={index}\n              className={cn(\n                \"inline-block will-change-[opacity,transform]\",\n                !disabled && active && \"animate-stagger-reveal\",\n                !disabled && !active && \"opacity-0\",\n                \"motion-reduce:animate-none motion-reduce:opacity-100\"\n              )}\n              style={\n                disabled || !active\n                  ? undefined\n                  : {\n                      animationDuration: `${duration}s`,\n                      animationDelay: `${delay + index * stagger}s`,\n                    }\n              }\n            >\n              {unit}\n            </span>\n          )\n        })}\n      </span>\n    </span>\n  )\n}\n",
+      "type": "registry:ui"
+    }
+  ],
+  "cssVars": {
+    "theme": {
+      "ease-out-quart": "cubic-bezier(0.165, 0.84, 0.44, 1)",
+      "animate-stagger-reveal": "stagger-reveal 500ms var(--ease-out-quart) both"
+    }
+  },
+  "css": {
+    "@keyframes stagger-reveal": {
+      "from": {
+        "opacity": "0",
+        "transform": "translateY(0.4em)"
+      },
+      "to": {
+        "opacity": "1",
+        "transform": "translateY(0)"
+      }
+    }
+  }
+}

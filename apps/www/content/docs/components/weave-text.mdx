@@ -1,0 +1,91 @@
+---
+title: Weave Text
+date: 2026-08-13
+description: Text filled with a slow-drifting gradient, woven from a palette you control.
+---
+
+<ComponentPreview name="weave-text-demo" />
+
+## Installation
+
+<Tabs defaultValue="cli">
+
+<TabsList>
+  <TabsTrigger value="cli">CLI</TabsTrigger>
+  <TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @loomui/weave-text
+```
+
+</TabsContent>
+
+<TabsContent value="manual">
+
+<Steps>
+
+<Step>Copy the component into your project.</Step>
+
+<ComponentSource name="weave-text" />
+
+<Step>Add the keyframes to your global stylesheet.</Step>
+
+```css title="app/globals.css"
+@theme {
+  --animate-weave: weave 8s linear infinite;
+}
+
+@keyframes weave {
+  from {
+    background-position: 0% 50%;
+  }
+  to {
+    background-position: 200% 50%;
+  }
+}
+```
+
+<Step>Update the import paths to match your setup.</Step>
+
+</Steps>
+
+</TabsContent>
+
+</Tabs>
+
+## Usage
+
+```tsx
+import { WeaveText } from "@/components/ui/weave-text"
+```
+
+```tsx
+<h1 className="text-5xl font-semibold">
+  Interfaces that <WeaveText>move</WeaveText>.
+</h1>
+```
+
+The component renders a `<span>` and inherits font size, weight, and tracking
+from its parent, so it drops into an existing heading without changing the
+layout.
+
+## Props
+
+| Prop        | Type        | Default    | Description                                                      |
+| ----------- | ----------- | ---------- | ---------------------------------------------------------------- |
+| `children`  | `ReactNode` | none       | The text to fill with the gradient.                              |
+| `colors`    | `string[]`  | teal, blue | Gradient stops, left to right. The first is repeated at the end. |
+| `duration`  | `number`    | `8`        | Seconds for one full pass. Lower is faster.                      |
+| `paused`    | `boolean`   | `false`    | Render a static gradient with no animation.                      |
+| `className` | `string`    | none       | Merged onto the span.                                            |
+
+Any other `<span>` prop is forwarded.
+
+<Callout type="tip" title="Accessibility">
+  The gradient is applied with `background-clip: text`, so the text stays real
+  text, so it stays selectable, searchable, and readable by screen readers. The
+  animation is disabled automatically under `prefers-reduced-motion`.
+</Callout>

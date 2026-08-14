@@ -1,0 +1,112 @@
+name: Code check
+
+on:
+  pull_request:
+    branches: ["*"]
+  push:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    name: typecheck / format / registry
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.0
+          run_install: false
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Format
+        run: pnpm format:check
+
+      - name: Registry dependency sync
+        run: |
+          pnpm registry-deps:check || {
+            echo "::error::Example imports and registry-examples.ts disagree. Run 'pnpm registry-deps:fix && pnpm build:registry' and commit."
+            exit 1
+          }
+
+  registry-drift:
+    name: registry artifact drift
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.0
+          run_install: false
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Rebuild registry artifacts
+        run: pnpm build:registry
+
+      - name: Verify artifacts are committed
+        run: |
+          CHANGED="$(git status --porcelain --untracked-files=all -- \
+            apps/www/registry.json \
+            apps/www/registry/__index__.tsx \
+            apps/www/registry/registry-examples.ts \
+            apps/www/public/registry.json \
+            apps/www/public/r \
+            apps/www/public/llms.txt \
+            apps/www/public/llms-full.txt)"
+
+          if [ -n "$CHANGED" ]; then
+            echo "::error::Registry artifacts are stale. Run 'pnpm build:registry' and commit the result."
+            printf '%s\n' "$CHANGED"
+            exit 1
+          fi
+
+  build:
+    name: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.0
+          run_install: false
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Restore Next.js cache
+        uses: actions/cache@v4
+        with:
+          path: apps/www/.next/cache
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('pnpm-lock.yaml') }}-${{ hashFiles('apps/www/**/*.[jt]s', 'apps/www/**/*.[jt]sx', 'apps/www/**/*.mdx') }}
+          restore-keys: |
+            ${{ runner.os }}-nextjs-${{ hashFiles('pnpm-lock.yaml') }}-
+
+      - name: Build
+        run: pnpm build
+        env:
+          NEXT_PUBLIC_APP_URL: https://loomui.design

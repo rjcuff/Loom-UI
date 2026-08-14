@@ -1,0 +1,28 @@
+
+{
+  "name": "loomui",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "packageManager": "pnpm@9.15.0",
+  "scripts": {
+    "preinstall": "npx only-allow pnpm",
+    "dev": "turbo run dev --parallel",
+    "build": "turbo run build",
+    "start": "turbo run start",
+    "typecheck": "turbo run typecheck",
+    "format:fix": "turbo run format:fix",
+    "format:check": "turbo run format:check",
+    "build:registry": "pnpm --filter=www build:registry",
+    "registry-deps:check": "pnpm --filter=www registry-deps:check",
+    "registry-deps:fix": "pnpm --filter=www registry-deps:fix",
+    "check": "pnpm typecheck && pnpm format:check && pnpm registry-deps:check"
+  },
+  "devDependencies": {
+    "turbo": "^2.5.8"
+  },
+  "engines": {
+    "node": ">=22.14.0",
+    "pnpm": ">=9"
+  }
+}

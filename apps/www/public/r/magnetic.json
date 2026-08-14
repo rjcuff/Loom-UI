@@ -1,0 +1,25 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "magnetic",
+  "type": "registry:ui",
+  "title": "Magnetic",
+  "description": "A wrapper that pulls its child toward the pointer as the pointer gets close.",
+  "dependencies": [
+    "@radix-ui/react-slot"
+  ],
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "path": "registry/loomui/magnetic.tsx",
+      "content": "\"use client\"\n\nimport * as React from \"react\"\nimport { Slot } from \"@radix-ui/react-slot\"\n\nimport { cn } from \"@/lib/utils\"\n\nexport interface MagneticProps extends React.ComponentProps<\"div\"> {\n  /** How far the child follows the pointer, as a fraction of the offset. */\n  strength?: number\n  /** Pixels of slack around the element that still count as near. */\n  radius?: number\n  /** Largest pull in pixels, whatever the radius says. */\n  max?: number\n  /** Merge onto the single child instead of rendering a wrapper div. */\n  asChild?: boolean\n  /** Render the child with no pull. */\n  disabled?: boolean\n}\n\nexport function Magnetic({\n  children,\n  className,\n  strength = 0.35,\n  radius = 80,\n  max = 16,\n  asChild = false,\n  disabled = false,\n  style,\n  ...props\n}: MagneticProps) {\n  const ref = React.useRef<HTMLDivElement>(null)\n  const frame = React.useRef(0)\n  const Comp = asChild ? Slot : \"div\"\n\n  const reset = React.useCallback(() => {\n    cancelAnimationFrame(frame.current)\n    const node = ref.current\n    if (node) {\n      node.style.translate = \"0px 0px\"\n    }\n  }, [])\n\n  React.useEffect(() => {\n    if (disabled) {\n      reset()\n      return\n    }\n\n    const reduced = window.matchMedia(\"(prefers-reduced-motion: reduce)\")\n    if (reduced.matches) {\n      return\n    }\n\n    // Listening on the window rather than the element itself means the pull\n    // starts before the pointer arrives, which is the whole effect.\n    const onPointerMove = (event: PointerEvent) => {\n      cancelAnimationFrame(frame.current)\n      frame.current = requestAnimationFrame(() => {\n        const node = ref.current\n        if (!node) {\n          return\n        }\n\n        const rect = node.getBoundingClientRect()\n        const dx = event.clientX - (rect.left + rect.width / 2)\n        const dy = event.clientY - (rect.top + rect.height / 2)\n        const near =\n          Math.abs(dx) < rect.width / 2 + radius &&\n          Math.abs(dy) < rect.height / 2 + radius\n\n        if (!near) {\n          node.style.translate = \"0px 0px\"\n          return\n        }\n\n        const clamp = (value: number) =>\n          Math.max(-max, Math.min(max, value * strength))\n        node.style.translate = `${clamp(dx)}px ${clamp(dy)}px`\n      })\n    }\n\n    window.addEventListener(\"pointermove\", onPointerMove, { passive: true })\n    return () => {\n      window.removeEventListener(\"pointermove\", onPointerMove)\n      cancelAnimationFrame(frame.current)\n    }\n  }, [disabled, radius, max, strength, reset])\n\n  return (\n    <Comp\n      ref={ref}\n      data-slot=\"magnetic\"\n      onBlur={reset}\n      className={cn(\n        \"inline-block will-change-transform\",\n        // v4 compiles translate utilities to the `translate` property, so the\n        // transition has to name `translate`, not `transform`.\n        !disabled &&\n          \"transition-[translate] duration-[240ms] ease-[var(--ease-out-quart)] motion-reduce:transition-none\",\n        className\n      )}\n      style={style}\n      {...props}\n    >\n      {children}\n    </Comp>\n  )\n}\n",
+      "type": "registry:ui"
+    }
+  ],
+  "cssVars": {
+    "theme": {
+      "ease-out-quart": "cubic-bezier(0.165, 0.84, 0.44, 1)"
+    }
+  }
+}

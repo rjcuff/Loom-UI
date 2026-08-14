@@ -1,0 +1,119 @@
+---
+title: Spotlight Card
+date: 2026-08-13
+description: A surface with a soft highlight that follows the pointer and fades out on leave.
+---
+
+<ComponentPreview name="spotlight-card-demo" />
+
+## Installation
+
+<Tabs defaultValue="cli">
+
+<TabsList>
+  <TabsTrigger value="cli">CLI</TabsTrigger>
+  <TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @loomui/spotlight-card
+```
+
+</TabsContent>
+
+<TabsContent value="manual">
+
+<Steps>
+
+<Step>Copy the component into your project.</Step>
+
+<ComponentSource name="spotlight-card" />
+
+<Step>Add the easing token to your global stylesheet.</Step>
+
+```css title="app/globals.css"
+@theme {
+  --ease-out-quart: cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+```
+
+<Step>Update the import paths to match your setup.</Step>
+
+</Steps>
+
+</TabsContent>
+
+</Tabs>
+
+## Usage
+
+```tsx
+import { SpotlightCard } from "@/components/ui/spotlight-card"
+```
+
+```tsx
+<SpotlightCard className="bg-card p-5">
+  <h3 className="text-sm font-medium">Copy, do not install</h3>
+  <p className="text-muted-foreground mt-2 text-sm">
+    The source lands in your repo.
+  </p>
+</SpotlightCard>
+```
+
+Two layers light up, not one. The border ring is masked so only its 1px edge
+shows, and it is the layer doing most of the work: the surface wash on its own
+is too soft to register at a glance.
+
+Pointer position is written to two CSS custom properties inside a
+`requestAnimationFrame`, never to React state. Moving the mouse across the card
+costs zero renders.
+
+Only `opacity` transitions. The highlight's position updates instantly, because
+a glow that eases toward the cursor reads as lag rather than polish.
+
+### Making the card clickable
+
+`interactive` gives the card a pointer cursor and a focus ring. Put the real
+destination on an anchor inside and stretch it over the card, so the whole
+surface is the hit target while the accessible name and the `href` stay on a
+proper link:
+
+```tsx
+<SpotlightCard interactive className="bg-card p-5">
+  <h3 className="text-sm font-medium">
+    <a href="/docs/installation" className="after:absolute after:inset-0">
+      Copy, do not install
+    </a>
+  </h3>
+  <p className="text-muted-foreground mt-2 text-sm">
+    The source lands in your repo.
+  </p>
+</SpotlightCard>
+```
+
+Reach for `interactive` on its own only when the card already has a click
+handler. A pointer cursor on something that does nothing is worse than no
+cursor change at all.
+
+## Props
+
+| Prop          | Type      | Default            | Description                                   |
+| ------------- | --------- | ------------------ | --------------------------------------------- |
+| `size`        | `number`  | `320`              | Diameter of the highlight in pixels.          |
+| `color`       | `string`  | 10% `currentColor` | Fill of the surface wash. Keep the alpha low. |
+| `borderColor` | `string`  | 60% `--primary`    | Fill of the border ring. Brighter on purpose. |
+| `interactive` | `boolean` | `false`            | Pointer cursor and a focus ring on the card.  |
+| `disabled`    | `boolean` | `false`            | Render a plain card with no highlight.        |
+| `className`   | `string`  | none               | Merged onto the card. Border and radius here. |
+
+Any other `<div>` prop is forwarded.
+
+<Callout type="tip" title="Accessibility">
+  Both layers appear on `:focus-within`, so a keyboard user reaching a link
+  inside the card gets the same emphasis a mouse user gets. The overlays are
+  `aria-hidden` and `pointer-events-none`, and the fade is skipped under
+  `prefers-reduced-motion`. The card itself is a plain `<div>`, so it never
+  invents a role it cannot honour.
+</Callout>
