@@ -20,6 +20,18 @@ export const transformers = [
   transformerNotationWordHighlight(MATCH),
 ]
 
+/**
+ * rehype-pretty-code tags every line with `data-line`, and the code block CSS
+ * hangs its gutters off that attribute. Raw shiki only emits `class="line"`, so
+ * without this the on-the-fly blocks render with no horizontal padding.
+ */
+const lineAttribute = {
+  name: "line-attribute",
+  line(node: { properties: Record<string, unknown> }) {
+    node.properties["data-line"] = ""
+  },
+}
+
 const THEMES = {
   light: "github-light-default",
   dark: "github-dark",
@@ -32,7 +44,7 @@ export async function highlightCode(code: string, language = "tsx") {
     // Emit --shiki-light / --shiki-dark vars instead of hardcoded colors so
     // theme switching is pure CSS. See styles/globals.css.
     defaultColor: false,
-    transformers,
+    transformers: [...transformers, lineAttribute],
   })
 
   return html

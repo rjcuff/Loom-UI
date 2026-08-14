@@ -94,7 +94,9 @@ function CodeBlock({
           {title}
         </figcaption>
       ) : null}
-      <CopyButton value={code} className={cn(title && "top-11")} />
+      {/* With a title bar there is a header to sit in; without one the button
+          falls back to hovering over the first line of code. */}
+      <CopyButton value={code} className={cn(title && "top-1")} />
       <div dangerouslySetInnerHTML={{ __html: html }} className="h-full" />
     </figure>
   )

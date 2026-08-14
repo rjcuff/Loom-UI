@@ -27,6 +27,7 @@
     "@radix-ui/react-tabs": "^1.1.13",
     "@radix-ui/react-tooltip": "^1.2.8",
     "@tailwindcss/postcss": "^4.1.13",
+    "@vercel/analytics": "^2.0.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "fumadocs-core": "^15.8.2",
@@ -87,7 +88,11 @@
       "",
       "^[./]"
     ],
-    "importOrderParserPlugins": ["typescript", "jsx", "decorators-legacy"],
+    "importOrderParserPlugins": [
+      "typescript",
+      "jsx",
+      "decorators-legacy"
+    ],
     "plugins": [
       "@ianvs/prettier-plugin-sort-imports",
       "prettier-plugin-tailwindcss"

@@ -399,17 +399,27 @@
 }
 
 [data-rehype-pretty-code-title] {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+  /* Block, not flex: the title is a bare text node, and an anonymous flex item
+     cannot be ellipsised. */
+  display: block;
   border: 1px solid var(--border);
   border-bottom: none;
   border-radius: var(--radius-lg) var(--radius-lg) 0 0;
   background-color: var(--code);
   padding: 0.625rem 1rem;
+  /* The copy button, and the expand trigger when the block is collapsible,
+     float over the right end of this bar. Reserve their width so a long file
+     path truncates instead of running underneath them. */
+  padding-right: 6rem;
   font-family: var(--font-mono);
   font-size: 0.75rem;
+  /* Fixes the bar at 2.5rem tall, which is what the floating buttons are
+     centred against. */
+  line-height: 1.25rem;
   color: var(--muted-foreground);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 /* The title and the code block must read as one box. `+ pre` is not enough:
