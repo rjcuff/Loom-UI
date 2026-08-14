@@ -5,12 +5,14 @@ import { siteConfig } from "@/config/site"
 /**
  * The header is rendered inside statically generated pages, so the count
  * cannot be fetched during the render without freezing it at build time.
- * It comes from here instead, cached for an hour, which is one call to
- * GitHub for the whole site rather than one per visitor. Unauthenticated
- * requests are limited to sixty an hour per IP, and this stays well inside
- * that without a token.
+ * It comes from here instead, cached, which is one call to GitHub for the
+ * whole site rather than one per visitor.
+ *
+ * Five minutes is short enough that a new star shows up while whoever left
+ * it is still looking at the page, and twelve calls an hour is nowhere near
+ * the sixty an hour that unauthenticated requests get without a token.
  */
-export const revalidate = 3600
+export const revalidate = 300
 
 const REPO = siteConfig.links.github.replace(/^https:\/\/github\.com\//, "")
 
