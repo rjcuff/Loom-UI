@@ -48,6 +48,10 @@ export function HoldButton({
   const settle = React.useRef<ReturnType<typeof setTimeout>>(undefined)
   const [holding, setHolding] = React.useState(false)
   const [clearing, setClearing] = React.useState(false)
+  // A completed button stays pressed until its fill has cleared. Springing
+  // back to full size the instant the action lands reads as a bounce, and
+  // fights whatever the caller is doing with the button at the same moment.
+  const [settling, setSettling] = React.useState(false)
   const spent = React.useRef(false)
 
   // Progress is a ref written straight to a custom property. A fill that
@@ -82,6 +86,7 @@ export function HoldButton({
           current.filling = false
           spent.current = true
           setHolding(false)
+          setSettling(true)
           onHold?.()
 
           // A completed fill does not run backwards. Rewinding it would read
@@ -93,6 +98,7 @@ export function HoldButton({
               current.progress = 0
               write()
               setClearing(false)
+              setSettling(false)
             }, CLEAR_MS)
           }, SETTLE_MS)
           return
@@ -141,6 +147,7 @@ export function HoldButton({
       state.current.progress = 0
       write()
       setClearing(false)
+      setSettling(false)
     }
 
     state.current.filling = true
@@ -191,7 +198,7 @@ export function HoldButton({
       ref={ref}
       type="button"
       data-slot="hold-button"
-      data-holding={holding ? "" : undefined}
+      data-holding={holding || settling ? "" : undefined}
       disabled={disabled}
       onPointerDown={press}
       onPointerUp={release}

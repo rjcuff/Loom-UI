@@ -20,9 +20,11 @@ const ENTER_DELAY = 90
  * Both halves share one grid cell, so the swap never moves anything around
  * it. Only opacity and transform animate, and both directions are eased out,
  * since each half is entering or leaving rather than moving on screen.
+ * `will-change` promotes each half to its own layer up front, so the first
+ * frame of the swap is not spent rasterising.
  */
 const SWAP =
-  "col-start-1 row-start-1 transition-[opacity,transform] ease-[var(--ease-out-quart)] motion-reduce:transition-none"
+  "col-start-1 row-start-1 will-change-[opacity,transform] transition-[opacity,transform] ease-[var(--ease-out-quart)] motion-reduce:transition-none"
 
 export default function HoldButtonDemo() {
   const [done, setDone] = React.useState(false)
@@ -46,7 +48,8 @@ export default function HoldButtonDemo() {
       setTimeout(
         () => {
           if (hadFocus.current) {
-            button.current?.focus()
+            // Focusing scrolls by default, which yanks the page mid-swap.
+            button.current?.focus({ preventScroll: true })
           }
         },
         CONFIRM_MS + ENTER_DELAY + ENTER_MS
@@ -56,11 +59,15 @@ export default function HoldButtonDemo() {
 
   return (
     <div className="grid place-items-center">
+      {/* The button half moves and fades but does not scale. The button
+          already runs its own scale as the press is released, and a second
+          scale on top of it, on a different clock, is what made the swap
+          wobble. */}
       <span
         className={`${SWAP} ${
           done
-            ? "-translate-y-1 scale-[0.98] opacity-0"
-            : "translate-y-0 scale-100 opacity-100 delay-[90ms]"
+            ? "-translate-y-1 opacity-0"
+            : "translate-y-0 opacity-100 delay-[90ms]"
         }`}
         style={{ transitionDuration: `${done ? EXIT_MS : ENTER_MS}ms` }}
       >
