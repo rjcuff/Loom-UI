@@ -285,6 +285,46 @@
       }
     },
     {
+      "name": "flip-card",
+      "type": "registry:ui",
+      "title": "Flip Card",
+      "description": "A card with two faces that turns in 3D when it is clicked, controlled or on its own.",
+      "registryDependencies": [
+        "utils"
+      ],
+      "files": [
+        {
+          "path": "registry/loomui/flip-card.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "cssVars": {
+        "theme": {
+          "ease-back-out": "cubic-bezier(0.34, 1.32, 0.52, 1)"
+        }
+      }
+    },
+    {
+      "name": "hold-button",
+      "type": "registry:ui",
+      "title": "Hold Button",
+      "description": "A button that fires only after a deliberate press and hold, with a fill sweeping across to count out the wait.",
+      "registryDependencies": [
+        "utils"
+      ],
+      "files": [
+        {
+          "path": "registry/loomui/hold-button.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "cssVars": {
+        "theme": {
+          "ease-out-quart": "cubic-bezier(0.165, 0.84, 0.44, 1)"
+        }
+      }
+    },
+    {
       "name": "magnetic",
       "type": "registry:ui",
       "title": "Magnetic",
@@ -522,6 +562,36 @@
       "files": [
         {
           "path": "registry/example/tilt-card-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "flip-card-demo",
+      "type": "registry:example",
+      "title": "Flip Card Demo",
+      "description": "A two-by-two matching game played by turning cards over.",
+      "registryDependencies": [
+        "@loomui/flip-card"
+      ],
+      "files": [
+        {
+          "path": "registry/example/flip-card-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "hold-button-demo",
+      "type": "registry:example",
+      "title": "Hold Button Demo",
+      "description": "A destructive action that only goes through if you keep holding.",
+      "registryDependencies": [
+        "@loomui/hold-button"
+      ],
+      "files": [
+        {
+          "path": "registry/example/hold-button-demo.tsx",
           "type": "registry:example"
         }
       ]

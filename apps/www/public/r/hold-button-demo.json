@@ -1,0 +1,17 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "hold-button-demo",
+  "type": "registry:example",
+  "title": "Hold Button Demo",
+  "description": "A destructive action that only goes through if you keep holding.",
+  "registryDependencies": [
+    "@loomui/hold-button"
+  ],
+  "files": [
+    {
+      "path": "registry/example/hold-button-demo.tsx",
+      "content": "\"use client\"\n\nimport * as React from \"react\"\n\nimport { HoldButton } from \"@/registry/loomui/hold-button\"\n\nexport default function HoldButtonDemo() {\n  const [deleted, setDeleted] = React.useState(false)\n  const timer = React.useRef<ReturnType<typeof setTimeout>>(undefined)\n\n  React.useEffect(() => () => clearTimeout(timer.current), [])\n\n  const handleHold = () => {\n    setDeleted(true)\n    timer.current = setTimeout(() => setDeleted(false), 2400)\n  }\n\n  return (\n    <div className=\"flex flex-col items-center gap-4\">\n      <HoldButton\n        duration={1100}\n        onHold={handleHold}\n        color=\"color-mix(in oklch, var(--destructive) 22%, transparent)\"\n        className=\"text-destructive px-4 py-2 text-sm font-medium\"\n      >\n        {deleted ? \"Deleted\" : \"Hold to delete\"}\n      </HoldButton>\n\n      <p className=\"text-muted-foreground text-xs\">\n        {deleted ? \"Nothing was really deleted\" : \"Press and keep holding\"}\n      </p>\n    </div>\n  )\n}\n",
+      "type": "registry:example"
+    }
+  ]
+}

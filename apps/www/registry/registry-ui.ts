@@ -7,6 +7,8 @@ import { type Registry } from "shadcn/schema"
  */
 const EASE_OUT_QUART = "cubic-bezier(0.165, 0.84, 0.44, 1)"
 const EASE_IN_OUT_CUBIC = "cubic-bezier(0.645, 0.045, 0.355, 1)"
+/** Overshoots and settles back, which is what makes a turn feel thrown. */
+const EASE_BACK_OUT = "cubic-bezier(0.34, 1.32, 0.52, 1)"
 
 export const ui: Registry["items"] = [
   {
@@ -273,6 +275,44 @@ export const ui: Registry["items"] = [
     files: [
       {
         path: "loomui/tilt-card.tsx",
+        type: "registry:ui",
+      },
+    ],
+    cssVars: {
+      theme: {
+        "ease-out-quart": EASE_OUT_QUART,
+      },
+    },
+  },
+  {
+    name: "flip-card",
+    type: "registry:ui",
+    title: "Flip Card",
+    description:
+      "A card with two faces that turns in 3D when it is clicked, controlled or on its own.",
+    registryDependencies: ["utils"],
+    files: [
+      {
+        path: "loomui/flip-card.tsx",
+        type: "registry:ui",
+      },
+    ],
+    cssVars: {
+      theme: {
+        "ease-back-out": EASE_BACK_OUT,
+      },
+    },
+  },
+  {
+    name: "hold-button",
+    type: "registry:ui",
+    title: "Hold Button",
+    description:
+      "A button that fires only after a deliberate press and hold, with a fill sweeping across to count out the wait.",
+    registryDependencies: ["utils"],
+    files: [
+      {
+        path: "loomui/hold-button.tsx",
         type: "registry:ui",
       },
     ],

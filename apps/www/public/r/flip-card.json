@@ -1,0 +1,22 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "flip-card",
+  "type": "registry:ui",
+  "title": "Flip Card",
+  "description": "A card with two faces that turns in 3D when it is clicked, controlled or on its own.",
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "path": "registry/loomui/flip-card.tsx",
+      "content": "\"use client\"\n\nimport * as React from \"react\"\n\nimport { cn } from \"@/lib/utils\"\n\nexport interface FlipCardProps extends Omit<\n  React.ComponentProps<\"button\">,\n  \"content\"\n> {\n  /** Face shown at rest. It sets the card's size; the back is laid over it. */\n  front: React.ReactNode\n  /** Face shown once the card is turned. */\n  back: React.ReactNode\n  /** Turn the card yourself. Leave it out to let the card own its state. */\n  flipped?: boolean\n  /** Starting face when the card owns its state. */\n  defaultFlipped?: boolean\n  /** Called with the face the card is turning to. */\n  onFlippedChange?: (flipped: boolean) => void\n  /** Turn around the vertical axis (`y`) or the horizontal one (`x`). */\n  axis?: \"x\" | \"y\"\n  /** Length of the turn in milliseconds. */\n  duration?: number\n  /** How much perspective the turn is drawn with, in pixels. Lower is deeper. */\n  depth?: number\n}\n\nconst FACE = \"absolute inset-0 [backface-visibility:hidden]\"\n\nexport function FlipCard({\n  front,\n  back,\n  flipped,\n  defaultFlipped = false,\n  onFlippedChange,\n  axis = \"y\",\n  duration = 480,\n  depth = 900,\n  className,\n  disabled,\n  onClick,\n  style,\n  ...props\n}: FlipCardProps) {\n  const [ownFlipped, setOwnFlipped] = React.useState(defaultFlipped)\n  const isControlled = flipped !== undefined\n  const isFlipped = isControlled ? flipped : ownFlipped\n\n  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {\n    onClick?.(event)\n\n    if (event.defaultPrevented || disabled) {\n      return\n    }\n\n    const next = !isFlipped\n    if (!isControlled) {\n      setOwnFlipped(next)\n    }\n    onFlippedChange?.(next)\n  }\n\n  const turn = axis === \"x\" ? \"rotateX\" : \"rotateY\"\n\n  return (\n    // A real button, so the card is reachable by keyboard and announces its\n    // state. `aria-pressed` is the honest mapping: this is a toggle, not a\n    // link to somewhere else.\n    <button\n      type=\"button\"\n      data-slot=\"flip-card\"\n      data-flipped={isFlipped ? \"\" : undefined}\n      aria-pressed={isFlipped}\n      disabled={disabled}\n      onClick={handleClick}\n      className={cn(\n        \"group relative block text-left\",\n        !disabled && \"cursor-pointer\",\n        className\n      )}\n      style={{ perspective: `${depth}px`, ...style }}\n      {...props}\n    >\n      <span\n        className=\"relative block h-full w-full transition-transform ease-[var(--ease-back-out)] [transform-style:preserve-3d] motion-reduce:transition-none\"\n        style={{\n          transitionDuration: `${duration}ms`,\n          transform: isFlipped ? `${turn}(180deg)` : undefined,\n        }}\n      >\n        {/* The front sits in flow and gives the card its size. Both faces are\n            in the DOM the whole time, so the hidden one is taken out of the\n            accessible name rather than left to be read through the card. */}\n        <span\n          className=\"relative block [backface-visibility:hidden]\"\n          aria-hidden={isFlipped || undefined}\n        >\n          {front}\n        </span>\n\n        <span\n          className={FACE}\n          style={{ transform: `${turn}(180deg)` }}\n          aria-hidden={!isFlipped || undefined}\n        >\n          {back}\n        </span>\n      </span>\n    </button>\n  )\n}\n",
+      "type": "registry:ui"
+    }
+  ],
+  "cssVars": {
+    "theme": {
+      "ease-back-out": "cubic-bezier(0.34, 1.32, 0.52, 1)"
+    }
+  }
+}

@@ -311,6 +311,247 @@ export default function CountUpDemo() {
 }
 
 
+===== COMPONENT: flip-card =====
+Title: Flip Card
+Description: A card with two faces that turns in 3D when it is clicked, controlled or on its own.
+Install: npx shadcn@latest add @loomui/flip-card
+
+--- file: loomui/flip-card.tsx ---
+"use client"
+
+import * as React from "react"
+
+import { cn } from "@/lib/utils"
+
+export interface FlipCardProps extends Omit<
+  React.ComponentProps<"button">,
+  "content"
+> {
+  /** Face shown at rest. It sets the card's size; the back is laid over it. */
+  front: React.ReactNode
+  /** Face shown once the card is turned. */
+  back: React.ReactNode
+  /** Turn the card yourself. Leave it out to let the card own its state. */
+  flipped?: boolean
+  /** Starting face when the card owns its state. */
+  defaultFlipped?: boolean
+  /** Called with the face the card is turning to. */
+  onFlippedChange?: (flipped: boolean) => void
+  /** Turn around the vertical axis (`y`) or the horizontal one (`x`). */
+  axis?: "x" | "y"
+  /** Length of the turn in milliseconds. */
+  duration?: number
+  /** How much perspective the turn is drawn with, in pixels. Lower is deeper. */
+  depth?: number
+}
+
+const FACE = "absolute inset-0 [backface-visibility:hidden]"
+
+export function FlipCard({
+  front,
+  back,
+  flipped,
+  defaultFlipped = false,
+  onFlippedChange,
+  axis = "y",
+  duration = 480,
+  depth = 900,
+  className,
+  disabled,
+  onClick,
+  style,
+  ...props
+}: FlipCardProps) {
+  const [ownFlipped, setOwnFlipped] = React.useState(defaultFlipped)
+  const isControlled = flipped !== undefined
+  const isFlipped = isControlled ? flipped : ownFlipped
+
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    onClick?.(event)
+
+    if (event.defaultPrevented || disabled) {
+      return
+    }
+
+    const next = !isFlipped
+    if (!isControlled) {
+      setOwnFlipped(next)
+    }
+    onFlippedChange?.(next)
+  }
+
+  const turn = axis === "x" ? "rotateX" : "rotateY"
+
+  return (
+    // A real button, so the card is reachable by keyboard and announces its
+    // state. `aria-pressed` is the honest mapping: this is a toggle, not a
+    // link to somewhere else.
+    <button
+      type="button"
+      data-slot="flip-card"
+      data-flipped={isFlipped ? "" : undefined}
+      aria-pressed={isFlipped}
+      disabled={disabled}
+      onClick={handleClick}
+      className={cn(
+        "group relative block text-left",
+        !disabled && "cursor-pointer",
+        className
+      )}
+      style={{ perspective: `${depth}px`, ...style }}
+      {...props}
+    >
+      <span
+        className="relative block h-full w-full transition-transform ease-[var(--ease-back-out)] [transform-style:preserve-3d] motion-reduce:transition-none"
+        style={{
+          transitionDuration: `${duration}ms`,
+          transform: isFlipped ? `${turn}(180deg)` : undefined,
+        }}
+      >
+        {/* The front sits in flow and gives the card its size. Both faces are
+            in the DOM the whole time, so the hidden one is taken out of the
+            accessible name rather than left to be read through the card. */}
+        <span
+          className="relative block [backface-visibility:hidden]"
+          aria-hidden={isFlipped || undefined}
+        >
+          {front}
+        </span>
+
+        <span
+          className={FACE}
+          style={{ transform: `${turn}(180deg)` }}
+          aria-hidden={!isFlipped || undefined}
+        >
+          {back}
+        </span>
+      </span>
+    </button>
+  )
+}
+
+
+===== EXAMPLE: flip-card-demo =====
+Title: Flip Card Demo
+
+--- file: example/flip-card-demo.tsx ---
+"use client"
+
+import * as React from "react"
+
+import { FlipCard } from "@/registry/loomui/flip-card"
+
+/** Fixed order rather than shuffled, so the server and the client agree. */
+const DECK = ["🫐", "🍑", "🍑", "🫐"]
+const MISS_DELAY = 700
+/** The card's own turn, so the match ring waits for both cards to land. */
+const FLIP_MS = 480
+
+const FACE =
+  "grid size-24 place-items-center rounded-xl border text-3xl transition-colors"
+
+export default function FlipCardDemo() {
+  const [faceUp, setFaceUp] = React.useState<number[]>([])
+  const [matched, setMatched] = React.useState<number[]>([])
+  // Matched cards that have finished turning. The ring waits for the turn so
+  // it lands on a card that is already face up, not on one mid-flight.
+  const [landed, setLanded] = React.useState<number[]>([])
+  const timer = React.useRef<ReturnType<typeof setTimeout>>(undefined)
+  const ring = React.useRef<ReturnType<typeof setTimeout>>(undefined)
+
+  React.useEffect(
+    () => () => {
+      clearTimeout(timer.current)
+      clearTimeout(ring.current)
+    },
+    []
+  )
+
+  const reveal = (index: number) => {
+    if (
+      faceUp.length === 2 ||
+      faceUp.includes(index) ||
+      matched.includes(index)
+    ) {
+      return
+    }
+
+    const next = [...faceUp, index]
+    setFaceUp(next)
+
+    if (next.length < 2) {
+      return
+    }
+
+    const [first, second] = next
+    if (DECK[first] === DECK[second]) {
+      setMatched((current) => [...current, first, second])
+      setFaceUp([])
+      ring.current = setTimeout(
+        () => setLanded((current) => [...current, first, second]),
+        FLIP_MS
+      )
+      return
+    }
+
+    timer.current = setTimeout(() => setFaceUp([]), MISS_DELAY)
+  }
+
+  const reset = () => {
+    clearTimeout(timer.current)
+    clearTimeout(ring.current)
+    setFaceUp([])
+    setMatched([])
+    setLanded([])
+  }
+
+  const won = landed.length === DECK.length
+
+  return (
+    <div className="flex flex-col items-center gap-5">
+      <div className="grid grid-cols-2 gap-3">
+        {DECK.map((emoji, index) => (
+          <FlipCard
+            key={index}
+            flipped={faceUp.includes(index) || matched.includes(index)}
+            onClick={() => reveal(index)}
+            aria-label={`Card ${index + 1}`}
+            front={
+              <span
+                className={`${FACE} bg-card text-muted-foreground/60 text-xl`}
+              >
+                ?
+              </span>
+            }
+            back={
+              <span
+                className={`${FACE} bg-card ${
+                  landed.includes(index) ? "border-accent" : ""
+                }`}
+              >
+                {emoji}
+              </span>
+            }
+          />
+        ))}
+      </div>
+
+      {won ? (
+        <button
+          type="button"
+          onClick={reset}
+          className="text-muted-foreground hover:text-foreground cursor-pointer text-xs underline underline-offset-4"
+        >
+          Both pairs. Play again
+        </button>
+      ) : (
+        <p className="text-muted-foreground text-xs">Find both pairs</p>
+      )}
+    </div>
+  )
+}
+
+
 ===== COMPONENT: grid-backdrop =====
 Title: Grid Backdrop
 Description: An SVG grid with cells that fade in and out at a deterministic, seeded scatter.
@@ -678,6 +919,259 @@ export default function GridBeamsDemo() {
           Seven beams, seeded onto random columns
         </p>
       </div>
+    </div>
+  )
+}
+
+
+===== COMPONENT: hold-button =====
+Title: Hold Button
+Description: A button that fires only after a deliberate press and hold, with a fill sweeping across to count out the wait.
+Install: npx shadcn@latest add @loomui/hold-button
+
+--- file: loomui/hold-button.tsx ---
+"use client"
+
+import * as React from "react"
+
+import { cn } from "@/lib/utils"
+
+export interface HoldButtonProps extends React.ComponentProps<"button"> {
+  /** Milliseconds the button has to be held down before it fires. */
+  duration?: number
+  /** Called once, when a hold runs the whole way through. */
+  onHold?: () => void
+  /** Fill that sweeps across the button. Keep it translucent so the label survives. */
+  color?: string
+}
+
+/** How long the fill takes to run back out, whether it completed or not. */
+const RETURN_MS = 260
+/** How long a completed fill sits at full before it runs back. */
+const SETTLE_MS = 140
+
+/** Fast at first, then easing to a stop. The fill draining should feel let go of. */
+function easeOutCubic(t: number) {
+  return 1 - Math.pow(1 - t, 3)
+}
+
+export function HoldButton({
+  children,
+  className,
+  duration = 1200,
+  onHold,
+  color = "color-mix(in oklch, var(--primary, currentColor) 22%, transparent)",
+  disabled,
+  style,
+  ...props
+}: HoldButtonProps) {
+  const ref = React.useRef<HTMLButtonElement>(null)
+  const frame = React.useRef(0)
+  const settle = React.useRef<ReturnType<typeof setTimeout>>(undefined)
+  const [holding, setHolding] = React.useState(false)
+
+  // Progress is a ref written straight to a custom property. A fill that
+  // re-rendered React sixty times a second to cross the button would be absurd.
+  const state = React.useRef({
+    progress: 0,
+    filling: false,
+    last: 0,
+    from: 0,
+    since: 0,
+  })
+
+  const write = React.useCallback(() => {
+    ref.current?.style.setProperty(
+      "--hold-progress",
+      `${state.current.progress}`
+    )
+  }, [])
+
+  const tick = React.useCallback(
+    (now: number) => {
+      const current = state.current
+
+      if (current.filling) {
+        // Filling is linear, because it is a promise about how much longer.
+        const elapsed = current.last ? Math.min(now - current.last, 64) : 16
+        current.last = now
+        current.progress = Math.min(1, current.progress + elapsed / duration)
+        write()
+
+        if (current.progress >= 1) {
+          current.filling = false
+          setHolding(false)
+          onHold?.()
+
+          // Sit at full long enough to be seen, then run back out.
+          settle.current = setTimeout(() => {
+            current.from = current.progress
+            current.since = performance.now()
+            frame.current = requestAnimationFrame(tick)
+          }, SETTLE_MS)
+          return
+        }
+
+        frame.current = requestAnimationFrame(tick)
+        return
+      }
+
+      // Draining is eased and on its own clock, so it takes the same quick
+      // moment whether it fell from full or from a tenth of the way across.
+      const t = Math.min(1, (now - current.since) / RETURN_MS)
+      current.progress = current.from * (1 - easeOutCubic(t))
+      write()
+
+      if (t < 1) {
+        frame.current = requestAnimationFrame(tick)
+      }
+    },
+    [duration, onHold, write]
+  )
+
+  const drain = React.useCallback(() => {
+    const current = state.current
+    current.filling = false
+    current.from = current.progress
+    current.since = performance.now()
+    current.last = 0
+
+    cancelAnimationFrame(frame.current)
+    frame.current = requestAnimationFrame(tick)
+  }, [tick])
+
+  const press = React.useCallback(() => {
+    if (disabled) {
+      return
+    }
+
+    clearTimeout(settle.current)
+    cancelAnimationFrame(frame.current)
+    state.current.filling = true
+    state.current.last = 0
+    setHolding(true)
+    frame.current = requestAnimationFrame(tick)
+  }, [disabled, tick])
+
+  const release = React.useCallback(() => {
+    if (!state.current.filling) {
+      return
+    }
+
+    setHolding(false)
+    drain()
+  }, [drain])
+
+  React.useEffect(
+    () => () => {
+      cancelAnimationFrame(frame.current)
+      clearTimeout(settle.current)
+    },
+    []
+  )
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLButtonElement>) => {
+    if (event.key !== " " && event.key !== "Enter") {
+      return
+    }
+
+    // Space scrolls and Enter fires a click; neither should stand in for the
+    // hold this button exists to require.
+    event.preventDefault()
+    if (!event.repeat) {
+      press()
+    }
+  }
+
+  const handleKeyUp = (event: React.KeyboardEvent<HTMLButtonElement>) => {
+    if (event.key === " " || event.key === "Enter") {
+      event.preventDefault()
+      release()
+    }
+  }
+
+  return (
+    <button
+      ref={ref}
+      type="button"
+      data-slot="hold-button"
+      data-holding={holding ? "" : undefined}
+      disabled={disabled}
+      onPointerDown={press}
+      onPointerUp={release}
+      onPointerLeave={release}
+      onPointerCancel={release}
+      onKeyDown={handleKeyDown}
+      onKeyUp={handleKeyUp}
+      onBlur={release}
+      className={cn(
+        "relative isolate inline-flex items-center justify-center rounded-lg border select-none",
+        "transition-transform duration-150 ease-[var(--ease-out-quart)] data-holding:scale-[0.98]",
+        "motion-reduce:transition-none",
+        !disabled && "cursor-pointer",
+        className
+      )}
+      style={style}
+      {...props}
+    >
+      {/* The fill is the whole affordance: it is the only thing telling you how
+          much longer to keep holding. It is a scale, not a width, so filling
+          the button costs no layout — and it is clipped by a wrapper rather
+          than rounded itself, or the scale would squash its own corners. */}
+      <span
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 overflow-hidden rounded-[inherit]"
+      >
+        <span
+          className="absolute inset-0 origin-left"
+          style={{
+            background: color,
+            transform: "scaleX(var(--hold-progress, 0))",
+          }}
+        />
+      </span>
+
+      <span className="relative">{children}</span>
+    </button>
+  )
+}
+
+
+===== EXAMPLE: hold-button-demo =====
+Title: Hold Button Demo
+
+--- file: example/hold-button-demo.tsx ---
+"use client"
+
+import * as React from "react"
+
+import { HoldButton } from "@/registry/loomui/hold-button"
+
+export default function HoldButtonDemo() {
+  const [deleted, setDeleted] = React.useState(false)
+  const timer = React.useRef<ReturnType<typeof setTimeout>>(undefined)
+
+  React.useEffect(() => () => clearTimeout(timer.current), [])
+
+  const handleHold = () => {
+    setDeleted(true)
+    timer.current = setTimeout(() => setDeleted(false), 2400)
+  }
+
+  return (
+    <div className="flex flex-col items-center gap-4">
+      <HoldButton
+        duration={1100}
+        onHold={handleHold}
+        color="color-mix(in oklch, var(--destructive) 22%, transparent)"
+        className="text-destructive px-4 py-2 text-sm font-medium"
+      >
+        {deleted ? "Deleted" : "Hold to delete"}
+      </HoldButton>
+
+      <p className="text-muted-foreground text-xs">
+        {deleted ? "Nothing was really deleted" : "Press and keep holding"}
+      </p>
     </div>
   )
 }

@@ -148,6 +148,33 @@ export const examples: Registry["items"] = [
     ],
   },
   {
+    name: "flip-card-demo",
+    type: "registry:example",
+    title: "Flip Card Demo",
+    description: "A two-by-two matching game played by turning cards over.",
+    registryDependencies: ["@loomui/flip-card"],
+    files: [
+      {
+        path: "example/flip-card-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "hold-button-demo",
+    type: "registry:example",
+    title: "Hold Button Demo",
+    description:
+      "A destructive action that only goes through if you keep holding.",
+    registryDependencies: ["@loomui/hold-button"],
+    files: [
+      {
+        path: "example/hold-button-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "magnetic-demo",
     type: "registry:example",
     title: "Magnetic Demo",

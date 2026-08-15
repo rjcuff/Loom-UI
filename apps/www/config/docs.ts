@@ -90,6 +90,16 @@ export const docsConfig: DocsConfig = {
           href: "/docs/components/tilt-card",
         },
         {
+          title: "Flip Card",
+          href: "/docs/components/flip-card",
+          badge: { text: "New", variant: "new" },
+        },
+        {
+          title: "Hold Button",
+          href: "/docs/components/hold-button",
+          badge: { text: "New", variant: "new" },
+        },
+        {
           title: "Magnetic",
           href: "/docs/components/magnetic",
         },

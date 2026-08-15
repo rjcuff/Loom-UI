@@ -169,6 +169,36 @@ export const Index: Record<string, any> = {
       return { default: mod.default ?? mod[exportName] }
     }),
   },
+  "flip-card": {
+    name: "flip-card",
+    type: "registry:ui",
+    title: "Flip Card",
+    description: "A card with two faces that turns in 3D when it is clicked, controlled or on its own.",
+    dependencies: [],
+    registryDependencies: ["utils"],
+    files: [{"path":"registry/loomui/flip-card.tsx","type":"registry:ui","target":""}],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/loomui/flip-card")
+      const exportName =
+        Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
+      return { default: mod.default ?? mod[exportName] }
+    }),
+  },
+  "hold-button": {
+    name: "hold-button",
+    type: "registry:ui",
+    title: "Hold Button",
+    description: "A button that fires only after a deliberate press and hold, with a fill sweeping across to count out the wait.",
+    dependencies: [],
+    registryDependencies: ["utils"],
+    files: [{"path":"registry/loomui/hold-button.tsx","type":"registry:ui","target":""}],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/loomui/hold-button")
+      const exportName =
+        Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
+      return { default: mod.default ?? mod[exportName] }
+    }),
+  },
   "magnetic": {
     name: "magnetic",
     type: "registry:ui",
@@ -374,6 +404,36 @@ export const Index: Record<string, any> = {
     files: [{"path":"registry/example/tilt-card-demo.tsx","type":"registry:example","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/example/tilt-card-demo")
+      const exportName =
+        Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
+      return { default: mod.default ?? mod[exportName] }
+    }),
+  },
+  "flip-card-demo": {
+    name: "flip-card-demo",
+    type: "registry:example",
+    title: "Flip Card Demo",
+    description: "A two-by-two matching game played by turning cards over.",
+    dependencies: [],
+    registryDependencies: ["@loomui/flip-card"],
+    files: [{"path":"registry/example/flip-card-demo.tsx","type":"registry:example","target":""}],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/example/flip-card-demo")
+      const exportName =
+        Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
+      return { default: mod.default ?? mod[exportName] }
+    }),
+  },
+  "hold-button-demo": {
+    name: "hold-button-demo",
+    type: "registry:example",
+    title: "Hold Button Demo",
+    description: "A destructive action that only goes through if you keep holding.",
+    dependencies: [],
+    registryDependencies: ["@loomui/hold-button"],
+    files: [{"path":"registry/example/hold-button-demo.tsx","type":"registry:example","target":""}],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/example/hold-button-demo")
       const exportName =
         Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
       return { default: mod.default ?? mod[exportName] }

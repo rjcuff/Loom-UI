@@ -1,0 +1,116 @@
+---
+title: Hold Button
+date: 2026-08-14
+description: A button that fires only after a deliberate press and hold, with a fill sweeping across to count out the wait.
+---
+
+<ComponentPreview name="hold-button-demo" />
+
+## Installation
+
+<Tabs defaultValue="cli">
+
+<TabsList>
+  <TabsTrigger value="cli">CLI</TabsTrigger>
+  <TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @loomui/hold-button
+```
+
+</TabsContent>
+
+<TabsContent value="manual">
+
+<Steps>
+
+<Step>Copy the component into your project.</Step>
+
+<ComponentSource name="hold-button" />
+
+<Step>Add the easing token to your global stylesheet.</Step>
+
+```css title="app/globals.css"
+@theme {
+  --ease-out-quart: cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+```
+
+<Step>Update the import paths to match your setup.</Step>
+
+</Steps>
+
+</TabsContent>
+
+</Tabs>
+
+## Usage
+
+```tsx
+import { HoldButton } from "@/components/ui/hold-button"
+```
+
+```tsx
+<HoldButton onHold={() => deleteAccount()} className="px-4 py-2 text-sm">
+  Hold to delete
+</HoldButton>
+```
+
+A hold is a confirmation dialog that costs no dialog. The user says yes by
+keeping their finger down, and the fill sweeping across the button is the only
+thing telling them how much longer that is, so it has to be there from the
+first frame of the press.
+
+The fill goes across linearly, because it is a promise about how much time is
+left. It runs back out eased and on its own quick clock, so letting go early
+reads as a slip you can recover from rather than a state being dropped. A
+completed hold sits at full for a beat first, so the action has a visible end.
+
+Progress lives in a ref and is written to a `--hold-progress` custom property
+inside a `requestAnimationFrame`. The fill is a `scaleX` on a clipped layer,
+not a width, so crossing the button costs no layout and no renders.
+
+### Choosing a duration
+
+```tsx
+<HoldButton duration={2000} onHold={wipe}>
+  Hold to wipe everything
+</HoldButton>
+```
+
+Under about `700`ms a hold is indistinguishable from a slow click and stops
+being a confirmation. Past about `2500`ms people let go because they assume it
+is broken. `1200` is the default because it is long enough to be deliberate and
+short enough to feel responsive.
+
+`color` is the fill. Keep it translucent — it passes under the label, and a
+solid one takes the label with it:
+
+```tsx
+<HoldButton color="color-mix(in oklch, var(--destructive) 22%, transparent)">
+  Hold to delete
+</HoldButton>
+```
+
+## Props
+
+| Prop        | Type         | Default         | Description                                    |
+| ----------- | ------------ | --------------- | ---------------------------------------------- |
+| `duration`  | `number`     | `1200`          | Milliseconds the button has to be held.        |
+| `onHold`    | `() => void` | none            | Called once, when a hold runs the whole way.   |
+| `color`     | `string`     | 22% `--primary` | Fill that sweeps across the button.            |
+| `disabled`  | `boolean`    | `false`         | Ignore presses entirely.                       |
+| `className` | `string`     | none            | Merged onto the button. Padding and type here. |
+
+Any other `<button>` prop is forwarded.
+
+<Callout type="tip" title="Accessibility">
+  Space and Enter hold the button down and release it, so the keyboard path is
+  the same deal as the pointer one rather than a shortcut around it. Both keys
+  have their default prevented, so a plain click can never stand in for the
+  hold. Blurring or dragging off the button cancels, and the fill is
+  `aria-hidden` decoration on top of a real `<button>`.
+</Callout>

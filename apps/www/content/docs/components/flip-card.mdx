@@ -1,0 +1,127 @@
+---
+title: Flip Card
+date: 2026-08-14
+description: A card with two faces that turns in 3D when it is clicked, controlled or on its own.
+---
+
+<ComponentPreview name="flip-card-demo" />
+
+## Installation
+
+<Tabs defaultValue="cli">
+
+<TabsList>
+  <TabsTrigger value="cli">CLI</TabsTrigger>
+  <TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @loomui/flip-card
+```
+
+</TabsContent>
+
+<TabsContent value="manual">
+
+<Steps>
+
+<Step>Copy the component into your project.</Step>
+
+<ComponentSource name="flip-card" />
+
+<Step>Add the easing token to your global stylesheet.</Step>
+
+```css title="app/globals.css"
+@theme {
+  --ease-back-out: cubic-bezier(0.34, 1.32, 0.52, 1);
+}
+```
+
+<Step>Update the import paths to match your setup.</Step>
+
+</Steps>
+
+</TabsContent>
+
+</Tabs>
+
+## Usage
+
+```tsx
+import { FlipCard } from "@/components/ui/flip-card"
+```
+
+```tsx
+<FlipCard
+  front={
+    <div className="bg-card grid size-24 place-items-center rounded-xl border">
+      ?
+    </div>
+  }
+  back={
+    <div className="bg-card grid size-24 place-items-center rounded-xl border">
+      🍑
+    </div>
+  }
+/>
+```
+
+The front face sits in normal flow and gives the card its size. The back is
+laid over it and pre-turned, so the two faces always match dimensions without
+either being measured.
+
+The turn is one `transform` on one element, eased with `--ease-back-out`, which
+overshoots a few degrees and settles. That overshoot is the whole difference
+between a card being thrown over and a card being rotated by a computer.
+
+### Driving it yourself
+
+Left alone, the card owns its state and every click turns it. Pass `flipped`
+and it does what you say instead, which is what a game of pairs needs: a card
+turns face up when you pick it, and turns itself back when the pair misses.
+
+```tsx
+const [flipped, setFlipped] = React.useState(false)
+
+<FlipCard flipped={flipped} onClick={() => setFlipped(true)} front={...} back={...} />
+```
+
+`onFlippedChange` reports the face the card is turning to. It fires in both
+modes, so it is the right place to hang a sound or a counter.
+
+### Axis and weight
+
+`axis="x"` turns the card top over bottom instead of left over right. `depth`
+is the perspective in pixels: lower numbers exaggerate the near edge and make
+the card feel like it is being thrown at you, higher numbers flatten it out.
+
+```tsx
+<FlipCard axis="x" depth={600} duration={560} front={...} back={...} />
+```
+
+Under `prefers-reduced-motion` the turn is dropped and the faces swap instantly.
+
+## Props
+
+| Prop              | Type                         | Default | Description                                       |
+| ----------------- | ---------------------------- | ------- | ------------------------------------------------- |
+| `front`           | `ReactNode`                  | —       | Face shown at rest. It sets the card's size.      |
+| `back`            | `ReactNode`                  | —       | Face shown once the card is turned.               |
+| `flipped`         | `boolean`                    | none    | Drive the card yourself. Omit to let it own this. |
+| `defaultFlipped`  | `boolean`                    | `false` | Starting face when the card owns its state.       |
+| `onFlippedChange` | `(flipped: boolean) => void` | none    | Called with the face the card is turning to.      |
+| `axis`            | `"x" \| "y"`                 | `"y"`   | Turn top over bottom, or left over right.         |
+| `duration`        | `number`                     | `480`   | Length of the turn in milliseconds.               |
+| `depth`           | `number`                     | `900`   | Perspective in pixels. Lower is deeper.           |
+| `className`       | `string`                     | none    | Merged onto the card. Size and layout here.       |
+
+Any other `<button>` prop is forwarded, `disabled` included.
+
+<Callout type="tip" title="Accessibility">
+  The card is a real `<button>` with `aria-pressed`, so it is reachable by
+  keyboard, announces which way it is turned, and needs no invented role. Both
+  faces stay in the DOM, and whichever one is turned away is `aria-hidden`, so
+  a screen reader reads the face you are looking at rather than both at once.
+</Callout>
