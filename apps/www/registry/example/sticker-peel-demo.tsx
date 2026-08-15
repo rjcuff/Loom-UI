@@ -1,9 +1,9 @@
 import { StickerPeel } from "@/registry/loomui/sticker-peel"
 
 const STICKERS = [
-  { label: "Ships today", tone: "bg-primary text-primary-foreground" },
+  { label: "Ships today", tone: "bg-accent text-accent-foreground" },
   { label: "One file", tone: "bg-card text-card-foreground border" },
-  { label: "No deps", tone: "bg-foreground text-background" },
+  { label: "No deps", tone: "bg-primary text-primary-foreground" },
 ] as const
 
 export default function StickerPeelDemo() {

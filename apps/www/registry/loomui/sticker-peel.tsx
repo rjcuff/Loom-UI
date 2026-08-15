@@ -110,7 +110,16 @@ export function StickerPeel({
         data-slot="sticker-peel-flap"
         aria-hidden="true"
         className={cn(
-          "from-border via-muted to-card pointer-events-none absolute transition-transform ease-[var(--ease-out-quart)] motion-reduce:transition-none",
+          "pointer-events-none absolute transition-transform ease-[var(--ease-out-quart)] motion-reduce:transition-none",
+          // The underside is backing paper, not the surface it came off, so it
+          // keeps its own neutral rather than following the theme's card. It
+          // stays lighter than the sticker in both modes, which is the only
+          // thing that reads as "lifted" instead of "cut out".
+          "from-zinc-300 via-zinc-100 to-white",
+          "dark:from-zinc-800 dark:via-zinc-600 dark:to-zinc-400",
+          // Dark mode has no ambient contrast to fall back on, so the crease
+          // shadow carries the separation and has to be deeper there.
+          "drop-shadow-[0_2px_6px_rgb(0_0_0/0.28)] dark:drop-shadow-[0_3px_10px_rgb(0_0_0/0.55)]",
           spec.anchor,
           spec.sheen
         )}
@@ -122,7 +131,6 @@ export function StickerPeel({
           // move on the same curve and the crease never splits.
           transform: lifted ? "scale(1)" : "scale(0)",
           transitionDuration: `${duration}ms`,
-          filter: "drop-shadow(0 2px 6px rgb(0 0 0 / 0.28))",
         }}
       />
     </div>
