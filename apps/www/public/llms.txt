@@ -19,6 +19,7 @@ Install any component with `npx shadcn@latest add @loomui/<name>`.
 - [Scramble Text](https://loomui.design/docs/components/scramble-text): A string that resolves out of random glyphs, left to right, on mount, on scroll, or on hover.
 - [Spotlight Card](https://loomui.design/docs/components/spotlight-card): A surface with a soft highlight that follows the pointer and fades out on leave.
 - [Stagger Text](https://loomui.design/docs/components/stagger-text): Words or characters that rise into place one after another, on mount or on scroll.
+- [Testimonial Wall](https://loomui.design/docs/components/testimonial-wall): Columns of quotes drifting past each other at different speeds, faded at both ends.
 - [Tilt Card](https://loomui.design/docs/components/tilt-card): A surface that leans away from the pointer in 3D and settles back on leave.
 - [Typewriter](https://loomui.design/docs/components/typewriter): Phrases typed out and deleted in a loop, with a caret and no layout shift.
 - [Weave Text](https://loomui.design/docs/components/weave-text): Text filled with a slow-drifting gradient, woven from a palette you control.

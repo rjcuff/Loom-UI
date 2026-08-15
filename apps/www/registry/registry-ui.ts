@@ -396,4 +396,34 @@ export const ui: Registry["items"] = [
       },
     ],
   },
+  {
+    name: "testimonial-wall",
+    type: "registry:ui",
+    title: "Testimonial Wall",
+    description:
+      "Columns of quotes drifting past each other at different speeds, faded at both ends.",
+    registryDependencies: ["utils"],
+    files: [
+      {
+        path: "loomui/testimonial-wall.tsx",
+        type: "registry:ui",
+      },
+    ],
+    cssVars: {
+      theme: {
+        "animate-marquee-vertical":
+          "marquee-vertical var(--marquee-duration, 40s) linear infinite",
+      },
+    },
+    css: {
+      "@keyframes marquee-vertical": {
+        from: {
+          transform: "translateY(0)",
+        },
+        to: {
+          transform: "translateY(calc(-100% - var(--marquee-gap, 1rem)))",
+        },
+      },
+    },
+  },
 ]

@@ -402,6 +402,36 @@
       ]
     },
     {
+      "name": "testimonial-wall",
+      "type": "registry:ui",
+      "title": "Testimonial Wall",
+      "description": "Columns of quotes drifting past each other at different speeds, faded at both ends.",
+      "registryDependencies": [
+        "utils"
+      ],
+      "files": [
+        {
+          "path": "registry/loomui/testimonial-wall.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "cssVars": {
+        "theme": {
+          "animate-marquee-vertical": "marquee-vertical var(--marquee-duration, 40s) linear infinite"
+        }
+      },
+      "css": {
+        "@keyframes marquee-vertical": {
+          "from": {
+            "transform": "translateY(0)"
+          },
+          "to": {
+            "transform": "translateY(calc(-100% - var(--marquee-gap, 1rem)))"
+          }
+        }
+      }
+    },
+    {
       "name": "weave-text-demo",
       "type": "registry:example",
       "title": "Weave Text Demo",
@@ -637,6 +667,21 @@
       "files": [
         {
           "path": "registry/example/reading-progress-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "testimonial-wall-demo",
+      "type": "registry:example",
+      "title": "Testimonial Wall Demo",
+      "description": "Nine quotes dealt across three columns going opposite ways.",
+      "registryDependencies": [
+        "@loomui/testimonial-wall"
+      ],
+      "files": [
+        {
+          "path": "registry/example/testimonial-wall-demo.tsx",
           "type": "registry:example"
         }
       ]

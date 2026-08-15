@@ -213,4 +213,17 @@ export const examples: Registry["items"] = [
       },
     ],
   },
+  {
+    name: "testimonial-wall-demo",
+    type: "registry:example",
+    title: "Testimonial Wall Demo",
+    description: "Nine quotes dealt across three columns going opposite ways.",
+    registryDependencies: ["@loomui/testimonial-wall"],
+    files: [
+      {
+        path: "example/testimonial-wall-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
 ]

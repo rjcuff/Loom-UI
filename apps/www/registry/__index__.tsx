@@ -244,6 +244,21 @@ export const Index: Record<string, any> = {
       return { default: mod.default ?? mod[exportName] }
     }),
   },
+  "testimonial-wall": {
+    name: "testimonial-wall",
+    type: "registry:ui",
+    title: "Testimonial Wall",
+    description: "Columns of quotes drifting past each other at different speeds, faded at both ends.",
+    dependencies: [],
+    registryDependencies: ["utils"],
+    files: [{"path":"registry/loomui/testimonial-wall.tsx","type":"registry:ui","target":""}],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/loomui/testimonial-wall")
+      const exportName =
+        Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
+      return { default: mod.default ?? mod[exportName] }
+    }),
+  },
   "weave-text-demo": {
     name: "weave-text-demo",
     type: "registry:example",
@@ -479,6 +494,21 @@ export const Index: Record<string, any> = {
     files: [{"path":"registry/example/reading-progress-demo.tsx","type":"registry:example","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/example/reading-progress-demo")
+      const exportName =
+        Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
+      return { default: mod.default ?? mod[exportName] }
+    }),
+  },
+  "testimonial-wall-demo": {
+    name: "testimonial-wall-demo",
+    type: "registry:example",
+    title: "Testimonial Wall Demo",
+    description: "Nine quotes dealt across three columns going opposite ways.",
+    dependencies: [],
+    registryDependencies: ["@loomui/testimonial-wall"],
+    files: [{"path":"registry/example/testimonial-wall-demo.tsx","type":"registry:example","target":""}],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/example/testimonial-wall-demo")
       const exportName =
         Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
       return { default: mod.default ?? mod[exportName] }

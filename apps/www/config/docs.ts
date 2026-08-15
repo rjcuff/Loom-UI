@@ -113,6 +113,16 @@ export const docsConfig: DocsConfig = {
         },
       ],
     },
+    {
+      title: "Sections",
+      items: [
+        {
+          title: "Testimonial Wall",
+          href: "/docs/components/testimonial-wall",
+          badge: { text: "New", variant: "new" },
+        },
+      ],
+    },
   ],
 }
 

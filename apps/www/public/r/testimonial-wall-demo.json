@@ -1,0 +1,17 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "testimonial-wall-demo",
+  "type": "registry:example",
+  "title": "Testimonial Wall Demo",
+  "description": "Nine quotes dealt across three columns going opposite ways.",
+  "registryDependencies": [
+    "@loomui/testimonial-wall"
+  ],
+  "files": [
+    {
+      "path": "registry/example/testimonial-wall-demo.tsx",
+      "content": "import { TestimonialWall } from \"@/registry/loomui/testimonial-wall\"\n\nconst QUOTES = [\n  {\n    name: \"Ada\",\n    handle: \"@ada\",\n    body: \"Shipped the landing page in an afternoon.\",\n  },\n  {\n    name: \"Ren\",\n    handle: \"@ren\",\n    body: \"Motion I can hand to a designer without a meeting.\",\n  },\n  {\n    name: \"Kofi\",\n    handle: \"@kofi\",\n    body: \"The off switch is the reason I kept it.\",\n  },\n  {\n    name: \"Mira\",\n    handle: \"@mira\",\n    body: \"Reads like code I would have written myself.\",\n  },\n  {\n    name: \"Otto\",\n    handle: \"@otto\",\n    body: \"One file. No package to babysit for a year.\",\n  },\n  {\n    name: \"Suki\",\n    handle: \"@suki\",\n    body: \"Reduced motion was already handled. Nice.\",\n  },\n  {\n    name: \"Iris\",\n    handle: \"@iris\",\n    body: \"Every timing I wanted to change was a prop.\",\n  },\n  {\n    name: \"Bo\",\n    handle: \"@bo\",\n    body: \"Dark mode looked right on the first try.\",\n  },\n  {\n    name: \"Nell\",\n    handle: \"@nell\",\n    body: \"Fast enough that I stopped checking the profiler.\",\n  },\n]\n\nexport default function TestimonialWallDemo() {\n  return (\n    <TestimonialWall className=\"h-[22rem] w-full max-w-3xl\" duration={36}>\n      {QUOTES.map((quote) => (\n        <figure key={quote.name} className=\"bg-card rounded-xl border p-4\">\n          <blockquote className=\"text-sm\">{quote.body}</blockquote>\n          <figcaption className=\"text-muted-foreground mt-3 text-xs\">\n            {quote.name} <span className=\"opacity-70\">{quote.handle}</span>\n          </figcaption>\n        </figure>\n      ))}\n    </TestimonialWall>\n  )\n}\n",
+      "type": "registry:example"
+    }
+  ]
+}

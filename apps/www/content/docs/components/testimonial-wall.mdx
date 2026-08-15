@@ -1,0 +1,136 @@
+---
+title: Testimonial Wall
+date: 2026-08-15
+description: Columns of quotes drifting past each other at different speeds, faded at both ends.
+---
+
+<ComponentPreview name="testimonial-wall-demo" />
+
+## Installation
+
+<Tabs defaultValue="cli">
+
+<TabsList>
+  <TabsTrigger value="cli">CLI</TabsTrigger>
+  <TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @loomui/testimonial-wall
+```
+
+</TabsContent>
+
+<TabsContent value="manual">
+
+<Steps>
+
+<Step>Copy the component into your project.</Step>
+
+<ComponentSource name="testimonial-wall" />
+
+<Step>Add the keyframes to your global stylesheet.</Step>
+
+```css title="app/globals.css"
+@theme {
+  --animate-marquee-vertical: marquee-vertical var(--marquee-duration, 40s)
+    linear infinite;
+}
+
+@keyframes marquee-vertical {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(calc(-100% - var(--marquee-gap, 1rem)));
+  }
+}
+```
+
+<Step>Update the import paths to match your setup.</Step>
+
+</Steps>
+
+</TabsContent>
+
+</Tabs>
+
+## Usage
+
+```tsx
+import { TestimonialWall } from "@/components/ui/testimonial-wall"
+```
+
+```tsx
+<TestimonialWall columns={3}>
+  {quotes.map((quote) => (
+    <figure key={quote.name} className="bg-card rounded-xl border p-4">
+      <blockquote>{quote.body}</blockquote>
+    </figure>
+  ))}
+</TestimonialWall>
+```
+
+Hand it a flat list of cards. They are dealt round robin across the columns, so
+a wall of uneven cards still balances out rather than leaving one column short.
+
+### Why it reads as depth
+
+Every other column runs the other way, and each column gets its own duration, so
+no two neighbouring cards ever travel together. Cards moving in lockstep read as
+one sliding sheet; cards moving against each other read as a wall with things
+happening on it.
+
+```tsx
+<TestimonialWall duration={36} speeds={[1, 1.4, 0.85]} />
+```
+
+`duration` is the seconds for one pass of the first column. `speeds` multiplies
+it per column when you want to set the drift yourself instead of taking the
+default spread.
+
+Each column is two copies of its cards travelling exactly one copy plus one gap,
+which is what makes the loop seamless. The whole thing is `transform` on a
+handful of elements, so the cost does not grow with the number of quotes.
+
+### Height and edges
+
+The wall clips to its own height, `32rem` by default, and fades top and bottom
+so cards enter and leave instead of being cut. Override either:
+
+```tsx
+<TestimonialWall className="h-[40rem]" fade="20%" />
+```
+
+The fade is sampled off a smoothstep curve rather than a plain two-stop
+gradient, because a linear alpha ramp meets full opacity at a point the eye
+reads as a hard line.
+
+On narrow screens the extra columns are dropped rather than squeezed: the second
+appears at `sm`, the third at `lg`.
+
+Under `prefers-reduced-motion` the whole wall is frozen at its start, rather
+than stopping mid-travel with half a card cut off.
+
+## Props
+
+| Prop           | Type                | Default  | Description                                     |
+| -------------- | ------------------- | -------- | ----------------------------------------------- |
+| `columns`      | `number`            | `3`      | Columns at the widest breakpoint.               |
+| `duration`     | `number`            | `44`     | Seconds for one pass of the first column.       |
+| `speeds`       | `number[]`          | none     | Per-column multipliers on `duration`.           |
+| `gap`          | `string`            | `"1rem"` | Gap between cards and between columns.          |
+| `pauseOnHover` | `boolean`           | `true`   | Stop every column while the pointer is over it. |
+| `paused`       | `boolean`           | `false`  | Render the wall static.                         |
+| `fade`         | `boolean \| string` | `true`   | Fade both ends. A length sizes the fade.        |
+| `className`    | `string`            | none     | Merged onto the wall. Height goes here.         |
+
+Any other `<div>` prop is forwarded.
+
+<Callout type="tip" title="Accessibility">
+  Only the first copy of each column is read; the duplicate that makes the loop
+  seamless is `aria-hidden`, so no quote is announced twice. `pauseOnHover` is
+  on by default, which is what makes a quote readable at all without chasing it.
+</Callout>
