@@ -58,6 +58,11 @@ That same circle is punched out of the blurred copy. Without the hole the sharp
 glyphs would sit on a blurred set of glyphs and read as a halo rather than as
 focus.
 
+The blurred copy sits in a padded, rounded panel, and the blur goes on a span
+inside it rather than on the panel itself. Blur the panel and its glow spreads
+past its own edges, where the mask cuts it off square — a pane of frosted glass
+with four hard corners, which is the tell that this is two divs and not glass.
+
 Position and radius are written to CSS custom properties from a single
 `requestAnimationFrame` loop, never to React state. Moving the mouse across a
 paragraph costs zero renders.
@@ -80,11 +85,12 @@ to the pointer and snaps it open, which is also what
 
 ### Shaping the lens
 
-`size` is the diameter, `feather` is how much of it fades at the edge, and
-`blur` is how far out of focus the rest of the text sits:
+`size` is the diameter, `feather` is how much of it fades at the edge, `blur`
+is how far out of focus the rest of the text sits, and `radius` rounds the
+frosted panel:
 
 ```tsx
-<LensText size={180} feather={0.2} blur={10}>
+<LensText size={180} feather={0.2} blur={10} radius="1em">
   A wide lens with a near-hard edge.
 </LensText>
 ```
@@ -92,7 +98,8 @@ to the pointer and snaps it open, which is also what
 `feather: 0` gives a hard cut, which reads as a hole in frosted glass.
 `feather: 1` falls off from the centre and reads as a soft wash. Push `blur`
 past about `12` and the resting text stops looking like words, which is the
-right call for a spoiler and the wrong one for a headline.
+right call for a spoiler and the wrong one for a headline. `radius` takes any
+CSS length, and in `em` it tracks whatever type size it is wrapped around.
 
 ### Magnifying
 
@@ -112,16 +119,17 @@ gives the pointer something to hold.
 
 ## Props
 
-| Prop        | Type      | Default | Description                                      |
-| ----------- | --------- | ------- | ------------------------------------------------ |
-| `blur`      | `number`  | `6`     | Blur radius of the resting text, in pixels.      |
-| `size`      | `number`  | `110`   | Diameter of the lens in pixels.                  |
-| `feather`   | `number`  | `0.5`   | How much of the lens edge fades out, `0` to `1`. |
-| `magnify`   | `number`  | `1`     | Scale under the lens. `1` is a flat window.      |
-| `follow`    | `number`  | `130`   | Ms the lens takes to catch up. `0` locks it.     |
-| `ring`      | `boolean` | `false` | Draw a hairline ring at the lens edge.           |
-| `disabled`  | `boolean` | `false` | Render the text sharp, with no lens.             |
-| `className` | `string`  | none    | Merged onto the wrapper. Type styles here.       |
+| Prop        | Type      | Default    | Description                                      |
+| ----------- | --------- | ---------- | ------------------------------------------------ |
+| `blur`      | `number`  | `8`        | Blur radius of the resting text, in pixels.      |
+| `size`      | `number`  | `110`      | Diameter of the lens in pixels.                  |
+| `feather`   | `number`  | `0.5`      | How much of the lens edge fades out, `0` to `1`. |
+| `magnify`   | `number`  | `1`        | Scale under the lens. `1` is a flat window.      |
+| `follow`    | `number`  | `130`      | Ms the lens takes to catch up. `0` locks it.     |
+| `radius`    | `string`  | `"0.35em"` | Corner radius of the frosted panel.              |
+| `ring`      | `boolean` | `false`    | Draw a hairline ring at the lens edge.           |
+| `disabled`  | `boolean` | `false`    | Render the text sharp, with no lens.             |
+| `className` | `string`  | none       | Merged onto the wrapper. Type styles here.       |
 
 Any other `<span>` prop is forwarded.
 

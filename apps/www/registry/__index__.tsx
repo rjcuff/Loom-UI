@@ -293,7 +293,7 @@ export const Index: Record<string, any> = {
     name: "lens-text-demo",
     type: "registry:example",
     title: "Lens Text Demo",
-    description: "A blurred paragraph read through a lens at the pointer.",
+    description: "A blurred headline pulled into focus under the pointer.",
     dependencies: [],
     registryDependencies: ["@loomui/lens-text"],
     files: [{"path":"registry/example/lens-text-demo.tsx","type":"registry:example","target":""}],

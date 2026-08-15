@@ -73,7 +73,7 @@ export const examples: Registry["items"] = [
     name: "lens-text-demo",
     type: "registry:example",
     title: "Lens Text Demo",
-    description: "A blurred paragraph read through a lens at the pointer.",
+    description: "A blurred headline pulled into focus under the pointer.",
     registryDependencies: ["@loomui/lens-text"],
     files: [
       {

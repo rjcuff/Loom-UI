@@ -704,6 +704,8 @@ export interface LensTextProps extends React.ComponentProps<"span"> {
   feather?: number
   /** Scale applied to the text under the lens. `1` is a plain focus window. */
   magnify?: number
+  /** Corner radius of the frosted panel. Any CSS length; `em` scales with the type. */
+  radius?: string
   /**
    * Milliseconds the lens takes to catch up to the pointer, and the pace it
    * opens and closes at. `0` locks it to the pointer.
@@ -724,6 +726,12 @@ const MOTION_QUERY = "(prefers-reduced-motion: reduce)"
 
 /** The lens opens slower than it tracks, or it pops on the way in. */
 const OPEN_FACTOR = 1.6
+
+/**
+ * Room for the blur to fall off inside the panel rather than at its edge.
+ * In `em` so it tracks the type it is wrapped around.
+ */
+const PANEL_PADDING = "0.28em 0.45em"
 
 function useMediaQuery(query: string, fallback: boolean) {
   // Server and first client paint agree on `fallback`; the effect corrects it
@@ -749,10 +757,11 @@ function clamp01(value: number) {
 export function LensText({
   children,
   className,
-  blur = 6,
+  blur = 8,
   size = 110,
   feather = 0.5,
   magnify = 1,
+  radius = "0.35em",
   follow = 130,
   ring = false,
   disabled = false,
@@ -765,7 +774,7 @@ export function LensText({
   const hasHover = useMediaQuery(HOVER_QUERY, true)
   const reduceMotion = useMediaQuery(MOTION_QUERY, false)
 
-  const radius = size / 2
+  const lensRadius = size / 2
   const tau = reduceMotion ? 0 : Math.max(follow, 0)
 
   // Everything the animation reads and writes lives in one ref. The lens runs
@@ -823,13 +832,13 @@ export function LensText({
         running.current = false
       }
 
-      write(radius === 0 ? 0 : clamp01(state.radius / radius))
+      write(lensRadius === 0 ? 0 : clamp01(state.radius / lensRadius))
 
       if (!settled) {
         frame.current = requestAnimationFrame(tick)
       }
     },
-    [radius, tau, write]
+    [lensRadius, tau, write]
   )
 
   // A single loop runs until the lens settles. Pointer events only move the
@@ -855,7 +864,7 @@ export function LensText({
       const state = lens.current
       state.targetX = event.clientX - rect.left
       state.targetY = event.clientY - rect.top
-      state.targetRadius = radius
+      state.targetRadius = lensRadius
 
       // On the way in the lens opens where the pointer already is. Sliding it
       // across from wherever it was left last time reads as a bug.
@@ -866,7 +875,7 @@ export function LensText({
 
       start()
     },
-    [radius, start]
+    [lensRadius, start]
   )
 
   const handleLeave = React.useCallback(() => {
@@ -920,22 +929,31 @@ export function LensText({
       {/* The blurred copy is the real text: filters are invisible to assistive
           technology, so the accessible name and the selection stay here. The
           lens is punched out of it, or the sharp copy would sit on top of a
-          blurred one and read as a halo. */}
+          blurred one and read as a halo.
+
+          The blur goes on the inner span and the panel does the clipping.
+          Blurring the panel itself would spread the glow past its own edges,
+          where the mask cuts it off square, and a pane of frosted glass with
+          four hard corners is the tell that this is two divs. */}
       <span
-        className="block [mask-image:var(--lens-hole)] [-webkit-mask-image:var(--lens-hole)]"
-        style={{ filter: `blur(${blur}px)` }}
+        className="block overflow-hidden [mask-image:var(--lens-hole)] [-webkit-mask-image:var(--lens-hole)]"
+        style={{ padding: PANEL_PADDING, borderRadius: radius }}
       >
-        {children}
+        <span className="block" style={{ filter: `blur(${blur}px)` }}>
+          {children}
+        </span>
       </span>
 
-      {/* The sharp copy is a duplicate clipped to the lens. `inset-0` inherits
-          the width of the copy above, so both wrap on the same words. Nothing
-          here fades: the lens radius is what animates, and both layers read it
-          from the same custom property, so the hole and the fill always agree. */}
+      {/* The sharp copy is a duplicate clipped to the lens. `inset-0` and the
+          same padding put it exactly over the blurred one, so both wrap on the
+          same words. Nothing here fades: the lens radius is what animates, and
+          both layers read it from the same custom property, so the hole and
+          the fill always agree. */}
       <span
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 block [mask-image:var(--lens)] select-none [-webkit-mask-image:var(--lens)]"
         style={{
+          padding: PANEL_PADDING,
           transform: magnify === 1 ? undefined : `scale(${magnify})`,
           transformOrigin: at,
         }}
@@ -970,24 +988,19 @@ import { LensText } from "@/registry/loomui/lens-text"
 
 export default function LensTextDemo() {
   return (
-    <div className="max-w-md text-center">
-      <p className="text-muted-foreground text-xs tracking-wide uppercase">
-        Spoiler
-      </p>
+    <div className="text-center">
       <LensText
         ring
-        size={120}
-        blur={7}
-        magnify={1.06}
+        size={130}
+        blur={8}
+        magnify={1.04}
         follow={150}
-        className="mt-3 text-base leading-relaxed font-medium text-balance"
+        className="text-5xl font-semibold tracking-tight sm:text-6xl"
       >
-        The lens is two copies of the same words. The one you can read is
-        clipped to a circle at the pointer, and the blurred one has that same
-        circle punched out of it.
+        Hover me
       </LensText>
-      <p className="text-muted-foreground mt-4 text-xs">
-        Move the pointer across the text
+      <p className="text-muted-foreground mt-6 text-xs">
+        Take the lens to the words
       </p>
     </div>
   )

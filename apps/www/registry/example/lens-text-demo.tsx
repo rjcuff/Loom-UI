@@ -2,24 +2,19 @@ import { LensText } from "@/registry/loomui/lens-text"
 
 export default function LensTextDemo() {
   return (
-    <div className="max-w-md text-center">
-      <p className="text-muted-foreground text-xs tracking-wide uppercase">
-        Spoiler
-      </p>
+    <div className="text-center">
       <LensText
         ring
-        size={120}
-        blur={7}
-        magnify={1.06}
+        size={130}
+        blur={8}
+        magnify={1.04}
         follow={150}
-        className="mt-3 text-base leading-relaxed font-medium text-balance"
+        className="text-5xl font-semibold tracking-tight sm:text-6xl"
       >
-        The lens is two copies of the same words. The one you can read is
-        clipped to a circle at the pointer, and the blurred one has that same
-        circle punched out of it.
+        Hover me
       </LensText>
-      <p className="text-muted-foreground mt-4 text-xs">
-        Move the pointer across the text
+      <p className="text-muted-foreground mt-6 text-xs">
+        Take the lens to the words
       </p>
     </div>
   )
