@@ -33,9 +33,17 @@ export function HoldButton({
   color = "color-mix(in oklch, var(--primary, currentColor) 22%, transparent)",
   disabled,
   style,
+  ref: forwardedRef,
   ...props
 }: HoldButtonProps) {
   const ref = React.useRef<HTMLButtonElement>(null)
+
+  // The button needs its own ref to write the fill to, so a caller's ref is
+  // pointed at the same node rather than replacing it.
+  React.useImperativeHandle(
+    forwardedRef,
+    () => ref.current as HTMLButtonElement
+  )
   const frame = React.useRef(0)
   const settle = React.useRef<ReturnType<typeof setTimeout>>(undefined)
   const [holding, setHolding] = React.useState(false)
