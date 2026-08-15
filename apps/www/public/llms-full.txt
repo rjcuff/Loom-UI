@@ -884,7 +884,12 @@ export function LensText({
 
   if (disabled || !hasHover) {
     return (
-      <span data-slot="lens-text" className={className} style={style} {...props}>
+      <span
+        data-slot="lens-text"
+        className={className}
+        style={style}
+        {...props}
+      >
         {children}
       </span>
     )
@@ -917,7 +922,7 @@ export function LensText({
           lens is punched out of it, or the sharp copy would sit on top of a
           blurred one and read as a halo. */}
       <span
-        className="block [-webkit-mask-image:var(--lens-hole)] [mask-image:var(--lens-hole)]"
+        className="block [mask-image:var(--lens-hole)] [-webkit-mask-image:var(--lens-hole)]"
         style={{ filter: `blur(${blur}px)` }}
       >
         {children}
@@ -929,7 +934,7 @@ export function LensText({
           from the same custom property, so the hole and the fill always agree. */}
       <span
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 block [-webkit-mask-image:var(--lens)] [mask-image:var(--lens)] select-none"
+        className="pointer-events-none absolute inset-0 block [mask-image:var(--lens)] select-none [-webkit-mask-image:var(--lens)]"
         style={{
           transform: magnify === 1 ? undefined : `scale(${magnify})`,
           transformOrigin: at,
