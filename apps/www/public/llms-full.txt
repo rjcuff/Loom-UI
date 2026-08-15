@@ -1180,10 +1180,14 @@ import { HoldButton } from "@/registry/loomui/hold-button"
 /** How long the confirmation sits there before the button is offered again. */
 const CONFIRM_MS = 1500
 /** Exits run shorter than entrances: leaving should not be dwelt on. */
-const EXIT_MS = 160
-const ENTER_MS = 220
-/** The incoming half waits for the outgoing one to clear out. */
-const ENTER_DELAY = 120
+const EXIT_MS = 180
+const ENTER_MS = 260
+/**
+ * The incoming half starts before the outgoing one is gone. A clean gap
+ * between them reads as a stall; an overlap reads as one thing becoming
+ * another.
+ */
+const ENTER_DELAY = 90
 
 /**
  * Both halves share one grid cell, so the swap never moves anything around
@@ -1224,66 +1228,56 @@ export default function HoldButtonDemo() {
   }
 
   return (
-    <div className="flex flex-col items-center gap-4">
-      <div className="grid place-items-center">
-        <span
-          className={`${SWAP} ${
-            done
-              ? "scale-[0.96] opacity-0"
-              : "scale-100 opacity-100 delay-[120ms]"
-          }`}
-          style={{ transitionDuration: `${done ? EXIT_MS : ENTER_MS}ms` }}
-        >
-          <HoldButton
-            ref={button}
-            duration={1100}
-            onHold={handleHold}
-            color="color-mix(in oklch, var(--destructive) 22%, transparent)"
-            className="text-destructive px-4 py-2 text-sm font-medium"
-            tabIndex={done ? -1 : undefined}
-            inert={done}
-          >
-            Hold to delete
-          </HoldButton>
-        </span>
-
-        <span
-          aria-hidden="true"
-          className={`${SWAP} text-muted-foreground pointer-events-none flex items-center gap-2 text-sm ${
-            done
-              ? "translate-y-0 scale-100 opacity-100 delay-[120ms]"
-              : "translate-y-1 scale-[0.96] opacity-0"
-          }`}
-          style={{ transitionDuration: `${done ? ENTER_MS : EXIT_MS}ms` }}
-        >
-          <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="text-accent size-4"
-          >
-            <path d="M20 6 9 17l-5-5" />
-          </svg>
-          Successfully deleted
-        </span>
-
-        {/* The visible confirmation is decoration on a swap; this is the part
-            a screen reader is told about, and only when it changes. */}
-        <span role="status" className="sr-only">
-          {done ? "Successfully deleted" : ""}
-        </span>
-      </div>
-
-      <p
-        className={`text-muted-foreground text-xs transition-opacity duration-200 ease-[var(--ease-out-quart)] motion-reduce:transition-none ${
-          done ? "opacity-0" : "opacity-100 delay-[120ms]"
+    <div className="grid place-items-center">
+      <span
+        className={`${SWAP} ${
+          done
+            ? "-translate-y-1 scale-[0.98] opacity-0"
+            : "translate-y-0 scale-100 opacity-100 delay-[90ms]"
         }`}
+        style={{ transitionDuration: `${done ? EXIT_MS : ENTER_MS}ms` }}
       >
-        Press and keep holding
-      </p>
+        <HoldButton
+          ref={button}
+          duration={1100}
+          onHold={handleHold}
+          color="color-mix(in oklch, var(--destructive) 22%, transparent)"
+          className="text-destructive px-4 py-2 text-sm font-medium"
+          tabIndex={done ? -1 : undefined}
+          inert={done}
+        >
+          Hold to delete
+        </HoldButton>
+      </span>
+
+      <span
+        aria-hidden="true"
+        className={`${SWAP} text-muted-foreground pointer-events-none flex items-center gap-2 text-sm ${
+          done
+            ? "translate-y-0 scale-100 opacity-100 delay-[90ms]"
+            : "translate-y-1.5 scale-[0.98] opacity-0"
+        }`}
+        style={{ transitionDuration: `${done ? ENTER_MS : EXIT_MS}ms` }}
+      >
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="text-accent size-4"
+        >
+          <path d="M20 6 9 17l-5-5" />
+        </svg>
+        Successfully deleted
+      </span>
+
+      {/* The visible confirmation is decoration on a swap; this is the part a
+          screen reader is told about, and only when it changes. */}
+      <span role="status" className="sr-only">
+        {done ? "Successfully deleted" : ""}
+      </span>
     </div>
   )
 }
