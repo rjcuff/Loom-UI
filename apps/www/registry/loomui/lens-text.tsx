@@ -27,8 +27,8 @@ export interface LensTextProps extends React.ComponentProps<"span"> {
 }
 
 /**
- * A hovering pointer is the only way to aim the lens, so anything else — touch,
- * pen, keyboard-only — gets the text sharp rather than never getting it at all.
+ * A hovering pointer is the only way to aim the lens, so anything else (touch,
+ * pen, keyboard-only) gets the text sharp rather than never getting it at all.
  */
 const HOVER_QUERY = "(hover: hover) and (pointer: fine)"
 const MOTION_QUERY = "(prefers-reduced-motion: reduce)"

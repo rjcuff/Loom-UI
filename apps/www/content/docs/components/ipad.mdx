@@ -79,7 +79,7 @@ whichever side is the width, so the bezel stays the same thickness in both.
 `width` is a maximum, not a fixed size. The frame fills the space it is given
 and stops there, so it never pushes a narrow screen sideways.
 
-Everything else — the rim, both corner radii, the camera — is a real device
+Everything else (the rim, both corner radii, the camera) is a real device
 point expressed as a share of the frame's own width, in container units. A
 percentage `border-radius` would go elliptical on a box this shape, and a scale
 factor worked out in JavaScript would be wrong the moment the frame had to
@@ -106,7 +106,7 @@ Any other `<div>` prop is forwarded. `children` fills the screen when there is
 no `src`.
 
 <Callout type="tip" title="Accessibility">
-  The rim and the camera are `aria-hidden` — they are a picture of a tablet, not
+  The rim and the camera are `aria-hidden`. They are a picture of a tablet, not
   content. Give `src` a real `alt` describing what is on the screen, or leave it
   empty when the screenshot is decoration beside copy that already says the same
   thing.

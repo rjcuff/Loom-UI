@@ -107,8 +107,8 @@ Under `prefers-reduced-motion` the turn is dropped and the faces swap instantly.
 
 | Prop              | Type                         | Default | Description                                       |
 | ----------------- | ---------------------------- | ------- | ------------------------------------------------- |
-| `front`           | `ReactNode`                  | —       | Face shown at rest. It sets the card's size.      |
-| `back`            | `ReactNode`                  | —       | Face shown once the card is turned.               |
+| `front`           | `ReactNode`                  | -       | Face shown at rest. It sets the card's size.      |
+| `back`            | `ReactNode`                  | -       | Face shown once the card is turned.               |
 | `flipped`         | `boolean`                    | none    | Drive the card yourself. Omit to let it own this. |
 | `defaultFlipped`  | `boolean`                    | `false` | Starting face when the card owns its state.       |
 | `onFlippedChange` | `(flipped: boolean) => void` | none    | Called with the face the card is turning to.      |

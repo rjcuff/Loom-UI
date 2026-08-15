@@ -1641,7 +1641,7 @@ export function HoldButton({
     >
       {/* The fill is the whole affordance: it is the only thing telling you how
           much longer to keep holding. It is a scale, not a width, so filling
-          the button costs no layout — and it is clipped by a wrapper rather
+          the button costs no layout, and it is clipped by a wrapper rather
           than rounded itself, or the scale would squash its own corners. */}
       <span
         aria-hidden="true"
@@ -1900,7 +1900,7 @@ const DEVICE_HEIGHT = 852
 
 /**
  * Every measurement is a share of the frame's own width. Container units keep
- * that share exact at any size — a percentage border-radius would go elliptical
+ * that share exact at any size. A percentage border-radius would go elliptical
  * on a box this tall, and a scale factor worked out in JS would be wrong the
  * moment the frame had to shrink to fit.
  */
@@ -2037,8 +2037,8 @@ export interface LensTextProps extends React.ComponentProps<"span"> {
 }
 
 /**
- * A hovering pointer is the only way to aim the lens, so anything else — touch,
- * pen, keyboard-only — gets the text sharp rather than never getting it at all.
+ * A hovering pointer is the only way to aim the lens, so anything else (touch,
+ * pen, keyboard-only) gets the text sharp rather than never getting it at all.
  */
 const HOVER_QUERY = "(hover: hover) and (pointer: fine)"
 const MOTION_QUERY = "(prefers-reduced-motion: reduce)"
@@ -4593,7 +4593,7 @@ export function TicketStub({
 
   // Everything the edge is made of lives out here. A `box-shadow` or a `border`
   // on the masked element is cut away with the paper, which leaves the notches
-  // unoutlined — and on a dark background an edge drawn only in shadow is not
+  // unoutlined, and on a dark background an edge drawn only in shadow is not
   // an edge at all. Four offset drop shadows trace the alpha instead, so the
   // outline follows the curve of every bite.
   const edge = [

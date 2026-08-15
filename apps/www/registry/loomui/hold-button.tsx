@@ -219,7 +219,7 @@ export function HoldButton({
     >
       {/* The fill is the whole affordance: it is the only thing telling you how
           much longer to keep holding. It is a scale, not a width, so filling
-          the button costs no layout — and it is clipped by a wrapper rather
+          the button costs no layout, and it is clipped by a wrapper rather
           than rounded itself, or the scale would squash its own corners. */}
       <span
         aria-hidden="true"

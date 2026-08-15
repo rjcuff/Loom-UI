@@ -52,7 +52,7 @@ import { TicketStub } from "@/components/ui/ticket-stub"
 ```
 
 `children` is the ticket and `stub` is the part that tears off. Both are your
-own markup — the component supplies the paper, not the layout.
+own markup. The component supplies the paper, not the layout.
 
 ### The notches
 
@@ -93,7 +93,7 @@ top to bottom. `vertical` is a tall one with the stub below and the tear
 running across. The notches and the perforation both follow.
 
 `lift={false}` drops the hover, which is a small rise and a fraction of a
-degree of rotation — enough to read as paper, not enough to read as a card
+degree of rotation, enough to read as paper, not enough to read as a card
 game.
 
 ## Props
@@ -111,6 +111,6 @@ Any other `<div>` prop is forwarded.
 
 <Callout type="tip" title="Accessibility">
   The perforation is `aria-hidden` and the mask only removes paper, never
-  content — but it does remove paper, so keep text clear of the notches or it
+  content, but it does remove paper, so keep text clear of the notches or it
   will be clipped along with them.
 </Callout>

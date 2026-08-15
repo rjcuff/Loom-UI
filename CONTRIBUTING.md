@@ -32,7 +32,7 @@ line up under one kebab-case name.
 
 - **Default** export, because the preview renders it generically.
 - Import the component through `@/registry/loomui/<name>`. The dependency sync
-  script reads that import; it is how the manifest stays correct.
+  script reads that import. It is how the manifest stays correct.
 - Keep it to the one idea the component is for.
 
 ### 3. The manifests

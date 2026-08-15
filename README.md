@@ -25,10 +25,10 @@ registry:
 npx shadcn@latest add @loomui/weave-text
 ```
 
-You own the file from that moment on. Edit it, delete it, rename it — nothing
+You own the file from that moment on. Edit it, delete it, rename it. Nothing
 upstream breaks.
 
-Every component below installs the same way — swap `weave-text` for its name.
+Every component below installs the same way. Swap `weave-text` for its name.
 
 ## Components
 
@@ -167,7 +167,7 @@ These are committed and checked for drift in CI. **Never edit them by hand.**
 
 ## Contributing
 
-Issues and pull requests are welcome — see [CONTRIBUTING.md](CONTRIBUTING.md).
+Issues and pull requests are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md).
 If Loom UI is useful to you, a star helps other people find it.
 
 ## License

@@ -78,9 +78,9 @@ and weaves them in when the row scrolls into view.
 ### Why it reads as woven
 
 One thread runs behind the whole row. Every other logo carries a background,
-which hides the thread where it crosses; the rest are transparent, so the
-thread runs straight through them. That alternation is the interlacing — over,
-under, over — rather than a row of logos sitting on a line.
+which hides the thread where it crosses. The rest are transparent, so the
+thread runs straight through them. That alternation is the interlacing (over,
+under, over) rather than a row of logos sitting on a line.
 
 The pass a logo takes is also the direction it arrives from, so the row laces
 itself together as it lands instead of dropping in from one side.
@@ -124,6 +124,6 @@ Any other `<div>` prop is forwarded.
 
 <Callout type="tip" title="Accessibility">
   The thread is `aria-hidden`. The logos are your own markup, so give an `img`
-  an `alt` and an inline `svg` a `title` — nothing here supplies a name for
-  them. Reduced motion shows the row rather than leaving it waiting on a scroll.
+  an `alt` and an inline `svg` a `title`. Nothing here supplies a name for them.
+  Reduced motion shows the row rather than leaving it waiting on a scroll.
 </Callout>

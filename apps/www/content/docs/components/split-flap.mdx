@@ -86,7 +86,7 @@ is to wherever it is going, so nothing ever jumps.
 
 Each cell is four halves. Two are settled: the top already carries the new
 glyph and the bottom still carries the old one. The other two are the flap
-itself, hinged on the seam across the middle — the outgoing face falls away
+itself, hinged on the seam across the middle. The outgoing face falls away
 from it, then the incoming face swings down onto it.
 
 The seam is not decoration. Without a visible hinge the turn reads as a fade
@@ -101,7 +101,7 @@ a crossfade.
 
 `interval` is the milliseconds a single flap takes, and also the gap between
 flaps, so a cell mid-run never shows a still frame. `stagger` is how many flaps
-of head start each cell hands to the one after it — the ripple down the board.
+of head start each cell hands to the one after it, the ripple down the board.
 
 Longer words take longer, because a cell only ever moves forward through the
 charset. Landing on `A` from `Z` means walking the whole set, which is exactly

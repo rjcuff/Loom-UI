@@ -38,7 +38,7 @@ export function TicketStub({
 
   // Everything the edge is made of lives out here. A `box-shadow` or a `border`
   // on the masked element is cut away with the paper, which leaves the notches
-  // unoutlined — and on a dark background an edge drawn only in shadow is not
+  // unoutlined, and on a dark background an edge drawn only in shadow is not
   // an edge at all. Four offset drop shadows trace the alpha instead, so the
   // outline follows the curve of every bite.
   const edge = [

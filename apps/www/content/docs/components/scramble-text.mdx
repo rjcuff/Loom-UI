@@ -61,16 +61,16 @@ Set the pool to change the character of the noise:
 
 ## Props
 
-| Prop         | Type                           | Default    | Description                                    |
-| ------------ | ------------------------------ | ---------- | ---------------------------------------------- |
-| `text`       | `string`                       | required   | The string the run resolves to.                |
-| `characters` | `string`                       | `A–Z 0–9…` | Glyphs drawn in an unresolved slot.            |
-| `speed`      | `number`                       | `45`       | Milliseconds per scramble frame.               |
-| `cycles`     | `number`                       | `8`        | Frames a slot scrambles before it settles.     |
-| `stagger`    | `number`                       | `2`        | Frames between one slot settling and the next. |
-| `trigger`    | `"mount" \| "view" \| "hover"` | `"mount"`  | What starts a run.                             |
-| `disabled`   | `boolean`                      | `false`    | Render the finished text with no scramble.     |
-| `className`  | `string`                       | none       | Merged onto the wrapper.                       |
+| Prop         | Type                           | Default   | Description                                    |
+| ------------ | ------------------------------ | --------- | ---------------------------------------------- |
+| `text`       | `string`                       | required  | The string the run resolves to.                |
+| `characters` | `string`                       | `A-Z 0-9` | Glyphs drawn in an unresolved slot.            |
+| `speed`      | `number`                       | `45`      | Milliseconds per scramble frame.               |
+| `cycles`     | `number`                       | `8`       | Frames a slot scrambles before it settles.     |
+| `stagger`    | `number`                       | `2`       | Frames between one slot settling and the next. |
+| `trigger`    | `"mount" \| "view" \| "hover"` | `"mount"` | What starts a run.                             |
+| `disabled`   | `boolean`                      | `false`   | Render the finished text with no scramble.     |
+| `className`  | `string`                       | none      | Merged onto the wrapper.                       |
 
 Any other `<span>` prop is forwarded.
 

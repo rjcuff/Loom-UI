@@ -73,10 +73,10 @@ Anything inside is clipped to the screen's radius and sits under the island.
 ```
 
 `width` is the only measurement you set, and it is a maximum rather than a
-fixed size — the frame fills the space it is given and stops there, so it never
+fixed size. The frame fills the space it is given and stops there, so it never
 pushes a narrow screen sideways.
 
-Everything else — the rim, both corner radii, the island, the four buttons — is
+Everything else (the rim, both corner radii, the island, the four buttons) is
 a real device point expressed as a share of the frame's own width, in container
 units. That keeps the proportions exact at whatever width the frame ends up:
 a percentage `border-radius` would go elliptical on a box this tall, and a
@@ -84,14 +84,14 @@ scale factor worked out in JavaScript would be wrong the moment the frame had
 to shrink to fit.
 
 The rim is a gradient rather than a flat fill. A solid band the same colour all
-the way round reads as a border; a gradient reads as metal catching light on
+the way round reads as a border. A gradient reads as metal catching light on
 one side.
 
 ```tsx
 <IPhone island={false} buttons={false} />
 ```
 
-Turn either off for a cleaner shape — useful when the frame is small enough
+Turn either off for a cleaner shape, useful when the frame is small enough
 that the detail becomes noise.
 
 The component is not client-side. There is no state and no listener, so it
@@ -112,7 +112,7 @@ Any other `<div>` prop is forwarded. `children` fills the screen when there is
 no `src`.
 
 <Callout type="tip" title="Accessibility">
-  The rim, the island and the buttons are all `aria-hidden` — they are a picture
+  The rim, the island and the buttons are all `aria-hidden`. They are a picture
   of a phone, not content. Give `src` a real `alt` describing what is on the
   screen, or leave it empty when the screenshot is decoration beside copy that
   already says the same thing.

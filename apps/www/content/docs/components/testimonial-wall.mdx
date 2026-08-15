@@ -80,7 +80,7 @@ a wall of uneven cards still balances out rather than leaving one column short.
 
 Every other column runs the other way, and each column gets its own duration, so
 no two neighbouring cards ever travel together. Cards moving in lockstep read as
-one sliding sheet; cards moving against each other read as a wall with things
+one sliding sheet. Cards moving against each other read as a wall with things
 happening on it.
 
 ```tsx
@@ -130,7 +130,7 @@ than stopping mid-travel with half a card cut off.
 Any other `<div>` prop is forwarded.
 
 <Callout type="tip" title="Accessibility">
-  Only the first copy of each column is read; the duplicate that makes the loop
+  Only the first copy of each column is read. The duplicate that makes the loop
   seamless is `aria-hidden`, so no quote is announced twice. `pauseOnHover` is
   on by default, which is what makes a quote readable at all without chasing it.
 </Callout>

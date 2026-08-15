@@ -21,7 +21,7 @@ const DEVICE_HEIGHT = 852
 
 /**
  * Every measurement is a share of the frame's own width. Container units keep
- * that share exact at any size — a percentage border-radius would go elliptical
+ * that share exact at any size. A percentage border-radius would go elliptical
  * on a box this tall, and a scale factor worked out in JS would be wrong the
  * moment the frame had to shrink to fit.
  */

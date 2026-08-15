@@ -87,7 +87,7 @@ const [value, setValue] = React.useState("text")
 <ElasticTabs items={items} value={value} onValueChange={setValue} />
 ```
 
-Leave `value` out and the group owns the selection; `defaultValue` sets where
+Leave `value` out and the group owns the selection. `defaultValue` sets where
 it starts, falling back to the first item.
 
 Under `prefers-reduced-motion` the pill is placed without travelling, so the
@@ -109,6 +109,6 @@ Any other `<div>` prop is forwarded.
 <Callout type="tip" title="Accessibility">
   A real `role="tablist"` of `role="tab"` buttons with `aria-selected`. Only the
   selected tab is in the tab order and the arrows move between them, with
-  selection carrying focus — the roving pattern a tablist is meant to use. The
+  selection carrying focus, the roving pattern a tablist is meant to use. The
   pill is `aria-hidden`, so nothing about it is announced.
 </Callout>

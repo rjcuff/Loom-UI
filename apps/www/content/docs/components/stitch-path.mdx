@@ -59,7 +59,7 @@ or anywhere above it is enough.
 
 The visible path carries a dash pattern, because that is what makes it read as
 stitches rather than a line. Wiping a dashed path with its own dash offset is
-not possible — the two want the same property — so the reveal is a second copy
+not possible (the two want the same property), so the reveal is a second copy
 of the path, stroked solid and wiped, used as a mask.
 
 `pathLength="1"` normalises the path, so the offset is simply the fraction left
@@ -85,7 +85,7 @@ has cleared the top.
 <StitchPath target={sectionRef} />
 ```
 
-Pass `target` to follow a different element — a whole section, usually, so a
+Pass `target` to follow a different element, a whole section usually, so a
 short seam is paced by the copy beside it rather than by its own height.
 
 ```tsx
@@ -102,7 +102,7 @@ attached.
 ```
 
 Path data is in a `0 0 100 100` box. Because the box stretches, a straight line
-stays straight and a curve keeps its shape only in proportion — draw the shape
+stays straight and a curve keeps its shape only in proportion. Draw the shape
 you want at the aspect ratio you plan to use.
 
 Under `prefers-reduced-motion` the seam is drawn complete and no listener runs.

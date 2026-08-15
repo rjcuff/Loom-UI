@@ -76,7 +76,7 @@ the cut and the crease never splits.
 <StickerPeel size="3rem" duration={380} corner="top-right" />
 ```
 
-`size` is how far the corner lifts. `corner` picks which one — each corner
+`size` is how far the corner lifts. `corner` picks which one. Each corner
 carries its own cut, its own flap and its own gradient direction, so the light
 always falls away from the crease.
 
@@ -106,7 +106,7 @@ than travelling.
 Any other `<div>` prop is forwarded.
 
 <Callout type="tip" title="Accessibility">
-  The flap is `aria-hidden` — it is paper, not content. Nothing is hidden by the
+  The flap is `aria-hidden`. It is paper, not content. Nothing is hidden by the
   cut either: the corner that is clipped away is empty by design, so put your
   content where the peel will not reach it.
 </Callout>

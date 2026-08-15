@@ -68,11 +68,11 @@ housing.
 ### The parts that name it
 
 Two details do the work. The camera housing is bezel that intrudes into the
-display, so it is drawn over the screen rather than around it — cutting a hole
+display, so it is drawn over the screen rather than around it, cutting a hole
 in the frame instead puts a step in the bezel that no machine has.
 
 The base is a little wider than the lid, with a shallow scoop in its front
-edge. Without the overhang the lid reads as floating above a bar; with it, the
+edge. Without the overhang the lid reads as floating above a bar. With it, the
 machine is standing on something.
 
 ```tsx
@@ -88,8 +88,8 @@ gap under it.
 `width` is a maximum, not a fixed size. The frame fills the space it is given
 and stops there, so it never pushes a narrow screen sideways.
 
-Everything else — the lid, both corner radii, the housing, the base, the
-scoop — is a real device point expressed as a share of the whole machine's
+Everything else (the lid, both corner radii, the housing, the base, the
+scoop) is a real device point expressed as a share of the whole machine's
 width, in container units. That keeps the lid and the base in step with each
 other at any size, which a scale factor worked out in JavaScript would not once
 the frame had to shrink to fit.
@@ -112,8 +112,8 @@ Any other `<div>` prop is forwarded. `children` fills the screen when there is
 no `src`.
 
 <Callout type="tip" title="Accessibility">
-  The lid, the housing and the base are all `aria-hidden` — they are a picture
-  of a laptop, not content. Give `src` a real `alt` describing what is on the
+  The lid, the housing and the base are all `aria-hidden`. They are a picture of
+  a laptop, not content. Give `src` a real `alt` describing what is on the
   screen, or leave it empty when the screenshot is decoration beside copy that
   already says the same thing.
 </Callout>
