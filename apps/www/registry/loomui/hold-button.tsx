@@ -16,9 +16,9 @@ export interface HoldButtonProps extends React.ComponentProps<"button"> {
 /** How long the fill takes to run back out when a hold is abandoned. */
 const RETURN_MS = 260
 /** How long a completed fill sits at full before it clears. */
-const SETTLE_MS = 600
+const SETTLE_MS = 200
 /** How long the completed fill takes to fade off. */
-const CLEAR_MS = 320
+const CLEAR_MS = 240
 
 /** Fast at first, then easing to a stop. The fill draining should feel let go of. */
 function easeOutCubic(t: number) {
