@@ -4,8 +4,8 @@ export const siteConfig = {
   /** Social share card in public/og.png. */
   ogImage: {
     url: "/og.png",
-    width: 1200,
-    height: 600,
+    width: 1731,
+    height: 909,
     alt: "Loom UI",
   },
   description:
