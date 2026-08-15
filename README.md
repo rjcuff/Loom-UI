@@ -32,7 +32,7 @@ Every component below installs the same way. Swap `weave-text` for its name.
 
 ## Components
 
-28 components, no runtime dependency on this project.
+30 components, no runtime dependency on this project.
 
 ### Text
 
@@ -56,13 +56,20 @@ Every component below installs the same way. Swap `weave-text` for its name.
 | [`aurora-backdrop`](https://loomui.design/docs/components/aurora-backdrop) | A wash of blurred colour that drifts behind content on cycles that never line up.    |
 | [`stitch-path`](https://loomui.design/docs/components/stitch-path)         | A running stitch sewn along an SVG path as the page scrolls, following its holes.    |
 
+### Buttons
+
+| Component                                                                  | What it does                                                                             |
+| --------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| [`hold-button`](https://loomui.design/docs/components/hold-button)         | A button that fires only after a deliberate press and hold, with a fill counting it out.  |
+| [`ripple-button`](https://loomui.design/docs/components/ripple-button)     | A circle sent out from wherever the button was pressed, sized to reach the furthest corner. |
+| [`confetti-button`](https://loomui.design/docs/components/confetti-button) | A handful of paper thrown into the air on press, each piece lobbed on its own arc.        |
+
 ### Interaction
 
 | Component                                                                      | What it does                                                                             |
 | ------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
 | [`tilt-card`](https://loomui.design/docs/components/tilt-card)                 | A surface that leans away from the pointer in 3D and settles back on leave.               |
 | [`flip-card`](https://loomui.design/docs/components/flip-card)                 | A card with two faces that turns in 3D when it is clicked, controlled or on its own.      |
-| [`hold-button`](https://loomui.design/docs/components/hold-button)             | A button that fires only after a deliberate press and hold, with a fill counting it out.  |
 | [`compare-slider`](https://loomui.design/docs/components/compare-slider)       | Two versions of the same frame, split by a divider you drag, or move with the arrow keys. |
 | [`sticker-peel`](https://loomui.design/docs/components/sticker-peel)           | A card whose corner lifts off the page on hover, folded back to show its backing.         |
 | [`elastic-tabs`](https://loomui.design/docs/components/elastic-tabs)           | A tab group whose pill stretches to cover both tabs before it contracts onto your pick.   |

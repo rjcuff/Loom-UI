@@ -90,6 +90,25 @@ export const docsConfig: DocsConfig = {
       ],
     },
     {
+      title: "Buttons",
+      items: [
+        {
+          title: "Hold Button",
+          href: "/docs/components/hold-button",
+        },
+        {
+          title: "Ripple Button",
+          href: "/docs/components/ripple-button",
+          badge: { text: "New", variant: "new" },
+        },
+        {
+          title: "Confetti Button",
+          href: "/docs/components/confetti-button",
+          badge: { text: "New", variant: "new" },
+        },
+      ],
+    },
+    {
       title: "Interaction",
       items: [
         {
@@ -99,10 +118,6 @@ export const docsConfig: DocsConfig = {
         {
           title: "Flip Card",
           href: "/docs/components/flip-card",
-        },
-        {
-          title: "Hold Button",
-          href: "/docs/components/hold-button",
         },
         {
           title: "Compare Slider",

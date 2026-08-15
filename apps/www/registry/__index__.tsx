@@ -229,6 +229,36 @@ export const Index: Record<string, any> = {
       return { default: mod.default ?? mod[exportName] }
     }),
   },
+  "ripple-button": {
+    name: "ripple-button",
+    type: "registry:ui",
+    title: "Ripple Button",
+    description: "A button that sends a circle out from wherever it was pressed, sized to reach the furthest corner.",
+    dependencies: [],
+    registryDependencies: ["utils"],
+    files: [{"path":"registry/loomui/ripple-button.tsx","type":"registry:ui","target":""}],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/loomui/ripple-button")
+      const exportName =
+        Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
+      return { default: mod.default ?? mod[exportName] }
+    }),
+  },
+  "confetti-button": {
+    name: "confetti-button",
+    type: "registry:ui",
+    title: "Confetti Button",
+    description: "A button that throws a handful of paper into the air on press, each piece lobbed on its own arc.",
+    dependencies: [],
+    registryDependencies: ["utils"],
+    files: [{"path":"registry/loomui/confetti-button.tsx","type":"registry:ui","target":""}],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/loomui/confetti-button")
+      const exportName =
+        Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
+      return { default: mod.default ?? mod[exportName] }
+    }),
+  },
   "elastic-tabs": {
     name: "elastic-tabs",
     type: "registry:ui",
@@ -644,6 +674,36 @@ export const Index: Record<string, any> = {
     files: [{"path":"registry/example/hold-button-demo.tsx","type":"registry:example","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/example/hold-button-demo")
+      const exportName =
+        Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
+      return { default: mod.default ?? mod[exportName] }
+    }),
+  },
+  "ripple-button-demo": {
+    name: "ripple-button-demo",
+    type: "registry:example",
+    title: "Ripple Button Demo",
+    description: "Three buttons, each pressed anywhere on its face.",
+    dependencies: [],
+    registryDependencies: ["@loomui/ripple-button"],
+    files: [{"path":"registry/example/ripple-button-demo.tsx","type":"registry:example","target":""}],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/example/ripple-button-demo")
+      const exportName =
+        Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
+      return { default: mod.default ?? mod[exportName] }
+    }),
+  },
+  "confetti-button-demo": {
+    name: "confetti-button-demo",
+    type: "registry:example",
+    title: "Confetti Button Demo",
+    description: "The same throw at three different sizes.",
+    dependencies: [],
+    registryDependencies: ["@loomui/confetti-button"],
+    files: [{"path":"registry/example/confetti-button-demo.tsx","type":"registry:example","target":""}],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/example/confetti-button-demo")
       const exportName =
         Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
       return { default: mod.default ?? mod[exportName] }

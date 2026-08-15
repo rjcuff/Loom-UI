@@ -1,0 +1,17 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "confetti-button-demo",
+  "type": "registry:example",
+  "title": "Confetti Button Demo",
+  "description": "The same throw at three different sizes.",
+  "registryDependencies": [
+    "@loomui/confetti-button"
+  ],
+  "files": [
+    {
+      "path": "registry/example/confetti-button-demo.tsx",
+      "content": "import { ConfettiButton } from \"@/registry/loomui/confetti-button\"\n\nexport default function ConfettiButtonDemo() {\n  return (\n    <div className=\"flex flex-wrap items-center justify-center gap-4\">\n      <ConfettiButton className=\"bg-primary text-primary-foreground rounded-md px-5 py-2.5 text-sm font-medium\">\n        Ship it\n      </ConfettiButton>\n\n      <ConfettiButton\n        count={34}\n        spread={140}\n        duration={1200}\n        className=\"border-border rounded-full border px-5 py-2.5 text-sm font-medium\"\n      >\n        Bigger party\n      </ConfettiButton>\n\n      <ConfettiButton\n        count={10}\n        spread={60}\n        colors={[\"#f472b6\", \"#c084fc\", \"#818cf8\"]}\n        className=\"bg-card text-card-foreground rounded-md border px-5 py-2.5 text-sm font-medium\"\n      >\n        Just a little\n      </ConfettiButton>\n    </div>\n  )\n}\n",
+      "type": "registry:example"
+    }
+  ]
+}

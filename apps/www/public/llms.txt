@@ -8,6 +8,7 @@ Install any component with `npx shadcn@latest add @loomui/<name>`.
 
 - [Aurora Backdrop](https://loomui.design/docs/components/aurora-backdrop): A wash of blurred colour that drifts behind content on cycles that never line up.
 - [Compare Slider](https://loomui.design/docs/components/compare-slider): Two versions of the same frame, split by a divider you drag, or move with the arrow keys.
+- [Confetti Button](https://loomui.design/docs/components/confetti-button): A button that throws a handful of paper into the air on press, each piece lobbed on its own arc.
 - [Count Up](https://loomui.design/docs/components/count-up): A number that counts to its value when it scrolls into view, without a render per frame.
 - [Elastic Tabs](https://loomui.design/docs/components/elastic-tabs): A tab group whose pill stretches to cover both tabs before it contracts onto the one you picked.
 - [Flip Card](https://loomui.design/docs/components/flip-card): A card with two faces that turns in 3D when it is clicked, controlled or on its own.
@@ -22,6 +23,7 @@ Install any component with `npx shadcn@latest add @loomui/<name>`.
 - [Magnetic](https://loomui.design/docs/components/magnetic): A wrapper that pulls its child toward the pointer as the pointer gets close.
 - [Marquee](https://loomui.design/docs/components/marquee): A seamless scrolling row or column, in either direction, that pauses on hover.
 - [Reading Progress](https://loomui.design/docs/components/reading-progress): A pinned bar that tracks how far through the page, or a chosen element, the reader is.
+- [Ripple Button](https://loomui.design/docs/components/ripple-button): A button that sends a circle out from wherever it was pressed, sized to reach the furthest corner.
 - [Scramble Text](https://loomui.design/docs/components/scramble-text): A string that resolves out of random glyphs, left to right, on mount, on scroll, or on hover.
 - [Split Flap](https://loomui.design/docs/components/split-flap): A departure board that flaps through its glyphs, one cell behind the last, until it lands on the value.
 - [Spotlight Card](https://loomui.design/docs/components/spotlight-card): A surface with a soft highlight that follows the pointer and fades out on leave.

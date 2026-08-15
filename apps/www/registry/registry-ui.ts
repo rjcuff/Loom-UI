@@ -377,6 +377,90 @@ export const ui: Registry["items"] = [
     },
   },
   {
+    name: "ripple-button",
+    type: "registry:ui",
+    title: "Ripple Button",
+    description:
+      "A button that sends a circle out from wherever it was pressed, sized to reach the furthest corner.",
+    registryDependencies: ["utils"],
+    files: [
+      {
+        path: "loomui/ripple-button.tsx",
+        type: "registry:ui",
+      },
+    ],
+    cssVars: {
+      theme: {
+        "ease-out-quart": EASE_OUT_QUART,
+        "animate-ripple-expand":
+          "ripple-expand var(--ripple-duration, 620ms) var(--ease-out-quart) forwards",
+      },
+    },
+    css: {
+      "@keyframes ripple-expand": {
+        from: {
+          transform: "scale(0)",
+          opacity: "1",
+        },
+        to: {
+          transform: "scale(1)",
+          opacity: "0",
+        },
+      },
+    },
+  },
+  {
+    name: "confetti-button",
+    type: "registry:ui",
+    title: "Confetti Button",
+    description:
+      "A button that throws a handful of paper into the air on press, each piece lobbed on its own arc.",
+    registryDependencies: ["utils"],
+    files: [
+      {
+        path: "loomui/confetti-button.tsx",
+        type: "registry:ui",
+      },
+    ],
+    cssVars: {
+      theme: {
+        "animate-confetti-drift":
+          "confetti-drift var(--confetti-duration, 900ms) linear forwards",
+        "animate-confetti-fall":
+          "confetti-fall var(--confetti-duration, 900ms) forwards",
+      },
+    },
+    css: {
+      "@keyframes confetti-drift": {
+        "0%": {
+          transform: "translateX(0)",
+          opacity: "1",
+        },
+        "70%": {
+          opacity: "1",
+        },
+        "100%": {
+          transform: "translateX(var(--drift, 0px))",
+          opacity: "0",
+        },
+      },
+      "@keyframes confetti-fall": {
+        "0%": {
+          transform: "translateY(0) rotate(0deg)",
+          "animation-timing-function": EASE_OUT_QUART,
+        },
+        "32%": {
+          transform:
+            "translateY(var(--rise, 0px)) rotate(calc(var(--spin, 0deg) * 0.3))",
+          "animation-timing-function": "cubic-bezier(0.55, 0.06, 0.68, 0.19)",
+        },
+        "100%": {
+          transform: "translateY(var(--fall, 0px)) rotate(var(--spin, 0deg))",
+        },
+      },
+    },
+  },
+  {
     name: "elastic-tabs",
     type: "registry:ui",
     title: "Elastic Tabs",

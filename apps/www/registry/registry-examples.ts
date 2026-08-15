@@ -201,6 +201,32 @@ export const examples: Registry["items"] = [
     ],
   },
   {
+    name: "ripple-button-demo",
+    type: "registry:example",
+    title: "Ripple Button Demo",
+    description: "Three buttons, each pressed anywhere on its face.",
+    registryDependencies: ["@loomui/ripple-button"],
+    files: [
+      {
+        path: "example/ripple-button-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "confetti-button-demo",
+    type: "registry:example",
+    title: "Confetti Button Demo",
+    description: "The same throw at three different sizes.",
+    registryDependencies: ["@loomui/confetti-button"],
+    files: [
+      {
+        path: "example/confetti-button-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "elastic-tabs-demo",
     type: "registry:example",
     title: "Elastic Tabs Demo",

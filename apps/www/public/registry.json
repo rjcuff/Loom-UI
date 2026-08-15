@@ -379,6 +379,88 @@
       }
     },
     {
+      "name": "ripple-button",
+      "type": "registry:ui",
+      "title": "Ripple Button",
+      "description": "A button that sends a circle out from wherever it was pressed, sized to reach the furthest corner.",
+      "registryDependencies": [
+        "utils"
+      ],
+      "files": [
+        {
+          "path": "registry/loomui/ripple-button.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "cssVars": {
+        "theme": {
+          "ease-out-quart": "cubic-bezier(0.165, 0.84, 0.44, 1)",
+          "animate-ripple-expand": "ripple-expand var(--ripple-duration, 620ms) var(--ease-out-quart) forwards"
+        }
+      },
+      "css": {
+        "@keyframes ripple-expand": {
+          "from": {
+            "transform": "scale(0)",
+            "opacity": "1"
+          },
+          "to": {
+            "transform": "scale(1)",
+            "opacity": "0"
+          }
+        }
+      }
+    },
+    {
+      "name": "confetti-button",
+      "type": "registry:ui",
+      "title": "Confetti Button",
+      "description": "A button that throws a handful of paper into the air on press, each piece lobbed on its own arc.",
+      "registryDependencies": [
+        "utils"
+      ],
+      "files": [
+        {
+          "path": "registry/loomui/confetti-button.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "cssVars": {
+        "theme": {
+          "animate-confetti-drift": "confetti-drift var(--confetti-duration, 900ms) linear forwards",
+          "animate-confetti-fall": "confetti-fall var(--confetti-duration, 900ms) forwards"
+        }
+      },
+      "css": {
+        "@keyframes confetti-drift": {
+          "0%": {
+            "transform": "translateX(0)",
+            "opacity": "1"
+          },
+          "70%": {
+            "opacity": "1"
+          },
+          "100%": {
+            "transform": "translateX(var(--drift, 0px))",
+            "opacity": "0"
+          }
+        },
+        "@keyframes confetti-fall": {
+          "0%": {
+            "transform": "translateY(0) rotate(0deg)",
+            "animation-timing-function": "cubic-bezier(0.165, 0.84, 0.44, 1)"
+          },
+          "32%": {
+            "transform": "translateY(var(--rise, 0px)) rotate(calc(var(--spin, 0deg) * 0.3))",
+            "animation-timing-function": "cubic-bezier(0.55, 0.06, 0.68, 0.19)"
+          },
+          "100%": {
+            "transform": "translateY(var(--fall, 0px)) rotate(var(--spin, 0deg))"
+          }
+        }
+      }
+    },
+    {
       "name": "elastic-tabs",
       "type": "registry:ui",
       "title": "Elastic Tabs",
@@ -884,6 +966,36 @@
       "files": [
         {
           "path": "registry/example/hold-button-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "ripple-button-demo",
+      "type": "registry:example",
+      "title": "Ripple Button Demo",
+      "description": "Three buttons, each pressed anywhere on its face.",
+      "registryDependencies": [
+        "@loomui/ripple-button"
+      ],
+      "files": [
+        {
+          "path": "registry/example/ripple-button-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "confetti-button-demo",
+      "type": "registry:example",
+      "title": "Confetti Button Demo",
+      "description": "The same throw at three different sizes.",
+      "registryDependencies": [
+        "@loomui/confetti-button"
+      ],
+      "files": [
+        {
+          "path": "registry/example/confetti-button-demo.tsx",
           "type": "registry:example"
         }
       ]

@@ -1,0 +1,158 @@
+---
+title: Confetti Button
+date: 2026-08-15
+description: A button that throws a handful of paper into the air on press, each piece lobbed on its own arc.
+---
+
+<ComponentPreview name="confetti-button-demo" />
+
+## Installation
+
+<Tabs defaultValue="cli">
+
+<TabsList>
+  <TabsTrigger value="cli">CLI</TabsTrigger>
+  <TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @loomui/confetti-button
+```
+
+</TabsContent>
+
+<TabsContent value="manual">
+
+<Steps>
+
+<Step>Copy the component into your project.</Step>
+
+<ComponentSource name="confetti-button" />
+
+<Step>Add the tokens and keyframes to your global stylesheet.</Step>
+
+```css title="app/globals.css"
+@theme {
+  --animate-confetti-drift: confetti-drift var(--confetti-duration, 900ms)
+    linear forwards;
+  --animate-confetti-fall: confetti-fall var(--confetti-duration, 900ms)
+    forwards;
+}
+
+@keyframes confetti-drift {
+  0% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  70% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(var(--drift, 0px));
+    opacity: 0;
+  }
+}
+
+@keyframes confetti-fall {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    animation-timing-function: cubic-bezier(0.165, 0.84, 0.44, 1);
+  }
+  32% {
+    transform: translateY(var(--rise, 0px))
+      rotate(calc(var(--spin, 0deg) * 0.3));
+    animation-timing-function: cubic-bezier(0.55, 0.06, 0.68, 0.19);
+  }
+  100% {
+    transform: translateY(var(--fall, 0px)) rotate(var(--spin, 0deg));
+  }
+}
+```
+
+<Step>Update the import paths to match your setup.</Step>
+
+</Steps>
+
+</TabsContent>
+
+</Tabs>
+
+## Usage
+
+```tsx
+import { ConfettiButton } from "@/components/ui/confetti-button"
+```
+
+```tsx
+<ConfettiButton onClick={() => publish()} className="rounded-md px-5 py-2.5">
+  Ship it
+</ConfettiButton>
+```
+
+Confetti belongs on the one press in a session that is worth marking. Put it on
+a save button people hit forty times a day and it stops meaning anything by the
+fourth.
+
+Each piece is two nested spans, because a lob is two motions running on two
+different clocks. The outer span drifts sideways at a constant rate. The inner
+one rises, slows, turns over and falls, and spins the whole way. A single
+element can only ever travel in a straight line between its two keyframes, and
+a straight line reads as a spark rather than paper.
+
+The arc comes from `animation-timing-function` set inside the keyframes rather
+than on the animation. The rise is eased out so it runs out of momentum at the
+top, and the fall is eased in so gravity takes it. One timing function across
+the whole animation gives you a shape that goes up and down at the same rate,
+which nothing in the world does.
+
+Pieces are thrown in a fan across the top, never downward. A piece that starts
+by heading for the floor reads as something leaking out of the button. Sizes,
+colours, angles, spin and the mix of chips and dots are all rolled per piece,
+so two presses never produce the same burst.
+
+The layer holding the pieces is pinned to the middle of the button and is not
+clipped by it, so the throw carries past the edge. That layer is zero-sized and
+`pointer-events-none`, so it never covers the thing it was thrown from.
+
+### Sizing a burst
+
+```tsx
+<ConfettiButton count={34} spread={140} duration={1200}>
+  Bigger party
+</ConfettiButton>
+```
+
+`count` past about `40` stops reading as individual pieces and starts reading as
+a cloud, and it is that many elements animating at once. `spread` is how far
+the furthest piece travels sideways, so it wants to be in proportion to the
+button rather than fixed. `duration` past about `1400`ms leaves paper hanging
+in the air long after the press it was celebrating.
+
+```tsx
+<ConfettiButton colors={["#f472b6", "#c084fc", "#818cf8"]} count={10}>
+  Just a little
+</ConfettiButton>
+```
+
+## Props
+
+| Prop        | Type       | Default      | Description                                    |
+| ----------- | ---------- | ------------ | ---------------------------------------------- |
+| `count`     | `number`   | `18`         | Pieces thrown by one press.                    |
+| `duration`  | `number`   | `900`        | Milliseconds a piece stays in the air.         |
+| `spread`    | `number`   | `90`         | Furthest a piece travels sideways, in pixels.  |
+| `colors`    | `string[]` | loom palette | Colours a piece is picked from.                |
+| `disabled`  | `boolean`  | `false`      | Ignore presses and throw nothing.              |
+| `className` | `string`   | none         | Merged onto the button. Padding and type here. |
+
+Any other `<button>` prop is forwarded.
+
+<Callout type="tip" title="Accessibility">
+  The paper is `aria-hidden` decoration on top of a real `<button>`, so a screen
+  reader is told about the action and not the celebration. Under
+  `prefers-reduced-motion` nothing is thrown at all and `onClick` still fires,
+  because the button's job is the click and the confetti is a reward for it.
+  Every burst clears itself, and pending timers are cancelled on unmount.
+</Callout>

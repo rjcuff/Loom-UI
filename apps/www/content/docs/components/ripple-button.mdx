@@ -1,0 +1,127 @@
+---
+title: Ripple Button
+date: 2026-08-15
+description: A button that sends a circle out from wherever it was pressed, sized to reach the furthest corner.
+---
+
+<ComponentPreview name="ripple-button-demo" />
+
+## Installation
+
+<Tabs defaultValue="cli">
+
+<TabsList>
+  <TabsTrigger value="cli">CLI</TabsTrigger>
+  <TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @loomui/ripple-button
+```
+
+</TabsContent>
+
+<TabsContent value="manual">
+
+<Steps>
+
+<Step>Copy the component into your project.</Step>
+
+<ComponentSource name="ripple-button" />
+
+<Step>Add the tokens and keyframes to your global stylesheet.</Step>
+
+```css title="app/globals.css"
+@theme {
+  --ease-out-quart: cubic-bezier(0.165, 0.84, 0.44, 1);
+  --animate-ripple-expand: ripple-expand var(--ripple-duration, 620ms)
+    var(--ease-out-quart) forwards;
+}
+
+@keyframes ripple-expand {
+  from {
+    transform: scale(0);
+    opacity: 1;
+  }
+  to {
+    transform: scale(1);
+    opacity: 0;
+  }
+}
+```
+
+<Step>Update the import paths to match your setup.</Step>
+
+</Steps>
+
+</TabsContent>
+
+</Tabs>
+
+## Usage
+
+```tsx
+import { RippleButton } from "@/components/ui/ripple-button"
+```
+
+```tsx
+<RippleButton className="rounded-md px-5 py-2.5 text-sm">Press me</RippleButton>
+```
+
+A ripple is feedback about where the press landed, not decoration, so it starts
+at the pointer rather than the middle of the button. Starting it in the middle
+every time throws away the only information the effect carries.
+
+Each circle is sized from the press point to the furthest corner, which is why
+a press near an edge throws a bigger circle than one in the middle. Both finish
+covering the button, and both finish at the same moment, so the button never
+looks like it was pressed harder in one place than another.
+
+The circle is a `scale` on an absolutely positioned layer sitting behind the
+label at `-z-10`. Scaling costs a composited layer and nothing else, where
+growing a width would relayout the button on every frame of every press.
+
+Ripples are kept in state and dropped on `animationend` rather than on a timer,
+so a tab that is backgrounded mid-press does not leave one behind. Presses
+stack, so a fast series of clicks overlaps instead of cutting the last one off.
+
+### Colour and pace
+
+```tsx
+<RippleButton
+  color="color-mix(in oklch, var(--accent) 30%, transparent)"
+  duration={900}
+>
+  Slower, tinted
+</RippleButton>
+```
+
+`color` defaults to 22% of `currentColor`, which means a ripple picks up the
+button's own text colour and works on a dark face and a light one without being
+told which it is on. Keep whatever you replace it with translucent. The circle
+passes under the label, and a solid one takes the label with it.
+
+Under about `300`ms the ripple is gone before the eye finds it. Past about
+`1000`ms it is still crossing when the next press arrives. `620` is the default
+because it reads as a response to the press rather than an animation about it.
+
+## Props
+
+| Prop        | Type      | Default            | Description                                      |
+| ----------- | --------- | ------------------ | ------------------------------------------------ |
+| `duration`  | `number`  | `620`              | Milliseconds one ripple takes to cross and fade. |
+| `color`     | `string`  | 22% `currentColor` | Fill of the circle.                              |
+| `disabled`  | `boolean` | `false`            | Ignore presses and throw no ripple.              |
+| `className` | `string`  | none               | Merged onto the button. Padding and type here.   |
+
+Any other `<button>` prop is forwarded.
+
+<Callout type="tip" title="Accessibility">
+  Enter and Space throw a ripple from the middle of the button, so a keyboard
+  press gets the same acknowledgement a pointer press does instead of silence.
+  Held keys repeat, and repeats are ignored, so one press is one ripple. The
+  circles are `aria-hidden` decoration on top of a real `<button>`, and
+  `prefers-reduced-motion` skips them without touching the click.
+</Callout>
