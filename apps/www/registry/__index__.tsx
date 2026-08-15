@@ -79,6 +79,21 @@ export const Index: Record<string, any> = {
       return { default: mod.default ?? mod[exportName] }
     }),
   },
+  "lens-text": {
+    name: "lens-text",
+    type: "registry:ui",
+    title: "Lens Text",
+    description: "Text held out of focus until the pointer passes over it like a magnifying glass.",
+    dependencies: [],
+    registryDependencies: ["utils"],
+    files: [{"path":"registry/loomui/lens-text.tsx","type":"registry:ui","target":""}],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/loomui/lens-text")
+      const exportName =
+        Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
+      return { default: mod.default ?? mod[exportName] }
+    }),
+  },
   "grid-backdrop": {
     name: "grid-backdrop",
     type: "registry:ui",
@@ -269,6 +284,21 @@ export const Index: Record<string, any> = {
     files: [{"path":"registry/example/count-up-demo.tsx","type":"registry:example","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/example/count-up-demo")
+      const exportName =
+        Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
+      return { default: mod.default ?? mod[exportName] }
+    }),
+  },
+  "lens-text-demo": {
+    name: "lens-text-demo",
+    type: "registry:example",
+    title: "Lens Text Demo",
+    description: "A blurred paragraph read through a lens at the pointer.",
+    dependencies: [],
+    registryDependencies: ["@loomui/lens-text"],
+    files: [{"path":"registry/example/lens-text-demo.tsx","type":"registry:example","target":""}],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/example/lens-text-demo")
       const exportName =
         Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
       return { default: mod.default ?? mod[exportName] }

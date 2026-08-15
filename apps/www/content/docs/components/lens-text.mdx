@@ -1,0 +1,136 @@
+---
+title: Lens Text
+date: 2026-08-14
+description: Text held out of focus until the pointer passes over it like a magnifying glass.
+---
+
+<ComponentPreview name="lens-text-demo" />
+
+## Installation
+
+<Tabs defaultValue="cli">
+
+<TabsList>
+  <TabsTrigger value="cli">CLI</TabsTrigger>
+  <TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @loomui/lens-text
+```
+
+</TabsContent>
+
+<TabsContent value="manual">
+
+<Steps>
+
+<Step>Copy the component into your project.</Step>
+
+<ComponentSource name="lens-text" />
+
+<Step>Update the import paths to match your setup.</Step>
+
+</Steps>
+
+</TabsContent>
+
+</Tabs>
+
+## Usage
+
+```tsx
+import { LensText } from "@/components/ui/lens-text"
+```
+
+```tsx
+<LensText>He was dead the whole time.</LensText>
+```
+
+Two copies of the same words sit on top of each other. The bottom one is
+blurred and is the real text: filters are invisible to assistive technology, so
+the accessible name, the selection and the copy-paste all stay there. The top
+one is sharp, `aria-hidden`, and masked down to a circle at the pointer.
+
+That same circle is punched out of the blurred copy. Without the hole the sharp
+glyphs would sit on a blurred set of glyphs and read as a halo rather than as
+focus.
+
+Position and radius are written to CSS custom properties from a single
+`requestAnimationFrame` loop, never to React state. Moving the mouse across a
+paragraph costs zero renders.
+
+### Weight and pace
+
+`follow` is the time constant of that loop, in milliseconds. The lens eases
+toward the pointer instead of being pinned to it, and it opens and closes on
+the same clock at a slightly slower rate, so it reads as a piece of glass being
+moved rather than a mask being toggled:
+
+```tsx
+<LensText follow={220}>Slow, heavy glass.</LensText>
+```
+
+Around `130` feels attached to the pointer. Past `250` the lens starts
+trailing far enough behind that aiming it becomes work. `follow={0}` locks it
+to the pointer and snaps it open, which is also what
+`prefers-reduced-motion: reduce` does.
+
+### Shaping the lens
+
+`size` is the diameter, `feather` is how much of it fades at the edge, and
+`blur` is how far out of focus the rest of the text sits:
+
+```tsx
+<LensText size={180} feather={0.2} blur={10}>
+  A wide lens with a near-hard edge.
+</LensText>
+```
+
+`feather: 0` gives a hard cut, which reads as a hole in frosted glass.
+`feather: 1` falls off from the centre and reads as a soft wash. Push `blur`
+past about `12` and the resting text stops looking like words, which is the
+right call for a spoiler and the wrong one for a headline.
+
+### Magnifying
+
+`magnify` scales the text under the lens, anchored to the pointer, so the lens
+reads as glass with a curve rather than a window:
+
+```tsx
+<LensText ring magnify={1.08}>
+  Held at arm's length.
+</LensText>
+```
+
+Keep it under about `1.1`. Past that the magnified glyphs no longer line up
+with the blurred ones around the edge of the lens, and the illusion breaks.
+`ring` draws a hairline circle at the lens edge, which sells the glass and
+gives the pointer something to hold.
+
+## Props
+
+| Prop        | Type      | Default | Description                                      |
+| ----------- | --------- | ------- | ------------------------------------------------ |
+| `blur`      | `number`  | `6`     | Blur radius of the resting text, in pixels.      |
+| `size`      | `number`  | `110`   | Diameter of the lens in pixels.                  |
+| `feather`   | `number`  | `0.5`   | How much of the lens edge fades out, `0` to `1`. |
+| `magnify`   | `number`  | `1`     | Scale under the lens. `1` is a flat window.      |
+| `follow`    | `number`  | `130`   | Ms the lens takes to catch up. `0` locks it.     |
+| `ring`      | `boolean` | `false` | Draw a hairline ring at the lens edge.           |
+| `disabled`  | `boolean` | `false` | Render the text sharp, with no lens.             |
+| `className` | `string`  | none    | Merged onto the wrapper. Type styles here.       |
+
+Any other `<span>` prop is forwarded.
+
+<Callout type="warning" title="Accessibility">
+  Blurred text is unreadable to anyone who cannot aim a pointer at it, so this
+  is a component for copy people can afford to miss: spoilers, teasers, a
+  redaction gag. Never put it on something load-bearing. On touch, pen and
+  coarse pointers the component detects the missing hover and renders the text
+  sharp instead, and `disabled` does the same on demand. The sharp copy is
+  `aria-hidden` and `pointer-events-none`, so a screen reader reads the words
+  once, unblurred.
+</Callout>

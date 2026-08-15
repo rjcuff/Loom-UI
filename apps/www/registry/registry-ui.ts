@@ -129,6 +129,20 @@ export const ui: Registry["items"] = [
     ],
   },
   {
+    name: "lens-text",
+    type: "registry:ui",
+    title: "Lens Text",
+    description:
+      "Text held out of focus until the pointer passes over it like a magnifying glass.",
+    registryDependencies: ["utils"],
+    files: [
+      {
+        path: "loomui/lens-text.tsx",
+        type: "registry:ui",
+      },
+    ],
+  },
+  {
     name: "grid-backdrop",
     type: "registry:ui",
     title: "Grid Backdrop",

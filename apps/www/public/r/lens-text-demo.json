@@ -1,0 +1,17 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "lens-text-demo",
+  "type": "registry:example",
+  "title": "Lens Text Demo",
+  "description": "A blurred paragraph read through a lens at the pointer.",
+  "registryDependencies": [
+    "@loomui/lens-text"
+  ],
+  "files": [
+    {
+      "path": "registry/example/lens-text-demo.tsx",
+      "content": "import { LensText } from \"@/registry/loomui/lens-text\"\n\nexport default function LensTextDemo() {\n  return (\n    <div className=\"max-w-md text-center\">\n      <p className=\"text-muted-foreground text-xs tracking-wide uppercase\">\n        Spoiler\n      </p>\n      <LensText\n        ring\n        size={120}\n        blur={7}\n        magnify={1.06}\n        follow={150}\n        className=\"mt-3 text-base leading-relaxed font-medium text-balance\"\n      >\n        The lens is two copies of the same words. The one you can read is\n        clipped to a circle at the pointer, and the blurred one has that same\n        circle punched out of it.\n      </LensText>\n      <p className=\"text-muted-foreground mt-4 text-xs\">\n        Move the pointer across the text\n      </p>\n    </div>\n  )\n}\n",
+      "type": "registry:example"
+    }
+  ]
+}

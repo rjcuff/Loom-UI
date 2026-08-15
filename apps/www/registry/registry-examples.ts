@@ -70,6 +70,19 @@ export const examples: Registry["items"] = [
     ],
   },
   {
+    name: "lens-text-demo",
+    type: "registry:example",
+    title: "Lens Text Demo",
+    description: "A blurred paragraph read through a lens at the pointer.",
+    registryDependencies: ["@loomui/lens-text"],
+    files: [
+      {
+        path: "example/lens-text-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "grid-backdrop-demo",
     type: "registry:example",
     title: "Grid Backdrop Demo",

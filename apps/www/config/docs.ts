@@ -49,11 +49,15 @@ export const docsConfig: DocsConfig = {
         {
           title: "Scramble Text",
           href: "/docs/components/scramble-text",
-          badge: { text: "New", variant: "new" },
         },
         {
           title: "Count Up",
           href: "/docs/components/count-up",
+        },
+        {
+          title: "Lens Text",
+          href: "/docs/components/lens-text",
+          badge: { text: "New", variant: "new" },
         },
       ],
     },
@@ -71,12 +75,10 @@ export const docsConfig: DocsConfig = {
         {
           title: "Grid Beams",
           href: "/docs/components/grid-beams",
-          badge: { text: "New", variant: "new" },
         },
         {
           title: "Aurora Backdrop",
           href: "/docs/components/aurora-backdrop",
-          badge: { text: "New", variant: "new" },
         },
       ],
     },
@@ -86,7 +88,6 @@ export const docsConfig: DocsConfig = {
         {
           title: "Tilt Card",
           href: "/docs/components/tilt-card",
-          badge: { text: "New", variant: "new" },
         },
         {
           title: "Magnetic",
