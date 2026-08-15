@@ -13,10 +13,12 @@ export interface HoldButtonProps extends React.ComponentProps<"button"> {
   color?: string
 }
 
-/** How long the fill takes to run back out, whether it completed or not. */
+/** How long the fill takes to run back out when a hold is abandoned. */
 const RETURN_MS = 260
-/** How long a completed fill sits at full before it runs back. */
-const SETTLE_MS = 140
+/** How long a completed fill sits at full before it clears. */
+const SETTLE_MS = 600
+/** How long the completed fill takes to fade off. */
+const CLEAR_MS = 320
 
 /** Fast at first, then easing to a stop. The fill draining should feel let go of. */
 function easeOutCubic(t: number) {
@@ -37,6 +39,8 @@ export function HoldButton({
   const frame = React.useRef(0)
   const settle = React.useRef<ReturnType<typeof setTimeout>>(undefined)
   const [holding, setHolding] = React.useState(false)
+  const [clearing, setClearing] = React.useState(false)
+  const spent = React.useRef(false)
 
   // Progress is a ref written straight to a custom property. A fill that
   // re-rendered React sixty times a second to cross the button would be absurd.
@@ -68,14 +72,20 @@ export function HoldButton({
 
         if (current.progress >= 1) {
           current.filling = false
+          spent.current = true
           setHolding(false)
           onHold?.()
 
-          // Sit at full long enough to be seen, then run back out.
+          // A completed fill does not run backwards. Rewinding it would read
+          // as an undo of the thing that just happened. It sits at full, fades
+          // off, and is reset to zero behind the fade.
           settle.current = setTimeout(() => {
-            current.from = current.progress
-            current.since = performance.now()
-            frame.current = requestAnimationFrame(tick)
+            setClearing(true)
+            settle.current = setTimeout(() => {
+              current.progress = 0
+              write()
+              setClearing(false)
+            }, CLEAR_MS)
           }, SETTLE_MS)
           return
         }
@@ -115,11 +125,21 @@ export function HoldButton({
 
     clearTimeout(settle.current)
     cancelAnimationFrame(frame.current)
+
+    // Pressing again during the clear starts from empty rather than picking up
+    // the fill that already did its job.
+    if (spent.current) {
+      spent.current = false
+      state.current.progress = 0
+      write()
+      setClearing(false)
+    }
+
     state.current.filling = true
     state.current.last = 0
     setHolding(true)
     frame.current = requestAnimationFrame(tick)
-  }, [disabled, tick])
+  }, [disabled, tick, write])
 
   const release = React.useCallback(() => {
     if (!state.current.filling) {
@@ -191,10 +211,12 @@ export function HoldButton({
         className="pointer-events-none absolute inset-0 overflow-hidden rounded-[inherit]"
       >
         <span
-          className="absolute inset-0 origin-left"
+          className="absolute inset-0 origin-left transition-opacity ease-[var(--ease-out-quart)] motion-reduce:transition-none"
           style={{
             background: color,
             transform: "scaleX(var(--hold-progress, 0))",
+            opacity: clearing ? 0 : 1,
+            transitionDuration: `${CLEAR_MS}ms`,
           }}
         />
       </span>

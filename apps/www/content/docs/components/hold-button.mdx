@@ -65,9 +65,13 @@ thing telling them how much longer that is, so it has to be there from the
 first frame of the press.
 
 The fill goes across linearly, because it is a promise about how much time is
-left. It runs back out eased and on its own quick clock, so letting go early
-reads as a slip you can recover from rather than a state being dropped. A
-completed hold sits at full for a beat first, so the action has a visible end.
+left. Letting go early runs it back out, eased and on its own quick clock, so
+an abandoned hold reads as a slip you can recover from rather than a state
+being dropped.
+
+A completed hold does not run backwards. Rewinding a fill that already did its
+job reads as an undo of the thing that just happened, so it sits at full, fades
+off, and is reset to zero behind the fade.
 
 Progress lives in a ref and is written to a `--hold-progress` custom property
 inside a `requestAnimationFrame`. The fill is a `scaleX` on a clipped layer,
