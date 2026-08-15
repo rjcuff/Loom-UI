@@ -57,7 +57,10 @@ export const docsConfig: DocsConfig = {
         {
           title: "Lens Text",
           href: "/docs/components/lens-text",
-          badge: { text: "New", variant: "new" },
+        },
+        {
+          title: "Split Flap",
+          href: "/docs/components/split-flap",
         },
       ],
     },
@@ -80,6 +83,10 @@ export const docsConfig: DocsConfig = {
           title: "Aurora Backdrop",
           href: "/docs/components/aurora-backdrop",
         },
+        {
+          title: "Stitch Path",
+          href: "/docs/components/stitch-path",
+        },
       ],
     },
     {
@@ -92,11 +99,27 @@ export const docsConfig: DocsConfig = {
         {
           title: "Flip Card",
           href: "/docs/components/flip-card",
-          badge: { text: "New", variant: "new" },
         },
         {
           title: "Hold Button",
           href: "/docs/components/hold-button",
+        },
+        {
+          title: "Compare Slider",
+          href: "/docs/components/compare-slider",
+        },
+        {
+          title: "Sticker Peel",
+          href: "/docs/components/sticker-peel",
+        },
+        {
+          title: "Elastic Tabs",
+          href: "/docs/components/elastic-tabs",
+          badge: { text: "New", variant: "new" },
+        },
+        {
+          title: "Ticket Stub",
+          href: "/docs/components/ticket-stub",
           badge: { text: "New", variant: "new" },
         },
         {
@@ -119,6 +142,34 @@ export const docsConfig: DocsConfig = {
         {
           title: "Testimonial Wall",
           href: "/docs/components/testimonial-wall",
+        },
+        {
+          title: "Thread Timeline",
+          href: "/docs/components/thread-timeline",
+        },
+        {
+          title: "Logo Loom",
+          href: "/docs/components/logo-loom",
+          badge: { text: "New", variant: "new" },
+        },
+      ],
+    },
+    {
+      title: "Mockups",
+      items: [
+        {
+          title: "iPhone",
+          href: "/docs/components/iphone",
+          badge: { text: "New", variant: "new" },
+        },
+        {
+          title: "iPad",
+          href: "/docs/components/ipad",
+          badge: { text: "New", variant: "new" },
+        },
+        {
+          title: "MacBook",
+          href: "/docs/components/macbook",
           badge: { text: "New", variant: "new" },
         },
       ],

@@ -1,0 +1,123 @@
+---
+title: Compare Slider
+date: 2026-08-15
+description: Two versions of the same frame, split by a divider you drag, or move with the arrow keys.
+---
+
+<ComponentPreview name="compare-slider-demo" />
+
+## Installation
+
+<Tabs defaultValue="cli">
+
+<TabsList>
+  <TabsTrigger value="cli">CLI</TabsTrigger>
+  <TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @loomui/compare-slider
+```
+
+</TabsContent>
+
+<TabsContent value="manual">
+
+<Steps>
+
+<Step>Copy the component into your project.</Step>
+
+<ComponentSource name="compare-slider" />
+
+<Step>Update the import paths to match your setup.</Step>
+
+</Steps>
+
+</TabsContent>
+
+</Tabs>
+
+## Usage
+
+```tsx
+import { CompareSlider } from "@/components/ui/compare-slider"
+```
+
+```tsx
+<CompareSlider
+  className="h-64 w-full rounded-xl border"
+  before={<img src="/before.jpg" alt="Before" />}
+  after={<img src="/after.jpg" alt="After" />}
+/>
+```
+
+`before` sits in flow and gives the frame its size. `after` is laid over it and
+clipped to everything past the divider, so both are always rendered at the same
+dimensions and nothing reflows as the divider moves.
+
+`position` is where the divider sits, `0` to `100`. Left of it is `before`,
+right of it is `after`.
+
+### Dragging
+
+The whole frame takes the gesture, so a click anywhere jumps the divider and
+carries straight on into a drag. Pointer capture keeps the drag alive when the
+pointer leaves the frame, which is what stops the divider sticking at an edge.
+
+The divider has no transition while it is being dragged. A divider that eases
+toward the pointer instead of sitting under it feels like it is being towed.
+Arrow keys do get the transition, because a step with no motion reads as a jump.
+
+`touch-action` is set to the axis the divider does not travel on, so a finger
+that lands on the frame can still scroll the page.
+
+### Controlled
+
+```tsx
+const [position, setPosition] = React.useState(50)
+
+<CompareSlider
+  position={position}
+  onPositionChange={setPosition}
+  before={...}
+  after={...}
+/>
+```
+
+Leave `position` out and the slider owns it. `defaultPosition` sets where it
+starts.
+
+### Vertical
+
+```tsx
+<CompareSlider orientation="vertical" before={...} after={...} />
+```
+
+`before` is on top, `after` below, and the handle turns with it. Arrow up and
+down move the divider, and `touch-action` swaps to let horizontal panning
+through instead.
+
+## Props
+
+| Prop               | Type                         | Default        | Description                                |
+| ------------------ | ---------------------------- | -------------- | ------------------------------------------ |
+| `before`           | `ReactNode`                  | required       | In flow. Sets the size of the frame.       |
+| `after`            | `ReactNode`                  | required       | Laid over the top, clipped to the divider. |
+| `position`         | `number`                     | none           | Divider position, `0` to `100`.            |
+| `defaultPosition`  | `number`                     | `50`           | Starting position when uncontrolled.       |
+| `onPositionChange` | `(position: number) => void` | none           | Called with the position moved to.         |
+| `orientation`      | `"horizontal" \| "vertical"` | `"horizontal"` | Which way the frame splits.                |
+| `step`             | `number`                     | `2`            | Percent per arrow key. Shift moves five.   |
+| `label`            | `string`                     | `"Compare"`    | Name for the divider.                      |
+| `className`        | `string`                     | none           | Merged onto the frame. Size goes here.     |
+
+Any other `<div>` prop is forwarded.
+
+<Callout type="tip" title="Accessibility">
+  The divider is a real `role="slider"` with a live `aria-valuenow`, reachable
+  by tab and moved with the arrows, `Home` and `End`. Give it a `label` that
+  says what is being compared — the default is only a fallback. Both sides stay
+  in the DOM, so alt text on either image is always available.
+</Callout>

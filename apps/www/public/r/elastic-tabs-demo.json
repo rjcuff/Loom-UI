@@ -1,0 +1,17 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "elastic-tabs-demo",
+  "type": "registry:example",
+  "title": "Elastic Tabs Demo",
+  "description": "Four categories with a pill that stretches between them.",
+  "registryDependencies": [
+    "@loomui/elastic-tabs"
+  ],
+  "files": [
+    {
+      "path": "registry/example/elastic-tabs-demo.tsx",
+      "content": "\"use client\"\n\nimport * as React from \"react\"\n\nimport { ElasticTabs } from \"@/registry/loomui/elastic-tabs\"\n\nconst ITEMS = [\n  { value: \"text\", label: \"Text\" },\n  { value: \"backgrounds\", label: \"Backgrounds\" },\n  { value: \"interaction\", label: \"Interaction\" },\n  { value: \"sections\", label: \"Sections\" },\n]\n\nconst COPY: Record<string, string> = {\n  text: \"Headlines that arrive with something to say.\",\n  backgrounds: \"Surfaces that move without asking to be looked at.\",\n  interaction: \"Things that answer back when you touch them.\",\n  sections: \"Whole blocks, not just the pieces they are cut from.\",\n}\n\nexport default function ElasticTabsDemo() {\n  const [value, setValue] = React.useState(\"text\")\n\n  return (\n    <div className=\"flex flex-col items-center gap-5\">\n      <ElasticTabs items={ITEMS} value={value} onValueChange={setValue} />\n      <p className=\"text-muted-foreground text-sm\">{COPY[value]}</p>\n    </div>\n  )\n}\n",
+      "type": "registry:example"
+    }
+  ]
+}

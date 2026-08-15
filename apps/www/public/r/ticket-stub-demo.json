@@ -1,0 +1,17 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "ticket-stub-demo",
+  "type": "registry:example",
+  "title": "Ticket Stub Demo",
+  "description": "A boarding pass torn along its perforation.",
+  "registryDependencies": [
+    "@loomui/ticket-stub"
+  ],
+  "files": [
+    {
+      "path": "registry/example/ticket-stub-demo.tsx",
+      "content": "import { TicketStub } from \"@/registry/loomui/ticket-stub\"\n\nexport default function TicketStubDemo() {\n  return (\n    <TicketStub\n      className=\"w-full max-w-lg\"\n      split={70}\n      stub={\n        <div className=\"flex h-full flex-col items-center justify-center gap-1 p-4 text-center\">\n          <div className=\"text-muted-foreground text-[0.6rem] tracking-[0.2em] uppercase\">\n            Seat\n          </div>\n          <div className=\"text-xl font-semibold sm:text-2xl\">14A</div>\n        </div>\n      }\n    >\n      <div className=\"p-4 sm:p-5\">\n        <div className=\"text-muted-foreground text-[0.6rem] tracking-[0.2em] uppercase\">\n          Boarding pass\n        </div>\n        <div className=\"mt-2 flex items-baseline gap-3\">\n          <span className=\"text-xl font-semibold sm:text-2xl\">LIS</span>\n          <span className=\"text-muted-foreground text-sm\">to</span>\n          <span className=\"text-xl font-semibold sm:text-2xl\">KIX</span>\n        </div>\n        <div className=\"text-muted-foreground mt-3 flex flex-wrap gap-x-6 gap-y-1 text-xs\">\n          <span>Gate B12</span>\n          <span>Boards 10:42</span>\n        </div>\n      </div>\n    </TicketStub>\n  )\n}\n",
+      "type": "registry:example"
+    }
+  ]
+}

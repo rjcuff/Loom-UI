@@ -1,0 +1,17 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "logo-loom-demo",
+  "type": "registry:example",
+  "title": "Logo Loom Demo",
+  "description": "Five wordmarks woven onto a thread as the row comes into view.",
+  "registryDependencies": [
+    "@loomui/logo-loom"
+  ],
+  "files": [
+    {
+      "path": "registry/example/logo-loom-demo.tsx",
+      "content": "import { LogoLoom } from \"@/registry/loomui/logo-loom\"\n\nconst LOGOS = [\"Northwind\", \"Contoso\", \"Fabrikam\", \"Tailspin\", \"Proseware\"]\n\nexport default function LogoLoomDemo() {\n  return (\n    <LogoLoom className=\"w-full max-w-2xl\" repeat>\n      {LOGOS.map((logo) => (\n        <span\n          key={logo}\n          className=\"text-muted-foreground text-lg font-semibold tracking-tight\"\n        >\n          {logo}\n        </span>\n      ))}\n    </LogoLoom>\n  )\n}\n",
+      "type": "registry:example"
+    }
+  ]
+}

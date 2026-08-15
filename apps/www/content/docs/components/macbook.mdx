@@ -1,0 +1,119 @@
+---
+title: MacBook
+date: 2026-08-15
+description: A laptop frame with the camera housing cut into the display and the scoop cut into its base.
+---
+
+<ComponentPreview name="macbook-demo" />
+
+## Installation
+
+<Tabs defaultValue="cli">
+
+<TabsList>
+  <TabsTrigger value="cli">CLI</TabsTrigger>
+  <TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @loomui/macbook
+```
+
+</TabsContent>
+
+<TabsContent value="manual">
+
+<Steps>
+
+<Step>Copy the component into your project.</Step>
+
+<ComponentSource name="macbook" />
+
+<Step>Update the import paths to match your setup.</Step>
+
+</Steps>
+
+</TabsContent>
+
+</Tabs>
+
+## Usage
+
+```tsx
+import { MacBook } from "@/components/ui/macbook"
+```
+
+```tsx
+<MacBook />
+```
+
+On its own it is a blank machine with a grey screen. Fill it with a
+screenshot, or with live markup:
+
+```tsx
+<MacBook src="/app.png" alt="The editor, open on a project" />
+```
+
+```tsx
+<MacBook width={880}>
+  <Editor />
+</MacBook>
+```
+
+Anything inside is clipped to the screen's radius and sits under the camera
+housing.
+
+### The parts that name it
+
+Two details do the work. The camera housing is bezel that intrudes into the
+display, so it is drawn over the screen rather than around it — cutting a hole
+in the frame instead puts a step in the bezel that no machine has.
+
+The base is a little wider than the lid, with a shallow scoop in its front
+edge. Without the overhang the lid reads as floating above a bar; with it, the
+machine is standing on something.
+
+```tsx
+<MacBook notch={false} base={false} />
+```
+
+Turn either off for a plainer shape. Dropping the base also drops it from the
+height, so the frame stays the shape of the lid alone rather than leaving a
+gap under it.
+
+### One number, and it shrinks
+
+`width` is a maximum, not a fixed size. The frame fills the space it is given
+and stops there, so it never pushes a narrow screen sideways.
+
+Everything else — the lid, both corner radii, the housing, the base, the
+scoop — is a real device point expressed as a share of the whole machine's
+width, in container units. That keeps the lid and the base in step with each
+other at any size, which a scale factor worked out in JavaScript would not once
+the frame had to shrink to fit.
+
+The component is not client-side. There is no state and no listener, so it
+renders on the server and costs nothing on the client.
+
+## Props
+
+| Prop        | Type      | Default | Description                                   |
+| ----------- | --------- | ------- | --------------------------------------------- |
+| `width`     | `number`  | `620`   | Largest width the machine is drawn at.        |
+| `src`       | `string`  | none    | Screenshot to fill the screen with.           |
+| `alt`       | `string`  | `""`    | Description of the screenshot.                |
+| `notch`     | `boolean` | `true`  | Draw the camera housing cut into the display. |
+| `base`      | `boolean` | `true`  | Draw the base the lid stands on.              |
+| `className` | `string`  | none    | Merged onto the frame.                        |
+
+Any other `<div>` prop is forwarded. `children` fills the screen when there is
+no `src`.
+
+<Callout type="tip" title="Accessibility">
+  The lid, the housing and the base are all `aria-hidden` — they are a picture
+  of a laptop, not content. Give `src` a real `alt` describing what is on the
+  screen, or leave it empty when the screenshot is decoration beside copy that
+  already says the same thing.
+</Callout>

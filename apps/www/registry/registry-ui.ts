@@ -145,6 +145,46 @@ export const ui: Registry["items"] = [
     ],
   },
   {
+    name: "split-flap",
+    type: "registry:ui",
+    title: "Split Flap",
+    description:
+      "A departure board that flaps through its glyphs, one cell behind the last, until it lands on the value.",
+    registryDependencies: ["utils"],
+    files: [
+      {
+        path: "loomui/split-flap.tsx",
+        type: "registry:ui",
+      },
+    ],
+    cssVars: {
+      theme: {
+        "animate-split-flap-out":
+          "split-flap-out calc(var(--flap-duration, 62ms) * 0.5) ease-in both",
+        "animate-split-flap-in":
+          "split-flap-in calc(var(--flap-duration, 62ms) * 0.5) ease-out calc(var(--flap-duration, 62ms) * 0.5) both",
+      },
+    },
+    css: {
+      "@keyframes split-flap-out": {
+        from: {
+          transform: "rotateX(0deg)",
+        },
+        to: {
+          transform: "rotateX(-90deg)",
+        },
+      },
+      "@keyframes split-flap-in": {
+        from: {
+          transform: "rotateX(90deg)",
+        },
+        to: {
+          transform: "rotateX(0deg)",
+        },
+      },
+    },
+  },
+  {
     name: "grid-backdrop",
     type: "registry:ui",
     title: "Grid Backdrop",
@@ -266,6 +306,20 @@ export const ui: Registry["items"] = [
     },
   },
   {
+    name: "stitch-path",
+    type: "registry:ui",
+    title: "Stitch Path",
+    description:
+      "A running stitch sewn along an SVG path as the page scrolls, following the holes it is laid over.",
+    registryDependencies: ["utils"],
+    files: [
+      {
+        path: "loomui/stitch-path.tsx",
+        type: "registry:ui",
+      },
+    ],
+  },
+  {
     name: "tilt-card",
     type: "registry:ui",
     title: "Tilt Card",
@@ -313,6 +367,82 @@ export const ui: Registry["items"] = [
     files: [
       {
         path: "loomui/hold-button.tsx",
+        type: "registry:ui",
+      },
+    ],
+    cssVars: {
+      theme: {
+        "ease-out-quart": EASE_OUT_QUART,
+      },
+    },
+  },
+  {
+    name: "elastic-tabs",
+    type: "registry:ui",
+    title: "Elastic Tabs",
+    description:
+      "A tab group whose pill stretches to cover both tabs before it contracts onto the one you picked.",
+    registryDependencies: ["utils"],
+    files: [
+      {
+        path: "loomui/elastic-tabs.tsx",
+        type: "registry:ui",
+      },
+    ],
+    cssVars: {
+      theme: {
+        "ease-out-quart": EASE_OUT_QUART,
+      },
+    },
+  },
+  {
+    name: "ticket-stub",
+    type: "registry:ui",
+    title: "Ticket Stub",
+    description:
+      "A card torn along a perforation, with a notch bitten out of the paper at each end of it.",
+    registryDependencies: ["utils"],
+    files: [
+      {
+        path: "loomui/ticket-stub.tsx",
+        type: "registry:ui",
+      },
+    ],
+    cssVars: {
+      theme: {
+        "ease-out-quart": EASE_OUT_QUART,
+      },
+    },
+  },
+  {
+    name: "compare-slider",
+    type: "registry:ui",
+    title: "Compare Slider",
+    description:
+      "Two versions of the same frame, split by a divider you drag, or move with the arrow keys.",
+    registryDependencies: ["utils"],
+    files: [
+      {
+        path: "loomui/compare-slider.tsx",
+        type: "registry:ui",
+      },
+    ],
+    cssVars: {
+      theme: {
+        "ease-out-quart": EASE_OUT_QUART,
+      },
+    },
+  },
+  {
+    name: "sticker-peel",
+    type: "registry:ui",
+    title: "Sticker Peel",
+    description:
+      "A card whose corner lifts off the page on hover, folded back over the crease to show its backing.",
+    registryDependencies: ["utils"],
+    files: [
+      {
+        path: "loomui/sticker-peel.tsx",
         type: "registry:ui",
       },
     ],
@@ -423,6 +553,99 @@ export const ui: Registry["items"] = [
         to: {
           transform: "translateY(calc(-100% - var(--marquee-gap, 1rem)))",
         },
+      },
+    },
+  },
+  {
+    name: "logo-loom",
+    type: "registry:ui",
+    title: "Logo Loom",
+    description:
+      "A logo row woven into place, every other mark arriving from the other side of the thread.",
+    registryDependencies: ["utils"],
+    files: [
+      {
+        path: "loomui/logo-loom.tsx",
+        type: "registry:ui",
+      },
+    ],
+    cssVars: {
+      theme: {
+        "ease-out-quart": EASE_OUT_QUART,
+        "animate-loom-weave": "loom-weave 700ms var(--ease-out-quart) both",
+      },
+    },
+    css: {
+      "@keyframes loom-weave": {
+        from: {
+          opacity: "0",
+          transform: "translateY(var(--loom-from, 1.5rem))",
+        },
+        to: {
+          opacity: "1",
+          transform: "translateY(0)",
+        },
+      },
+    },
+  },
+  {
+    name: "iphone",
+    type: "registry:ui",
+    title: "iPhone",
+    description:
+      "A device frame drawn from the real measurements, with a screen you put anything in.",
+    registryDependencies: ["utils"],
+    files: [
+      {
+        path: "loomui/iphone.tsx",
+        type: "registry:ui",
+      },
+    ],
+  },
+  {
+    name: "ipad",
+    type: "registry:ui",
+    title: "iPad",
+    description:
+      "A tablet frame drawn from the real measurements, upright or on its side, with a screen you put anything in.",
+    registryDependencies: ["utils"],
+    files: [
+      {
+        path: "loomui/ipad.tsx",
+        type: "registry:ui",
+      },
+    ],
+  },
+  {
+    name: "macbook",
+    type: "registry:ui",
+    title: "MacBook",
+    description:
+      "A laptop frame with the camera housing cut into the display and the scoop cut into its base.",
+    registryDependencies: ["utils"],
+    files: [
+      {
+        path: "loomui/macbook.tsx",
+        type: "registry:ui",
+      },
+    ],
+  },
+  {
+    name: "thread-timeline",
+    type: "registry:ui",
+    title: "Thread Timeline",
+    description:
+      "A timeline whose thread is sewn down the page as you read, lighting each node as it reaches it.",
+    registryDependencies: ["utils"],
+    files: [
+      {
+        path: "loomui/thread-timeline.tsx",
+        type: "registry:ui",
+      },
+    ],
+    cssVars: {
+      theme: {
+        "ease-out-quart": EASE_OUT_QUART,
       },
     },
   },

@@ -1,0 +1,17 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "thread-timeline-demo",
+  "type": "registry:example",
+  "title": "Thread Timeline Demo",
+  "description": "Four entries sewn together as the page scrolls past them.",
+  "registryDependencies": [
+    "@loomui/thread-timeline"
+  ],
+  "files": [
+    {
+      "path": "registry/example/thread-timeline-demo.tsx",
+      "content": "import {\n  ThreadTimeline,\n  ThreadTimelineItem,\n} from \"@/registry/loomui/thread-timeline\"\n\nconst ENTRIES = [\n  {\n    meta: \"March\",\n    title: \"First thread\",\n    body: \"One component, copied by hand, with the timings left as props.\",\n  },\n  {\n    meta: \"May\",\n    title: \"The registry\",\n    body: \"Every component installable in a single command, keyframes included.\",\n  },\n  {\n    meta: \"July\",\n    title: \"Reduced motion\",\n    body: \"Every animation given a resting state worth looking at.\",\n  },\n  {\n    meta: \"August\",\n    title: \"Sections\",\n    body: \"Whole blocks, not just the pieces they are cut from.\",\n  },\n]\n\nexport default function ThreadTimelineDemo() {\n  return (\n    <ThreadTimeline className=\"w-full max-w-md\">\n      {ENTRIES.map((entry, index) => (\n        <ThreadTimelineItem\n          key={entry.title}\n          meta={entry.meta}\n          title={entry.title}\n          marker={index + 1}\n        >\n          {entry.body}\n        </ThreadTimelineItem>\n      ))}\n    </ThreadTimeline>\n  )\n}\n",
+      "type": "registry:example"
+    }
+  ]
+}

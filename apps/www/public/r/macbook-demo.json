@@ -1,0 +1,17 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "macbook-demo",
+  "type": "registry:example",
+  "title": "MacBook Demo",
+  "description": "A blank laptop standing on its base.",
+  "registryDependencies": [
+    "@loomui/macbook"
+  ],
+  "files": [
+    {
+      "path": "registry/example/macbook-demo.tsx",
+      "content": "import { MacBook } from \"@/registry/loomui/macbook\"\n\nexport default function MacBookDemo() {\n  return <MacBook width={520} />\n}\n",
+      "type": "registry:example"
+    }
+  ]
+}

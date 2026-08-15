@@ -1,0 +1,119 @@
+---
+title: iPhone
+date: 2026-08-15
+description: A device frame drawn from the real measurements, with a screen you put anything in.
+---
+
+<ComponentPreview name="iphone-demo" />
+
+## Installation
+
+<Tabs defaultValue="cli">
+
+<TabsList>
+  <TabsTrigger value="cli">CLI</TabsTrigger>
+  <TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @loomui/iphone
+```
+
+</TabsContent>
+
+<TabsContent value="manual">
+
+<Steps>
+
+<Step>Copy the component into your project.</Step>
+
+<ComponentSource name="iphone" />
+
+<Step>Update the import paths to match your setup.</Step>
+
+</Steps>
+
+</TabsContent>
+
+</Tabs>
+
+## Usage
+
+```tsx
+import { IPhone } from "@/components/ui/iphone"
+```
+
+```tsx
+<IPhone />
+```
+
+On its own it is a blank device with a grey screen. Fill it with a screenshot:
+
+```tsx
+<IPhone src="/screenshot.png" alt="The app's home screen" />
+```
+
+Or with live markup, which is the reason to use a frame built out of elements
+rather than an image of one:
+
+```tsx
+<IPhone width={280}>
+  <AppShell />
+</IPhone>
+```
+
+Anything inside is clipped to the screen's radius and sits under the island.
+
+### One number, and it shrinks
+
+```tsx
+<IPhone width={360} />
+```
+
+`width` is the only measurement you set, and it is a maximum rather than a
+fixed size — the frame fills the space it is given and stops there, so it never
+pushes a narrow screen sideways.
+
+Everything else — the rim, both corner radii, the island, the four buttons — is
+a real device point expressed as a share of the frame's own width, in container
+units. That keeps the proportions exact at whatever width the frame ends up:
+a percentage `border-radius` would go elliptical on a box this tall, and a
+scale factor worked out in JavaScript would be wrong the moment the frame had
+to shrink to fit.
+
+The rim is a gradient rather than a flat fill. A solid band the same colour all
+the way round reads as a border; a gradient reads as metal catching light on
+one side.
+
+```tsx
+<IPhone island={false} buttons={false} />
+```
+
+Turn either off for a cleaner shape — useful when the frame is small enough
+that the detail becomes noise.
+
+The component is not client-side. There is no state and no listener, so it
+renders on the server and costs nothing on the client.
+
+## Props
+
+| Prop        | Type      | Default | Description                               |
+| ----------- | --------- | ------- | ----------------------------------------- |
+| `width`     | `number`  | `300`   | Largest width the device is drawn at.     |
+| `src`       | `string`  | none    | Screenshot to fill the screen with.       |
+| `alt`       | `string`  | `""`    | Description of the screenshot.            |
+| `island`    | `boolean` | `true`  | Draw the island at the top of the screen. |
+| `buttons`   | `boolean` | `true`  | Draw the buttons down the sides.          |
+| `className` | `string`  | none    | Merged onto the frame.                    |
+
+Any other `<div>` prop is forwarded. `children` fills the screen when there is
+no `src`.
+
+<Callout type="tip" title="Accessibility">
+  The rim, the island and the buttons are all `aria-hidden` — they are a picture
+  of a phone, not content. Give `src` a real `alt` describing what is on the
+  screen, or leave it empty when the screenshot is decoration beside copy that
+  already says the same thing.
+</Callout>

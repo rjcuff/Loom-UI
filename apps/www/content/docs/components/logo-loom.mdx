@@ -1,0 +1,129 @@
+---
+title: Logo Loom
+date: 2026-08-15
+description: A logo row woven into place, every other mark arriving from the other side of the thread.
+---
+
+<ComponentPreview name="logo-loom-demo" />
+
+## Installation
+
+<Tabs defaultValue="cli">
+
+<TabsList>
+  <TabsTrigger value="cli">CLI</TabsTrigger>
+  <TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @loomui/logo-loom
+```
+
+</TabsContent>
+
+<TabsContent value="manual">
+
+<Steps>
+
+<Step>Copy the component into your project.</Step>
+
+<ComponentSource name="logo-loom" />
+
+<Step>Add the keyframes to your global stylesheet.</Step>
+
+```css title="app/globals.css"
+@theme {
+  --animate-loom-weave: loom-weave 700ms var(--ease-out-quart) both;
+}
+
+@keyframes loom-weave {
+  from {
+    opacity: 0;
+    transform: translateY(var(--loom-from, 1.5rem));
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+```
+
+<Step>Update the import paths to match your setup.</Step>
+
+</Steps>
+
+</TabsContent>
+
+</Tabs>
+
+## Usage
+
+```tsx
+import { LogoLoom } from "@/components/ui/logo-loom"
+```
+
+```tsx
+<LogoLoom>
+  <NorthwindLogo />
+  <ContosoLogo />
+  <FabrikamLogo />
+</LogoLoom>
+```
+
+Hand it a flat list of marks. It lays them out, runs a thread through the row,
+and weaves them in when the row scrolls into view.
+
+### Why it reads as woven
+
+One thread runs behind the whole row. Every other logo carries a background,
+which hides the thread where it crosses; the rest are transparent, so the
+thread runs straight through them. That alternation is the interlacing — over,
+under, over — rather than a row of logos sitting on a line.
+
+The pass a logo takes is also the direction it arrives from, so the row laces
+itself together as it lands instead of dropping in from one side.
+
+```tsx
+<LogoLoom stagger={90} duration={700} distance="1.6rem" />
+```
+
+`stagger` is the delay between one logo arriving and the next, `duration` the
+length of a single arrival, and `distance` how far each one travels.
+
+One keyframe covers both passes: the direction lives in a `--loom-from` custom
+property, set per logo, so there is no second animation to keep in step with
+the first.
+
+### When it runs
+
+```tsx
+<LogoLoom repeat />
+```
+
+By default the row weaves once, the first time it comes into view. `repeat`
+resets it whenever the row leaves, so it weaves again on the way back.
+
+`thread={false}` drops the line and keeps the arrival.
+
+Under `prefers-reduced-motion` the logos are shown in place with no travel.
+
+## Props
+
+| Prop        | Type      | Default    | Description                                          |
+| ----------- | --------- | ---------- | ---------------------------------------------------- |
+| `stagger`   | `number`  | `90`       | Milliseconds between one logo arriving and the next. |
+| `duration`  | `number`  | `700`      | Length of a single arrival.                          |
+| `distance`  | `string`  | `"1.6rem"` | How far a logo travels in.                           |
+| `thread`    | `boolean` | `true`     | Draw the thread the logos are woven onto.            |
+| `repeat`    | `boolean` | `false`    | Weave again every time the row returns to view.      |
+| `className` | `string`  | none       | Merged onto the row. Gaps go here.                   |
+
+Any other `<div>` prop is forwarded.
+
+<Callout type="tip" title="Accessibility">
+  The thread is `aria-hidden`. The logos are your own markup, so give an `img`
+  an `alt` and an inline `svg` a `title` — nothing here supplies a name for
+  them. Reduced motion shows the row rather than leaving it waiting on a scroll.
+</Callout>

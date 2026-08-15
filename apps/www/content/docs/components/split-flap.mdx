@@ -1,0 +1,143 @@
+---
+title: Split Flap
+date: 2026-08-15
+description: A departure board that flaps through its glyphs, one cell behind the last, until it lands on the value.
+---
+
+<ComponentPreview name="split-flap-demo" />
+
+## Installation
+
+<Tabs defaultValue="cli">
+
+<TabsList>
+  <TabsTrigger value="cli">CLI</TabsTrigger>
+  <TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @loomui/split-flap
+```
+
+</TabsContent>
+
+<TabsContent value="manual">
+
+<Steps>
+
+<Step>Copy the component into your project.</Step>
+
+<ComponentSource name="split-flap" />
+
+<Step>Add the keyframes to your global stylesheet.</Step>
+
+```css title="app/globals.css"
+@theme {
+  --animate-split-flap-out: split-flap-out
+    calc(var(--flap-duration, 62ms) * 0.5) ease-in both;
+  --animate-split-flap-in: split-flap-in calc(var(--flap-duration, 62ms) * 0.5)
+    ease-out calc(var(--flap-duration, 62ms) * 0.5) both;
+}
+
+@keyframes split-flap-out {
+  from {
+    transform: rotateX(0deg);
+  }
+  to {
+    transform: rotateX(-90deg);
+  }
+}
+
+@keyframes split-flap-in {
+  from {
+    transform: rotateX(90deg);
+  }
+  to {
+    transform: rotateX(0deg);
+  }
+}
+```
+
+<Step>Update the import paths to match your setup.</Step>
+
+</Steps>
+
+</TabsContent>
+
+</Tabs>
+
+## Usage
+
+```tsx
+import { SplitFlap } from "@/components/ui/split-flap"
+```
+
+```tsx
+<SplitFlap value="LISBON" />
+```
+
+Give it a string. Every cell starts blank, walks forward through the charset,
+and stops on its letter. Change `value` and the board flaps from wherever it
+is to wherever it is going, so nothing ever jumps.
+
+### The flap
+
+Each cell is four halves. Two are settled: the top already carries the new
+glyph and the bottom still carries the old one. The other two are the flap
+itself, hinged on the seam across the middle — the outgoing face falls away
+from it, then the incoming face swings down onto it.
+
+The seam is not decoration. Without a visible hinge the turn reads as a fade
+rather than a card falling, which is the whole reason to use a board instead of
+a crossfade.
+
+### Timing
+
+```tsx
+<SplitFlap value="OSAKA" interval={62} stagger={2} />
+```
+
+`interval` is the milliseconds a single flap takes, and also the gap between
+flaps, so a cell mid-run never shows a still frame. `stagger` is how many flaps
+of head start each cell hands to the one after it — the ripple down the board.
+
+Longer words take longer, because a cell only ever moves forward through the
+charset. Landing on `A` from `Z` means walking the whole set, which is exactly
+what the real thing does.
+
+### Charset and width
+
+```tsx
+<SplitFlap value="B12" charset=" 0123456789ABCDEFGH" padTo={3} />
+```
+
+`charset` is every glyph a cell can show, in the order it flaps through them.
+Anything in `value` that is not in the charset is set outright rather than
+walked to, so a stray character costs a flap rather than a stall.
+
+`padTo` holds a minimum number of cells, which keeps a board from resizing when
+a shorter value arrives. Cells past the value flap back to blank.
+
+Under `prefers-reduced-motion` the board is set to its value on the spot, with
+no walk and no flap.
+
+## Props
+
+| Prop        | Type     | Default      | Description                                     |
+| ----------- | -------- | ------------ | ----------------------------------------------- |
+| `value`     | `string` | required     | The string the board settles on.                |
+| `charset`   | `string` | board glyphs | Every glyph a cell can show, in flap order.     |
+| `interval`  | `number` | `62`         | Milliseconds per flap.                          |
+| `stagger`   | `number` | `2`          | Flaps of head start between neighbouring cells. |
+| `padTo`     | `number` | none         | Minimum number of cells.                        |
+| `className` | `string` | none         | Merged onto the board. Font size goes here.     |
+
+Any other `<div>` prop is forwarded.
+
+<Callout type="tip" title="Accessibility">
+  The board is a single `role="img"` labelled with `value`, and every cell is
+  `aria-hidden`. Reading the cells out would spell the word one letter at a
+  time, and mid-flap it would spell nonsense.
+</Callout>

@@ -1,0 +1,114 @@
+---
+title: Elastic Tabs
+date: 2026-08-15
+description: A tab group whose pill stretches to cover both tabs before it contracts onto the one you picked.
+---
+
+<ComponentPreview name="elastic-tabs-demo" />
+
+## Installation
+
+<Tabs defaultValue="cli">
+
+<TabsList>
+  <TabsTrigger value="cli">CLI</TabsTrigger>
+  <TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @loomui/elastic-tabs
+```
+
+</TabsContent>
+
+<TabsContent value="manual">
+
+<Steps>
+
+<Step>Copy the component into your project.</Step>
+
+<ComponentSource name="elastic-tabs" />
+
+<Step>Update the import paths to match your setup.</Step>
+
+</Steps>
+
+</TabsContent>
+
+</Tabs>
+
+## Usage
+
+```tsx
+import { ElasticTabs } from "@/components/ui/elastic-tabs"
+```
+
+```tsx
+<ElasticTabs
+  items={[
+    { value: "text", label: "Text" },
+    { value: "backgrounds", label: "Backgrounds" },
+    { value: "sections", label: "Sections" },
+  ]}
+  defaultValue="text"
+  onValueChange={setCategory}
+/>
+```
+
+### The stretch
+
+The pill does not slide. On a change it first grows to span both the tab it is
+leaving and the tab it is going to, then contracts onto the target.
+
+Moving `left` and `width` straight to the destination slides a fixed shape
+across the group, which reads as a marker being dragged. Spanning first reads
+as one thing letting go of the old tab and pulling onto the new one, which is
+the whole effect.
+
+```tsx
+<ElasticTabs duration={420} />
+```
+
+`duration` is the whole travel. The two halves are cut from it: the stretch
+holds for the first 45%, and each phase transitions over a little more than
+half, so they overlap rather than landing in two visible steps.
+
+Positions come from `offsetLeft` and `offsetWidth`, re-read by a
+`ResizeObserver` on the group, so a row that wraps or a label that changes
+never leaves the pill behind.
+
+### Controlled
+
+```tsx
+const [value, setValue] = React.useState("text")
+
+<ElasticTabs items={items} value={value} onValueChange={setValue} />
+```
+
+Leave `value` out and the group owns the selection; `defaultValue` sets where
+it starts, falling back to the first item.
+
+Under `prefers-reduced-motion` the pill is placed without travelling, so the
+selection still moves and nothing slides.
+
+## Props
+
+| Prop            | Type                      | Default    | Description                                 |
+| --------------- | ------------------------- | ---------- | ------------------------------------------- |
+| `items`         | `{ value, label }[]`      | required   | The tabs, in order.                         |
+| `value`         | `string`                  | none       | Selected tab.                               |
+| `defaultValue`  | `string`                  | first item | Starting tab when uncontrolled.             |
+| `onValueChange` | `(value: string) => void` | none       | Called with the value moved to.             |
+| `duration`      | `number`                  | `420`      | Length of the whole travel in milliseconds. |
+| `className`     | `string`                  | none       | Merged onto the group.                      |
+
+Any other `<div>` prop is forwarded.
+
+<Callout type="tip" title="Accessibility">
+  A real `role="tablist"` of `role="tab"` buttons with `aria-selected`. Only the
+  selected tab is in the tab order and the arrows move between them, with
+  selection carrying focus — the roving pattern a tablist is meant to use. The
+  pill is `aria-hidden`, so nothing about it is announced.
+</Callout>

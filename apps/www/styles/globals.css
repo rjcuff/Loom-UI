@@ -177,6 +177,11 @@
   --animate-aurora-drift: aurora-drift 18s var(--ease-in-out-cubic) infinite;
   --animate-grid-beam: grid-beam 4s linear infinite;
   --animate-grid-beam-x: grid-beam-x 4s linear infinite;
+  --animate-split-flap-out: split-flap-out calc(var(--flap-duration, 62ms) * 0.5)
+    ease-in both;
+  --animate-split-flap-in: split-flap-in calc(var(--flap-duration, 62ms) * 0.5)
+    ease-out calc(var(--flap-duration, 62ms) * 0.5) both;
+  --animate-loom-weave: loom-weave 700ms var(--ease-out-quart) both;
 }
 
 @keyframes weave {
@@ -268,6 +273,39 @@
   }
   to {
     transform: translateX(100%);
+  }
+}
+
+/* One flap is two half turns on the same hinge: the outgoing face falls away
+   from it, then the incoming face swings down onto it. */
+@keyframes split-flap-out {
+  from {
+    transform: rotateX(0deg);
+  }
+  to {
+    transform: rotateX(-90deg);
+  }
+}
+
+@keyframes split-flap-in {
+  from {
+    transform: rotateX(90deg);
+  }
+  to {
+    transform: rotateX(0deg);
+  }
+}
+
+/* One keyframe for both passes. The direction lives in --loom-from, so logos
+   above and below the thread share a single animation. */
+@keyframes loom-weave {
+  from {
+    opacity: 0;
+    transform: translateY(var(--loom-from, 1.5rem));
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 

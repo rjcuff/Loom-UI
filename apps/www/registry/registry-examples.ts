@@ -83,6 +83,19 @@ export const examples: Registry["items"] = [
     ],
   },
   {
+    name: "split-flap-demo",
+    type: "registry:example",
+    title: "Split Flap Demo",
+    description: "A departure board cycling through four destinations.",
+    registryDependencies: ["@loomui/split-flap"],
+    files: [
+      {
+        path: "example/split-flap-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "grid-backdrop-demo",
     type: "registry:example",
     title: "Grid Backdrop Demo",
@@ -135,6 +148,19 @@ export const examples: Registry["items"] = [
     ],
   },
   {
+    name: "stitch-path-demo",
+    type: "registry:example",
+    title: "Stitch Path Demo",
+    description: "A seam sewn between two lines of copy as the page scrolls.",
+    registryDependencies: ["@loomui/stitch-path"],
+    files: [
+      {
+        path: "example/stitch-path-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "tilt-card-demo",
     type: "registry:example",
     title: "Tilt Card Demo",
@@ -170,6 +196,59 @@ export const examples: Registry["items"] = [
     files: [
       {
         path: "example/hold-button-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "elastic-tabs-demo",
+    type: "registry:example",
+    title: "Elastic Tabs Demo",
+    description: "Four categories with a pill that stretches between them.",
+    registryDependencies: ["@loomui/elastic-tabs"],
+    files: [
+      {
+        path: "example/elastic-tabs-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "ticket-stub-demo",
+    type: "registry:example",
+    title: "Ticket Stub Demo",
+    description: "A boarding pass torn along its perforation.",
+    registryDependencies: ["@loomui/ticket-stub"],
+    files: [
+      {
+        path: "example/ticket-stub-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "compare-slider-demo",
+    type: "registry:example",
+    title: "Compare Slider Demo",
+    description: "A draft and a shipped page split by a divider you drag.",
+    registryDependencies: ["@loomui/compare-slider"],
+    files: [
+      {
+        path: "example/compare-slider-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "sticker-peel-demo",
+    type: "registry:example",
+    title: "Sticker Peel Demo",
+    description:
+      "Three stickers whose corners lift as the pointer crosses them.",
+    registryDependencies: ["@loomui/sticker-peel"],
+    files: [
+      {
+        path: "example/sticker-peel-demo.tsx",
         type: "registry:example",
       },
     ],
@@ -222,6 +301,72 @@ export const examples: Registry["items"] = [
     files: [
       {
         path: "example/testimonial-wall-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "logo-loom-demo",
+    type: "registry:example",
+    title: "Logo Loom Demo",
+    description:
+      "Five wordmarks woven onto a thread as the row comes into view.",
+    registryDependencies: ["@loomui/logo-loom"],
+    files: [
+      {
+        path: "example/logo-loom-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "iphone-demo",
+    type: "registry:example",
+    title: "iPhone Demo",
+    description: "A device frame with a screen built out of live markup.",
+    registryDependencies: ["@loomui/iphone"],
+    files: [
+      {
+        path: "example/iphone-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "ipad-demo",
+    type: "registry:example",
+    title: "iPad Demo",
+    description: "A blank tablet held upright.",
+    registryDependencies: ["@loomui/ipad"],
+    files: [
+      {
+        path: "example/ipad-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "macbook-demo",
+    type: "registry:example",
+    title: "MacBook Demo",
+    description: "A blank laptop standing on its base.",
+    registryDependencies: ["@loomui/macbook"],
+    files: [
+      {
+        path: "example/macbook-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "thread-timeline-demo",
+    type: "registry:example",
+    title: "Thread Timeline Demo",
+    description: "Four entries sewn together as the page scrolls past them.",
+    registryDependencies: ["@loomui/thread-timeline"],
+    files: [
+      {
+        path: "example/thread-timeline-demo.tsx",
         type: "registry:example",
       },
     ],

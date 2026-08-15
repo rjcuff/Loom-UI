@@ -1,0 +1,113 @@
+---
+title: iPad
+date: 2026-08-15
+description: A tablet frame drawn from the real measurements, upright or on its side, with a screen you put anything in.
+---
+
+<ComponentPreview name="ipad-demo" />
+
+## Installation
+
+<Tabs defaultValue="cli">
+
+<TabsList>
+  <TabsTrigger value="cli">CLI</TabsTrigger>
+  <TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @loomui/ipad
+```
+
+</TabsContent>
+
+<TabsContent value="manual">
+
+<Steps>
+
+<Step>Copy the component into your project.</Step>
+
+<ComponentSource name="ipad" />
+
+<Step>Update the import paths to match your setup.</Step>
+
+</Steps>
+
+</TabsContent>
+
+</Tabs>
+
+## Usage
+
+```tsx
+import { IPad } from "@/components/ui/ipad"
+```
+
+```tsx
+<IPad />
+```
+
+On its own it is a blank tablet with a grey screen. Fill it with a screenshot,
+or with live markup:
+
+```tsx
+<IPad src="/dashboard.png" alt="The dashboard on a tablet" />
+```
+
+```tsx
+<IPad width={520}>
+  <Dashboard />
+</IPad>
+```
+
+Anything inside is clipped to the screen's radius.
+
+### Which way up
+
+```tsx
+<IPad orientation="landscape" width={640} />
+```
+
+`portrait` is 834 by 1194 points and `landscape` swaps them. The camera follows
+the top edge either way, and every other measurement is worked out against
+whichever side is the width, so the bezel stays the same thickness in both.
+
+### One number, and it shrinks
+
+`width` is a maximum, not a fixed size. The frame fills the space it is given
+and stops there, so it never pushes a narrow screen sideways.
+
+Everything else — the rim, both corner radii, the camera — is a real device
+point expressed as a share of the frame's own width, in container units. A
+percentage `border-radius` would go elliptical on a box this shape, and a scale
+factor worked out in JavaScript would be wrong the moment the frame had to
+shrink to fit.
+
+The camera is drawn in the bezel rather than on the screen, which is where it
+sits and what keeps it clear of anything laid over the display.
+
+The component is not client-side. There is no state and no listener, so it
+renders on the server and costs nothing on the client.
+
+## Props
+
+| Prop          | Type                        | Default      | Description                           |
+| ------------- | --------------------------- | ------------ | ------------------------------------- |
+| `width`       | `number`                    | `420`        | Largest width the device is drawn at. |
+| `src`         | `string`                    | none         | Screenshot to fill the screen with.   |
+| `alt`         | `string`                    | `""`         | Description of the screenshot.        |
+| `orientation` | `"portrait" \| "landscape"` | `"portrait"` | Which way up the tablet is held.      |
+| `camera`      | `boolean`                   | `true`       | Draw the camera in the bezel.         |
+| `className`   | `string`                    | none         | Merged onto the frame.                |
+
+Any other `<div>` prop is forwarded. `children` fills the screen when there is
+no `src`.
+
+<Callout type="tip" title="Accessibility">
+  The rim and the camera are `aria-hidden` — they are a picture of a tablet, not
+  content. Give `src` a real `alt` describing what is on the screen, or leave it
+  empty when the screenshot is decoration beside copy that already says the same
+  thing.
+</Callout>

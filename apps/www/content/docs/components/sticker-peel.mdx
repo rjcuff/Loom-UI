@@ -1,0 +1,112 @@
+---
+title: Sticker Peel
+date: 2026-08-15
+description: A card whose corner lifts off the page on hover, folded back over the crease to show its backing.
+---
+
+<ComponentPreview name="sticker-peel-demo" />
+
+## Installation
+
+<Tabs defaultValue="cli">
+
+<TabsList>
+  <TabsTrigger value="cli">CLI</TabsTrigger>
+  <TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @loomui/sticker-peel
+```
+
+</TabsContent>
+
+<TabsContent value="manual">
+
+<Steps>
+
+<Step>Copy the component into your project.</Step>
+
+<ComponentSource name="sticker-peel" />
+
+<Step>Update the import paths to match your setup.</Step>
+
+</Steps>
+
+</TabsContent>
+
+</Tabs>
+
+## Usage
+
+```tsx
+import { StickerPeel } from "@/components/ui/sticker-peel"
+```
+
+```tsx
+<StickerPeel className="size-32 rounded-xl">
+  <div className="bg-primary text-primary-foreground grid h-full w-full place-items-center rounded-xl">
+    Ships today
+  </div>
+</StickerPeel>
+```
+
+Wrap anything. The child is clipped, so give it the same corner radius as the
+wrapper or the peel will cut across a square edge.
+
+### The fold
+
+Two things move together. The sticker is clipped with a five-point polygon that
+loses one corner, and a triangle is grown from that same corner to stand in for
+the lifted flap.
+
+The flap is not the cut corner moved aside. It is that triangle mirrored back
+over the crease, which is why its tip lands _inside_ the sticker rather than
+where the corner used to be. Getting that wrong is what makes most CSS peels
+look like a corner has simply been deleted.
+
+Both polygons have the same number of points at rest and at full lift, so the
+browser interpolates the cut rather than snapping between two shapes. The flap
+is grown with `transform: scale`, not sized, so it travels on the same curve as
+the cut and the crease never splits.
+
+```tsx
+<StickerPeel size="3rem" duration={380} corner="top-right" />
+```
+
+`size` is how far the corner lifts. `corner` picks which one — each corner
+carries its own cut, its own flap and its own gradient direction, so the light
+always falls away from the crease.
+
+### Holding it open
+
+```tsx
+<StickerPeel peeled={selected}>...</StickerPeel>
+```
+
+Pass `peeled` to drive it yourself. Left out, it peels on hover and on focus:
+focus bubbles, so anything focusable inside lifts the corner too and the peel
+is never a hover-only affordance.
+
+Under `prefers-reduced-motion` the corner still lifts, but it arrives rather
+than travelling.
+
+## Props
+
+| Prop        | Type                                                           | Default          | Description                         |
+| ----------- | -------------------------------------------------------------- | ---------------- | ----------------------------------- |
+| `size`      | `string`                                                       | `"2.75rem"`      | How far the corner lifts.           |
+| `corner`    | `"top-left" \| "top-right" \| "bottom-left" \| "bottom-right"` | `"bottom-right"` | Which corner peels.                 |
+| `duration`  | `number`                                                       | `380`            | Length of the peel in milliseconds. |
+| `peeled`    | `boolean`                                                      | none             | Hold the corner up.                 |
+| `className` | `string`                                                       | none             | Merged onto the wrapper.            |
+
+Any other `<div>` prop is forwarded.
+
+<Callout type="tip" title="Accessibility">
+  The flap is `aria-hidden` — it is paper, not content. Nothing is hidden by the
+  cut either: the corner that is clipped away is empty by design, so put your
+  content where the peel will not reach it.
+</Callout>

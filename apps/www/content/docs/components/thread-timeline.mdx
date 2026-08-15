@@ -1,0 +1,124 @@
+---
+title: Thread Timeline
+date: 2026-08-15
+description: A timeline whose thread is sewn down the page as you read, lighting each node as it reaches it.
+---
+
+<ComponentPreview name="thread-timeline-demo" />
+
+## Installation
+
+<Tabs defaultValue="cli">
+
+<TabsList>
+  <TabsTrigger value="cli">CLI</TabsTrigger>
+  <TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @loomui/thread-timeline
+```
+
+</TabsContent>
+
+<TabsContent value="manual">
+
+<Steps>
+
+<Step>Copy the component into your project.</Step>
+
+<ComponentSource name="thread-timeline" />
+
+<Step>Update the import paths to match your setup.</Step>
+
+</Steps>
+
+</TabsContent>
+
+</Tabs>
+
+## Usage
+
+```tsx
+import {
+  ThreadTimeline,
+  ThreadTimelineItem,
+} from "@/components/ui/thread-timeline"
+```
+
+```tsx
+<ThreadTimeline>
+  <ThreadTimelineItem meta="March" title="First thread" marker={1}>
+    One component, copied by hand.
+  </ThreadTimelineItem>
+  <ThreadTimelineItem meta="May" title="The registry" marker={2}>
+    Every component installable in a single command.
+  </ThreadTimelineItem>
+</ThreadTimeline>
+```
+
+The list draws a dashed rail — the pattern — and a solid thread over it that
+grows as the page scrolls. Each entry has a node on the rail that fills in, and
+content that slides the last pixel into place behind it.
+
+### One measurement, not two
+
+The thread and the nodes are driven by the same line across the viewport, set
+by `line` and sitting at 55% of the screen height by default.
+
+```tsx
+<ThreadTimeline line={0.5} />
+```
+
+A node lights the moment its own centre crosses that line, and the thread is
+drawn to the same place. Because both read the same number, a node can never
+light ahead of the thread that is meant to reach it — which is the thing that
+gives a timeline built out of separate observers away.
+
+Measurement is one `requestAnimationFrame` per scroll event on the list, and
+the result is written straight to the DOM as a `--thread-progress` custom
+property and a `data-reached` attribute. Nothing re-renders while you scroll,
+however many entries there are.
+
+### Styling the nodes
+
+`data-reached` is a plain attribute, so anything can hang off it:
+
+```tsx
+<ThreadTimelineItem className="group-data-[reached]:border-primary">
+```
+
+`marker` is whatever goes inside the node — an index, a glyph, or nothing.
+`meta` is the small line above the title, usually a date.
+
+Under `prefers-reduced-motion` the thread is drawn complete and every entry is
+marked reached on mount, so nothing is left greyed out waiting for a scroll
+that will not animate.
+
+## Props
+
+### ThreadTimeline
+
+| Prop        | Type     | Default | Description                                             |
+| ----------- | -------- | ------- | ------------------------------------------------------- |
+| `line`      | `number` | `0.55`  | Where the thread head sits in the viewport, `0` to `1`. |
+| `className` | `string` | none    | Merged onto the `ol`. Width goes here.                  |
+
+### ThreadTimelineItem
+
+| Prop        | Type        | Default | Description                  |
+| ----------- | ----------- | ------- | ---------------------------- |
+| `title`     | `ReactNode` | none    | Heading for the entry.       |
+| `meta`      | `ReactNode` | none    | Small line above the title.  |
+| `marker`    | `ReactNode` | none    | Content for the node itself. |
+| `className` | `string`    | none    | Merged onto the `li`.        |
+
+Any other `<ol>` or `<li>` prop is forwarded.
+
+<Callout type="tip" title="Accessibility">
+  It is an ordered list of list items, which is what a timeline is. The rail,
+  the thread and the nodes are all `aria-hidden`, so nothing is announced twice
+  and no entry depends on having been scrolled past to be readable.
+</Callout>

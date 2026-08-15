@@ -1,0 +1,116 @@
+---
+title: Ticket Stub
+date: 2026-08-15
+description: A card torn along a perforation, with a notch bitten out of the paper at each end of it.
+---
+
+<ComponentPreview name="ticket-stub-demo" />
+
+## Installation
+
+<Tabs defaultValue="cli">
+
+<TabsList>
+  <TabsTrigger value="cli">CLI</TabsTrigger>
+  <TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @loomui/ticket-stub
+```
+
+</TabsContent>
+
+<TabsContent value="manual">
+
+<Steps>
+
+<Step>Copy the component into your project.</Step>
+
+<ComponentSource name="ticket-stub" />
+
+<Step>Update the import paths to match your setup.</Step>
+
+</Steps>
+
+</TabsContent>
+
+</Tabs>
+
+## Usage
+
+```tsx
+import { TicketStub } from "@/components/ui/ticket-stub"
+```
+
+```tsx
+<TicketStub stub={<Seat number="14A" />}>
+  <BoardingPass from="LIS" to="KIX" />
+</TicketStub>
+```
+
+`children` is the ticket and `stub` is the part that tears off. Both are your
+own markup — the component supplies the paper, not the layout.
+
+### The notches
+
+Two radial gradients, each transparent inside its radius, used as a mask. The
+masks are composited with `intersect` rather than stacked, because layered
+masks add up: without it only the last one declared takes a bite and the ticket
+comes out notched at one end.
+
+```tsx
+<TicketStub split={70} notch={12} />
+```
+
+`split` is where the tear falls as a percentage of the long side, and `notch`
+is the radius of the bite in pixels. The perforation is inset by that same
+radius at both ends, so the dashes start where the paper does rather than
+running out into the hole.
+
+### The edge
+
+Everything the edge is made of sits on a wrapper. A `box-shadow` or a `border`
+on the masked element is cut away along with the paper, which leaves the
+notches unoutlined and the ticket flat.
+
+The outline is four drop shadows offset a pixel in each direction, in
+`--border`. A filter traces the element's alpha, so the line follows the curve
+of every bite rather than the rectangle the paper started as. It is also the
+only edge that survives dark mode, where a card the same value as the page
+behind it has nothing but its outline to separate them.
+
+### Orientation
+
+```tsx
+<TicketStub orientation="vertical" stub={...}>...</TicketStub>
+```
+
+`horizontal` is a wide ticket with the stub on the right and the tear running
+top to bottom. `vertical` is a tall one with the stub below and the tear
+running across. The notches and the perforation both follow.
+
+`lift={false}` drops the hover, which is a small rise and a fraction of a
+degree of rotation — enough to read as paper, not enough to read as a card
+game.
+
+## Props
+
+| Prop          | Type                         | Default        | Description                               |
+| ------------- | ---------------------------- | -------------- | ----------------------------------------- |
+| `stub`        | `ReactNode`                  | none           | The torn-off part, after the perforation. |
+| `split`       | `number`                     | `68`           | Where the tear falls, as a percentage.    |
+| `notch`       | `number`                     | `12`           | Radius of the notches, in pixels.         |
+| `orientation` | `"horizontal" \| "vertical"` | `"horizontal"` | Stub to the right, or below.              |
+| `lift`        | `boolean`                    | `true`         | Lift the ticket off the page on hover.    |
+| `className`   | `string`                     | none           | Merged onto the wrapper. Size goes here.  |
+
+Any other `<div>` prop is forwarded.
+
+<Callout type="tip" title="Accessibility">
+  The perforation is `aria-hidden` and the mask only removes paper, never
+  content — but it does remove paper, so keep text clear of the notches or it
+  will be clipped along with them.
+</Callout>

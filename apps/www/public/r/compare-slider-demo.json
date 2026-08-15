@@ -1,0 +1,17 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "compare-slider-demo",
+  "type": "registry:example",
+  "title": "Compare Slider Demo",
+  "description": "A draft and a shipped page split by a divider you drag.",
+  "registryDependencies": [
+    "@loomui/compare-slider"
+  ],
+  "files": [
+    {
+      "path": "registry/example/compare-slider-demo.tsx",
+      "content": "import { CompareSlider } from \"@/registry/loomui/compare-slider\"\n\nfunction Panel({\n  label,\n  className,\n  children,\n}: {\n  label: string\n  className?: string\n  children: React.ReactNode\n}) {\n  return (\n    <div className={`h-full w-full p-4 sm:p-6 ${className ?? \"\"}`}>\n      <div className=\"text-[0.65rem] tracking-[0.2em] uppercase opacity-60\">\n        {label}\n      </div>\n      <div className=\"mt-3 space-y-2\">{children}</div>\n    </div>\n  )\n}\n\nexport default function CompareSliderDemo() {\n  return (\n    <CompareSlider\n      label=\"Compare the draft with the shipped page\"\n      className=\"h-64 w-full max-w-2xl rounded-xl border\"\n      before={\n        <Panel label=\"Draft\" className=\"bg-muted text-muted-foreground\">\n          <div className=\"bg-foreground/15 h-3 w-full max-w-40 rounded-full\" />\n          <div className=\"bg-foreground/10 h-3 w-full max-w-56 rounded-full\" />\n          <div className=\"bg-foreground/10 h-3 w-full max-w-48 rounded-full\" />\n          <div className=\"bg-foreground/10 mt-6 h-9 w-28 rounded-md\" />\n        </Panel>\n      }\n      after={\n        <Panel\n          label=\"Shipped\"\n          className=\"from-primary/15 via-background to-background text-foreground bg-linear-to-br\"\n        >\n          <div className=\"bg-primary h-3 w-full max-w-40 rounded-full\" />\n          <div className=\"bg-foreground/30 h-3 w-full max-w-56 rounded-full\" />\n          <div className=\"bg-foreground/20 h-3 w-full max-w-48 rounded-full\" />\n          <div className=\"bg-primary text-primary-foreground mt-6 grid h-9 w-28 place-items-center rounded-md text-xs font-medium\">\n            Get started\n          </div>\n        </Panel>\n      }\n    />\n  )\n}\n",
+      "type": "registry:example"
+    }
+  ]
+}

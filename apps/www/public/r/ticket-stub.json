@@ -1,0 +1,22 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "ticket-stub",
+  "type": "registry:ui",
+  "title": "Ticket Stub",
+  "description": "A card torn along a perforation, with a notch bitten out of the paper at each end of it.",
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "path": "registry/loomui/ticket-stub.tsx",
+      "content": "\"use client\"\n\nimport * as React from \"react\"\n\nimport { cn } from \"@/lib/utils\"\n\nexport interface TicketStubProps extends React.ComponentProps<\"div\"> {\n  /** The torn-off part. Sits after the perforation. */\n  stub?: React.ReactNode\n  /** Where the perforation falls, as a percentage of the long side. */\n  split?: number\n  /** Radius of the notches bitten out at each end of the tear, in pixels. */\n  notch?: number\n  /** Stub on the right of a wide ticket, or below a tall one. */\n  orientation?: \"horizontal\" | \"vertical\"\n  /** Lift the ticket off the page on hover. */\n  lift?: boolean\n}\n\nexport function TicketStub({\n  children,\n  stub,\n  split = 68,\n  notch = 12,\n  orientation = \"horizontal\",\n  lift = true,\n  className,\n  style,\n  ...props\n}: TicketStubProps) {\n  const vertical = orientation === \"vertical\"\n\n  // Two circles cut out of the same shape. Intersecting the masks is what takes\n  // a bite from both ends of the tear instead of only the last one declared.\n  const mask = vertical\n    ? `radial-gradient(circle at left ${split}%, transparent ${notch}px, #000 ${notch + 0.5}px), radial-gradient(circle at right ${split}%, transparent ${notch}px, #000 ${notch + 0.5}px)`\n    : `radial-gradient(circle at ${split}% top, transparent ${notch}px, #000 ${notch + 0.5}px), radial-gradient(circle at ${split}% bottom, transparent ${notch}px, #000 ${notch + 0.5}px)`\n\n  // Everything the edge is made of lives out here. A `box-shadow` or a `border`\n  // on the masked element is cut away with the paper, which leaves the notches\n  // unoutlined — and on a dark background an edge drawn only in shadow is not\n  // an edge at all. Four offset drop shadows trace the alpha instead, so the\n  // outline follows the curve of every bite.\n  const edge = [\n    \"drop-shadow(0 1px 0 var(--border))\",\n    \"drop-shadow(0 -1px 0 var(--border))\",\n    \"drop-shadow(1px 0 0 var(--border))\",\n    \"drop-shadow(-1px 0 0 var(--border))\",\n    \"drop-shadow(0 4px 10px rgb(0 0 0 / 0.14))\",\n  ].join(\" \")\n\n  return (\n    <div\n      data-slot=\"ticket-stub\"\n      className={cn(\n        \"relative\",\n        lift &&\n          \"transition-transform duration-300 ease-[var(--ease-out-quart)] hover:-translate-y-1 hover:rotate-[-0.4deg] motion-reduce:transition-none\",\n        className\n      )}\n      style={{ filter: edge, ...style }}\n      {...props}\n    >\n      <div\n        className={cn(\n          \"bg-card text-card-foreground flex overflow-hidden rounded-xl\",\n          vertical ? \"h-full flex-col\" : \"w-full flex-row\"\n        )}\n        style={{\n          WebkitMaskImage: mask,\n          maskImage: mask,\n          WebkitMaskComposite: \"source-in\",\n          maskComposite: \"intersect\",\n        }}\n      >\n        <div\n          style={vertical ? { height: `${split}%` } : { width: `${split}%` }}\n        >\n          {children}\n        </div>\n        <div className=\"flex-1\">{stub}</div>\n      </div>\n\n      {/* The perforation. Inset by the notch radius at both ends so it starts\n          where the paper does. */}\n      <span\n        aria-hidden=\"true\"\n        className={cn(\n          \"border-muted-foreground/40 absolute border-dashed\",\n          vertical ? \"border-t\" : \"border-l\"\n        )}\n        style={\n          vertical\n            ? { top: `${split}%`, left: notch, right: notch }\n            : { left: `${split}%`, top: notch, bottom: notch }\n        }\n      />\n    </div>\n  )\n}\n",
+      "type": "registry:ui"
+    }
+  ],
+  "cssVars": {
+    "theme": {
+      "ease-out-quart": "cubic-bezier(0.165, 0.84, 0.44, 1)"
+    }
+  }
+}

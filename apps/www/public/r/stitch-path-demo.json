@@ -1,0 +1,17 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "stitch-path-demo",
+  "type": "registry:example",
+  "title": "Stitch Path Demo",
+  "description": "A seam sewn between two lines of copy as the page scrolls.",
+  "registryDependencies": [
+    "@loomui/stitch-path"
+  ],
+  "files": [
+    {
+      "path": "registry/example/stitch-path-demo.tsx",
+      "content": "import { StitchPath } from \"@/registry/loomui/stitch-path\"\n\nexport default function StitchPathDemo() {\n  return (\n    <div className=\"w-full max-w-2xl\">\n      <p className=\"text-muted-foreground text-sm\">\n        Cut the pieces, lay them out, and pin them down.\n      </p>\n\n      <div className=\"h-28 py-4\">\n        <StitchPath className=\"text-primary\" />\n      </div>\n\n      <p className=\"text-muted-foreground text-sm\">\n        Scroll the page and the thread follows you down it.\n      </p>\n    </div>\n  )\n}\n",
+      "type": "registry:example"
+    }
+  ]
+}

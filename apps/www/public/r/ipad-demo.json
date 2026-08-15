@@ -1,0 +1,17 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "ipad-demo",
+  "type": "registry:example",
+  "title": "iPad Demo",
+  "description": "A blank tablet held upright.",
+  "registryDependencies": [
+    "@loomui/ipad"
+  ],
+  "files": [
+    {
+      "path": "registry/example/ipad-demo.tsx",
+      "content": "import { IPad } from \"@/registry/loomui/ipad\"\n\nexport default function IPadDemo() {\n  return <IPad width={340} />\n}\n",
+      "type": "registry:example"
+    }
+  ]
+}

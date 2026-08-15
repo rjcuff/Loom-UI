@@ -94,6 +94,21 @@ export const Index: Record<string, any> = {
       return { default: mod.default ?? mod[exportName] }
     }),
   },
+  "split-flap": {
+    name: "split-flap",
+    type: "registry:ui",
+    title: "Split Flap",
+    description: "A departure board that flaps through its glyphs, one cell behind the last, until it lands on the value.",
+    dependencies: [],
+    registryDependencies: ["utils"],
+    files: [{"path":"registry/loomui/split-flap.tsx","type":"registry:ui","target":""}],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/loomui/split-flap")
+      const exportName =
+        Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
+      return { default: mod.default ?? mod[exportName] }
+    }),
+  },
   "grid-backdrop": {
     name: "grid-backdrop",
     type: "registry:ui",
@@ -154,6 +169,21 @@ export const Index: Record<string, any> = {
       return { default: mod.default ?? mod[exportName] }
     }),
   },
+  "stitch-path": {
+    name: "stitch-path",
+    type: "registry:ui",
+    title: "Stitch Path",
+    description: "A running stitch sewn along an SVG path as the page scrolls, following the holes it is laid over.",
+    dependencies: [],
+    registryDependencies: ["utils"],
+    files: [{"path":"registry/loomui/stitch-path.tsx","type":"registry:ui","target":""}],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/loomui/stitch-path")
+      const exportName =
+        Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
+      return { default: mod.default ?? mod[exportName] }
+    }),
+  },
   "tilt-card": {
     name: "tilt-card",
     type: "registry:ui",
@@ -194,6 +224,66 @@ export const Index: Record<string, any> = {
     files: [{"path":"registry/loomui/hold-button.tsx","type":"registry:ui","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/loomui/hold-button")
+      const exportName =
+        Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
+      return { default: mod.default ?? mod[exportName] }
+    }),
+  },
+  "elastic-tabs": {
+    name: "elastic-tabs",
+    type: "registry:ui",
+    title: "Elastic Tabs",
+    description: "A tab group whose pill stretches to cover both tabs before it contracts onto the one you picked.",
+    dependencies: [],
+    registryDependencies: ["utils"],
+    files: [{"path":"registry/loomui/elastic-tabs.tsx","type":"registry:ui","target":""}],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/loomui/elastic-tabs")
+      const exportName =
+        Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
+      return { default: mod.default ?? mod[exportName] }
+    }),
+  },
+  "ticket-stub": {
+    name: "ticket-stub",
+    type: "registry:ui",
+    title: "Ticket Stub",
+    description: "A card torn along a perforation, with a notch bitten out of the paper at each end of it.",
+    dependencies: [],
+    registryDependencies: ["utils"],
+    files: [{"path":"registry/loomui/ticket-stub.tsx","type":"registry:ui","target":""}],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/loomui/ticket-stub")
+      const exportName =
+        Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
+      return { default: mod.default ?? mod[exportName] }
+    }),
+  },
+  "compare-slider": {
+    name: "compare-slider",
+    type: "registry:ui",
+    title: "Compare Slider",
+    description: "Two versions of the same frame, split by a divider you drag, or move with the arrow keys.",
+    dependencies: [],
+    registryDependencies: ["utils"],
+    files: [{"path":"registry/loomui/compare-slider.tsx","type":"registry:ui","target":""}],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/loomui/compare-slider")
+      const exportName =
+        Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
+      return { default: mod.default ?? mod[exportName] }
+    }),
+  },
+  "sticker-peel": {
+    name: "sticker-peel",
+    type: "registry:ui",
+    title: "Sticker Peel",
+    description: "A card whose corner lifts off the page on hover, folded back over the crease to show its backing.",
+    dependencies: [],
+    registryDependencies: ["utils"],
+    files: [{"path":"registry/loomui/sticker-peel.tsx","type":"registry:ui","target":""}],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/loomui/sticker-peel")
       const exportName =
         Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
       return { default: mod.default ?? mod[exportName] }
@@ -254,6 +344,81 @@ export const Index: Record<string, any> = {
     files: [{"path":"registry/loomui/testimonial-wall.tsx","type":"registry:ui","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/loomui/testimonial-wall")
+      const exportName =
+        Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
+      return { default: mod.default ?? mod[exportName] }
+    }),
+  },
+  "logo-loom": {
+    name: "logo-loom",
+    type: "registry:ui",
+    title: "Logo Loom",
+    description: "A logo row woven into place, every other mark arriving from the other side of the thread.",
+    dependencies: [],
+    registryDependencies: ["utils"],
+    files: [{"path":"registry/loomui/logo-loom.tsx","type":"registry:ui","target":""}],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/loomui/logo-loom")
+      const exportName =
+        Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
+      return { default: mod.default ?? mod[exportName] }
+    }),
+  },
+  "iphone": {
+    name: "iphone",
+    type: "registry:ui",
+    title: "iPhone",
+    description: "A device frame drawn from the real measurements, with a screen you put anything in.",
+    dependencies: [],
+    registryDependencies: ["utils"],
+    files: [{"path":"registry/loomui/iphone.tsx","type":"registry:ui","target":""}],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/loomui/iphone")
+      const exportName =
+        Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
+      return { default: mod.default ?? mod[exportName] }
+    }),
+  },
+  "ipad": {
+    name: "ipad",
+    type: "registry:ui",
+    title: "iPad",
+    description: "A tablet frame drawn from the real measurements, upright or on its side, with a screen you put anything in.",
+    dependencies: [],
+    registryDependencies: ["utils"],
+    files: [{"path":"registry/loomui/ipad.tsx","type":"registry:ui","target":""}],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/loomui/ipad")
+      const exportName =
+        Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
+      return { default: mod.default ?? mod[exportName] }
+    }),
+  },
+  "macbook": {
+    name: "macbook",
+    type: "registry:ui",
+    title: "MacBook",
+    description: "A laptop frame with the camera housing cut into the display and the scoop cut into its base.",
+    dependencies: [],
+    registryDependencies: ["utils"],
+    files: [{"path":"registry/loomui/macbook.tsx","type":"registry:ui","target":""}],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/loomui/macbook")
+      const exportName =
+        Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
+      return { default: mod.default ?? mod[exportName] }
+    }),
+  },
+  "thread-timeline": {
+    name: "thread-timeline",
+    type: "registry:ui",
+    title: "Thread Timeline",
+    description: "A timeline whose thread is sewn down the page as you read, lighting each node as it reaches it.",
+    dependencies: [],
+    registryDependencies: ["utils"],
+    files: [{"path":"registry/loomui/thread-timeline.tsx","type":"registry:ui","target":""}],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/loomui/thread-timeline")
       const exportName =
         Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
       return { default: mod.default ?? mod[exportName] }
@@ -349,6 +514,21 @@ export const Index: Record<string, any> = {
       return { default: mod.default ?? mod[exportName] }
     }),
   },
+  "split-flap-demo": {
+    name: "split-flap-demo",
+    type: "registry:example",
+    title: "Split Flap Demo",
+    description: "A departure board cycling through four destinations.",
+    dependencies: [],
+    registryDependencies: ["@loomui/split-flap"],
+    files: [{"path":"registry/example/split-flap-demo.tsx","type":"registry:example","target":""}],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/example/split-flap-demo")
+      const exportName =
+        Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
+      return { default: mod.default ?? mod[exportName] }
+    }),
+  },
   "grid-backdrop-demo": {
     name: "grid-backdrop-demo",
     type: "registry:example",
@@ -409,6 +589,21 @@ export const Index: Record<string, any> = {
       return { default: mod.default ?? mod[exportName] }
     }),
   },
+  "stitch-path-demo": {
+    name: "stitch-path-demo",
+    type: "registry:example",
+    title: "Stitch Path Demo",
+    description: "A seam sewn between two lines of copy as the page scrolls.",
+    dependencies: [],
+    registryDependencies: ["@loomui/stitch-path"],
+    files: [{"path":"registry/example/stitch-path-demo.tsx","type":"registry:example","target":""}],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/example/stitch-path-demo")
+      const exportName =
+        Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
+      return { default: mod.default ?? mod[exportName] }
+    }),
+  },
   "tilt-card-demo": {
     name: "tilt-card-demo",
     type: "registry:example",
@@ -449,6 +644,66 @@ export const Index: Record<string, any> = {
     files: [{"path":"registry/example/hold-button-demo.tsx","type":"registry:example","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/example/hold-button-demo")
+      const exportName =
+        Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
+      return { default: mod.default ?? mod[exportName] }
+    }),
+  },
+  "elastic-tabs-demo": {
+    name: "elastic-tabs-demo",
+    type: "registry:example",
+    title: "Elastic Tabs Demo",
+    description: "Four categories with a pill that stretches between them.",
+    dependencies: [],
+    registryDependencies: ["@loomui/elastic-tabs"],
+    files: [{"path":"registry/example/elastic-tabs-demo.tsx","type":"registry:example","target":""}],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/example/elastic-tabs-demo")
+      const exportName =
+        Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
+      return { default: mod.default ?? mod[exportName] }
+    }),
+  },
+  "ticket-stub-demo": {
+    name: "ticket-stub-demo",
+    type: "registry:example",
+    title: "Ticket Stub Demo",
+    description: "A boarding pass torn along its perforation.",
+    dependencies: [],
+    registryDependencies: ["@loomui/ticket-stub"],
+    files: [{"path":"registry/example/ticket-stub-demo.tsx","type":"registry:example","target":""}],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/example/ticket-stub-demo")
+      const exportName =
+        Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
+      return { default: mod.default ?? mod[exportName] }
+    }),
+  },
+  "compare-slider-demo": {
+    name: "compare-slider-demo",
+    type: "registry:example",
+    title: "Compare Slider Demo",
+    description: "A draft and a shipped page split by a divider you drag.",
+    dependencies: [],
+    registryDependencies: ["@loomui/compare-slider"],
+    files: [{"path":"registry/example/compare-slider-demo.tsx","type":"registry:example","target":""}],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/example/compare-slider-demo")
+      const exportName =
+        Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
+      return { default: mod.default ?? mod[exportName] }
+    }),
+  },
+  "sticker-peel-demo": {
+    name: "sticker-peel-demo",
+    type: "registry:example",
+    title: "Sticker Peel Demo",
+    description: "Three stickers whose corners lift as the pointer crosses them.",
+    dependencies: [],
+    registryDependencies: ["@loomui/sticker-peel"],
+    files: [{"path":"registry/example/sticker-peel-demo.tsx","type":"registry:example","target":""}],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/example/sticker-peel-demo")
       const exportName =
         Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
       return { default: mod.default ?? mod[exportName] }
@@ -509,6 +764,81 @@ export const Index: Record<string, any> = {
     files: [{"path":"registry/example/testimonial-wall-demo.tsx","type":"registry:example","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/example/testimonial-wall-demo")
+      const exportName =
+        Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
+      return { default: mod.default ?? mod[exportName] }
+    }),
+  },
+  "logo-loom-demo": {
+    name: "logo-loom-demo",
+    type: "registry:example",
+    title: "Logo Loom Demo",
+    description: "Five wordmarks woven onto a thread as the row comes into view.",
+    dependencies: [],
+    registryDependencies: ["@loomui/logo-loom"],
+    files: [{"path":"registry/example/logo-loom-demo.tsx","type":"registry:example","target":""}],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/example/logo-loom-demo")
+      const exportName =
+        Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
+      return { default: mod.default ?? mod[exportName] }
+    }),
+  },
+  "iphone-demo": {
+    name: "iphone-demo",
+    type: "registry:example",
+    title: "iPhone Demo",
+    description: "A device frame with a screen built out of live markup.",
+    dependencies: [],
+    registryDependencies: ["@loomui/iphone"],
+    files: [{"path":"registry/example/iphone-demo.tsx","type":"registry:example","target":""}],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/example/iphone-demo")
+      const exportName =
+        Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
+      return { default: mod.default ?? mod[exportName] }
+    }),
+  },
+  "ipad-demo": {
+    name: "ipad-demo",
+    type: "registry:example",
+    title: "iPad Demo",
+    description: "A blank tablet held upright.",
+    dependencies: [],
+    registryDependencies: ["@loomui/ipad"],
+    files: [{"path":"registry/example/ipad-demo.tsx","type":"registry:example","target":""}],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/example/ipad-demo")
+      const exportName =
+        Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
+      return { default: mod.default ?? mod[exportName] }
+    }),
+  },
+  "macbook-demo": {
+    name: "macbook-demo",
+    type: "registry:example",
+    title: "MacBook Demo",
+    description: "A blank laptop standing on its base.",
+    dependencies: [],
+    registryDependencies: ["@loomui/macbook"],
+    files: [{"path":"registry/example/macbook-demo.tsx","type":"registry:example","target":""}],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/example/macbook-demo")
+      const exportName =
+        Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
+      return { default: mod.default ?? mod[exportName] }
+    }),
+  },
+  "thread-timeline-demo": {
+    name: "thread-timeline-demo",
+    type: "registry:example",
+    title: "Thread Timeline Demo",
+    description: "Four entries sewn together as the page scrolls past them.",
+    dependencies: [],
+    registryDependencies: ["@loomui/thread-timeline"],
+    files: [{"path":"registry/example/thread-timeline-demo.tsx","type":"registry:example","target":""}],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/example/thread-timeline-demo")
       const exportName =
         Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
       return { default: mod.default ?? mod[exportName] }

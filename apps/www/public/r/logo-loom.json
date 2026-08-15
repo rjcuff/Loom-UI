@@ -1,0 +1,35 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "logo-loom",
+  "type": "registry:ui",
+  "title": "Logo Loom",
+  "description": "A logo row woven into place, every other mark arriving from the other side of the thread.",
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "path": "registry/loomui/logo-loom.tsx",
+      "content": "\"use client\"\n\nimport * as React from \"react\"\n\nimport { cn } from \"@/lib/utils\"\n\nexport interface LogoLoomProps extends React.ComponentProps<\"div\"> {\n  /** Milliseconds between one logo arriving and the next. */\n  stagger?: number\n  /** Length of a single logo's arrival, in milliseconds. */\n  duration?: number\n  /** How far a logo travels in, as a CSS length. */\n  distance?: string\n  /** Draw the thread the logos are woven onto. */\n  thread?: boolean\n  /** Weave again every time the row comes back into view. */\n  repeat?: boolean\n}\n\nexport function LogoLoom({\n  children,\n  className,\n  stagger = 90,\n  duration = 700,\n  distance = \"1.6rem\",\n  thread = true,\n  repeat = false,\n  ...props\n}: LogoLoomProps) {\n  const ref = React.useRef<HTMLDivElement>(null)\n  const [woven, setWoven] = React.useState(false)\n\n  React.useEffect(() => {\n    const node = ref.current\n    if (!node) {\n      return\n    }\n\n    const observer = new IntersectionObserver(\n      ([entry]) => {\n        if (entry.isIntersecting) {\n          setWoven(true)\n        } else if (repeat) {\n          setWoven(false)\n        }\n      },\n      { threshold: 0.35 }\n    )\n\n    observer.observe(node)\n    return () => observer.disconnect()\n  }, [repeat])\n\n  const logos = React.Children.toArray(children)\n\n  return (\n    <div\n      ref={ref}\n      data-slot=\"logo-loom\"\n      data-woven={woven ? \"\" : undefined}\n      className={cn(\n        \"relative flex flex-wrap items-center justify-center gap-x-10 gap-y-6\",\n        className\n      )}\n      {...props}\n    >\n      {/* The warp. It runs behind every logo, and only the logos that carry a\n          background hide it, which is what makes the row read as woven rather\n          than as a row of logos on a line. */}\n      {thread ? (\n        <span\n          aria-hidden=\"true\"\n          className=\"border-muted-foreground/25 absolute inset-x-0 top-1/2 -z-10 border-t border-dashed\"\n        />\n      ) : null}\n\n      {logos.map((logo, index) => (\n        <span\n          key={index}\n          data-slot=\"logo-loom-item\"\n          className={cn(\n            \"relative px-3 opacity-0\",\n            // Every other logo sits over the thread and the rest sit under it.\n            // The pass a logo takes is also the direction it arrives from, so\n            // the row interlaces as it lands.\n            index % 2 === 0 ? \"bg-background\" : \"bg-transparent\",\n            woven &&\n              \"animate-loom-weave motion-reduce:animate-none motion-reduce:opacity-100\"\n          )}\n          style={\n            {\n              \"--loom-from\": index % 2 === 0 ? `-${distance}` : distance,\n              animationDelay: `${index * stagger}ms`,\n              animationDuration: `${duration}ms`,\n            } as React.CSSProperties\n          }\n        >\n          {logo}\n        </span>\n      ))}\n    </div>\n  )\n}\n",
+      "type": "registry:ui"
+    }
+  ],
+  "cssVars": {
+    "theme": {
+      "ease-out-quart": "cubic-bezier(0.165, 0.84, 0.44, 1)",
+      "animate-loom-weave": "loom-weave 700ms var(--ease-out-quart) both"
+    }
+  },
+  "css": {
+    "@keyframes loom-weave": {
+      "from": {
+        "opacity": "0",
+        "transform": "translateY(var(--loom-from, 1.5rem))"
+      },
+      "to": {
+        "opacity": "1",
+        "transform": "translateY(0)"
+      }
+    }
+  }
+}

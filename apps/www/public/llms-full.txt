@@ -132,6 +132,258 @@ export default function AuroraBackdropDemo() {
 }
 
 
+===== COMPONENT: compare-slider =====
+Title: Compare Slider
+Description: Two versions of the same frame, split by a divider you drag, or move with the arrow keys.
+Install: npx shadcn@latest add @loomui/compare-slider
+
+--- file: loomui/compare-slider.tsx ---
+"use client"
+
+import * as React from "react"
+
+import { cn } from "@/lib/utils"
+
+export interface CompareSliderProps extends Omit<
+  React.ComponentProps<"div">,
+  "onChange"
+> {
+  /** Sits in flow and sets the size of the frame. Shown before the divider. */
+  before: React.ReactNode
+  /** Laid over the top and clipped to after the divider. */
+  after: React.ReactNode
+  /** Divider position, 0 to 100. Leave it out to let the slider own it. */
+  position?: number
+  /** Starting position when the slider owns it. */
+  defaultPosition?: number
+  /** Called with the position the divider moved to. */
+  onPositionChange?: (position: number) => void
+  /** Split left to right, or top to bottom. */
+  orientation?: "horizontal" | "vertical"
+  /** Percent moved per arrow key. Shift moves five of these. */
+  step?: number
+  /** Name for the divider, which is a real slider. */
+  label?: string
+}
+
+const clamp = (value: number) => Math.min(Math.max(value, 0), 100)
+
+export function CompareSlider({
+  before,
+  after,
+  position,
+  defaultPosition = 50,
+  onPositionChange,
+  orientation = "horizontal",
+  step = 2,
+  label = "Compare",
+  className,
+  style,
+  ...props
+}: CompareSliderProps) {
+  const [own, setOwn] = React.useState(defaultPosition)
+  const [dragging, setDragging] = React.useState(false)
+  const frameRef = React.useRef<HTMLDivElement>(null)
+
+  const isControlled = position !== undefined
+  const value = clamp(isControlled ? position : own)
+  const vertical = orientation === "vertical"
+
+  const commit = (next: number) => {
+    const clamped = clamp(next)
+    if (!isControlled) {
+      setOwn(clamped)
+    }
+    onPositionChange?.(clamped)
+  }
+
+  const trackPointer = (event: React.PointerEvent<HTMLDivElement>) => {
+    const frame = frameRef.current
+    if (!frame) {
+      return
+    }
+    const rect = frame.getBoundingClientRect()
+    const ratio = vertical
+      ? (event.clientY - rect.top) / rect.height
+      : (event.clientX - rect.left) / rect.width
+    commit(ratio * 100)
+  }
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    const distance = event.shiftKey ? step * 5 : step
+    const back = vertical ? "ArrowUp" : "ArrowLeft"
+    const forward = vertical ? "ArrowDown" : "ArrowRight"
+
+    if (event.key === back) {
+      commit(value - distance)
+    } else if (event.key === forward) {
+      commit(value + distance)
+    } else if (event.key === "Home") {
+      commit(0)
+    } else if (event.key === "End") {
+      commit(100)
+    } else {
+      return
+    }
+
+    event.preventDefault()
+  }
+
+  return (
+    <div
+      ref={frameRef}
+      data-slot="compare-slider"
+      data-dragging={dragging ? "" : undefined}
+      className={cn(
+        "group/compare relative isolate overflow-hidden select-none",
+        className
+      )}
+      onPointerDown={(event) => {
+        event.currentTarget.setPointerCapture(event.pointerId)
+        setDragging(true)
+        trackPointer(event)
+      }}
+      onPointerMove={(event) => {
+        if (dragging) {
+          trackPointer(event)
+        }
+      }}
+      onPointerUp={(event) => {
+        event.currentTarget.releasePointerCapture(event.pointerId)
+        setDragging(false)
+      }}
+      onPointerCancel={() => setDragging(false)}
+      style={{
+        // Block only the axis the divider travels on, so the page can still be
+        // scrolled with a finger that lands on the frame.
+        touchAction: vertical ? "pan-x" : "pan-y",
+        ...style,
+      }}
+      {...props}
+    >
+      <div className="h-full w-full">{before}</div>
+
+      <div
+        className="absolute inset-0"
+        style={{
+          clipPath: vertical
+            ? `inset(${value}% 0 0 0)`
+            : `inset(0 0 0 ${value}%)`,
+        }}
+      >
+        {after}
+      </div>
+
+      <div
+        // A real slider, so the comparison is reachable without a pointer. The
+        // value is the divider's position, which is the only thing to move.
+        role="slider"
+        tabIndex={0}
+        aria-label={label}
+        aria-orientation={orientation}
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-valuenow={Math.round(value)}
+        onKeyDown={handleKeyDown}
+        className={cn(
+          "group/handle absolute z-10 flex items-center justify-center outline-none",
+          vertical
+            ? "inset-x-0 h-0 cursor-ns-resize"
+            : "inset-y-0 w-0 cursor-ew-resize",
+          // Only glide for keys. During a drag the divider has to sit exactly
+          // under the finger or it feels like it is being towed.
+          !dragging &&
+            "transition-[left,top] duration-200 ease-[var(--ease-out-quart)] motion-reduce:transition-none"
+        )}
+        style={vertical ? { top: `${value}%` } : { left: `${value}%` }}
+      >
+        <span
+          aria-hidden="true"
+          className={cn(
+            "bg-background/90 absolute",
+            vertical ? "inset-x-0 h-0.5" : "inset-y-0 w-0.5"
+          )}
+        />
+        <span
+          data-slot="compare-slider-knob"
+          aria-hidden="true"
+          className="bg-background text-foreground ring-ring/60 relative grid size-8 place-items-center rounded-full border shadow-sm group-focus-visible/handle:ring-2"
+        >
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={2}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className={cn("size-4", vertical && "rotate-90")}
+          >
+            <path d="m9 6-4 6 4 6" />
+            <path d="m15 6 4 6-4 6" />
+          </svg>
+        </span>
+      </div>
+    </div>
+  )
+}
+
+
+===== EXAMPLE: compare-slider-demo =====
+Title: Compare Slider Demo
+
+--- file: example/compare-slider-demo.tsx ---
+import { CompareSlider } from "@/registry/loomui/compare-slider"
+
+function Panel({
+  label,
+  className,
+  children,
+}: {
+  label: string
+  className?: string
+  children: React.ReactNode
+}) {
+  return (
+    <div className={`h-full w-full p-4 sm:p-6 ${className ?? ""}`}>
+      <div className="text-[0.65rem] tracking-[0.2em] uppercase opacity-60">
+        {label}
+      </div>
+      <div className="mt-3 space-y-2">{children}</div>
+    </div>
+  )
+}
+
+export default function CompareSliderDemo() {
+  return (
+    <CompareSlider
+      label="Compare the draft with the shipped page"
+      className="h-64 w-full max-w-2xl rounded-xl border"
+      before={
+        <Panel label="Draft" className="bg-muted text-muted-foreground">
+          <div className="bg-foreground/15 h-3 w-full max-w-40 rounded-full" />
+          <div className="bg-foreground/10 h-3 w-full max-w-56 rounded-full" />
+          <div className="bg-foreground/10 h-3 w-full max-w-48 rounded-full" />
+          <div className="bg-foreground/10 mt-6 h-9 w-28 rounded-md" />
+        </Panel>
+      }
+      after={
+        <Panel
+          label="Shipped"
+          className="from-primary/15 via-background to-background text-foreground bg-linear-to-br"
+        >
+          <div className="bg-primary h-3 w-full max-w-40 rounded-full" />
+          <div className="bg-foreground/30 h-3 w-full max-w-56 rounded-full" />
+          <div className="bg-foreground/20 h-3 w-full max-w-48 rounded-full" />
+          <div className="bg-primary text-primary-foreground mt-6 grid h-9 w-28 place-items-center rounded-md text-xs font-medium">
+            Get started
+          </div>
+        </Panel>
+      }
+    />
+  )
+}
+
+
 ===== COMPONENT: count-up =====
 Title: Count Up
 Description: A number that counts to its value when it scrolls into view, without a render per frame.
@@ -306,6 +558,244 @@ export default function CountUpDemo() {
         />
         <p className="text-muted-foreground mt-1 text-xs">Processed</p>
       </div>
+    </div>
+  )
+}
+
+
+===== COMPONENT: elastic-tabs =====
+Title: Elastic Tabs
+Description: A tab group whose pill stretches to cover both tabs before it contracts onto the one you picked.
+Install: npx shadcn@latest add @loomui/elastic-tabs
+
+--- file: loomui/elastic-tabs.tsx ---
+"use client"
+
+import * as React from "react"
+
+import { cn } from "@/lib/utils"
+
+export interface ElasticTabsItem {
+  value: string
+  label: React.ReactNode
+}
+
+export interface ElasticTabsProps extends Omit<
+  React.ComponentProps<"div">,
+  "onChange"
+> {
+  /** The tabs, in order. */
+  items: ElasticTabsItem[]
+  /** Selected tab. Leave it out to let the group own the selection. */
+  value?: string
+  /** Starting tab when the group owns the selection. */
+  defaultValue?: string
+  /** Called with the value of the tab moved to. */
+  onValueChange?: (value: string) => void
+  /** Length of the whole travel, in milliseconds. */
+  duration?: number
+}
+
+const EMPTY = { left: 0, width: 0 }
+
+export function ElasticTabs({
+  items,
+  value,
+  defaultValue,
+  onValueChange,
+  duration = 280,
+  className,
+  ...props
+}: ElasticTabsProps) {
+  const [own, setOwn] = React.useState(defaultValue ?? items[0]?.value)
+  const isControlled = value !== undefined
+  const active = isControlled ? value : own
+  const index = Math.max(
+    items.findIndex((item) => item.value === active),
+    0
+  )
+
+  const listRef = React.useRef<HTMLDivElement>(null)
+  const tabsRef = React.useRef<(HTMLButtonElement | null)[]>([])
+  const [pill, setPill] = React.useState(EMPTY)
+  // The first placement is a measurement, not a move, so it must not travel.
+  const [settled, setSettled] = React.useState(false)
+
+  const measure = React.useCallback((position: number) => {
+    const tab = tabsRef.current[position]
+    return tab ? { left: tab.offsetLeft, width: tab.offsetWidth } : EMPTY
+  }, [])
+
+  const indexRef = React.useRef(index)
+  indexRef.current = index
+  const pillRef = React.useRef(EMPTY)
+  React.useEffect(() => {
+    pillRef.current = pill
+  }, [pill])
+
+  // Placement. Runs once on mount and again whenever the row is resized, so a
+  // wrapped or re-laid-out group never leaves the pill behind.
+  React.useEffect(() => {
+    const list = listRef.current
+    if (!list) {
+      return
+    }
+
+    const observer = new ResizeObserver(() =>
+      setPill(measure(indexRef.current))
+    )
+    observer.observe(list)
+
+    const timer = window.setTimeout(() => setSettled(true), 0)
+    return () => {
+      observer.disconnect()
+      window.clearTimeout(timer)
+    }
+  }, [measure])
+
+  // Travel. The pill first stretches to cover both tabs, then contracts onto
+  // the new one. Moving `left` and `width` straight to the target slides a
+  // fixed shape across; spanning first is what makes it read as elastic.
+  React.useEffect(() => {
+    const target = measure(index)
+    const from = pillRef.current
+
+    if (from.width === 0) {
+      setPill(target)
+      return
+    }
+
+    const start = Math.min(from.left, target.left)
+    const end = Math.max(from.left + from.width, target.left + target.width)
+    setPill({ left: start, width: end - start })
+
+    const timer = window.setTimeout(
+      () => setPill(measure(index)),
+      duration * 0.4
+    )
+    return () => window.clearTimeout(timer)
+  }, [index, measure, duration])
+
+  const select = (position: number) => {
+    const next = items[position]
+    if (!next || next.value === active) {
+      return
+    }
+
+    if (!isControlled) {
+      setOwn(next.value)
+    }
+    onValueChange?.(next.value)
+  }
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    let position: number
+
+    if (event.key === "ArrowLeft") {
+      position = (index - 1 + items.length) % items.length
+    } else if (event.key === "ArrowRight") {
+      position = (index + 1) % items.length
+    } else if (event.key === "Home") {
+      position = 0
+    } else if (event.key === "End") {
+      position = items.length - 1
+    } else {
+      return
+    }
+
+    event.preventDefault()
+    select(position)
+    // Selection carries focus with it, or the next arrow key would start from
+    // the tab that has just been left behind.
+    tabsRef.current[position]?.focus()
+  }
+
+  return (
+    <div
+      ref={listRef}
+      data-slot="elastic-tabs"
+      role="tablist"
+      onKeyDown={handleKeyDown}
+      className={cn(
+        // Never wider than its parent. The pill is positioned in content
+        // coordinates, so it scrolls with the tabs rather than detaching.
+        "bg-muted relative inline-flex max-w-full items-center overflow-x-auto rounded-full p-1",
+        className
+      )}
+      {...props}
+    >
+      <span
+        aria-hidden="true"
+        className={cn(
+          "bg-background absolute inset-y-1 rounded-full shadow-sm",
+          settled &&
+            "transition-[left,width] ease-[var(--ease-out-quart)] motion-reduce:transition-none"
+        )}
+        style={{
+          left: pill.left,
+          width: pill.width,
+          transitionDuration: `${duration * 0.62}ms`,
+        }}
+      />
+
+      {items.map((item, position) => (
+        <button
+          key={item.value}
+          ref={(node) => {
+            tabsRef.current[position] = node
+          }}
+          type="button"
+          role="tab"
+          aria-selected={position === index}
+          // Only the selected tab is in the tab order; the arrows move between
+          // them, which is how a tablist is meant to be walked.
+          tabIndex={position === index ? 0 : -1}
+          onClick={() => select(position)}
+          className={cn(
+            "text-muted-foreground relative z-10 cursor-pointer rounded-full px-3 py-1.5 text-xs font-medium whitespace-nowrap transition-colors outline-none sm:px-4 sm:text-sm",
+            "focus-visible:ring-ring/60 focus-visible:ring-2",
+            position === index && "text-foreground"
+          )}
+        >
+          {item.label}
+        </button>
+      ))}
+    </div>
+  )
+}
+
+
+===== EXAMPLE: elastic-tabs-demo =====
+Title: Elastic Tabs Demo
+
+--- file: example/elastic-tabs-demo.tsx ---
+"use client"
+
+import * as React from "react"
+
+import { ElasticTabs } from "@/registry/loomui/elastic-tabs"
+
+const ITEMS = [
+  { value: "text", label: "Text" },
+  { value: "backgrounds", label: "Backgrounds" },
+  { value: "interaction", label: "Interaction" },
+  { value: "sections", label: "Sections" },
+]
+
+const COPY: Record<string, string> = {
+  text: "Headlines that arrive with something to say.",
+  backgrounds: "Surfaces that move without asking to be looked at.",
+  interaction: "Things that answer back when you touch them.",
+  sections: "Whole blocks, not just the pieces they are cut from.",
+}
+
+export default function ElasticTabsDemo() {
+  const [value, setValue] = React.useState("text")
+
+  return (
+    <div className="flex flex-col items-center gap-5">
+      <ElasticTabs items={ITEMS} value={value} onValueChange={setValue} />
+      <p className="text-muted-foreground text-sm">{COPY[value]}</p>
     </div>
   )
 }
@@ -1281,6 +1771,237 @@ export default function HoldButtonDemo() {
 }
 
 
+===== COMPONENT: ipad =====
+Title: iPad
+Description: A tablet frame drawn from the real measurements, upright or on its side, with a screen you put anything in.
+Install: npx shadcn@latest add @loomui/ipad
+
+--- file: loomui/ipad.tsx ---
+import * as React from "react"
+
+import { cn } from "@/lib/utils"
+
+export interface IPadProps extends React.ComponentProps<"div"> {
+  /** Largest width the device is drawn at, in pixels. It shrinks below this. */
+  width?: number
+  /** Screenshot to fill the screen with. */
+  src?: string
+  /** Description of the screenshot. Required whenever `src` is set. */
+  alt?: string
+  /** Which way up the tablet is held. */
+  orientation?: "portrait" | "landscape"
+  /** Draw the camera in the bezel above the screen. */
+  camera?: boolean
+}
+
+/** iPad Pro 11" in points, held upright. */
+const SHORT_SIDE = 834
+const LONG_SIDE = 1194
+
+export function IPad({
+  children,
+  src,
+  alt = "",
+  width = 420,
+  orientation = "portrait",
+  camera = true,
+  className,
+  style,
+  ...props
+}: IPadProps) {
+  const portrait = orientation === "portrait"
+  const deviceWidth = portrait ? SHORT_SIDE : LONG_SIDE
+  const deviceHeight = portrait ? LONG_SIDE : SHORT_SIDE
+
+  // Every measurement is a share of the frame's own width, so the proportions
+  // hold at whatever size the frame ends up rather than at one tuned by eye.
+  const cq = (points: number) =>
+    `${((points / deviceWidth) * 100).toFixed(4)}cqw`
+
+  return (
+    <div
+      data-slot="ipad"
+      className={cn("relative w-full", className)}
+      style={{
+        maxWidth: width,
+        aspectRatio: `${deviceWidth} / ${deviceHeight}`,
+        containerType: "inline-size",
+        ...style,
+      }}
+      {...props}
+    >
+      <div
+        className="absolute inset-0 bg-linear-to-br from-neutral-500 via-neutral-700 to-neutral-600 shadow-xl"
+        style={{ borderRadius: cq(50), padding: cq(22) }}
+      >
+        <div
+          className="relative h-full w-full overflow-hidden bg-neutral-200 dark:bg-neutral-800"
+          style={{ borderRadius: cq(32) }}
+        >
+          {src ? (
+            <img src={src} alt={alt} className="h-full w-full object-cover" />
+          ) : (
+            children
+          )}
+        </div>
+
+        {/* In the bezel rather than on the screen, which is where it sits and
+            what keeps it out of anything laid over the display. */}
+        {camera ? (
+          <span
+            aria-hidden="true"
+            className="absolute left-1/2 -translate-x-1/2 rounded-full bg-neutral-900"
+            style={{ top: cq(8), width: cq(7), height: cq(7) }}
+          />
+        ) : null}
+      </div>
+    </div>
+  )
+}
+
+
+===== EXAMPLE: ipad-demo =====
+Title: iPad Demo
+
+--- file: example/ipad-demo.tsx ---
+import { IPad } from "@/registry/loomui/ipad"
+
+export default function IPadDemo() {
+  return <IPad width={340} />
+}
+
+
+===== COMPONENT: iphone =====
+Title: iPhone
+Description: A device frame drawn from the real measurements, with a screen you put anything in.
+Install: npx shadcn@latest add @loomui/iphone
+
+--- file: loomui/iphone.tsx ---
+import * as React from "react"
+
+import { cn } from "@/lib/utils"
+
+export interface IPhoneProps extends React.ComponentProps<"div"> {
+  /** Largest width the device is drawn at, in pixels. It shrinks below this. */
+  width?: number
+  /** Screenshot to fill the screen with. */
+  src?: string
+  /** Description of the screenshot. Required whenever `src` is set. */
+  alt?: string
+  /** Draw the island at the top of the screen. */
+  island?: boolean
+  /** Draw the buttons down the sides. */
+  buttons?: boolean
+}
+
+/** Device points, so every measurement below is a real one. */
+const DEVICE_WIDTH = 393
+const DEVICE_HEIGHT = 852
+
+/**
+ * Every measurement is a share of the frame's own width. Container units keep
+ * that share exact at any size — a percentage border-radius would go elliptical
+ * on a box this tall, and a scale factor worked out in JS would be wrong the
+ * moment the frame had to shrink to fit.
+ */
+const cq = (points: number) =>
+  `${((points / DEVICE_WIDTH) * 100).toFixed(4)}cqw`
+
+const BUTTONS = [
+  { side: "left", top: 150, height: 32 },
+  { side: "left", top: 216, height: 62 },
+  { side: "left", top: 292, height: 62 },
+  { side: "right", top: 240, height: 96 },
+] as const
+
+export function IPhone({
+  children,
+  src,
+  alt = "",
+  width = 300,
+  island = true,
+  buttons = true,
+  className,
+  style,
+  ...props
+}: IPhoneProps) {
+  return (
+    <div
+      data-slot="iphone"
+      className={cn("relative w-full", className)}
+      style={{
+        maxWidth: width,
+        aspectRatio: `${DEVICE_WIDTH} / ${DEVICE_HEIGHT}`,
+        containerType: "inline-size",
+        ...style,
+      }}
+      {...props}
+    >
+      {buttons
+        ? BUTTONS.map((button, index) => (
+            <span
+              key={index}
+              aria-hidden="true"
+              className="absolute bg-neutral-500"
+              style={{
+                ...(button.side === "left"
+                  ? { left: cq(-2) }
+                  : { right: cq(-2) }),
+                top: cq(button.top),
+                width: cq(3),
+                height: cq(button.height),
+                borderRadius: cq(2),
+              }}
+            />
+          ))
+        : null}
+
+      {/* The rim. A gradient rather than a flat fill, because a solid band the
+          same colour all the way round reads as a border, not as metal. */}
+      <div
+        className="absolute inset-0 bg-linear-to-br from-neutral-600 via-neutral-800 to-neutral-700 shadow-xl"
+        style={{ borderRadius: cq(56), padding: cq(9) }}
+      >
+        <div
+          className="relative h-full w-full overflow-hidden bg-neutral-200 dark:bg-neutral-800"
+          style={{ borderRadius: cq(48) }}
+        >
+          {src ? (
+            <img src={src} alt={alt} className="h-full w-full object-cover" />
+          ) : (
+            children
+          )}
+
+          {island ? (
+            <span
+              aria-hidden="true"
+              className="absolute left-1/2 -translate-x-1/2 bg-black"
+              style={{
+                top: cq(12),
+                width: cq(120),
+                height: cq(34),
+                borderRadius: cq(17),
+              }}
+            />
+          ) : null}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+
+===== EXAMPLE: iphone-demo =====
+Title: iPhone Demo
+
+--- file: example/iphone-demo.tsx ---
+import { IPhone } from "@/registry/loomui/iphone"
+
+export default function IPhoneDemo() {
+  return <IPhone width={260} />
+}
+
+
 ===== COMPONENT: lens-text =====
 Title: Lens Text
 Description: Text held out of focus until the pointer passes over it like a magnifying glass.
@@ -1602,6 +2323,280 @@ export default function LensTextDemo() {
       </p>
     </div>
   )
+}
+
+
+===== COMPONENT: logo-loom =====
+Title: Logo Loom
+Description: A logo row woven into place, every other mark arriving from the other side of the thread.
+Install: npx shadcn@latest add @loomui/logo-loom
+
+--- file: loomui/logo-loom.tsx ---
+"use client"
+
+import * as React from "react"
+
+import { cn } from "@/lib/utils"
+
+export interface LogoLoomProps extends React.ComponentProps<"div"> {
+  /** Milliseconds between one logo arriving and the next. */
+  stagger?: number
+  /** Length of a single logo's arrival, in milliseconds. */
+  duration?: number
+  /** How far a logo travels in, as a CSS length. */
+  distance?: string
+  /** Draw the thread the logos are woven onto. */
+  thread?: boolean
+  /** Weave again every time the row comes back into view. */
+  repeat?: boolean
+}
+
+export function LogoLoom({
+  children,
+  className,
+  stagger = 90,
+  duration = 700,
+  distance = "1.6rem",
+  thread = true,
+  repeat = false,
+  ...props
+}: LogoLoomProps) {
+  const ref = React.useRef<HTMLDivElement>(null)
+  const [woven, setWoven] = React.useState(false)
+
+  React.useEffect(() => {
+    const node = ref.current
+    if (!node) {
+      return
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setWoven(true)
+        } else if (repeat) {
+          setWoven(false)
+        }
+      },
+      { threshold: 0.35 }
+    )
+
+    observer.observe(node)
+    return () => observer.disconnect()
+  }, [repeat])
+
+  const logos = React.Children.toArray(children)
+
+  return (
+    <div
+      ref={ref}
+      data-slot="logo-loom"
+      data-woven={woven ? "" : undefined}
+      className={cn(
+        "relative flex flex-wrap items-center justify-center gap-x-10 gap-y-6",
+        className
+      )}
+      {...props}
+    >
+      {/* The warp. It runs behind every logo, and only the logos that carry a
+          background hide it, which is what makes the row read as woven rather
+          than as a row of logos on a line. */}
+      {thread ? (
+        <span
+          aria-hidden="true"
+          className="border-muted-foreground/25 absolute inset-x-0 top-1/2 -z-10 border-t border-dashed"
+        />
+      ) : null}
+
+      {logos.map((logo, index) => (
+        <span
+          key={index}
+          data-slot="logo-loom-item"
+          className={cn(
+            "relative px-3 opacity-0",
+            // Every other logo sits over the thread and the rest sit under it.
+            // The pass a logo takes is also the direction it arrives from, so
+            // the row interlaces as it lands.
+            index % 2 === 0 ? "bg-background" : "bg-transparent",
+            woven &&
+              "animate-loom-weave motion-reduce:animate-none motion-reduce:opacity-100"
+          )}
+          style={
+            {
+              "--loom-from": index % 2 === 0 ? `-${distance}` : distance,
+              animationDelay: `${index * stagger}ms`,
+              animationDuration: `${duration}ms`,
+            } as React.CSSProperties
+          }
+        >
+          {logo}
+        </span>
+      ))}
+    </div>
+  )
+}
+
+
+===== EXAMPLE: logo-loom-demo =====
+Title: Logo Loom Demo
+
+--- file: example/logo-loom-demo.tsx ---
+import { LogoLoom } from "@/registry/loomui/logo-loom"
+
+const LOGOS = ["Northwind", "Contoso", "Fabrikam", "Tailspin", "Proseware"]
+
+export default function LogoLoomDemo() {
+  return (
+    <LogoLoom className="w-full max-w-2xl" repeat>
+      {LOGOS.map((logo) => (
+        <span
+          key={logo}
+          className="text-muted-foreground text-lg font-semibold tracking-tight"
+        >
+          {logo}
+        </span>
+      ))}
+    </LogoLoom>
+  )
+}
+
+
+===== COMPONENT: macbook =====
+Title: MacBook
+Description: A laptop frame with the camera housing cut into the display and the scoop cut into its base.
+Install: npx shadcn@latest add @loomui/macbook
+
+--- file: loomui/macbook.tsx ---
+import * as React from "react"
+
+import { cn } from "@/lib/utils"
+
+export interface MacBookProps extends React.ComponentProps<"div"> {
+  /** Largest width the machine is drawn at, in pixels. It shrinks below this. */
+  width?: number
+  /** Screenshot to fill the screen with. */
+  src?: string
+  /** Description of the screenshot. Required whenever `src` is set. */
+  alt?: string
+  /** Draw the camera housing cut into the top of the display. */
+  notch?: boolean
+  /** Draw the base the lid stands on. */
+  base?: boolean
+}
+
+/**
+ * MacBook Pro 14" in points. The base is a little wider than the lid, which is
+ * the only reason the machine reads as standing on something rather than
+ * floating above a bar.
+ */
+const LID_WIDTH = 1544
+const LID_HEIGHT = 1014
+const BASE_WIDTH = 1600
+const BASE_HEIGHT = 26
+
+export function MacBook({
+  children,
+  src,
+  alt = "",
+  width = 620,
+  notch = true,
+  base = true,
+  className,
+  style,
+  ...props
+}: MacBookProps) {
+  const height = LID_HEIGHT + (base ? BASE_HEIGHT : 0)
+
+  // Shares of the whole machine's width, so the lid, the base and the scoop
+  // stay in step with each other at any size.
+  const cq = (points: number) =>
+    `${((points / BASE_WIDTH) * 100).toFixed(4)}cqw`
+
+  return (
+    <div
+      data-slot="macbook"
+      className={cn("relative w-full", className)}
+      style={{
+        maxWidth: width,
+        aspectRatio: `${BASE_WIDTH} / ${height}`,
+        containerType: "inline-size",
+        ...style,
+      }}
+      {...props}
+    >
+      {/* The lid. Narrower than the base and centred on it. */}
+      <div
+        className="mx-auto bg-linear-to-br from-neutral-500 via-neutral-700 to-neutral-600 shadow-xl"
+        style={{
+          width: cq(LID_WIDTH),
+          height: cq(LID_HEIGHT),
+          borderRadius: cq(22),
+          padding: cq(16),
+        }}
+      >
+        <div
+          className="relative h-full w-full overflow-hidden bg-neutral-200 dark:bg-neutral-800"
+          style={{ borderRadius: cq(8) }}
+        >
+          {src ? (
+            <img src={src} alt={alt} className="h-full w-full object-cover" />
+          ) : (
+            children
+          )}
+
+          {/* The camera housing is bezel that intrudes into the display, so it
+              is drawn over the screen rather than around it. */}
+          {notch ? (
+            <span
+              aria-hidden="true"
+              className="absolute top-0 left-1/2 -translate-x-1/2 bg-neutral-900"
+              style={{
+                width: cq(160),
+                height: cq(30),
+                borderBottomLeftRadius: cq(10),
+                borderBottomRightRadius: cq(10),
+              }}
+            />
+          ) : null}
+        </div>
+      </div>
+
+      {base ? (
+        <div
+          aria-hidden="true"
+          className="relative w-full bg-linear-to-b from-neutral-400 to-neutral-600"
+          style={{
+            height: cq(BASE_HEIGHT),
+            borderBottomLeftRadius: cq(10),
+            borderBottomRightRadius: cq(10),
+          }}
+        >
+          {/* The scoop cut into the front edge, which is the detail that names
+              the machine from across a room. */}
+          <span
+            className="absolute bottom-0 left-1/2 -translate-x-1/2 bg-neutral-500"
+            style={{
+              width: cq(210),
+              height: cq(11),
+              borderBottomLeftRadius: cq(11),
+              borderBottomRightRadius: cq(11),
+            }}
+          />
+        </div>
+      ) : null}
+    </div>
+  )
+}
+
+
+===== EXAMPLE: macbook-demo =====
+Title: MacBook Demo
+
+--- file: example/macbook-demo.tsx ---
+import { MacBook } from "@/registry/loomui/macbook"
+
+export default function MacBookDemo() {
+  return <MacBook width={520} />
 }
 
 
@@ -2208,6 +3203,256 @@ export default function ScrambleTextDemo() {
 }
 
 
+===== COMPONENT: split-flap =====
+Title: Split Flap
+Description: A departure board that flaps through its glyphs, one cell behind the last, until it lands on the value.
+Install: npx shadcn@latest add @loomui/split-flap
+
+--- file: loomui/split-flap.tsx ---
+"use client"
+
+import * as React from "react"
+
+import { cn } from "@/lib/utils"
+
+export interface SplitFlapProps extends Omit<
+  React.ComponentProps<"div">,
+  "children"
+> {
+  /** The string the board settles on. Matched against the charset in caps. */
+  value: string
+  /** Every glyph a cell can show, in the order it flaps through them. */
+  charset?: string
+  /** Milliseconds per flap. One flap is also this long, so the board never gaps. */
+  interval?: number
+  /** Flaps of head start each cell gives the one after it. */
+  stagger?: number
+  /** Keep at least this many cells, so a shorter value does not resize the board. */
+  padTo?: number
+}
+
+/** The glyphs a departure board actually carries, in board order. */
+const DEFAULT_CHARSET = " ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,:'-?!"
+
+export function SplitFlap({
+  value,
+  charset = DEFAULT_CHARSET,
+  interval = 62,
+  stagger = 2,
+  padTo,
+  className,
+  ...props
+}: SplitFlapProps) {
+  const target = React.useMemo(() => {
+    const text = value.toUpperCase()
+    const width = Math.max(padTo ?? 0, text.length)
+    return text.padEnd(width, " ").split("")
+  }, [value, padTo])
+
+  const blank = charset[0] ?? " "
+  const charsRef = React.useRef<string[]>(target.map(() => blank))
+  const [chars, setChars] = React.useState(charsRef.current)
+
+  // The half falling away carries the glyph from the previous commit, so the
+  // flap has something to show on its way out. Read during render, written
+  // after it, which is the only ordering that gives the outgoing face.
+  const previousRef = React.useRef(chars)
+  const previous = previousRef.current
+  React.useEffect(() => {
+    previousRef.current = chars
+  }, [chars])
+
+  React.useEffect(() => {
+    const commit = (next: string[]) => {
+      charsRef.current = next
+      setChars(next)
+    }
+
+    // A board that grew gets blank cells to flap up from rather than popping.
+    const from = target.map((_, index) => charsRef.current[index] ?? blank)
+
+    // Flaps forward through the charset, per cell. A cell whose target is not
+    // in the charset takes none and is set outright.
+    const steps = from.map((char, index) => {
+      const start = charset.indexOf(char)
+      const end = charset.indexOf(target[index])
+      if (start < 0 || end < 0) {
+        return 0
+      }
+      return (end - start + charset.length) % charset.length
+    })
+
+    const total = steps.reduce(
+      (longest, count, index) =>
+        count > 0 ? Math.max(longest, count + index * stagger) : longest,
+      0
+    )
+
+    const reduced = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches
+
+    if (reduced || total === 0) {
+      commit(target)
+      return
+    }
+
+    // Cells with nothing to flap land now instead of waiting out the stagger.
+    commit(
+      from.map((char, index) => (steps[index] === 0 ? target[index] : char))
+    )
+
+    let tick = 0
+    const timer = window.setInterval(() => {
+      tick += 1
+      commit(
+        target.map((char, index) => {
+          const count = steps[index]
+          if (count === 0) {
+            return char
+          }
+          const start = charset.indexOf(from[index])
+          const walked = Math.min(Math.max(tick - index * stagger, 0), count)
+          return charset[(start + walked) % charset.length]
+        })
+      )
+      if (tick >= total) {
+        window.clearInterval(timer)
+      }
+    }, interval)
+
+    return () => window.clearInterval(timer)
+  }, [target, charset, interval, stagger, blank])
+
+  return (
+    <div
+      data-slot="split-flap"
+      // One image with one name. Reading the cells out would spell the value a
+      // letter at a time, and mid-flap it would spell nonsense.
+      role="img"
+      aria-label={value}
+      className={cn(
+        "inline-flex flex-wrap gap-[0.1em] font-mono text-[2rem] leading-none tabular-nums select-none",
+        className
+      )}
+      {...props}
+    >
+      {chars.map((char, index) => (
+        <span
+          key={index}
+          data-slot="split-flap-cell"
+          className="bg-card text-card-foreground relative block h-[1.3em] w-[0.86em] overflow-hidden rounded-[0.08em] border shadow-xs"
+          style={
+            {
+              perspective: "10em",
+              "--flap-duration": `${interval}ms`,
+            } as React.CSSProperties
+          }
+        >
+          {/* Settled halves. The top already carries the new glyph and the
+              bottom still carries the old one; the two flaps cover the swap. */}
+          <Half char={char} side="top" />
+          <Half char={previous[index] ?? char} side="bottom" />
+
+          {/* Keyed on the glyph so a new character remounts the flaps and the
+              animations restart. Nothing else re-triggers a CSS animation. */}
+          <React.Fragment key={char}>
+            <Half char={previous[index] ?? char} side="top" flap />
+            <Half char={char} side="bottom" flap />
+          </React.Fragment>
+
+          {/* The hinge. Without the seam the cell reads as a fade, not a flap. */}
+          <span
+            aria-hidden="true"
+            className="absolute inset-x-0 top-1/2 z-20 h-px -translate-y-1/2 bg-black/20 dark:bg-black/50"
+          />
+        </span>
+      ))}
+    </div>
+  )
+}
+
+function Half({
+  char,
+  side,
+  flap,
+}: {
+  char: string
+  side: "top" | "bottom"
+  flap?: boolean
+}) {
+  const top = side === "top"
+
+  return (
+    <span
+      aria-hidden="true"
+      className={cn(
+        "absolute inset-x-0 h-1/2 overflow-hidden [backface-visibility:hidden]",
+        top ? "top-0" : "bottom-0",
+        flap && "bg-card z-10 motion-reduce:animate-none",
+        flap &&
+          (top
+            ? "animate-split-flap-out origin-bottom"
+            : "animate-split-flap-in origin-top")
+      )}
+    >
+      {/* A full-height glyph box pinned to this half's outer edge, so both
+          halves clip the same letter along the same line. */}
+      <span
+        className={cn(
+          "absolute inset-x-0 flex h-[200%] items-center justify-center",
+          top ? "top-0" : "bottom-0"
+        )}
+      >
+        {char === " " ? " " : char}
+      </span>
+    </span>
+  )
+}
+
+
+===== EXAMPLE: split-flap-demo =====
+Title: Split Flap Demo
+
+--- file: example/split-flap-demo.tsx ---
+"use client"
+
+import * as React from "react"
+
+import { SplitFlap } from "@/registry/loomui/split-flap"
+
+const BOARD = [
+  { city: "LISBON", gate: "B12", time: "10:42" },
+  { city: "OSAKA", gate: "D04", time: "13:05" },
+  { city: "REYKJAVIK", gate: "A21", time: "16:30" },
+  { city: "MONTREAL", gate: "C09", time: "19:55" },
+]
+
+export default function SplitFlapDemo() {
+  const [index, setIndex] = React.useState(0)
+
+  React.useEffect(() => {
+    const timer = window.setInterval(
+      () => setIndex((current) => (current + 1) % BOARD.length),
+      3600
+    )
+    return () => window.clearInterval(timer)
+  }, [])
+
+  const row = BOARD[index]
+
+  return (
+    <div className="bg-muted/40 flex flex-col items-center gap-3 rounded-xl border p-6">
+      <SplitFlap value={row.city} padTo={9} className="text-[1.6rem]" />
+      <div className="flex gap-3">
+        <SplitFlap value={row.gate} padTo={3} className="text-base" />
+        <SplitFlap value={row.time} padTo={5} className="text-base" />
+      </div>
+    </div>
+  )
+}
+
+
 ===== COMPONENT: spotlight-card =====
 Title: Spotlight Card
 Description: A surface with a soft highlight that follows the pointer and fades out on leave.
@@ -2517,6 +3762,367 @@ export default function StaggerTextDemo() {
 }
 
 
+===== COMPONENT: sticker-peel =====
+Title: Sticker Peel
+Description: A card whose corner lifts off the page on hover, folded back over the crease to show its backing.
+Install: npx shadcn@latest add @loomui/sticker-peel
+
+--- file: loomui/sticker-peel.tsx ---
+"use client"
+
+import * as React from "react"
+
+import { cn } from "@/lib/utils"
+
+export interface StickerPeelProps extends React.ComponentProps<"div"> {
+  /** How far the corner lifts, as a CSS length. */
+  size?: string
+  /** Which corner peels. */
+  corner?: "top-left" | "top-right" | "bottom-left" | "bottom-right"
+  /** Length of the peel in milliseconds. */
+  duration?: number
+  /** Hold the corner up. Leave it out to peel on hover and focus. */
+  peeled?: boolean
+}
+
+/**
+ * Each corner is one cut and one flap. The flap is the cut triangle mirrored
+ * back over the crease, which is why its tip lands inside the sticker rather
+ * than on top of the corner it came from.
+ */
+const CORNERS = {
+  "top-left": {
+    face: (size: string) =>
+      `polygon(${size} 0, 100% 0, 100% 100%, 0 100%, 0 ${size})`,
+    flap: "polygon(0 100%, 100% 0, 100% 100%)",
+    anchor: "top-0 left-0 origin-top-left",
+    sheen: "bg-linear-to-br",
+  },
+  "top-right": {
+    face: (size: string) =>
+      `polygon(0 0, calc(100% - ${size}) 0, 100% ${size}, 100% 100%, 0 100%)`,
+    flap: "polygon(0 0, 100% 100%, 0 100%)",
+    anchor: "top-0 right-0 origin-top-right",
+    sheen: "bg-linear-to-bl",
+  },
+  "bottom-left": {
+    face: (size: string) =>
+      `polygon(0 0, 100% 0, 100% 100%, ${size} 100%, 0 calc(100% - ${size}))`,
+    flap: "polygon(0 0, 100% 100%, 100% 0)",
+    anchor: "bottom-0 left-0 origin-bottom-left",
+    sheen: "bg-linear-to-tr",
+  },
+  "bottom-right": {
+    face: (size: string) =>
+      `polygon(0 0, 100% 0, 100% calc(100% - ${size}), calc(100% - ${size}) 100%, 0 100%)`,
+    flap: "polygon(100% 0, 0 100%, 0 0)",
+    anchor: "bottom-0 right-0 origin-bottom-right",
+    sheen: "bg-linear-to-tl",
+  },
+} as const
+
+export function StickerPeel({
+  children,
+  size = "2.75rem",
+  corner = "bottom-right",
+  duration = 380,
+  peeled,
+  className,
+  onPointerEnter,
+  onPointerLeave,
+  onFocus,
+  onBlur,
+  ...props
+}: StickerPeelProps) {
+  const [hovered, setHovered] = React.useState(false)
+  const isControlled = peeled !== undefined
+  const lifted = isControlled ? peeled : hovered
+  const spec = CORNERS[corner]
+
+  return (
+    <div
+      data-slot="sticker-peel"
+      data-peeled={lifted ? "" : undefined}
+      className={cn("relative isolate", className)}
+      onPointerEnter={(event) => {
+        onPointerEnter?.(event)
+        setHovered(true)
+      }}
+      onPointerLeave={(event) => {
+        onPointerLeave?.(event)
+        setHovered(false)
+      }}
+      // Focus bubbles, so anything focusable inside the sticker peels it too
+      // and the corner is not a hover-only affordance.
+      onFocus={(event) => {
+        onFocus?.(event)
+        setHovered(true)
+      }}
+      onBlur={(event) => {
+        onBlur?.(event)
+        setHovered(false)
+      }}
+      {...props}
+    >
+      {/* Both polygons have the same five points, so the browser interpolates
+          the cut instead of snapping between two shapes. */}
+      <div
+        className="h-full w-full transition-[clip-path] ease-[var(--ease-out-quart)] motion-reduce:transition-none"
+        style={{
+          clipPath: spec.face(lifted ? size : "0px"),
+          transitionDuration: `${duration}ms`,
+        }}
+      >
+        {children}
+      </div>
+
+      <span
+        data-slot="sticker-peel-flap"
+        aria-hidden="true"
+        className={cn(
+          "from-border via-muted to-card pointer-events-none absolute transition-transform ease-[var(--ease-out-quart)] motion-reduce:transition-none",
+          spec.anchor,
+          spec.sheen
+        )}
+        style={{
+          width: size,
+          height: size,
+          clipPath: spec.flap,
+          // Grown from the corner rather than sized, so the flap and the cut
+          // move on the same curve and the crease never splits.
+          transform: lifted ? "scale(1)" : "scale(0)",
+          transitionDuration: `${duration}ms`,
+          filter: "drop-shadow(0 2px 6px rgb(0 0 0 / 0.28))",
+        }}
+      />
+    </div>
+  )
+}
+
+
+===== EXAMPLE: sticker-peel-demo =====
+Title: Sticker Peel Demo
+
+--- file: example/sticker-peel-demo.tsx ---
+import { StickerPeel } from "@/registry/loomui/sticker-peel"
+
+const STICKERS = [
+  { label: "Ships today", tone: "bg-primary text-primary-foreground" },
+  { label: "One file", tone: "bg-card text-card-foreground border" },
+  { label: "No deps", tone: "bg-foreground text-background" },
+] as const
+
+export default function StickerPeelDemo() {
+  return (
+    <div className="flex flex-wrap items-center justify-center gap-6">
+      {STICKERS.map((sticker, index) => (
+        <StickerPeel
+          key={sticker.label}
+          corner={index === 1 ? "top-right" : "bottom-right"}
+          size="2.5rem"
+          className="size-32 rounded-xl"
+        >
+          <div
+            className={`grid h-full w-full place-items-center rounded-xl p-4 text-center text-sm font-medium ${sticker.tone}`}
+          >
+            {sticker.label}
+          </div>
+        </StickerPeel>
+      ))}
+    </div>
+  )
+}
+
+
+===== COMPONENT: stitch-path =====
+Title: Stitch Path
+Description: A running stitch sewn along an SVG path as the page scrolls, following the holes it is laid over.
+Install: npx shadcn@latest add @loomui/stitch-path
+
+--- file: loomui/stitch-path.tsx ---
+"use client"
+
+import * as React from "react"
+
+import { cn } from "@/lib/utils"
+
+export interface StitchPathProps extends Omit<
+  React.ComponentProps<"svg">,
+  "target"
+> {
+  /** Path data, in the `0 0 100 100` box the component draws in. */
+  d?: string
+  /** Length of one stitch. */
+  stitch?: number
+  /** Bare thread between two stitches. */
+  gap?: number
+  /** Thread thickness in pixels. It does not stretch with the box. */
+  thickness?: number
+  /** Sew it yourself, 0 to 1. Leave it out to sew on scroll. */
+  progress?: number
+  /** Follow this element through the viewport instead of the path's own box. */
+  target?: React.RefObject<HTMLElement | null>
+  /** Draw the holes the thread is sewn through. */
+  guide?: boolean
+}
+
+const DEFAULT_PATH = "M 0 62 C 18 6 42 6 52 48 S 78 96 100 34"
+
+const clamp = (value: number) => Math.min(Math.max(value, 0), 1)
+
+export function StitchPath({
+  d = DEFAULT_PATH,
+  stitch = 5,
+  gap = 4,
+  thickness = 2,
+  progress,
+  target,
+  guide = true,
+  className,
+  ...props
+}: StitchPathProps) {
+  const maskId = React.useId()
+  const hostRef = React.useRef<SVGSVGElement>(null)
+  const revealRef = React.useRef<SVGPathElement>(null)
+  const controlled = progress !== undefined
+
+  React.useEffect(() => {
+    const node = revealRef.current
+    if (!node) {
+      return
+    }
+
+    // `pathLength="1"` normalises the path, so the offset is the fraction of it
+    // still to be sewn and the geometry never has to be measured.
+    const draw = (value: number) => {
+      node.style.strokeDashoffset = `${1 - clamp(value)}`
+    }
+
+    if (controlled) {
+      draw(progress)
+      return
+    }
+
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      draw(1)
+      return
+    }
+
+    let frame = 0
+
+    const measure = () => {
+      const box = target?.current ?? hostRef.current
+      if (!box) {
+        return
+      }
+
+      // Zero when the top edge sits on the bottom of the viewport, one when the
+      // bottom edge has cleared the top of it.
+      const rect = box.getBoundingClientRect()
+      const travel = window.innerHeight + rect.height
+      draw(travel > 0 ? (window.innerHeight - rect.top) / travel : 1)
+    }
+
+    const onScroll = () => {
+      cancelAnimationFrame(frame)
+      frame = requestAnimationFrame(measure)
+    }
+
+    measure()
+    window.addEventListener("scroll", onScroll, { passive: true })
+    window.addEventListener("resize", onScroll, { passive: true })
+    return () => {
+      window.removeEventListener("scroll", onScroll)
+      window.removeEventListener("resize", onScroll)
+      cancelAnimationFrame(frame)
+    }
+  }, [controlled, progress, target])
+
+  return (
+    <svg
+      ref={hostRef}
+      data-slot="stitch-path"
+      // Decoration. There is nothing here a reader would want announced.
+      aria-hidden="true"
+      viewBox="0 0 100 100"
+      preserveAspectRatio="none"
+      fill="none"
+      className={cn(
+        "text-primary pointer-events-none h-full w-full",
+        className
+      )}
+      {...props}
+    >
+      <defs>
+        {/* The reveal is the same path stroked solid and wiped by its own dash
+            offset. Wiping the visible path directly would cost it the dash
+            pattern that makes it read as stitches rather than a line. */}
+        <mask id={maskId}>
+          <path
+            ref={revealRef}
+            d={d}
+            pathLength="1"
+            strokeDasharray="1 1"
+            strokeDashoffset="1"
+            stroke="white"
+            strokeWidth="12"
+            fill="none"
+          />
+        </mask>
+      </defs>
+
+      {guide ? (
+        <path
+          d={d}
+          stroke="currentColor"
+          strokeWidth={thickness}
+          strokeLinecap="round"
+          // Zero-length dashes with a round cap are dots: one hole per stitch.
+          strokeDasharray={`0 ${stitch + gap}`}
+          vectorEffect="non-scaling-stroke"
+          className="opacity-25"
+        />
+      ) : null}
+
+      <path
+        d={d}
+        stroke="currentColor"
+        strokeWidth={thickness}
+        strokeLinecap="round"
+        strokeDasharray={`${stitch} ${gap}`}
+        vectorEffect="non-scaling-stroke"
+        mask={`url(#${maskId})`}
+      />
+    </svg>
+  )
+}
+
+
+===== EXAMPLE: stitch-path-demo =====
+Title: Stitch Path Demo
+
+--- file: example/stitch-path-demo.tsx ---
+import { StitchPath } from "@/registry/loomui/stitch-path"
+
+export default function StitchPathDemo() {
+  return (
+    <div className="w-full max-w-2xl">
+      <p className="text-muted-foreground text-sm">
+        Cut the pieces, lay them out, and pin them down.
+      </p>
+
+      <div className="h-28 py-4">
+        <StitchPath className="text-primary" />
+      </div>
+
+      <p className="text-muted-foreground text-sm">
+        Scroll the page and the thread follows you down it.
+      </p>
+    </div>
+  )
+}
+
+
 ===== COMPONENT: testimonial-wall =====
 Title: Testimonial Wall
 Description: Columns of quotes drifting past each other at different speeds, faded at both ends.
@@ -2719,6 +4325,363 @@ export default function TestimonialWallDemo() {
         </figure>
       ))}
     </TestimonialWall>
+  )
+}
+
+
+===== COMPONENT: thread-timeline =====
+Title: Thread Timeline
+Description: A timeline whose thread is sewn down the page as you read, lighting each node as it reaches it.
+Install: npx shadcn@latest add @loomui/thread-timeline
+
+--- file: loomui/thread-timeline.tsx ---
+"use client"
+
+import * as React from "react"
+
+import { cn } from "@/lib/utils"
+
+export interface ThreadTimelineProps extends React.ComponentProps<"ol"> {
+  /** Where the thread head sits in the viewport, 0 at the top, 1 at the bottom. */
+  line?: number
+}
+
+export function ThreadTimeline({
+  children,
+  className,
+  line = 0.55,
+  style,
+  ...props
+}: ThreadTimelineProps) {
+  const ref = React.useRef<HTMLOListElement>(null)
+
+  React.useEffect(() => {
+    const list = ref.current
+    if (!list) {
+      return
+    }
+
+    const settle = (progress: number, reached: boolean) => {
+      list.style.setProperty("--thread-progress", `${progress}`)
+      for (const item of list.querySelectorAll<HTMLElement>(
+        "[data-slot='thread-timeline-item']"
+      )) {
+        item.toggleAttribute("data-reached", reached)
+      }
+    }
+
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      settle(1, true)
+      return
+    }
+
+    let frame = 0
+
+    const measure = () => {
+      const head = window.innerHeight * line
+      const rect = list.getBoundingClientRect()
+      const progress = rect.height > 0 ? (head - rect.top) / rect.height : 1
+      list.style.setProperty(
+        "--thread-progress",
+        `${Math.min(Math.max(progress, 0), 1)}`
+      )
+
+      // Each node is measured against the same head the thread is drawn to, so
+      // a node can never light up ahead of the thread that reaches it.
+      for (const item of list.querySelectorAll<HTMLElement>(
+        "[data-slot='thread-timeline-item']"
+      )) {
+        const node = item.querySelector<HTMLElement>(
+          "[data-slot='thread-timeline-node']"
+        )
+        const box = (node ?? item).getBoundingClientRect()
+        item.toggleAttribute("data-reached", box.top + box.height / 2 <= head)
+      }
+    }
+
+    const onScroll = () => {
+      cancelAnimationFrame(frame)
+      frame = requestAnimationFrame(measure)
+    }
+
+    measure()
+    window.addEventListener("scroll", onScroll, { passive: true })
+    window.addEventListener("resize", onScroll, { passive: true })
+    return () => {
+      window.removeEventListener("scroll", onScroll)
+      window.removeEventListener("resize", onScroll)
+      cancelAnimationFrame(frame)
+    }
+  }, [line])
+
+  return (
+    <ol
+      ref={ref}
+      data-slot="thread-timeline"
+      className={cn("relative", className)}
+      style={{ "--thread-progress": "0", ...style } as React.CSSProperties}
+      {...props}
+    >
+      {/* The pattern to sew along, and the thread that has reached it. */}
+      <span
+        aria-hidden="true"
+        className="border-muted-foreground/25 absolute top-1 bottom-1 left-2 border-l border-dashed"
+      />
+      <span
+        aria-hidden="true"
+        className="bg-primary absolute top-1 bottom-1 left-2 w-px origin-top"
+        style={{ scale: "1 var(--thread-progress)" }}
+      />
+      {children}
+    </ol>
+  )
+}
+
+export interface ThreadTimelineItemProps extends Omit<
+  React.ComponentProps<"li">,
+  "title"
+> {
+  /** Heading for the entry. */
+  title?: React.ReactNode
+  /** Small line above the title. A date, usually. */
+  meta?: React.ReactNode
+  /** Content for the node itself. A number or a glyph, if anything. */
+  marker?: React.ReactNode
+}
+
+export function ThreadTimelineItem({
+  title,
+  meta,
+  marker,
+  children,
+  className,
+  ...props
+}: ThreadTimelineItemProps) {
+  return (
+    <li
+      data-slot="thread-timeline-item"
+      className={cn("group relative pb-9 pl-9 last:pb-0", className)}
+      {...props}
+    >
+      <span
+        data-slot="thread-timeline-node"
+        aria-hidden="true"
+        className="bg-background border-muted-foreground/40 text-primary-foreground group-data-[reached]:border-primary group-data-[reached]:bg-primary absolute top-1 left-2 grid size-4 -translate-x-1/2 place-items-center rounded-full border-2 text-[0.5rem] font-medium transition duration-300 ease-[var(--ease-out-quart)] group-data-[reached]:scale-110 motion-reduce:transition-none"
+      >
+        {marker}
+      </span>
+
+      <div className="translate-x-1 opacity-55 transition duration-500 ease-[var(--ease-out-quart)] group-data-[reached]:translate-x-0 group-data-[reached]:opacity-100 motion-reduce:transition-none">
+        {meta ? (
+          <div className="text-muted-foreground text-xs tracking-wide">
+            {meta}
+          </div>
+        ) : null}
+        {title ? (
+          <h3 className="mt-1 text-sm leading-none font-medium">{title}</h3>
+        ) : null}
+        {children ? (
+          <div className="text-muted-foreground mt-2 text-sm">{children}</div>
+        ) : null}
+      </div>
+    </li>
+  )
+}
+
+
+===== EXAMPLE: thread-timeline-demo =====
+Title: Thread Timeline Demo
+
+--- file: example/thread-timeline-demo.tsx ---
+import {
+  ThreadTimeline,
+  ThreadTimelineItem,
+} from "@/registry/loomui/thread-timeline"
+
+const ENTRIES = [
+  {
+    meta: "March",
+    title: "First thread",
+    body: "One component, copied by hand, with the timings left as props.",
+  },
+  {
+    meta: "May",
+    title: "The registry",
+    body: "Every component installable in a single command, keyframes included.",
+  },
+  {
+    meta: "July",
+    title: "Reduced motion",
+    body: "Every animation given a resting state worth looking at.",
+  },
+  {
+    meta: "August",
+    title: "Sections",
+    body: "Whole blocks, not just the pieces they are cut from.",
+  },
+]
+
+export default function ThreadTimelineDemo() {
+  return (
+    <ThreadTimeline className="w-full max-w-md">
+      {ENTRIES.map((entry, index) => (
+        <ThreadTimelineItem
+          key={entry.title}
+          meta={entry.meta}
+          title={entry.title}
+          marker={index + 1}
+        >
+          {entry.body}
+        </ThreadTimelineItem>
+      ))}
+    </ThreadTimeline>
+  )
+}
+
+
+===== COMPONENT: ticket-stub =====
+Title: Ticket Stub
+Description: A card torn along a perforation, with a notch bitten out of the paper at each end of it.
+Install: npx shadcn@latest add @loomui/ticket-stub
+
+--- file: loomui/ticket-stub.tsx ---
+"use client"
+
+import * as React from "react"
+
+import { cn } from "@/lib/utils"
+
+export interface TicketStubProps extends React.ComponentProps<"div"> {
+  /** The torn-off part. Sits after the perforation. */
+  stub?: React.ReactNode
+  /** Where the perforation falls, as a percentage of the long side. */
+  split?: number
+  /** Radius of the notches bitten out at each end of the tear, in pixels. */
+  notch?: number
+  /** Stub on the right of a wide ticket, or below a tall one. */
+  orientation?: "horizontal" | "vertical"
+  /** Lift the ticket off the page on hover. */
+  lift?: boolean
+}
+
+export function TicketStub({
+  children,
+  stub,
+  split = 68,
+  notch = 12,
+  orientation = "horizontal",
+  lift = true,
+  className,
+  style,
+  ...props
+}: TicketStubProps) {
+  const vertical = orientation === "vertical"
+
+  // Two circles cut out of the same shape. Intersecting the masks is what takes
+  // a bite from both ends of the tear instead of only the last one declared.
+  const mask = vertical
+    ? `radial-gradient(circle at left ${split}%, transparent ${notch}px, #000 ${notch + 0.5}px), radial-gradient(circle at right ${split}%, transparent ${notch}px, #000 ${notch + 0.5}px)`
+    : `radial-gradient(circle at ${split}% top, transparent ${notch}px, #000 ${notch + 0.5}px), radial-gradient(circle at ${split}% bottom, transparent ${notch}px, #000 ${notch + 0.5}px)`
+
+  // Everything the edge is made of lives out here. A `box-shadow` or a `border`
+  // on the masked element is cut away with the paper, which leaves the notches
+  // unoutlined — and on a dark background an edge drawn only in shadow is not
+  // an edge at all. Four offset drop shadows trace the alpha instead, so the
+  // outline follows the curve of every bite.
+  const edge = [
+    "drop-shadow(0 1px 0 var(--border))",
+    "drop-shadow(0 -1px 0 var(--border))",
+    "drop-shadow(1px 0 0 var(--border))",
+    "drop-shadow(-1px 0 0 var(--border))",
+    "drop-shadow(0 4px 10px rgb(0 0 0 / 0.14))",
+  ].join(" ")
+
+  return (
+    <div
+      data-slot="ticket-stub"
+      className={cn(
+        "relative",
+        lift &&
+          "transition-transform duration-300 ease-[var(--ease-out-quart)] hover:-translate-y-1 hover:rotate-[-0.4deg] motion-reduce:transition-none",
+        className
+      )}
+      style={{ filter: edge, ...style }}
+      {...props}
+    >
+      <div
+        className={cn(
+          "bg-card text-card-foreground flex overflow-hidden rounded-xl",
+          vertical ? "h-full flex-col" : "w-full flex-row"
+        )}
+        style={{
+          WebkitMaskImage: mask,
+          maskImage: mask,
+          WebkitMaskComposite: "source-in",
+          maskComposite: "intersect",
+        }}
+      >
+        <div
+          style={vertical ? { height: `${split}%` } : { width: `${split}%` }}
+        >
+          {children}
+        </div>
+        <div className="flex-1">{stub}</div>
+      </div>
+
+      {/* The perforation. Inset by the notch radius at both ends so it starts
+          where the paper does. */}
+      <span
+        aria-hidden="true"
+        className={cn(
+          "border-muted-foreground/40 absolute border-dashed",
+          vertical ? "border-t" : "border-l"
+        )}
+        style={
+          vertical
+            ? { top: `${split}%`, left: notch, right: notch }
+            : { left: `${split}%`, top: notch, bottom: notch }
+        }
+      />
+    </div>
+  )
+}
+
+
+===== EXAMPLE: ticket-stub-demo =====
+Title: Ticket Stub Demo
+
+--- file: example/ticket-stub-demo.tsx ---
+import { TicketStub } from "@/registry/loomui/ticket-stub"
+
+export default function TicketStubDemo() {
+  return (
+    <TicketStub
+      className="w-full max-w-lg"
+      split={70}
+      stub={
+        <div className="flex h-full flex-col items-center justify-center gap-1 p-4 text-center">
+          <div className="text-muted-foreground text-[0.6rem] tracking-[0.2em] uppercase">
+            Seat
+          </div>
+          <div className="text-xl font-semibold sm:text-2xl">14A</div>
+        </div>
+      }
+    >
+      <div className="p-4 sm:p-5">
+        <div className="text-muted-foreground text-[0.6rem] tracking-[0.2em] uppercase">
+          Boarding pass
+        </div>
+        <div className="mt-2 flex items-baseline gap-3">
+          <span className="text-xl font-semibold sm:text-2xl">LIS</span>
+          <span className="text-muted-foreground text-sm">to</span>
+          <span className="text-xl font-semibold sm:text-2xl">KIX</span>
+        </div>
+        <div className="text-muted-foreground mt-3 flex flex-wrap gap-x-6 gap-y-1 text-xs">
+          <span>Gate B12</span>
+          <span>Boards 10:42</span>
+        </div>
+      </div>
+    </TicketStub>
   )
 }
 

@@ -1,0 +1,41 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "split-flap",
+  "type": "registry:ui",
+  "title": "Split Flap",
+  "description": "A departure board that flaps through its glyphs, one cell behind the last, until it lands on the value.",
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "path": "registry/loomui/split-flap.tsx",
+      "content": "\"use client\"\n\nimport * as React from \"react\"\n\nimport { cn } from \"@/lib/utils\"\n\nexport interface SplitFlapProps extends Omit<\n  React.ComponentProps<\"div\">,\n  \"children\"\n> {\n  /** The string the board settles on. Matched against the charset in caps. */\n  value: string\n  /** Every glyph a cell can show, in the order it flaps through them. */\n  charset?: string\n  /** Milliseconds per flap. One flap is also this long, so the board never gaps. */\n  interval?: number\n  /** Flaps of head start each cell gives the one after it. */\n  stagger?: number\n  /** Keep at least this many cells, so a shorter value does not resize the board. */\n  padTo?: number\n}\n\n/** The glyphs a departure board actually carries, in board order. */\nconst DEFAULT_CHARSET = \" ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,:'-?!\"\n\nexport function SplitFlap({\n  value,\n  charset = DEFAULT_CHARSET,\n  interval = 62,\n  stagger = 2,\n  padTo,\n  className,\n  ...props\n}: SplitFlapProps) {\n  const target = React.useMemo(() => {\n    const text = value.toUpperCase()\n    const width = Math.max(padTo ?? 0, text.length)\n    return text.padEnd(width, \" \").split(\"\")\n  }, [value, padTo])\n\n  const blank = charset[0] ?? \" \"\n  const charsRef = React.useRef<string[]>(target.map(() => blank))\n  const [chars, setChars] = React.useState(charsRef.current)\n\n  // The half falling away carries the glyph from the previous commit, so the\n  // flap has something to show on its way out. Read during render, written\n  // after it, which is the only ordering that gives the outgoing face.\n  const previousRef = React.useRef(chars)\n  const previous = previousRef.current\n  React.useEffect(() => {\n    previousRef.current = chars\n  }, [chars])\n\n  React.useEffect(() => {\n    const commit = (next: string[]) => {\n      charsRef.current = next\n      setChars(next)\n    }\n\n    // A board that grew gets blank cells to flap up from rather than popping.\n    const from = target.map((_, index) => charsRef.current[index] ?? blank)\n\n    // Flaps forward through the charset, per cell. A cell whose target is not\n    // in the charset takes none and is set outright.\n    const steps = from.map((char, index) => {\n      const start = charset.indexOf(char)\n      const end = charset.indexOf(target[index])\n      if (start < 0 || end < 0) {\n        return 0\n      }\n      return (end - start + charset.length) % charset.length\n    })\n\n    const total = steps.reduce(\n      (longest, count, index) =>\n        count > 0 ? Math.max(longest, count + index * stagger) : longest,\n      0\n    )\n\n    const reduced = window.matchMedia(\n      \"(prefers-reduced-motion: reduce)\"\n    ).matches\n\n    if (reduced || total === 0) {\n      commit(target)\n      return\n    }\n\n    // Cells with nothing to flap land now instead of waiting out the stagger.\n    commit(\n      from.map((char, index) => (steps[index] === 0 ? target[index] : char))\n    )\n\n    let tick = 0\n    const timer = window.setInterval(() => {\n      tick += 1\n      commit(\n        target.map((char, index) => {\n          const count = steps[index]\n          if (count === 0) {\n            return char\n          }\n          const start = charset.indexOf(from[index])\n          const walked = Math.min(Math.max(tick - index * stagger, 0), count)\n          return charset[(start + walked) % charset.length]\n        })\n      )\n      if (tick >= total) {\n        window.clearInterval(timer)\n      }\n    }, interval)\n\n    return () => window.clearInterval(timer)\n  }, [target, charset, interval, stagger, blank])\n\n  return (\n    <div\n      data-slot=\"split-flap\"\n      // One image with one name. Reading the cells out would spell the value a\n      // letter at a time, and mid-flap it would spell nonsense.\n      role=\"img\"\n      aria-label={value}\n      className={cn(\n        \"inline-flex flex-wrap gap-[0.1em] font-mono text-[2rem] leading-none tabular-nums select-none\",\n        className\n      )}\n      {...props}\n    >\n      {chars.map((char, index) => (\n        <span\n          key={index}\n          data-slot=\"split-flap-cell\"\n          className=\"bg-card text-card-foreground relative block h-[1.3em] w-[0.86em] overflow-hidden rounded-[0.08em] border shadow-xs\"\n          style={\n            {\n              perspective: \"10em\",\n              \"--flap-duration\": `${interval}ms`,\n            } as React.CSSProperties\n          }\n        >\n          {/* Settled halves. The top already carries the new glyph and the\n              bottom still carries the old one; the two flaps cover the swap. */}\n          <Half char={char} side=\"top\" />\n          <Half char={previous[index] ?? char} side=\"bottom\" />\n\n          {/* Keyed on the glyph so a new character remounts the flaps and the\n              animations restart. Nothing else re-triggers a CSS animation. */}\n          <React.Fragment key={char}>\n            <Half char={previous[index] ?? char} side=\"top\" flap />\n            <Half char={char} side=\"bottom\" flap />\n          </React.Fragment>\n\n          {/* The hinge. Without the seam the cell reads as a fade, not a flap. */}\n          <span\n            aria-hidden=\"true\"\n            className=\"absolute inset-x-0 top-1/2 z-20 h-px -translate-y-1/2 bg-black/20 dark:bg-black/50\"\n          />\n        </span>\n      ))}\n    </div>\n  )\n}\n\nfunction Half({\n  char,\n  side,\n  flap,\n}: {\n  char: string\n  side: \"top\" | \"bottom\"\n  flap?: boolean\n}) {\n  const top = side === \"top\"\n\n  return (\n    <span\n      aria-hidden=\"true\"\n      className={cn(\n        \"absolute inset-x-0 h-1/2 overflow-hidden [backface-visibility:hidden]\",\n        top ? \"top-0\" : \"bottom-0\",\n        flap && \"bg-card z-10 motion-reduce:animate-none\",\n        flap &&\n          (top\n            ? \"animate-split-flap-out origin-bottom\"\n            : \"animate-split-flap-in origin-top\")\n      )}\n    >\n      {/* A full-height glyph box pinned to this half's outer edge, so both\n          halves clip the same letter along the same line. */}\n      <span\n        className={cn(\n          \"absolute inset-x-0 flex h-[200%] items-center justify-center\",\n          top ? \"top-0\" : \"bottom-0\"\n        )}\n      >\n        {char === \" \" ? \" \" : char}\n      </span>\n    </span>\n  )\n}\n",
+      "type": "registry:ui"
+    }
+  ],
+  "cssVars": {
+    "theme": {
+      "animate-split-flap-out": "split-flap-out calc(var(--flap-duration, 62ms) * 0.5) ease-in both",
+      "animate-split-flap-in": "split-flap-in calc(var(--flap-duration, 62ms) * 0.5) ease-out calc(var(--flap-duration, 62ms) * 0.5) both"
+    }
+  },
+  "css": {
+    "@keyframes split-flap-out": {
+      "from": {
+        "transform": "rotateX(0deg)"
+      },
+      "to": {
+        "transform": "rotateX(-90deg)"
+      }
+    },
+    "@keyframes split-flap-in": {
+      "from": {
+        "transform": "rotateX(90deg)"
+      },
+      "to": {
+        "transform": "rotateX(0deg)"
+      }
+    }
+  }
+}
