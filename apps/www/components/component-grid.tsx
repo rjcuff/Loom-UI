@@ -49,12 +49,12 @@ export function ComponentGrid() {
   const components = getComponentLinks()
 
   return (
-    <ul className="mt-10 grid list-none gap-x-8 gap-y-4 pl-0 sm:grid-cols-2 lg:grid-cols-3">
+    <ul className="mt-10 grid list-none gap-x-8 gap-y-6 pl-0 sm:grid-cols-2 lg:grid-cols-3">
       {components.map((component) => (
         <li key={component.name} className="mt-0">
           <Link
             href={component.href}
-            className="text-muted-foreground hover:text-foreground flex items-center gap-2 text-sm no-underline transition-colors duration-150"
+            className="text-muted-foreground hover:text-foreground flex items-center gap-2 text-base no-underline transition-colors duration-150"
           >
             {component.title}
             {component.badge ? <Badge badge={component.badge} /> : null}
