@@ -1,0 +1,157 @@
+---
+title: Card Stack
+date: 2026-08-16
+description: Cards that pin one behind another as the page scrolls, each settling behind the next.
+---
+
+<ComponentPreview name="card-stack-demo" />
+
+## Installation
+
+<Tabs defaultValue="cli">
+
+<TabsList>
+  <TabsTrigger value="cli">CLI</TabsTrigger>
+  <TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @loomui/card-stack
+```
+
+</TabsContent>
+
+<TabsContent value="manual">
+
+<Steps>
+
+<Step>Copy the component into your project.</Step>
+
+<ComponentSource name="card-stack" />
+
+<Step>Update the import paths to match your setup.</Step>
+
+</Steps>
+
+</TabsContent>
+
+</Tabs>
+
+## Usage
+
+```tsx
+import { CardStack, CardStackItem } from "@/components/ui/card-stack"
+```
+
+```tsx
+<CardStack>
+  <CardStackItem>
+    <article className="rounded-xl border p-6">Cut</article>
+  </CardStackItem>
+  <CardStackItem>
+    <article className="rounded-xl border p-6">Pin</article>
+  </CardStackItem>
+</CardStack>
+```
+
+Each card is pinned a little lower than the one before it, so a covered card
+keeps a strip of itself on screen and the pile reads as a pile rather than as
+one card that keeps changing its mind.
+
+The scroll distance comes from the cards themselves. A card that is 320 pixels
+tall gives 320 pixels of travel before the next one has finished covering it,
+which means pacing the section is a matter of sizing its cards, not of tuning a
+number.
+
+### How a card knows it is buried
+
+A pinned card stops moving, so it cannot measure its own progress. It is
+measured from the card _after_ it instead: how far that card has travelled from
+the bottom of the scrollport to its own pin is exactly how buried this one is.
+The last card has nothing above it and never shrinks.
+
+That progress is written to each card as `--card-progress`, a number from `0`
+to `1`, and the scale and the fade are `calc()` on top of it. Nothing is
+animated frame by frame in JavaScript and no card re-renders while you scroll.
+
+### Depth
+
+```tsx
+<CardStack offset={120} peek={32} scale={0.04} dim={0.2}>
+```
+
+`offset` is where the first card pins, measured from the top of the scrolling
+box. Leave room for a sticky header if you have one.
+
+`peek` is how much lower each card pins than the last, which is the strip of
+the covered card that stays visible. Around 10 to 20 pixels is enough to see
+that there is something underneath. Push it past about 40 and the pile stops
+looking stacked and starts looking like a staircase.
+
+`dim` is how much a fully covered card fades. It is deliberately slight. The
+card behind is context, not competition, and one that fades far enough to read
+the card in front through it has stopped looking like paper.
+
+`scale` shrinks a covered card, and it is off by default on purpose. A shrink
+only reads as depth if `peek` is large enough to show a real strip of the card
+behind it. At a 10 or 15 pixel peek all you see is the top edge, and an edge
+that is narrower than the card in front of it reads as a misalignment rather
+than as distance. Raise `peek` to 30 or more first, then add a `scale` of
+around `0.04`, and check the two together.
+
+Progress is smoothstepped before it is written out, so a card starts and stops
+being buried gently instead of shrinking at a constant rate from the first
+pixel of scroll to the last.
+
+### The last card
+
+```tsx
+<CardStack tail={320}>
+```
+
+`tail` is how long the last card holds its pin once it lands, in pixels of
+scroll. Without it the stack ends the moment the last card arrives, and every
+pinned card is dragged up out of the panel on the final few pixels of scroll.
+
+The tail is a real element in the flow rather than padding on the wrapper, and
+it has to be. A sticky box is held inside its containing block's _content_ box,
+so padding on the stack buys the scroll distance without extending the range
+the cards are allowed to stay pinned in. The cards reach the end of that range
+and get pushed, which looks exactly like the last card overshooting the line
+the others stopped on.
+
+### Inside a panel
+
+The stack measures itself against the nearest scrolling ancestor, not always
+the page, because that is what `position: sticky` does too. A stack inside a
+dialog, a drawer or a scrolling panel works without being told which box it is
+in.
+
+## Props
+
+### CardStack
+
+| Prop        | Type      | Default | Description                                          |
+| ----------- | --------- | ------- | ---------------------------------------------------- |
+| `offset`    | `number`  | `96`    | Pixels from the top of the scrollport to the pin.    |
+| `peek`      | `number`  | `14`    | Pixels lower each card pins than the last.           |
+| `scale`     | `number`  | `0`     | How much a fully covered card shrinks.               |
+| `dim`       | `number`  | `0.12`  | How much a fully covered card fades, from 0 to 1.    |
+| `tail`      | `number`  | `200`   | Pixels the last card stays pinned for once it lands. |
+| `disabled`  | `boolean` | `false` | Pin the cards at full size and opacity.              |
+| `className` | `string`  | none    | Merged onto the wrapper.                             |
+
+### CardStackItem
+
+Takes any `<div>` prop. Put the card's own border, padding and fill on the
+element you render inside it, not on the item itself, so the sticky box stays
+the full width of the column.
+
+<Callout type="tip" title="Accessibility">
+  Nothing is hidden or unmounted as the stack scrolls, so every card is in the
+  document, in order, whatever is on top. Under `prefers-reduced-motion` the
+  cards still pin, which is layout, but they hold their size and opacity instead
+  of shrinking under each other.
+</Callout>

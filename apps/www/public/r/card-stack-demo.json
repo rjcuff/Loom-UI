@@ -1,0 +1,17 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "card-stack-demo",
+  "type": "registry:example",
+  "title": "Card Stack Demo",
+  "description": "Four cards pinning one behind another inside a panel.",
+  "registryDependencies": [
+    "@loomui/card-stack"
+  ],
+  "files": [
+    {
+      "path": "registry/example/card-stack-demo.tsx",
+      "content": "import { CardStack, CardStackItem } from \"@/registry/loomui/card-stack\"\n\nconst CARDS = [\n  {\n    step: \"01\",\n    title: \"Cut\",\n    body: \"Every piece is measured against the finished garment, not the bolt it came off.\",\n  },\n  {\n    step: \"02\",\n    title: \"Pin\",\n    body: \"Nothing is sewn until the whole thing has been laid out and pinned down.\",\n  },\n  {\n    step: \"03\",\n    title: \"Sew\",\n    body: \"One seam at a time, each one pressed flat before the next one starts.\",\n  },\n  {\n    step: \"04\",\n    title: \"Finish\",\n    body: \"The hem, the lining, and the label. The parts nobody sees hold it together.\",\n  },\n]\n\nexport default function CardStackDemo() {\n  return (\n    <div className=\"w-full max-w-md\">\n      {/* The stack measures itself against the nearest scrolling box, so it\n          works in a panel like this one as well as against the page. */}\n      <div className=\"h-72 [scrollbar-width:none] overflow-y-auto rounded-xl [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden\">\n        <CardStack offset={10} peek={18} tail={120}>\n          {CARDS.map((card) => (\n            <CardStackItem key={card.step}>\n              <div className=\"border-border bg-card mb-4 rounded-xl border p-6 shadow-sm\">\n                <div className=\"text-muted-foreground font-mono text-xs\">\n                  {card.step}\n                </div>\n                <h3 className=\"mt-3 text-lg font-medium\">{card.title}</h3>\n                <p className=\"text-muted-foreground mt-2 text-sm\">\n                  {card.body}\n                </p>\n              </div>\n            </CardStackItem>\n          ))}\n        </CardStack>\n      </div>\n\n      <p className=\"text-muted-foreground mt-3 text-center text-xs\">\n        Scroll inside the panel.\n      </p>\n    </div>\n  )\n}\n",
+      "type": "registry:example"
+    }
+  ]
+}

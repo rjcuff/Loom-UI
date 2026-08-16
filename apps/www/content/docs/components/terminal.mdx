@@ -1,0 +1,168 @@
+---
+title: Terminal
+date: 2026-08-16
+description: A window that types its commands out and prints their output a beat later.
+---
+
+<ComponentPreview name="terminal-demo" />
+
+## Installation
+
+<Tabs defaultValue="cli">
+
+<TabsList>
+  <TabsTrigger value="cli">CLI</TabsTrigger>
+  <TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @loomui/terminal
+```
+
+</TabsContent>
+
+<TabsContent value="manual">
+
+<Steps>
+
+<Step>Copy the component into your project.</Step>
+
+<ComponentSource name="terminal" />
+
+<Step>Add the tokens and keyframes to your global stylesheet.</Step>
+
+```css title="app/globals.css"
+@theme {
+  --ease-out-quart: cubic-bezier(0.165, 0.84, 0.44, 1);
+  --animate-caret-blink: caret-blink 1.1s steps(2, jump-none) infinite;
+  --animate-terminal-print: terminal-print 240ms var(--ease-out-quart) both;
+}
+
+@keyframes caret-blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+@keyframes terminal-print {
+  from {
+    opacity: 0;
+    transform: translateY(3px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+```
+
+<Step>Update the import paths to match your setup.</Step>
+
+</Steps>
+
+</TabsContent>
+
+</Tabs>
+
+## Usage
+
+```tsx
+import {
+  Terminal,
+  TerminalCommand,
+  TerminalOutput,
+} from "@/components/ui/terminal"
+```
+
+```tsx
+<Terminal title="~/acme-app">
+  <TerminalCommand>npm install</TerminalCommand>
+  <TerminalOutput delay={500}>added 214 packages in 3s</TerminalOutput>
+  <TerminalCommand>npm run dev</TerminalCommand>
+  <TerminalOutput>ready on http://localhost:3000</TerminalOutput>
+</Terminal>
+```
+
+The session runs in order. A command types itself out, hands the session to the
+next line, and an output waits its delay before printing. Lines are rendered as
+the session reaches them rather than hidden and revealed, so a line that has
+not run yet is not in the document at all.
+
+Order comes from where a line sits in the children, so writing a session is
+writing it down. There are no indexes to keep in step and no `step` prop to
+increment when you add a line in the middle.
+
+### Pace
+
+```tsx
+<Terminal speed={20}>
+  <TerminalCommand>pnpm build</TerminalCommand>
+  <TerminalOutput delay={900}>Compiled successfully</TerminalOutput>
+</Terminal>
+```
+
+`speed` is milliseconds per character, and it belongs to the terminal rather
+than to a line, because one hand is typing all of it. Around 34 reads as a
+person; below about 15 it reads as a paste.
+
+`delay` on an output is how long the command appears to take before it answers.
+This is the prop that sells the whole thing: an install that answers instantly
+looks fake, and one that answers after 400ms looks like an install.
+
+### Prompts
+
+```tsx
+<TerminalCommand prompt="›">deploy --prod</TerminalCommand>
+```
+
+`prompt` is whatever sits in front of the command, and it is decoration: it is
+`aria-hidden` and not selectable, so copying the session out of the page gives
+you commands you can paste rather than commands with a `$` welded on.
+
+### Holding and skipping
+
+`startOnView` holds the session until the window is on screen, which is on by
+default. A terminal that has already finished typing by the time it is scrolled
+to has told its story to an empty room.
+
+`instant` prints the whole session at once. Use it in tests, or anywhere the
+content matters more than the performance.
+
+## Props
+
+### Terminal
+
+| Prop          | Type      | Default  | Description                              |
+| ------------- | --------- | -------- | ---------------------------------------- |
+| `title`       | `string`  | `"bash"` | Text in the window bar.                  |
+| `speed`       | `number`  | `34`     | Milliseconds per typed character.        |
+| `startOnView` | `boolean` | `true`   | Hold until the window scrolls into view. |
+| `instant`     | `boolean` | `false`  | Print the whole session with no typing.  |
+| `className`   | `string`  | none     | Merged onto the window.                  |
+
+### TerminalCommand
+
+| Prop       | Type     | Default | Description                        |
+| ---------- | -------- | ------- | ---------------------------------- |
+| `children` | `string` | none    | The command, as plain text.        |
+| `prompt`   | `string` | `"$"`   | What sits in front of the command. |
+
+### TerminalOutput
+
+| Prop       | Type        | Default | Description                                       |
+| ---------- | ----------- | ------- | ------------------------------------------------- |
+| `children` | `ReactNode` | none    | Anything. Output is not typed, so markup is fine. |
+| `delay`    | `number`    | `260`   | Milliseconds the command appears to run.          |
+
+<Callout type="tip" title="Accessibility">
+  The session is not a live region, so a screen reader is not interrupted line
+  by line by decoration. Under `prefers-reduced-motion` the whole session
+  renders at once, which is also what a reader who cannot wait for the typing
+  gets: the full text, immediately, in order.
+</Callout>

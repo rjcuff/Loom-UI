@@ -1,0 +1,146 @@
+---
+title: Bento Grid
+date: 2026-08-16
+description: A grid of tiles of different sizes that arrive one after another when the grid is reached.
+---
+
+<ComponentPreview name="bento-grid-demo" />
+
+## Installation
+
+<Tabs defaultValue="cli">
+
+<TabsList>
+  <TabsTrigger value="cli">CLI</TabsTrigger>
+  <TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @loomui/bento-grid
+```
+
+</TabsContent>
+
+<TabsContent value="manual">
+
+<Steps>
+
+<Step>Copy the component into your project.</Step>
+
+<ComponentSource name="bento-grid" />
+
+<Step>Add the tokens and keyframes to your global stylesheet.</Step>
+
+```css title="app/globals.css"
+@theme {
+  --ease-out-quart: cubic-bezier(0.165, 0.84, 0.44, 1);
+  --animate-bento-rise: bento-rise 620ms var(--ease-out-quart)
+    var(--bento-delay, 0ms) both;
+}
+
+@keyframes bento-rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+```
+
+<Step>Update the import paths to match your setup.</Step>
+
+</Steps>
+
+</TabsContent>
+
+</Tabs>
+
+## Usage
+
+```tsx
+import { BentoCard, BentoGrid } from "@/components/ui/bento-grid"
+```
+
+```tsx
+<BentoGrid>
+  <BentoCard
+    className="sm:col-span-2"
+    title="Copied, not installed"
+    description="Every component lands in your repo as one file you own."
+  />
+  <BentoCard
+    title="Motion first"
+    description="Every piece animates for a reason."
+  />
+</BentoGrid>
+```
+
+Tiles are spanned with the grid utilities you already know: `sm:col-span-2`,
+`row-span-2`, whatever the layout needs. There is no `size` prop mapping names
+onto spans, because that would be a second grammar for the one you have.
+
+### Arrival
+
+The grid owns the arrival, not the tiles. It hands each tile its place in the
+order by writing `--bento-delay` onto it, so a tile stays plain markup and can
+be wrapped, reordered or pulled into its own component without carrying an
+index around behind it.
+
+Nothing runs until the grid is on screen. A grid below the fold that has
+already played its arrival by the time you reach it has spent the effect on
+nobody, so it holds and waits.
+
+```tsx
+<BentoGrid stagger={110} />
+```
+
+`stagger` is the gap between one tile arriving and the next. Around 70ms reads
+as one movement across the grid. Past about 150ms the last tile is arriving
+well after the reader has started on the first one, and the grid feels slow to
+assemble rather than deliberate.
+
+### Composing
+
+`BentoCard` gives you a title, a description, an icon slot and a footer, and
+anything you pass as children lands between the description and the footer, so
+a chart or a mockup goes straight in.
+
+For the pointer highlight, wrap a tile in
+[`spotlight-card`](/docs/components/spotlight-card) rather than reaching for a
+prop here. The grid handles layout and arrival; the highlight is its own
+component and stays that way.
+
+## Props
+
+### BentoGrid
+
+| Prop          | Type      | Default | Description                                          |
+| ------------- | --------- | ------- | ---------------------------------------------------- |
+| `stagger`     | `number`  | `70`    | Milliseconds between one tile arriving and the next. |
+| `startOnView` | `boolean` | `true`  | Hold until the grid scrolls into view.               |
+| `disabled`    | `boolean` | `false` | Render the finished layout with no arrival.          |
+| `className`   | `string`  | none    | Merged onto the grid. Columns and gap here.          |
+
+### BentoCard
+
+| Prop          | Type        | Default | Description                          |
+| ------------- | ----------- | ------- | ------------------------------------ |
+| `title`       | `ReactNode` | none    | Heading for the tile.                |
+| `description` | `ReactNode` | none    | Supporting line under the title.     |
+| `icon`        | `ReactNode` | none    | Mark shown above the title.          |
+| `footer`      | `ReactNode` | none    | Pinned to the bottom of the tile.    |
+| `className`   | `string`    | none    | Merged onto the tile. Spans go here. |
+
+Any other `<div>` prop is forwarded.
+
+<Callout type="tip" title="Accessibility">
+  Tiles are in the document from the start and only their opacity and offset
+  are animated, so nothing is hidden from a screen reader while it waits its
+  turn. Under `prefers-reduced-motion` the grid renders finished. Titles are
+  `<h3>`, so check that fits under whatever heading the section already has.
+</Callout>

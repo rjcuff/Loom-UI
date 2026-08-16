@@ -1,0 +1,17 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "bento-grid-demo",
+  "type": "registry:example",
+  "title": "Bento Grid Demo",
+  "description": "Four tiles of two sizes arriving one after another.",
+  "registryDependencies": [
+    "@loomui/bento-grid"
+  ],
+  "files": [
+    {
+      "path": "registry/example/bento-grid-demo.tsx",
+      "content": "import { BentoCard, BentoGrid } from \"@/registry/loomui/bento-grid\"\n\nexport default function BentoGridDemo() {\n  return (\n    <BentoGrid className=\"w-full max-w-2xl\">\n      <BentoCard\n        className=\"sm:col-span-2\"\n        title=\"Copied, not installed\"\n        description=\"Every component lands in your repo as one file you own outright.\"\n      >\n        <div className=\"mt-4 flex gap-1.5\">\n          {Array.from({ length: 5 }, (_, index) => (\n            <span\n              key={index}\n              className=\"bg-primary/15 h-8 flex-1 rounded\"\n              style={{ opacity: 1 - index * 0.15 }}\n            />\n          ))}\n        </div>\n      </BentoCard>\n\n      <BentoCard\n        title=\"Motion first\"\n        description=\"Every piece animates for a reason.\"\n      />\n\n      <BentoCard\n        title=\"Themed\"\n        description=\"Light and dark from the same tokens.\"\n      />\n\n      <BentoCard\n        className=\"sm:col-span-2\"\n        title=\"No runtime\"\n        description=\"No animation library, no provider, no context to wire up.\"\n        footer={\n          <span className=\"text-muted-foreground font-mono text-xs\">\n            0 dependencies\n          </span>\n        }\n      />\n    </BentoGrid>\n  )\n}\n",
+      "type": "registry:example"
+    }
+  ]
+}

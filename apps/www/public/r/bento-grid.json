@@ -1,0 +1,35 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "bento-grid",
+  "type": "registry:ui",
+  "title": "Bento Grid",
+  "description": "A grid of tiles of different sizes that arrive one after another when the grid is reached.",
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "path": "registry/loomui/bento-grid.tsx",
+      "content": "\"use client\"\n\nimport * as React from \"react\"\n\nimport { cn } from \"@/lib/utils\"\n\nexport interface BentoGridProps extends React.ComponentProps<\"div\"> {\n  /** Milliseconds between one tile arriving and the next. */\n  stagger?: number\n  /** Run on mount instead of holding until the grid scrolls into view. */\n  startOnView?: boolean\n  /** Render the finished layout with no arrival. */\n  disabled?: boolean\n}\n\n/**\n * The grid owns the arrival, not the tiles: it hands each tile its place in the\n * order, so tiles stay plain markup and can be composed, wrapped or reordered\n * without carrying an index around.\n */\nexport function BentoGrid({\n  children,\n  className,\n  stagger = 70,\n  startOnView = true,\n  disabled = false,\n  style,\n  ...props\n}: BentoGridProps) {\n  const ref = React.useRef<HTMLDivElement>(null)\n  const [active, setActive] = React.useState(!startOnView)\n\n  React.useEffect(() => {\n    const root = ref.current\n    if (!root) {\n      return\n    }\n\n    for (const [index, tile] of Array.from(\n      root.querySelectorAll<HTMLElement>(\"[data-slot='bento-card']\")\n    ).entries()) {\n      tile.style.setProperty(\"--bento-delay\", `${index * stagger}ms`)\n    }\n  }, [stagger, children])\n\n  React.useEffect(() => {\n    if (!startOnView || disabled) {\n      return\n    }\n\n    const root = ref.current\n    if (!root || typeof IntersectionObserver === \"undefined\") {\n      setActive(true)\n      return\n    }\n\n    const observer = new IntersectionObserver(\n      ([entry]) => {\n        if (entry.isIntersecting) {\n          setActive(true)\n          observer.disconnect()\n        }\n      },\n      { threshold: 0.15 }\n    )\n\n    observer.observe(root)\n    return () => observer.disconnect()\n  }, [startOnView, disabled])\n\n  return (\n    <div\n      ref={ref}\n      data-slot=\"bento-grid\"\n      data-active={disabled || active ? \"\" : undefined}\n      className={cn(\n        \"group grid auto-rows-[minmax(9rem,auto)] grid-cols-1 gap-4 sm:grid-cols-3\",\n        className\n      )}\n      style={style}\n      {...props}\n    >\n      {children}\n    </div>\n  )\n}\n\nexport interface BentoCardProps extends Omit<\n  React.ComponentProps<\"div\">,\n  \"title\"\n> {\n  /** Heading for the tile. */\n  title?: React.ReactNode\n  /** Supporting line under the title. */\n  description?: React.ReactNode\n  /** Mark shown above the title. A glyph or a small icon. */\n  icon?: React.ReactNode\n  /** Anything pinned to the bottom of the tile. A link, usually. */\n  footer?: React.ReactNode\n}\n\nexport function BentoCard({\n  title,\n  description,\n  icon,\n  footer,\n  children,\n  className,\n  ...props\n}: BentoCardProps) {\n  return (\n    <div\n      data-slot=\"bento-card\"\n      className={cn(\n        \"border-border bg-card relative flex flex-col overflow-hidden rounded-xl border p-5\",\n        \"opacity-0 transition-[border-color,translate] duration-300 ease-[var(--ease-out-quart)]\",\n        \"hover:border-muted-foreground/40 hover:-translate-y-0.5\",\n        // The tile is only allowed to arrive once the grid says the grid is on\n        // screen, so a tile below the fold never plays to nobody.\n        \"group-data-[active]:animate-bento-rise\",\n        \"motion-reduce:animate-none motion-reduce:opacity-100 motion-reduce:transition-none\",\n        className\n      )}\n      {...props}\n    >\n      {icon ? (\n        <div className=\"text-muted-foreground mb-3 [&_svg]:size-5\">{icon}</div>\n      ) : null}\n\n      {title ? (\n        <h3 className=\"text-sm leading-none font-medium\">{title}</h3>\n      ) : null}\n\n      {description ? (\n        <p className=\"text-muted-foreground mt-2 text-sm\">{description}</p>\n      ) : null}\n\n      {children}\n\n      {footer ? <div className=\"mt-auto pt-4\">{footer}</div> : null}\n    </div>\n  )\n}\n",
+      "type": "registry:ui"
+    }
+  ],
+  "cssVars": {
+    "theme": {
+      "ease-out-quart": "cubic-bezier(0.165, 0.84, 0.44, 1)",
+      "animate-bento-rise": "bento-rise 620ms var(--ease-out-quart) var(--bento-delay, 0ms) both"
+    }
+  },
+  "css": {
+    "@keyframes bento-rise": {
+      "from": {
+        "opacity": "0",
+        "transform": "translateY(14px) scale(0.98)"
+      },
+      "to": {
+        "opacity": "1",
+        "transform": "translateY(0) scale(1)"
+      }
+    }
+  }
+}
