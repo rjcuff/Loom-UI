@@ -44,6 +44,18 @@ export const siteConfig = {
 
 export type SiteConfig = typeof siteConfig
 
+export interface Announcement {
+  /** The line itself. Keep it to one short clause — it has to fit on a phone. */
+  text: string
+  href: string
+}
+
+/** The strip above the header. Set to `null` to take it down. */
+export const announcement: Announcement | null = {
+  text: "Loom UI is here. Explore our catalog of 30+ animated components",
+  href: "/docs/components",
+}
+
 /** Builds a consistent tab title: "Weave Text | React Components & Effects" */
 export function pageTitle(name: string) {
   return `${name} | ${siteConfig.titleSuffix}`

@@ -28,7 +28,7 @@ export default function HomePage() {
 
       <div className="mx-auto flex w-full max-w-3xl flex-col items-center px-5 pt-24 pb-20 text-center sm:pt-40 sm:pb-28">
         <span className="animate-rise border-border bg-surface/60 text-muted-foreground rounded-full border px-3 py-1 text-xs backdrop-blur">
-          Free and open source
+          <span aria-hidden>🎉</span> Free and open source
         </span>
 
         <h1 className="animate-rise mt-6 text-[2rem] leading-[1.1] font-semibold tracking-tight text-balance [animation-delay:60ms] sm:text-6xl">
