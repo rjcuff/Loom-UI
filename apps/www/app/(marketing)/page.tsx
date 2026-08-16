@@ -6,6 +6,12 @@ import { Button } from "@/components/ui/button"
 import { InstallCommand } from "@/components/install-command"
 import { GridBeams } from "@/registry/loomui/grid-beams"
 import { WeaveText } from "@/registry/loomui/weave-text"
+import { ui } from "@/registry/registry-ui"
+
+/** Lifts a name out of the subheading without shouting. */
+function Mark({ children }: { children: React.ReactNode }) {
+  return <span className="text-foreground font-medium">{children}</span>
+}
 
 // The home page is the one place the tab shows the bare brand name.
 export const metadata: Metadata = {
@@ -27,12 +33,14 @@ export default function HomePage() {
         </span>
 
         <h1 className="animate-rise mt-6 text-[2rem] leading-[1.1] font-semibold tracking-tight text-balance [animation-delay:60ms] sm:text-6xl">
-          Interfaces that <WeaveText>move</WeaveText> without getting in the
-          way.
+          Animated components you <WeaveText>actually own</WeaveText>.
         </h1>
 
         <p className="animate-rise text-muted-foreground mt-5 max-w-xl text-base text-pretty [animation-delay:120ms] sm:mt-6 sm:text-lg">
-          {siteConfig.description}
+          {ui.length} animated <Mark>React</Mark> components in{" "}
+          <Mark>TypeScript</Mark> and <Mark>Tailwind CSS</Mark>, copied into
+          your project one file at a time. No runtime, no package to keep up
+          with, and made to sit beside <Mark>shadcn/ui</Mark>.
         </p>
 
         <div className="animate-rise mt-8 flex w-full flex-col items-center gap-3 [animation-delay:180ms] sm:mt-9 sm:w-auto sm:flex-row">
