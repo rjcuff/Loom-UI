@@ -1,0 +1,17 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "image-trail-demo",
+  "type": "registry:example",
+  "title": "Image Trail Demo",
+  "description": "Swatches dropped behind the pointer as it crosses a panel.",
+  "registryDependencies": [
+    "@loomui/image-trail"
+  ],
+  "files": [
+    {
+      "path": "registry/example/image-trail-demo.tsx",
+      "content": "import { ImageTrail } from \"@/registry/loomui/image-trail\"\n\n/** Stock photography, so the demo shows what real sources look like. */\nconst IMAGES = [\n  \"https://picsum.photos/id/1015/400/400\",\n  \"https://picsum.photos/id/1025/400/400\",\n  \"https://picsum.photos/id/1039/400/400\",\n  \"https://picsum.photos/id/1043/400/400\",\n  \"https://picsum.photos/id/1062/400/400\",\n  \"https://picsum.photos/id/1074/400/400\",\n]\n\nexport default function ImageTrailDemo() {\n  return (\n    <ImageTrail\n      images={IMAGES}\n      className=\"grid h-64 w-full max-w-2xl place-items-center rounded-xl border\"\n      imageClassName=\"size-24 rounded-xl\"\n    >\n      <p className=\"text-muted-foreground pointer-events-none text-sm\">\n        Move the pointer across this panel.\n      </p>\n    </ImageTrail>\n  )\n}\n",
+      "type": "registry:example"
+    }
+  ]
+}

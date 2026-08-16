@@ -1,0 +1,140 @@
+---
+title: Image Trail
+date: 2026-08-16
+description: Images dropped along the pointer's path, spaced by distance travelled rather than by time.
+---
+
+<ComponentPreview name="image-trail-demo" />
+
+## Installation
+
+<Tabs defaultValue="cli">
+
+<TabsList>
+  <TabsTrigger value="cli">CLI</TabsTrigger>
+  <TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @loomui/image-trail
+```
+
+</TabsContent>
+
+<TabsContent value="manual">
+
+<Steps>
+
+<Step>Copy the component into your project.</Step>
+
+<ComponentSource name="image-trail" />
+
+<Step>Add the tokens and keyframes to your global stylesheet.</Step>
+
+```css title="app/globals.css"
+@theme {
+  --ease-out-quart: cubic-bezier(0.165, 0.84, 0.44, 1);
+  --animate-trail-fade: trail-fade var(--trail-duration, 900ms)
+    var(--ease-out-quart) forwards;
+}
+
+@keyframes trail-fade {
+  0% {
+    opacity: 0;
+    transform: scale(0.7) rotate(0deg);
+  }
+  14% {
+    opacity: 1;
+    transform: scale(1) rotate(var(--trail-tilt, 0deg));
+  }
+  70% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.86) rotate(var(--trail-tilt, 0deg));
+  }
+}
+```
+
+<Step>Update the import paths to match your setup.</Step>
+
+</Steps>
+
+</TabsContent>
+
+</Tabs>
+
+## Usage
+
+```tsx
+import { ImageTrail } from "@/components/ui/image-trail"
+```
+
+```tsx
+<ImageTrail images={["/work/1.jpg", "/work/2.jpg", "/work/3.jpg"]}>
+  <h1>Selected work</h1>
+</ImageTrail>
+```
+
+Images are dropped by distance travelled, not on a timer. A slow drag across
+the panel leaves the same trail a fast flick does, and a pointer sitting still
+leaves nothing at all. On a timer, a paused pointer piles the whole set on one
+spot, which is the failure mode this effect is usually shipped with.
+
+Anything you pass as children sits above the trail, so the effect goes behind a
+heading rather than in place of one. The panel is the hit area, so give it the
+size you want the effect to have.
+
+### Spacing and life
+
+```tsx
+<ImageTrail images={IMAGES} distance={140} life={700} max={8} />
+```
+
+`distance` is how far the pointer must travel before the next image is dropped.
+Lower it and the trail becomes a dense ribbon; raise it and you get a handful
+of deliberate marks. Around 90 is a trail. Around 200 is a breadcrumb.
+
+`life` is how long one image takes to arrive, hold and go. It lands quickly and
+leaves slowly: an image that fades in at the same rate it fades out is never
+legible at any point in its life.
+
+`max` caps how many are alive at once. Older images are dropped first, which
+keeps a fast sweep across a wide panel from putting eighty layers on screen.
+
+Each image is removed on `animationend` rather than on a timer, so a tab that
+is backgrounded mid-sweep does not come back with a trail frozen across it.
+
+### Sizing the images
+
+```tsx
+<ImageTrail images={IMAGES} imageClassName="h-40 w-32 rounded-2xl" />
+```
+
+`className` sizes the panel, `imageClassName` sizes what lands in it. Images
+are `object-cover`, so a mixed set of portrait and landscape sources still
+lands as one consistent shape.
+
+## Props
+
+| Prop             | Type       | Default | Description                                         |
+| ---------------- | ---------- | ------- | --------------------------------------------------- |
+| `images`         | `string[]` | none    | Sources dropped in order, on a loop.                |
+| `distance`       | `number`   | `90`    | Pixels of travel between drops.                     |
+| `life`           | `number`   | `900`   | Milliseconds an image takes to arrive, hold and go. |
+| `max`            | `number`   | `12`    | Most images alive at once.                          |
+| `tilt`           | `number`   | `14`    | Largest tilt either side of straight, in degrees.   |
+| `imageClassName` | `string`   | none    | Merged onto each image. Size and radius here.       |
+| `className`      | `string`   | none    | Merged onto the panel.                              |
+
+Any other `<div>` prop is forwarded.
+
+<Callout type="tip" title="Accessibility">
+  Dropped images are decoration: they are `aria-hidden`, carry an empty `alt`,
+  and are not focusable or draggable, so the panel's real content is all a
+  screen reader or a keyboard ever meets. Under `prefers-reduced-motion` nothing
+  is dropped at all, and the panel is just a panel.
+</Callout>

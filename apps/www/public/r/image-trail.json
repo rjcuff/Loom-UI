@@ -1,0 +1,42 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "image-trail",
+  "type": "registry:ui",
+  "title": "Image Trail",
+  "description": "Images dropped along the pointer's path, spaced by distance travelled rather than by time.",
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "path": "registry/loomui/image-trail.tsx",
+      "content": "\"use client\"\n\nimport * as React from \"react\"\n\nimport { cn } from \"@/lib/utils\"\n\nexport interface ImageTrailProps extends React.ComponentProps<\"div\"> {\n  /** Sources dropped along the pointer's path, in order and on a loop. */\n  images: string[]\n  /** Pixels the pointer must travel before the next image is dropped. */\n  distance?: number\n  /** Milliseconds an image takes to arrive, hold and fade. */\n  life?: number\n  /** Most images alive at once. Older ones are dropped first. */\n  max?: number\n  /** Largest tilt either side of straight, in degrees. */\n  tilt?: number\n  /** Classes for each dropped image. Size and radius belong here. */\n  imageClassName?: string\n}\n\ninterface Drop {\n  id: number\n  x: number\n  y: number\n  src: string\n  tilt: number\n}\n\n/**\n * Images are dropped by distance travelled rather than on a timer, so a slow\n * drag leaves the same trail a fast one does and a still pointer leaves none.\n */\nexport function ImageTrail({\n  images,\n  children,\n  className,\n  distance = 90,\n  life = 900,\n  max = 12,\n  tilt = 14,\n  imageClassName,\n  onPointerMove,\n  ...props\n}: ImageTrailProps) {\n  const [drops, setDrops] = React.useState<Drop[]>([])\n  const last = React.useRef<{ x: number; y: number } | null>(null)\n  const nextId = React.useRef(0)\n\n  const handlePointerMove = (event: React.PointerEvent<HTMLDivElement>) => {\n    onPointerMove?.(event)\n\n    if (\n      images.length === 0 ||\n      window.matchMedia(\"(prefers-reduced-motion: reduce)\").matches\n    ) {\n      return\n    }\n\n    const rect = event.currentTarget.getBoundingClientRect()\n    const x = event.clientX - rect.left\n    const y = event.clientY - rect.top\n    const previous = last.current\n\n    if (previous && Math.hypot(x - previous.x, y - previous.y) < distance) {\n      return\n    }\n\n    last.current = { x, y }\n    const id = nextId.current++\n\n    setDrops((current) =>\n      [\n        ...current,\n        {\n          id,\n          x,\n          y,\n          src: images[id % images.length],\n          // Seeded off the id, so a given image in the trail always lands at\n          // the same angle instead of jittering on re-render.\n          tilt: ((id * 37) % (tilt * 2 + 1)) - tilt,\n        },\n      ].slice(-max)\n    )\n  }\n\n  const drop = React.useCallback((id: number) => {\n    setDrops((current) => current.filter((item) => item.id !== id))\n  }, [])\n\n  return (\n    <div\n      data-slot=\"image-trail\"\n      onPointerMove={handlePointerMove}\n      onPointerLeave={() => {\n        last.current = null\n      }}\n      className={cn(\"relative isolate overflow-hidden\", className)}\n      {...props}\n    >\n      {drops.map((item) => (\n        <img\n          key={item.id}\n          src={item.src}\n          alt=\"\"\n          aria-hidden=\"true\"\n          draggable={false}\n          onAnimationEnd={() => drop(item.id)}\n          className={cn(\n            \"animate-trail-fade pointer-events-none absolute -z-10 size-28 -translate-x-1/2 -translate-y-1/2 rounded-lg object-cover select-none motion-reduce:hidden\",\n            imageClassName\n          )}\n          style={\n            {\n              left: item.x,\n              top: item.y,\n              \"--trail-tilt\": `${item.tilt}deg`,\n              \"--trail-duration\": `${life}ms`,\n            } as React.CSSProperties\n          }\n        />\n      ))}\n      {children}\n    </div>\n  )\n}\n",
+      "type": "registry:ui"
+    }
+  ],
+  "cssVars": {
+    "theme": {
+      "ease-out-quart": "cubic-bezier(0.165, 0.84, 0.44, 1)",
+      "animate-trail-fade": "trail-fade var(--trail-duration, 900ms) var(--ease-out-quart) forwards"
+    }
+  },
+  "css": {
+    "@keyframes trail-fade": {
+      "0%": {
+        "opacity": "0",
+        "transform": "scale(0.7) rotate(0deg)"
+      },
+      "14%": {
+        "opacity": "1",
+        "transform": "scale(1) rotate(var(--trail-tilt, 0deg))"
+      },
+      "70%": {
+        "opacity": "1"
+      },
+      "100%": {
+        "opacity": "0",
+        "transform": "scale(0.86) rotate(var(--trail-tilt, 0deg))"
+      }
+    }
+  }
+}

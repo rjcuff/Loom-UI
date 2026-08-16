@@ -1,0 +1,133 @@
+---
+title: Unfold List
+date: 2026-08-16
+description: A disclosure list whose panels turn down onto the page from their top edge.
+---
+
+<ComponentPreview name="unfold-list-demo" />
+
+## Installation
+
+<Tabs defaultValue="cli">
+
+<TabsList>
+  <TabsTrigger value="cli">CLI</TabsTrigger>
+  <TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @loomui/unfold-list
+```
+
+</TabsContent>
+
+<TabsContent value="manual">
+
+<Steps>
+
+<Step>Copy the component into your project.</Step>
+
+<ComponentSource name="unfold-list" />
+
+<Step>Add the easing token to your global stylesheet.</Step>
+
+```css title="app/globals.css"
+@theme {
+  --ease-out-quart: cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+```
+
+<Step>Update the import paths to match your setup.</Step>
+
+</Steps>
+
+</TabsContent>
+
+</Tabs>
+
+## Usage
+
+```tsx
+import { UnfoldItem, UnfoldList } from "@/components/ui/unfold-list"
+```
+
+```tsx
+<UnfoldList defaultValue="own">
+  <UnfoldItem value="own" title="Do I own the code?">
+    Every component is copied into your project as a plain file.
+  </UnfoldItem>
+  <UnfoldItem value="deps" title="What does it install?">
+    The file, and the tokens it needs in your stylesheet.
+  </UnfoldItem>
+</UnfoldList>
+```
+
+A panel opens to whatever height its content happens to be. The row it sits in
+is a grid track animated from `0fr` to `1fr`, so nothing has to measure the
+content first, and nothing has a fixed height to keep in sync when the content
+changes, the window resizes, or a font finally loads.
+
+On top of that, the panel turns down onto the page from its top edge rather
+than sliding up from underneath. That is the difference between paper being
+unfolded and a drawer being opened, and it is why the content is tilted very
+slightly away from you until the fold finishes.
+
+### One at a time, or many
+
+```tsx
+<UnfoldList type="multiple" defaultValue={["own", "deps"]}>
+```
+
+`single` is the default: opening a panel closes the one that was open, which
+suits an FAQ where the answers are alternatives. `multiple` lets a reader open
+as many as they want, which suits documentation where they are steps.
+
+In `single` mode, `collapsible` decides whether the open panel can be closed
+again by clicking its own row. Leave it on unless something below the list
+depends on a panel always being open.
+
+### Controlled
+
+```tsx
+const [open, setOpen] = React.useState<string[]>(["own"])
+
+<UnfoldList value={open} onValueChange={setOpen}>
+```
+
+Pass `value` and the list stops holding its own state. `onValueChange` is
+always called with an array, in both modes, so the handler does not change
+shape when the `type` does.
+
+## Props
+
+### UnfoldList
+
+| Prop            | Type                        | Default    | Description                               |
+| --------------- | --------------------------- | ---------- | ----------------------------------------- |
+| `type`          | `"single" \| "multiple"`    | `"single"` | One panel open at a time, or many.        |
+| `defaultValue`  | `string \| string[]`        | none       | Panels open before anyone touches it.     |
+| `value`         | `string \| string[]`        | none       | Open panels, if you hold the state.       |
+| `onValueChange` | `(value: string[]) => void` | none       | Called with the open panels.              |
+| `collapsible`   | `boolean`                   | `true`     | In `single` mode, allow closing it again. |
+| `duration`      | `number`                    | `320`      | Milliseconds one panel takes to unfold.   |
+
+### UnfoldItem
+
+| Prop        | Type        | Default | Description                                 |
+| ----------- | ----------- | ------- | ------------------------------------------- |
+| `value`     | `string`    | none    | Identifies the panel. Unique in the list.   |
+| `title`     | `ReactNode` | none    | The row, which is the button that opens it. |
+| `className` | `string`    | none    | Merged onto the item.                       |
+
+Any other `<div>` prop is forwarded.
+
+<Callout type="tip" title="Accessibility">
+  Each row is a real button carrying `aria-expanded` and pointing at its panel
+  with `aria-controls`; the panel is a labelled region pointing back at its row.
+  A closed panel is marked `inert`, so it is out of the tab order and off the
+  accessibility tree while still being able to animate closed, which `hidden`
+  would not allow. Under `prefers-reduced-motion` panels change state with no
+  fold at all.
+</Callout>

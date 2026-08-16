@@ -1,0 +1,17 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "unfold-list-demo",
+  "type": "registry:example",
+  "title": "Unfold List Demo",
+  "description": "Three questions, one panel open at a time.",
+  "registryDependencies": [
+    "@loomui/unfold-list"
+  ],
+  "files": [
+    {
+      "path": "registry/example/unfold-list-demo.tsx",
+      "content": "import { UnfoldItem, UnfoldList } from \"@/registry/loomui/unfold-list\"\n\nexport default function UnfoldListDemo() {\n  return (\n    <UnfoldList defaultValue=\"own\" className=\"w-full max-w-md\">\n      <UnfoldItem value=\"own\" title=\"Do I own the code?\">\n        Every component is copied into your project as a plain file. Edit it,\n        rename it, delete it. Nothing upstream breaks.\n      </UnfoldItem>\n\n      <UnfoldItem value=\"deps\" title=\"What does it install?\">\n        The file, and the tokens it needs in your stylesheet. No animation\n        library and no provider to wrap your app in.\n      </UnfoldItem>\n\n      <UnfoldItem value=\"motion\" title=\"What about reduced motion?\">\n        Each component checks the preference itself and settles straight into\n        its finished state instead of animating into it.\n      </UnfoldItem>\n    </UnfoldList>\n  )\n}\n",
+      "type": "registry:example"
+    }
+  ]
+}
