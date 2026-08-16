@@ -1,0 +1,138 @@
+---
+title: Shimmer Skeleton
+date: 2026-08-16
+description: A placeholder block with a shimmer that passes across it while the real thing loads.
+---
+
+<ComponentPreview name="shimmer-skeleton-demo" />
+
+## Installation
+
+<Tabs defaultValue="cli">
+
+<TabsList>
+  <TabsTrigger value="cli">CLI</TabsTrigger>
+  <TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @loomui/shimmer-skeleton
+```
+
+</TabsContent>
+
+<TabsContent value="manual">
+
+<Steps>
+
+<Step>Copy the component into your project.</Step>
+
+<ComponentSource name="shimmer-skeleton" />
+
+<Step>Add the token and keyframes to your global stylesheet.</Step>
+
+```css title="app/globals.css"
+@theme {
+  --animate-skeleton-shimmer: skeleton-shimmer var(--shimmer-duration, 1600ms)
+    linear var(--shimmer-delay, 0ms) infinite;
+}
+
+@keyframes skeleton-shimmer {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+```
+
+<Step>Update the import paths to match your setup.</Step>
+
+</Steps>
+
+</TabsContent>
+
+</Tabs>
+
+## Usage
+
+```tsx
+import {
+  ShimmerSkeleton,
+  ShimmerSkeletonText,
+} from "@/components/ui/shimmer-skeleton"
+```
+
+```tsx
+<ShimmerSkeleton className="h-10 w-full rounded-lg" />
+```
+
+A placeholder is a promise about what is arriving. Draw it at the size and
+shape of the real thing, and the page does not jump when the data lands. Draw
+it as a grey box of some other size and you have traded a spinner for a shift.
+
+The sweep is a gradient translated across a clipped box, not a background
+position animated on the block itself. Translation stays on the compositor, so
+a table of forty placeholders costs about what one costs.
+
+### Building a card
+
+```tsx
+<div className="flex items-center gap-3">
+  <ShimmerSkeleton className="size-10 rounded-full" />
+  <div className="flex-1 space-y-2">
+    <ShimmerSkeleton className="h-3.5 w-32" delay={80} />
+    <ShimmerSkeleton className="h-3 w-20" delay={160} />
+  </div>
+</div>
+```
+
+Every block takes its size from `className`, so a placeholder is laid out with
+the same utilities the real component is. There is no `variant` prop, because
+a circle is `rounded-full` and a title is `h-4 w-40` and both of those are
+things you already know how to write.
+
+`delay` offsets one block's sweep from its neighbours'. Give blocks that sit
+near each other rising delays and the shimmer travels across the group rather
+than firing everywhere at once, which is the difference between a card that
+looks like it is loading and one that looks like it is flashing.
+
+### Paragraphs
+
+```tsx
+<ShimmerSkeletonText lines={4} lastLineWidth="45%" />
+```
+
+`ShimmerSkeletonText` is the same block repeated with the offsets already
+applied, and a short last line, because that is what a real paragraph does at
+its end.
+
+## Props
+
+### ShimmerSkeleton
+
+| Prop        | Type      | Default | Description                                  |
+| ----------- | --------- | ------- | -------------------------------------------- |
+| `duration`  | `number`  | `1600`  | Milliseconds for one pass across the block.  |
+| `delay`     | `number`  | `0`     | Milliseconds before this block's first pass. |
+| `shimmer`   | `boolean` | `true`  | Draw a plain block with no pass over it.     |
+| `className` | `string`  | none    | Merged onto the block. Size and radius here. |
+
+### ShimmerSkeletonText
+
+| Prop            | Type     | Default | Description             |
+| --------------- | -------- | ------- | ----------------------- |
+| `lines`         | `number` | `3`     | How many lines to draw. |
+| `lastLineWidth` | `string` | `"62%"` | Width of the last line. |
+
+Every `ShimmerSkeleton` prop is accepted too and passed down to each line.
+
+<Callout type="tip" title="Accessibility">
+  Placeholders are `aria-hidden`, so a screen reader is not read a paragraph of
+  nothing. Announce the load once on the region that owns it, with
+  `aria-busy="true"` or a live region, rather than on every block. Under
+  `prefers-reduced-motion` the sweep is not rendered and the blocks hold still.
+</Callout>

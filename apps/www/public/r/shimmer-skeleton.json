@@ -1,0 +1,32 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "shimmer-skeleton",
+  "type": "registry:ui",
+  "title": "Shimmer Skeleton",
+  "description": "A placeholder block with a shimmer that passes across it while the real thing loads.",
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "path": "registry/loomui/shimmer-skeleton.tsx",
+      "content": "\"use client\"\n\nimport * as React from \"react\"\n\nimport { cn } from \"@/lib/utils\"\n\nexport interface ShimmerSkeletonProps extends React.ComponentProps<\"div\"> {\n  /** Milliseconds for one pass of the shimmer across the block. */\n  duration?: number\n  /** Milliseconds to hold before this block's first pass. */\n  delay?: number\n  /** Render a plain block with no pass over it. */\n  shimmer?: boolean\n}\n\n/**\n * The sweep is a gradient translated across a clipped box, not a background\n * position on the block itself, so a placeholder costs one composited layer\n * however many of them are on the page at once.\n */\nexport function ShimmerSkeleton({\n  className,\n  duration = 1600,\n  delay = 0,\n  shimmer = true,\n  style,\n  children,\n  ...props\n}: ShimmerSkeletonProps) {\n  return (\n    <div\n      data-slot=\"shimmer-skeleton\"\n      aria-hidden=\"true\"\n      className={cn(\n        \"bg-muted relative isolate h-4 w-full overflow-hidden rounded-md\",\n        className\n      )}\n      style={\n        {\n          \"--shimmer-duration\": `${duration}ms`,\n          \"--shimmer-delay\": `${delay}ms`,\n          ...style,\n        } as React.CSSProperties\n      }\n      {...props}\n    >\n      {shimmer ? (\n        <span className=\"animate-skeleton-shimmer absolute inset-0 bg-[linear-gradient(90deg,transparent,color-mix(in_oklch,var(--foreground)_9%,transparent),transparent)] motion-reduce:hidden\" />\n      ) : null}\n      {children}\n    </div>\n  )\n}\n\nexport interface ShimmerSkeletonTextProps extends ShimmerSkeletonProps {\n  /** How many lines of placeholder text to draw. */\n  lines?: number\n  /** Width of the last line, which is short the way a real one is. */\n  lastLineWidth?: string\n}\n\n/**\n * Lines are offset from each other so the sweep runs down the paragraph rather\n * than firing across every line at once.\n */\nexport function ShimmerSkeletonText({\n  lines = 3,\n  lastLineWidth = \"62%\",\n  className,\n  duration = 1600,\n  delay = 0,\n  shimmer = true,\n  ...props\n}: ShimmerSkeletonTextProps) {\n  return (\n    <div\n      data-slot=\"shimmer-skeleton-text\"\n      className={cn(\"flex w-full flex-col gap-2.5\", className)}\n    >\n      {Array.from({ length: lines }, (_, index) => (\n        <ShimmerSkeleton\n          key={index}\n          duration={duration}\n          delay={delay + index * 120}\n          shimmer={shimmer}\n          style={\n            index === lines - 1 && lines > 1\n              ? { width: lastLineWidth }\n              : undefined\n          }\n          {...props}\n        />\n      ))}\n    </div>\n  )\n}\n",
+      "type": "registry:ui"
+    }
+  ],
+  "cssVars": {
+    "theme": {
+      "animate-skeleton-shimmer": "skeleton-shimmer var(--shimmer-duration, 1600ms) linear var(--shimmer-delay, 0ms) infinite"
+    }
+  },
+  "css": {
+    "@keyframes skeleton-shimmer": {
+      "from": {
+        "transform": "translateX(-100%)"
+      },
+      "to": {
+        "transform": "translateX(100%)"
+      }
+    }
+  }
+}

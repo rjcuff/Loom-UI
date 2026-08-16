@@ -1,0 +1,140 @@
+---
+title: Loom Loader
+date: 2026-08-16
+description: Threads drawn through a frame and pulled off the far side, with a shuttle crossing them.
+---
+
+<ComponentPreview name="loom-loader-demo" />
+
+## Installation
+
+<Tabs defaultValue="cli">
+
+<TabsList>
+  <TabsTrigger value="cli">CLI</TabsTrigger>
+  <TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @loomui/loom-loader
+```
+
+</TabsContent>
+
+<TabsContent value="manual">
+
+<Steps>
+
+<Step>Copy the component into your project.</Step>
+
+<ComponentSource name="loom-loader" />
+
+<Step>Add the tokens and keyframes to your global stylesheet.</Step>
+
+```css title="app/globals.css"
+@theme {
+  --ease-in-out-cubic: cubic-bezier(0.645, 0.045, 0.355, 1);
+  --animate-loom-thread: loom-thread var(--loom-duration, 1400ms) ease-in-out
+    infinite;
+  --animate-loom-shuttle: loom-shuttle var(--loom-duration, 1400ms)
+    var(--ease-in-out-cubic) infinite alternate;
+}
+
+@keyframes loom-thread {
+  0% {
+    stroke-dashoffset: 1;
+  }
+  40%,
+  60% {
+    stroke-dashoffset: 0;
+  }
+  100% {
+    stroke-dashoffset: -1;
+  }
+}
+
+@keyframes loom-shuttle {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(var(--loom-sweep, 30px));
+  }
+}
+```
+
+<Step>Update the import paths to match your setup.</Step>
+
+</Steps>
+
+</TabsContent>
+
+</Tabs>
+
+## Usage
+
+```tsx
+import { LoomLoader } from "@/components/ui/loom-loader"
+```
+
+```tsx
+<LoomLoader />
+```
+
+A spinner says only that something is happening. This one says the same thing,
+in the shape of the work: warp threads drawn down the frame one after another,
+and a shuttle carrying the weft across them.
+
+The threads are drawn and pulled off rather than faded in and out. A thread
+that fades is a thread that never went anywhere, and the loop stops reading as
+progress within about two cycles of watching it.
+
+### Size and colour
+
+```tsx
+<LoomLoader className="text-accent size-16" />
+```
+
+The loader is sized entirely by `className`, and it draws in `currentColor`, so
+it inherits the colour of whatever it sits in. Put it inside a button and it is
+the button's label colour without being told.
+
+Threads carry `pathLength="1"`, which means the dash animation is written in
+fractions of a line rather than in pixels. The same keyframes hold at `size-4`
+and at `size-24`, and nothing has to measure the SVG at runtime.
+
+### Threads and pace
+
+```tsx
+<LoomLoader strands={7} duration={2000} />
+```
+
+`strands` is how many warp threads are on the frame. Three reads as a small
+inline indicator; seven fills a page-level one. Past about nine the threads are
+closer together than the stroke is wide and the frame turns into a block.
+
+`duration` is one thread's whole trip, drawn and pulled off, and it also sets
+the shuttle's crossing. Each thread starts a fraction of that behind the one
+before it, which is what makes five lines read as a weave rather than as five
+lines blinking together.
+
+## Props
+
+| Prop        | Type     | Default     | Description                                    |
+| ----------- | -------- | ----------- | ---------------------------------------------- |
+| `strands`   | `number` | `5`         | Warp threads on the frame.                     |
+| `duration`  | `number` | `1400`      | Milliseconds for one thread's trip.            |
+| `label`     | `string` | `"Loading"` | Announced while the loader is on screen.       |
+| `className` | `string` | none        | Merged onto the root. Size and colour go here. |
+
+Any other `<div>` prop is forwarded.
+
+<Callout type="tip" title="Accessibility">
+  The root is a `role="status"` with an accessible name, so a screen reader is
+  told the page is busy without the SVG being described stroke by stroke. Under
+  `prefers-reduced-motion` the threads hold fully drawn: a woven glyph rather
+  than an empty frame, since a loader that renders as nothing is worse than one
+  that does not move.
+</Callout>

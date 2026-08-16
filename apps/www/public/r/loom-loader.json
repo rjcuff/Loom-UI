@@ -1,0 +1,45 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "loom-loader",
+  "type": "registry:ui",
+  "title": "Loom Loader",
+  "description": "Threads drawn through a frame and pulled off the far side, with a shuttle crossing them.",
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "path": "registry/loomui/loom-loader.tsx",
+      "content": "\"use client\"\n\nimport * as React from \"react\"\n\nimport { cn } from \"@/lib/utils\"\n\nexport interface LoomLoaderProps extends React.ComponentProps<\"div\"> {\n  /** How many warp threads are on the frame. Three to seven reads best. */\n  strands?: number\n  /** Milliseconds for one thread to be drawn through and pulled off. */\n  duration?: number\n  /** Announced to screen readers while the loader is on screen. */\n  label?: string\n}\n\n/** The frame the threads are strung across, in user units. */\nconst BOX = 40\nconst INSET = 5\n\n/**\n * Warp threads are drawn with `pathLength=\"1\"`, so the dash animation is\n * written in fractions of a line rather than in pixels and the same keyframes\n * hold at any size.\n */\nexport function LoomLoader({\n  strands = 5,\n  duration = 1400,\n  label = \"Loading\",\n  className,\n  style,\n  ...props\n}: LoomLoaderProps) {\n  const positions = React.useMemo(() => {\n    const span = BOX - INSET * 2\n    const gap = strands > 1 ? span / (strands - 1) : 0\n    return Array.from({ length: strands }, (_, index) => INSET + index * gap)\n  }, [strands])\n\n  return (\n    <div\n      data-slot=\"loom-loader\"\n      role=\"status\"\n      aria-label={label}\n      className={cn(\"text-primary inline-block size-10\", className)}\n      style={\n        { \"--loom-duration\": `${duration}ms`, ...style } as React.CSSProperties\n      }\n      {...props}\n    >\n      <svg\n        viewBox={`0 0 ${BOX} ${BOX}`}\n        fill=\"none\"\n        aria-hidden=\"true\"\n        className=\"size-full overflow-visible\"\n      >\n        {positions.map((x, index) => (\n          <line\n            key={x}\n            x1={x}\n            y1={INSET}\n            x2={x}\n            y2={BOX - INSET}\n            pathLength={1}\n            stroke=\"currentColor\"\n            strokeWidth={2}\n            strokeLinecap=\"round\"\n            strokeOpacity={0.3}\n            // Drawn whole at rest, so a reduced-motion frame is a woven glyph\n            // rather than an empty box.\n            strokeDasharray={1}\n            className=\"animate-loom-thread motion-reduce:animate-none\"\n            style={{\n              // Threads start one after another, which is what turns five\n              // lines into a weave instead of five lines blinking together.\n              animationDelay: `${(index / strands) * duration * 0.6}ms`,\n            }}\n          />\n        ))}\n\n        {/* The shuttle. It carries the weft across the warp and back. */}\n        <line\n          x1={INSET}\n          y1={INSET - 1}\n          x2={INSET}\n          y2={BOX - INSET + 1}\n          stroke=\"currentColor\"\n          strokeWidth={2.5}\n          strokeLinecap=\"round\"\n          className=\"animate-loom-shuttle motion-reduce:animate-none\"\n          style={\n            { \"--loom-sweep\": `${BOX - INSET * 2}px` } as React.CSSProperties\n          }\n        />\n      </svg>\n\n      <span className=\"sr-only\">{label}</span>\n    </div>\n  )\n}\n",
+      "type": "registry:ui"
+    }
+  ],
+  "cssVars": {
+    "theme": {
+      "ease-in-out-cubic": "cubic-bezier(0.645, 0.045, 0.355, 1)",
+      "animate-loom-thread": "loom-thread var(--loom-duration, 1400ms) ease-in-out infinite",
+      "animate-loom-shuttle": "loom-shuttle var(--loom-duration, 1400ms) var(--ease-in-out-cubic) infinite alternate"
+    }
+  },
+  "css": {
+    "@keyframes loom-thread": {
+      "0%": {
+        "stroke-dashoffset": "1"
+      },
+      "40%, 60%": {
+        "stroke-dashoffset": "0"
+      },
+      "100%": {
+        "stroke-dashoffset": "-1"
+      }
+    },
+    "@keyframes loom-shuttle": {
+      "from": {
+        "transform": "translateX(0)"
+      },
+      "to": {
+        "transform": "translateX(var(--loom-sweep, 30px))"
+      }
+    }
+  }
+}

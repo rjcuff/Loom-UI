@@ -1,0 +1,17 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "shimmer-skeleton-demo",
+  "type": "registry:example",
+  "title": "Shimmer Skeleton Demo",
+  "description": "A card placeholder with the sweep running down it.",
+  "registryDependencies": [
+    "@loomui/shimmer-skeleton"
+  ],
+  "files": [
+    {
+      "path": "registry/example/shimmer-skeleton-demo.tsx",
+      "content": "import {\n  ShimmerSkeleton,\n  ShimmerSkeletonText,\n} from \"@/registry/loomui/shimmer-skeleton\"\n\nexport default function ShimmerSkeletonDemo() {\n  return (\n    <div className=\"w-full max-w-sm\">\n      <div className=\"border-border bg-card rounded-xl border p-5\">\n        <div className=\"flex items-center gap-3\">\n          <ShimmerSkeleton className=\"size-10 shrink-0 rounded-full\" />\n          <div className=\"flex-1 space-y-2\">\n            <ShimmerSkeleton className=\"h-3.5 w-32\" delay={80} />\n            <ShimmerSkeleton className=\"h-3 w-20\" delay={160} />\n          </div>\n        </div>\n\n        <ShimmerSkeleton className=\"mt-5 h-28 w-full rounded-lg\" delay={240} />\n\n        <ShimmerSkeletonText className=\"mt-5\" lines={3} delay={320} />\n      </div>\n    </div>\n  )\n}\n",
+      "type": "registry:example"
+    }
+  ]
+}
