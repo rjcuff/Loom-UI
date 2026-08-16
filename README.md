@@ -32,7 +32,7 @@ Every component below installs the same way. Swap `weave-text` for its name.
 
 ## Components
 
-30 components, no runtime dependency on this project.
+37 components, no runtime dependency on this project.
 
 ### Text
 
@@ -77,6 +77,15 @@ Every component below installs the same way. Swap `weave-text` for its name.
 | [`magnetic`](https://loomui.design/docs/components/magnetic)                   | A wrapper that pulls its child toward the pointer as the pointer gets close.              |
 | [`marquee`](https://loomui.design/docs/components/marquee)                     | A seamless scrolling row or column, in either direction, that pauses on hover.            |
 | [`reading-progress`](https://loomui.design/docs/components/reading-progress)   | A pinned bar that tracks how far through the page, or a chosen element, the reader is.    |
+| [`unfold-list`](https://loomui.design/docs/components/unfold-list)             | A disclosure list whose panels turn down onto the page from their top edge.               |
+| [`image-trail`](https://loomui.design/docs/components/image-trail)             | Images dropped along the pointer's path, spaced by distance travelled rather than time.   |
+
+### Feedback
+
+| Component                                                                      | What it does                                                                            |
+| ------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| [`loom-loader`](https://loomui.design/docs/components/loom-loader)             | Threads drawn through a frame and pulled off the far side, with a shuttle crossing them. |
+| [`shimmer-skeleton`](https://loomui.design/docs/components/shimmer-skeleton)   | A placeholder block with a shimmer that passes across it while the real thing loads.     |
 
 ### Sections
 
@@ -85,6 +94,9 @@ Every component below installs the same way. Swap `weave-text` for its name.
 | [`testimonial-wall`](https://loomui.design/docs/components/testimonial-wall)     | Columns of quotes drifting past each other at different speeds, faded at both ends.      |
 | [`thread-timeline`](https://loomui.design/docs/components/thread-timeline)       | A timeline whose thread is sewn down the page as you read, lighting each node it reaches. |
 | [`logo-loom`](https://loomui.design/docs/components/logo-loom)                   | A logo row woven into place, every other mark arriving from the other side of the thread. |
+| [`bento-grid`](https://loomui.design/docs/components/bento-grid)                 | A grid of tiles of different sizes that arrive one after another when the grid is reached. |
+| [`card-stack`](https://loomui.design/docs/components/card-stack)                 | Cards that pin one behind another as the page scrolls, each settling behind the next.     |
+| [`terminal`](https://loomui.design/docs/components/terminal)                     | A window that types its commands out and prints their output a beat later.               |
 
 ### Mockups
 

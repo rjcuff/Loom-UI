@@ -454,6 +454,111 @@ export const Index: Record<string, any> = {
       return { default: mod.default ?? mod[exportName] }
     }),
   },
+  "loom-loader": {
+    name: "loom-loader",
+    type: "registry:ui",
+    title: "Loom Loader",
+    description: "Threads drawn through a frame and pulled off the far side, with a shuttle crossing them.",
+    dependencies: [],
+    registryDependencies: ["utils"],
+    files: [{"path":"registry/loomui/loom-loader.tsx","type":"registry:ui","target":""}],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/loomui/loom-loader")
+      const exportName =
+        Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
+      return { default: mod.default ?? mod[exportName] }
+    }),
+  },
+  "shimmer-skeleton": {
+    name: "shimmer-skeleton",
+    type: "registry:ui",
+    title: "Shimmer Skeleton",
+    description: "A placeholder block with a shimmer that passes across it while the real thing loads.",
+    dependencies: [],
+    registryDependencies: ["utils"],
+    files: [{"path":"registry/loomui/shimmer-skeleton.tsx","type":"registry:ui","target":""}],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/loomui/shimmer-skeleton")
+      const exportName =
+        Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
+      return { default: mod.default ?? mod[exportName] }
+    }),
+  },
+  "card-stack": {
+    name: "card-stack",
+    type: "registry:ui",
+    title: "Card Stack",
+    description: "Cards that pin one behind another as the page scrolls, each settling behind the next.",
+    dependencies: [],
+    registryDependencies: ["utils"],
+    files: [{"path":"registry/loomui/card-stack.tsx","type":"registry:ui","target":""}],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/loomui/card-stack")
+      const exportName =
+        Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
+      return { default: mod.default ?? mod[exportName] }
+    }),
+  },
+  "image-trail": {
+    name: "image-trail",
+    type: "registry:ui",
+    title: "Image Trail",
+    description: "Images dropped along the pointer's path, spaced by distance travelled rather than by time.",
+    dependencies: [],
+    registryDependencies: ["utils"],
+    files: [{"path":"registry/loomui/image-trail.tsx","type":"registry:ui","target":""}],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/loomui/image-trail")
+      const exportName =
+        Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
+      return { default: mod.default ?? mod[exportName] }
+    }),
+  },
+  "bento-grid": {
+    name: "bento-grid",
+    type: "registry:ui",
+    title: "Bento Grid",
+    description: "A grid of tiles of different sizes that arrive one after another when the grid is reached.",
+    dependencies: [],
+    registryDependencies: ["utils"],
+    files: [{"path":"registry/loomui/bento-grid.tsx","type":"registry:ui","target":""}],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/loomui/bento-grid")
+      const exportName =
+        Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
+      return { default: mod.default ?? mod[exportName] }
+    }),
+  },
+  "terminal": {
+    name: "terminal",
+    type: "registry:ui",
+    title: "Terminal",
+    description: "A window that types its commands out and prints their output a beat later.",
+    dependencies: [],
+    registryDependencies: ["utils"],
+    files: [{"path":"registry/loomui/terminal.tsx","type":"registry:ui","target":""}],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/loomui/terminal")
+      const exportName =
+        Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
+      return { default: mod.default ?? mod[exportName] }
+    }),
+  },
+  "unfold-list": {
+    name: "unfold-list",
+    type: "registry:ui",
+    title: "Unfold List",
+    description: "A disclosure list whose panels turn down onto the page from their top edge.",
+    dependencies: [],
+    registryDependencies: ["utils"],
+    files: [{"path":"registry/loomui/unfold-list.tsx","type":"registry:ui","target":""}],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/loomui/unfold-list")
+      const exportName =
+        Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
+      return { default: mod.default ?? mod[exportName] }
+    }),
+  },
   "weave-text-demo": {
     name: "weave-text-demo",
     type: "registry:example",
@@ -899,6 +1004,111 @@ export const Index: Record<string, any> = {
     files: [{"path":"registry/example/thread-timeline-demo.tsx","type":"registry:example","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/example/thread-timeline-demo")
+      const exportName =
+        Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
+      return { default: mod.default ?? mod[exportName] }
+    }),
+  },
+  "loom-loader-demo": {
+    name: "loom-loader-demo",
+    type: "registry:example",
+    title: "Loom Loader Demo",
+    description: "The loader at three sizes, with a wider frame on the last.",
+    dependencies: [],
+    registryDependencies: ["@loomui/loom-loader"],
+    files: [{"path":"registry/example/loom-loader-demo.tsx","type":"registry:example","target":""}],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/example/loom-loader-demo")
+      const exportName =
+        Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
+      return { default: mod.default ?? mod[exportName] }
+    }),
+  },
+  "shimmer-skeleton-demo": {
+    name: "shimmer-skeleton-demo",
+    type: "registry:example",
+    title: "Shimmer Skeleton Demo",
+    description: "A card placeholder with the sweep running down it.",
+    dependencies: [],
+    registryDependencies: ["@loomui/shimmer-skeleton"],
+    files: [{"path":"registry/example/shimmer-skeleton-demo.tsx","type":"registry:example","target":""}],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/example/shimmer-skeleton-demo")
+      const exportName =
+        Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
+      return { default: mod.default ?? mod[exportName] }
+    }),
+  },
+  "card-stack-demo": {
+    name: "card-stack-demo",
+    type: "registry:example",
+    title: "Card Stack Demo",
+    description: "Four cards pinning one behind another inside a panel.",
+    dependencies: [],
+    registryDependencies: ["@loomui/card-stack"],
+    files: [{"path":"registry/example/card-stack-demo.tsx","type":"registry:example","target":""}],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/example/card-stack-demo")
+      const exportName =
+        Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
+      return { default: mod.default ?? mod[exportName] }
+    }),
+  },
+  "image-trail-demo": {
+    name: "image-trail-demo",
+    type: "registry:example",
+    title: "Image Trail Demo",
+    description: "Swatches dropped behind the pointer as it crosses a panel.",
+    dependencies: [],
+    registryDependencies: ["@loomui/image-trail"],
+    files: [{"path":"registry/example/image-trail-demo.tsx","type":"registry:example","target":""}],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/example/image-trail-demo")
+      const exportName =
+        Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
+      return { default: mod.default ?? mod[exportName] }
+    }),
+  },
+  "bento-grid-demo": {
+    name: "bento-grid-demo",
+    type: "registry:example",
+    title: "Bento Grid Demo",
+    description: "Four tiles of two sizes arriving one after another.",
+    dependencies: [],
+    registryDependencies: ["@loomui/bento-grid"],
+    files: [{"path":"registry/example/bento-grid-demo.tsx","type":"registry:example","target":""}],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/example/bento-grid-demo")
+      const exportName =
+        Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
+      return { default: mod.default ?? mod[exportName] }
+    }),
+  },
+  "terminal-demo": {
+    name: "terminal-demo",
+    type: "registry:example",
+    title: "Terminal Demo",
+    description: "An install session typed out one command at a time.",
+    dependencies: [],
+    registryDependencies: ["@loomui/terminal"],
+    files: [{"path":"registry/example/terminal-demo.tsx","type":"registry:example","target":""}],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/example/terminal-demo")
+      const exportName =
+        Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
+      return { default: mod.default ?? mod[exportName] }
+    }),
+  },
+  "unfold-list-demo": {
+    name: "unfold-list-demo",
+    type: "registry:example",
+    title: "Unfold List Demo",
+    description: "Three questions, one panel open at a time.",
+    dependencies: [],
+    registryDependencies: ["@loomui/unfold-list"],
+    files: [{"path":"registry/example/unfold-list-demo.tsx","type":"registry:example","target":""}],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/example/unfold-list-demo")
       const exportName =
         Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
       return { default: mod.default ?? mod[exportName] }

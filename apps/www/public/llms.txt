@@ -7,6 +7,8 @@ Install any component with `npx shadcn@latest add @loomui/<name>`.
 ## Components
 
 - [Aurora Backdrop](https://loomui.design/docs/components/aurora-backdrop): A wash of blurred colour that drifts behind content on cycles that never line up.
+- [Bento Grid](https://loomui.design/docs/components/bento-grid): A grid of tiles of different sizes that arrive one after another when the grid is reached.
+- [Card Stack](https://loomui.design/docs/components/card-stack): Cards that pin one behind another as the page scrolls, each settling behind the next.
 - [Compare Slider](https://loomui.design/docs/components/compare-slider): Two versions of the same frame, split by a divider you drag, or move with the arrow keys.
 - [Confetti Button](https://loomui.design/docs/components/confetti-button): A button that throws a handful of paper into the air on press, each piece lobbed on its own arc.
 - [Count Up](https://loomui.design/docs/components/count-up): A number that counts to its value when it scrolls into view, without a render per frame.
@@ -15,26 +17,31 @@ Install any component with `npx shadcn@latest add @loomui/<name>`.
 - [Grid Backdrop](https://loomui.design/docs/components/grid-backdrop): An SVG grid with cells that fade in and out at a deterministic, seeded scatter.
 - [Grid Beams](https://loomui.design/docs/components/grid-beams): A ruled grid with neon beams running down random lines, fading out toward the edges.
 - [Hold Button](https://loomui.design/docs/components/hold-button): A button that fires only after a deliberate press and hold, with a fill sweeping across to count out the wait.
+- [Image Trail](https://loomui.design/docs/components/image-trail): Images dropped along the pointer's path, spaced by distance travelled rather than by time.
 - [iPad](https://loomui.design/docs/components/ipad): A tablet frame drawn from the real measurements, upright or on its side, with a screen you put anything in.
 - [iPhone](https://loomui.design/docs/components/iphone): A device frame drawn from the real measurements, with a screen you put anything in.
 - [Lens Text](https://loomui.design/docs/components/lens-text): Text held out of focus until the pointer passes over it like a magnifying glass.
 - [Logo Loom](https://loomui.design/docs/components/logo-loom): A logo row woven into place, every other mark arriving from the other side of the thread.
+- [Loom Loader](https://loomui.design/docs/components/loom-loader): Threads drawn through a frame and pulled off the far side, with a shuttle crossing them.
 - [MacBook](https://loomui.design/docs/components/macbook): A laptop frame with the camera housing cut into the display and the scoop cut into its base.
 - [Magnetic](https://loomui.design/docs/components/magnetic): A wrapper that pulls its child toward the pointer as the pointer gets close.
 - [Marquee](https://loomui.design/docs/components/marquee): A seamless scrolling row or column, in either direction, that pauses on hover.
 - [Reading Progress](https://loomui.design/docs/components/reading-progress): A pinned bar that tracks how far through the page, or a chosen element, the reader is.
 - [Ripple Button](https://loomui.design/docs/components/ripple-button): A button that sends a circle out from wherever it was pressed, sized to reach the furthest corner.
 - [Scramble Text](https://loomui.design/docs/components/scramble-text): A string that resolves out of random glyphs, left to right, on mount, on scroll, or on hover.
+- [Shimmer Skeleton](https://loomui.design/docs/components/shimmer-skeleton): A placeholder block with a shimmer that passes across it while the real thing loads.
 - [Split Flap](https://loomui.design/docs/components/split-flap): A departure board that flaps through its glyphs, one cell behind the last, until it lands on the value.
 - [Spotlight Card](https://loomui.design/docs/components/spotlight-card): A surface with a soft highlight that follows the pointer and fades out on leave.
 - [Stagger Text](https://loomui.design/docs/components/stagger-text): Words or characters that rise into place one after another, on mount or on scroll.
 - [Sticker Peel](https://loomui.design/docs/components/sticker-peel): A card whose corner lifts off the page on hover, folded back over the crease to show its backing.
 - [Stitch Path](https://loomui.design/docs/components/stitch-path): A running stitch sewn along an SVG path as the page scrolls, following the holes it is laid over.
+- [Terminal](https://loomui.design/docs/components/terminal): A window that types its commands out and prints their output a beat later.
 - [Testimonial Wall](https://loomui.design/docs/components/testimonial-wall): Columns of quotes drifting past each other at different speeds, faded at both ends.
 - [Thread Timeline](https://loomui.design/docs/components/thread-timeline): A timeline whose thread is sewn down the page as you read, lighting each node as it reaches it.
 - [Ticket Stub](https://loomui.design/docs/components/ticket-stub): A card torn along a perforation, with a notch bitten out of the paper at each end of it.
 - [Tilt Card](https://loomui.design/docs/components/tilt-card): A surface that leans away from the pointer in 3D and settles back on leave.
 - [Typewriter](https://loomui.design/docs/components/typewriter): Phrases typed out and deleted in a loop, with a caret and no layout shift.
+- [Unfold List](https://loomui.design/docs/components/unfold-list): A disclosure list whose panels turn down onto the page from their top edge.
 - [Weave Text](https://loomui.design/docs/components/weave-text): Text filled with a slow-drifting gradient, woven from a palette you control.
 
 ## Links
