@@ -32,7 +32,7 @@ export default function HomePage() {
         </span>
 
         <h1 className="animate-rise mt-6 text-[2rem] leading-[1.1] font-semibold tracking-tight text-balance [animation-delay:60ms] sm:text-6xl">
-          Animated components you <WeaveText>actually own</WeaveText>.
+          Where Design Meets <WeaveText>Production</WeaveText>
         </h1>
 
         <p className="animate-rise text-muted-foreground mt-5 max-w-xl text-base text-pretty [animation-delay:120ms] sm:mt-6 sm:text-lg">
