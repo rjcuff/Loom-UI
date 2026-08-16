@@ -149,6 +149,31 @@ export const docsConfig: DocsConfig = {
           title: "Reading Progress",
           href: "/docs/components/reading-progress",
         },
+        {
+          title: "Unfold List",
+          href: "/docs/components/unfold-list",
+          badge: { text: "New", variant: "new" },
+        },
+        {
+          title: "Image Trail",
+          href: "/docs/components/image-trail",
+          badge: { text: "New", variant: "new" },
+        },
+      ],
+    },
+    {
+      title: "Feedback",
+      items: [
+        {
+          title: "Loom Loader",
+          href: "/docs/components/loom-loader",
+          badge: { text: "New", variant: "new" },
+        },
+        {
+          title: "Shimmer Skeleton",
+          href: "/docs/components/shimmer-skeleton",
+          badge: { text: "New", variant: "new" },
+        },
       ],
     },
     {
@@ -165,6 +190,21 @@ export const docsConfig: DocsConfig = {
         {
           title: "Logo Loom",
           href: "/docs/components/logo-loom",
+          badge: { text: "New", variant: "new" },
+        },
+        {
+          title: "Bento Grid",
+          href: "/docs/components/bento-grid",
+          badge: { text: "New", variant: "new" },
+        },
+        {
+          title: "Card Stack",
+          href: "/docs/components/card-stack",
+          badge: { text: "New", variant: "new" },
+        },
+        {
+          title: "Terminal",
+          href: "/docs/components/terminal",
           badge: { text: "New", variant: "new" },
         },
       ],

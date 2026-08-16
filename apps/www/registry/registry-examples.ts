@@ -397,4 +397,95 @@ export const examples: Registry["items"] = [
       },
     ],
   },
+  {
+    name: "loom-loader-demo",
+    type: "registry:example",
+    title: "Loom Loader Demo",
+    description: "The loader at three sizes, with a wider frame on the last.",
+    registryDependencies: ["@loomui/loom-loader"],
+    files: [
+      {
+        path: "example/loom-loader-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "shimmer-skeleton-demo",
+    type: "registry:example",
+    title: "Shimmer Skeleton Demo",
+    description: "A card placeholder with the sweep running down it.",
+    registryDependencies: ["@loomui/shimmer-skeleton"],
+    files: [
+      {
+        path: "example/shimmer-skeleton-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "card-stack-demo",
+    type: "registry:example",
+    title: "Card Stack Demo",
+    description: "Four cards pinning one behind another inside a panel.",
+    registryDependencies: ["@loomui/card-stack"],
+    files: [
+      {
+        path: "example/card-stack-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "image-trail-demo",
+    type: "registry:example",
+    title: "Image Trail Demo",
+    description: "Swatches dropped behind the pointer as it crosses a panel.",
+    registryDependencies: ["@loomui/image-trail"],
+    files: [
+      {
+        path: "example/image-trail-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "bento-grid-demo",
+    type: "registry:example",
+    title: "Bento Grid Demo",
+    description: "Four tiles of two sizes arriving one after another.",
+    registryDependencies: ["@loomui/bento-grid"],
+    files: [
+      {
+        path: "example/bento-grid-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "terminal-demo",
+    type: "registry:example",
+    title: "Terminal Demo",
+    description: "An install session typed out one command at a time.",
+    registryDependencies: ["@loomui/terminal"],
+    files: [
+      {
+        path: "example/terminal-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "unfold-list-demo",
+    type: "registry:example",
+    title: "Unfold List Demo",
+    description: "Three questions, one panel open at a time.",
+    registryDependencies: ["@loomui/unfold-list"],
+    files: [
+      {
+        path: "example/unfold-list-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
 ]

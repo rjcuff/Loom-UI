@@ -733,4 +733,226 @@ export const ui: Registry["items"] = [
       },
     },
   },
+  {
+    name: "loom-loader",
+    type: "registry:ui",
+    title: "Loom Loader",
+    description:
+      "Threads drawn through a frame and pulled off the far side, with a shuttle crossing them.",
+    registryDependencies: ["utils"],
+    files: [
+      {
+        path: "loomui/loom-loader.tsx",
+        type: "registry:ui",
+      },
+    ],
+    cssVars: {
+      theme: {
+        "ease-in-out-cubic": EASE_IN_OUT_CUBIC,
+        "animate-loom-thread":
+          "loom-thread var(--loom-duration, 1400ms) ease-in-out infinite",
+        "animate-loom-shuttle":
+          "loom-shuttle var(--loom-duration, 1400ms) var(--ease-in-out-cubic) infinite alternate",
+      },
+    },
+    css: {
+      "@keyframes loom-thread": {
+        "0%": {
+          "stroke-dashoffset": "1",
+        },
+        "40%, 60%": {
+          "stroke-dashoffset": "0",
+        },
+        "100%": {
+          "stroke-dashoffset": "-1",
+        },
+      },
+      "@keyframes loom-shuttle": {
+        from: {
+          transform: "translateX(0)",
+        },
+        to: {
+          transform: "translateX(var(--loom-sweep, 30px))",
+        },
+      },
+    },
+  },
+  {
+    name: "shimmer-skeleton",
+    type: "registry:ui",
+    title: "Shimmer Skeleton",
+    description:
+      "A placeholder block with a shimmer that passes across it while the real thing loads.",
+    registryDependencies: ["utils"],
+    files: [
+      {
+        path: "loomui/shimmer-skeleton.tsx",
+        type: "registry:ui",
+      },
+    ],
+    cssVars: {
+      theme: {
+        "animate-skeleton-shimmer":
+          "skeleton-shimmer var(--shimmer-duration, 1600ms) linear var(--shimmer-delay, 0ms) infinite",
+      },
+    },
+    css: {
+      "@keyframes skeleton-shimmer": {
+        from: {
+          transform: "translateX(-100%)",
+        },
+        to: {
+          transform: "translateX(100%)",
+        },
+      },
+    },
+  },
+  {
+    name: "card-stack",
+    type: "registry:ui",
+    title: "Card Stack",
+    description:
+      "Cards that pin one behind another as the page scrolls, each settling behind the next.",
+    registryDependencies: ["utils"],
+    files: [
+      {
+        path: "loomui/card-stack.tsx",
+        type: "registry:ui",
+      },
+    ],
+  },
+  {
+    name: "image-trail",
+    type: "registry:ui",
+    title: "Image Trail",
+    description:
+      "Images dropped along the pointer's path, spaced by distance travelled rather than by time.",
+    registryDependencies: ["utils"],
+    files: [
+      {
+        path: "loomui/image-trail.tsx",
+        type: "registry:ui",
+      },
+    ],
+    cssVars: {
+      theme: {
+        "ease-out-quart": EASE_OUT_QUART,
+        "animate-trail-fade":
+          "trail-fade var(--trail-duration, 900ms) var(--ease-out-quart) forwards",
+      },
+    },
+    css: {
+      "@keyframes trail-fade": {
+        "0%": {
+          opacity: "0",
+          transform: "scale(0.7) rotate(0deg)",
+        },
+        "14%": {
+          opacity: "1",
+          transform: "scale(1) rotate(var(--trail-tilt, 0deg))",
+        },
+        "70%": {
+          opacity: "1",
+        },
+        "100%": {
+          opacity: "0",
+          transform: "scale(0.86) rotate(var(--trail-tilt, 0deg))",
+        },
+      },
+    },
+  },
+  {
+    name: "bento-grid",
+    type: "registry:ui",
+    title: "Bento Grid",
+    description:
+      "A grid of tiles of different sizes that arrive one after another when the grid is reached.",
+    registryDependencies: ["utils"],
+    files: [
+      {
+        path: "loomui/bento-grid.tsx",
+        type: "registry:ui",
+      },
+    ],
+    cssVars: {
+      theme: {
+        "ease-out-quart": EASE_OUT_QUART,
+        "animate-bento-rise":
+          "bento-rise 620ms var(--ease-out-quart) var(--bento-delay, 0ms) both",
+      },
+    },
+    css: {
+      "@keyframes bento-rise": {
+        from: {
+          opacity: "0",
+          transform: "translateY(14px) scale(0.98)",
+        },
+        to: {
+          opacity: "1",
+          transform: "translateY(0) scale(1)",
+        },
+      },
+    },
+  },
+  {
+    name: "terminal",
+    type: "registry:ui",
+    title: "Terminal",
+    description:
+      "A window that types its commands out and prints their output a beat later.",
+    registryDependencies: ["utils"],
+    files: [
+      {
+        path: "loomui/terminal.tsx",
+        type: "registry:ui",
+      },
+    ],
+    cssVars: {
+      theme: {
+        "ease-out-quart": EASE_OUT_QUART,
+        "animate-caret-blink": "caret-blink 1.1s steps(2, jump-none) infinite",
+        "animate-terminal-print":
+          "terminal-print 240ms var(--ease-out-quart) both",
+      },
+    },
+    css: {
+      "@keyframes caret-blink": {
+        "0%, 100%": {
+          opacity: "1",
+        },
+        "50%": {
+          opacity: "0",
+        },
+      },
+      "@keyframes terminal-print": {
+        from: {
+          opacity: "0",
+          transform: "translateY(3px)",
+        },
+        to: {
+          opacity: "1",
+          transform: "translateY(0)",
+        },
+      },
+    },
+  },
+  {
+    name: "unfold-list",
+    type: "registry:ui",
+    title: "Unfold List",
+    description:
+      "A disclosure list whose panels turn down onto the page from their top edge.",
+    registryDependencies: ["utils"],
+    files: [
+      {
+        path: "loomui/unfold-list.tsx",
+        type: "registry:ui",
+      },
+    ],
+    cssVars: {
+      theme: {
+        "ease-out-quart": EASE_OUT_QUART,
+      },
+    },
+  },
 ]

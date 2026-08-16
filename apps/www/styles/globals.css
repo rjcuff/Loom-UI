@@ -187,6 +187,17 @@
   --animate-confetti-drift: confetti-drift var(--confetti-duration, 900ms) linear
     forwards;
   --animate-confetti-fall: confetti-fall var(--confetti-duration, 900ms) forwards;
+  --animate-loom-thread: loom-thread var(--loom-duration, 1400ms) ease-in-out
+    infinite;
+  --animate-loom-shuttle: loom-shuttle var(--loom-duration, 1400ms)
+    var(--ease-in-out-cubic) infinite alternate;
+  --animate-skeleton-shimmer: skeleton-shimmer var(--shimmer-duration, 1600ms)
+    linear var(--shimmer-delay, 0ms) infinite;
+  --animate-trail-fade: trail-fade var(--trail-duration, 900ms)
+    var(--ease-out-quart) forwards;
+  --animate-bento-rise: bento-rise 620ms var(--ease-out-quart)
+    var(--bento-delay, 0ms) both;
+  --animate-terminal-print: terminal-print 240ms var(--ease-out-quart) both;
 }
 
 @keyframes weave {
@@ -349,6 +360,82 @@
   from {
     opacity: 0;
     transform: translateY(var(--loom-from, 1.5rem));
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* A thread is drawn through the frame from one end and pulled off the other,
+   in fractions of a line: the warp lines carry `pathLength="1"`, so the same
+   keyframes hold whatever size the loader is rendered at. */
+@keyframes loom-thread {
+  0% {
+    stroke-dashoffset: 1;
+  }
+  40%,
+  60% {
+    stroke-dashoffset: 0;
+  }
+  100% {
+    stroke-dashoffset: -1;
+  }
+}
+
+@keyframes loom-shuttle {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(var(--loom-sweep, 30px));
+  }
+}
+
+@keyframes skeleton-shimmer {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+
+/* Lands quickly, holds, then leaves. A dropped image has to be readable before
+   it starts going, or the trail is a blur. */
+@keyframes trail-fade {
+  0% {
+    opacity: 0;
+    transform: scale(0.7) rotate(0deg);
+  }
+  14% {
+    opacity: 1;
+    transform: scale(1) rotate(var(--trail-tilt, 0deg));
+  }
+  70% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.86) rotate(var(--trail-tilt, 0deg));
+  }
+}
+
+@keyframes bento-rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes terminal-print {
+  from {
+    opacity: 0;
+    transform: translateY(3px);
   }
   to {
     opacity: 1;
