@@ -1,0 +1,77 @@
+---
+title: Introduction
+description: What loom is, why it exists, and what it is trying to be.
+---
+
+loom is a collection of animated React components you copy into your project.
+Every one is a single file with no runtime dependency on this library. Once it
+is in your repo it is yours. Edit it, rename it, delete it. Nothing upstream
+breaks.
+
+There is no package to install and no version to keep up with. Components are
+distributed through a [shadcn](https://ui.shadcn.com/docs/registry)-compatible
+registry, so `npx shadcn@latest add @loomui/weave-text` drops the source into
+`components/ui` and that is the end of loom's involvement in your codebase.
+
+## Why I built this
+
+I have always loved building this kind of thing. The small, fiddly pieces. A
+button that acknowledges a press from the exact spot it was pressed. A number
+that counts up when it finally scrolls into view. A card that leans away from
+your pointer and settles back when you leave. They take the longest to get
+right, they are the first thing cut when a deadline moves, and they are the
+part of an interface people actually remember.
+
+They are also solved problems that everybody keeps solving again from scratch.
+I have written the same marquee four times at four different jobs. That is a
+waste of everyone's evening.
+
+So loom is the version I wanted to exist. Not a dependency you install and pray
+about, but a shelf you take things off. Read the file, understand it in a
+minute, keep it, change it, throw it out.
+
+I want software to be free and open. loom is MIT licensed, the whole registry
+is in the repo, and there is no paid tier holding the good components hostage.
+If you ship something with it, that is the point. If you find a bug in it, or
+you have a component that belongs here, the repo is open and I would rather
+this grew from other people's hands than only from mine.
+
+<Callout type="tip" title="Contributing">
+  Every component in this library started as one file. If you have written one
+  you are proud of, [open a pull
+  request](https://github.com/rjcuff/Loom-UI/blob/main/CONTRIBUTING.md).
+</Callout>
+
+## What loom is trying to be
+
+**Motion that means something.** Every animation here reports a fact. A ripple
+starts where you pressed because that is where you pressed. A timeline lights a
+node when the thread reaches it. Motion that decorates instead of reporting is
+noise, and noise is what makes people ask for the animations to be turned off.
+
+**One file, no runtime.** No provider to wrap your app in, no animation library
+in your bundle, no config object. If a component needs a keyframe, it ships the
+keyframe. CSS does the work wherever CSS can, which is more often than most
+libraries assume.
+
+**Accessible without being asked.** Every component checks
+`prefers-reduced-motion` itself and settles into its finished state rather than
+disappearing. Buttons are buttons, disclosure panels announce their state, and
+decoration is hidden from screen readers instead of read out.
+
+**Yours, immediately.** The code in the docs is the code you get. There is no
+minified build, no compiled distribution, and nothing in the file you did not
+ask for.
+
+## Credit
+
+loom follows the path [shadcn/ui](https://ui.shadcn.com) cut. The idea that a
+component library can be a registry of files you own rather than a package you
+depend on is theirs, and this project would not exist in this shape without it.
+The components here are built to sit alongside shadcn/ui components in the same
+project, using the same tokens and the same `cn()` helper.
+
+## Where to go next
+
+Set the registry up once on the [Installation](/docs/installation) page, or go
+straight to [the components](/docs/components) and pick something.
