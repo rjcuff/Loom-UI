@@ -77,7 +77,11 @@ export default function RootLayout({
             injecting `transition: none !important` on every element for the
             duration of the swap, which would kill the theme toggle's own icon
             animation at exactly the moment it should play. */}
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="light"
+          enableSystem={false}
+        >
           <TooltipProvider>{children}</TooltipProvider>
         </ThemeProvider>
         <Analytics />
