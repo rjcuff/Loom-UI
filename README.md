@@ -2,10 +2,10 @@
 
 # Loom UI
 
-**Open-source animated components for React.**
-Weave motion into your interface, one file at a time.
+**Where design meets production.**
+Animated React components you copy in, own outright, and ship.
 
-[Documentation](https://loomui.design) · [Components](https://loomui.design/docs/components) · [Contributing](CONTRIBUTING.md)
+[Introduction](https://loomui.design/docs/introduction) · [Documentation](https://loomui.design) · [Components](https://loomui.design/docs/components) · [Contributing](CONTRIBUTING.md)
 
 [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE.md)
 [![Stars](https://img.shields.io/github/stars/rjcuff/Loom-UI?style=flat)](https://github.com/rjcuff/Loom-UI/stargazers)
@@ -14,6 +14,18 @@ Weave motion into your interface, one file at a time.
 <img src="apps/www/public/demo.gif" alt="loom components in motion" width="100%" />
 
 </div>
+
+## Why loom
+
+- **No animation library.** Nothing added to your bundle, no provider to wrap
+  your app in, no config object. CSS does the work wherever CSS can, which is
+  more often than most libraries assume.
+- **One file each.** Read it in a minute, keep it, change it, throw it out.
+- **Reduced motion, everywhere.** Every component checks
+  `prefers-reduced-motion` itself and settles into its finished state rather
+  than disappearing.
+- **Made for shadcn/ui.** The same tokens, the same `cn()` helper, the same
+  conventions, so loom components sit beside yours without translation.
 
 ## Install
 
