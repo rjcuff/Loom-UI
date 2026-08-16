@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button"
 import { InstallCommand } from "@/components/install-command"
 import { GridBeams } from "@/registry/loomui/grid-beams"
 import { WeaveText } from "@/registry/loomui/weave-text"
-import { ui } from "@/registry/registry-ui"
 
 /** Lifts a name out of the subheading without shouting. */
 function Mark({ children }: { children: React.ReactNode }) {
@@ -37,7 +36,7 @@ export default function HomePage() {
         </h1>
 
         <p className="animate-rise text-muted-foreground mt-5 max-w-xl text-base text-pretty [animation-delay:120ms] sm:mt-6 sm:text-lg">
-          {ui.length} animated <Mark>React</Mark> components in{" "}
+          A collection of animated <Mark>React</Mark> components in{" "}
           <Mark>TypeScript</Mark> and <Mark>Tailwind CSS</Mark>, copied into
           your project one file at a time. No runtime, no package to keep up
           with, and made to sit beside <Mark>shadcn/ui</Mark>.
