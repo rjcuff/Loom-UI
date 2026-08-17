@@ -8,9 +8,19 @@ export const siteConfig = {
     height: 909,
     alt: "Loom UI",
   },
+  /**
+   * The search snippet, so it leads with what someone is searching for
+   * (animated React components) and what it costs them (nothing). Kept under
+   * 160 characters, which is roughly where Google starts truncating.
+   */
   description:
-    "Beautifully animated React components and effects to make your interface feel alive.",
+    "Free, open-source animated React components built with TypeScript, Tailwind CSS and Motion. Copy any one into your project. No runtime, no dependency to track.",
   tagline: "Weave motion into your interface.",
+  /**
+   * The home page title. A bare brand name earns nothing in search results, so
+   * the one page competing for generic queries says what it is as well.
+   */
+  seoTitle: "Loom UI | Animated React Components for Tailwind CSS",
   /** Appended after a page name in the browser tab, e.g. "Weave Text | ...". */
   titleSuffix: "React Components & Effects",
   registry: {
@@ -28,12 +38,18 @@ export const siteConfig = {
   keywords: [
     "React components",
     "animated components",
+    "React animation library",
+    "copy paste React components",
     "Tailwind CSS",
     "TypeScript",
     "Motion",
+    "Framer Motion components",
     "shadcn/ui",
+    "shadcn registry",
     "Next.js",
     "UI library",
+    "free UI components",
+    "open source component library",
     "landing page components",
   ],
   author: {

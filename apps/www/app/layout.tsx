@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   // No `template` here: every page sets its own absolute title so the tab
   // reads exactly as intended: "Loom UI" on the home page, "<Page> | React
   // Components & Effects" everywhere else.
-  title: siteConfig.name,
+  title: siteConfig.seoTitle,
   description: siteConfig.description,
   keywords: siteConfig.keywords,
   applicationName: siteConfig.name,
@@ -40,6 +40,12 @@ export const metadata: Metadata = {
     creator: "@ryancuff_",
     images: [siteConfig.ogImage],
   },
+  category: "Web Development",
+  // Set NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION in the deploy environment to claim
+  // the property in Search Console; the tag is left out entirely without it.
+  verification: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION
+    ? { google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION }
+    : undefined,
   robots: {
     index: true,
     follow: true,

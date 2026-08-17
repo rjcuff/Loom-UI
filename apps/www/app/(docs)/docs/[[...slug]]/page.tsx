@@ -4,12 +4,13 @@ import { notFound } from "next/navigation"
 import { mdxComponents } from "@/mdx-components"
 import { ArrowLeftIcon, ArrowRightIcon } from "lucide-react"
 
-import { getNeighboursFromConfig } from "@/config/docs"
+import { DOCS_ENTRY, getNeighboursFromConfig } from "@/config/docs"
 import { pageTitle, siteConfig } from "@/config/site"
 import { source } from "@/lib/source"
 import { absoluteUrl } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { DocsTableOfContents } from "@/components/docs-toc"
+import { docSchema, JsonLd, type Crumb } from "@/components/structured-data"
 
 // The docs tree is fully known at build time, so prerender all of it and
 // reject anything that is not in the tree.
@@ -47,6 +48,14 @@ export async function generateMetadata({
   const tabTitle = pageTitle(title)
   const summary = description ?? siteConfig.description
 
+  // A card drawn for this page in particular, from /og/<slug>.
+  const ogImage = {
+    url: absoluteUrl(`/og/${page.slugs.join("/")}`),
+    width: 1200,
+    height: 630,
+    alt: title,
+  }
+
   return {
     title: tabTitle,
     description: summary,
@@ -57,18 +66,35 @@ export async function generateMetadata({
       description: summary,
       url: absoluteUrl(page.url),
       siteName: siteConfig.name,
-      // Page-level openGraph replaces the layout's wholesale rather than
-      // merging, so the share card has to be repeated here.
-      images: [siteConfig.ogImage],
+      images: [ogImage],
     },
     twitter: {
       card: "summary_large_image",
       title: tabTitle,
       description: summary,
       creator: "@ryancuff_",
-      images: [siteConfig.ogImage],
+      images: [ogImage],
     },
   }
+}
+
+/**
+ * The trail a docs URL implies: the site, the docs root, the section, the page.
+ * Search results show it under the title, so it is worth being exact.
+ */
+function crumbsFor(url: string, title: string): Crumb[] {
+  const crumbs: Crumb[] = [
+    { name: siteConfig.name, url: "/" },
+    { name: "Docs", url: DOCS_ENTRY },
+  ]
+
+  // `/docs/components/weave-text` has a section worth naming; `/docs/installation`
+  // does not, and the page itself closes the trail either way.
+  if (url.startsWith("/docs/components/")) {
+    crumbs.push({ name: "Components", url: "/docs/components" })
+  }
+
+  return [...crumbs, { name: title, url }]
 }
 
 export default async function DocPage({ params }: DocPageProps) {
@@ -79,6 +105,15 @@ export default async function DocPage({ params }: DocPageProps) {
 
   return (
     <div className="flex items-start gap-8">
+      <JsonLd
+        schema={docSchema({
+          title: doc.title,
+          description: doc.description ?? siteConfig.description,
+          url: page.url,
+          crumbs: crumbsFor(page.url, doc.title),
+        })}
+      />
+
       <article className="max-w-3xl min-w-0 flex-1 py-8 lg:py-10">
         <header className="flex flex-col gap-2">
           <h1 className="scroll-m-20 text-3xl font-semibold tracking-tight">

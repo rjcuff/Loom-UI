@@ -4,6 +4,7 @@ import Link from "next/link"
 import { siteConfig } from "@/config/site"
 import { Button } from "@/components/ui/button"
 import { InstallCommand } from "@/components/install-command"
+import { JsonLd, siteSchema } from "@/components/structured-data"
 import { GridBeams } from "@/registry/loomui/grid-beams"
 import { WeaveText } from "@/registry/loomui/weave-text"
 
@@ -12,16 +13,34 @@ function Mark({ children }: { children: React.ReactNode }) {
   return <span className="text-foreground font-medium">{children}</span>
 }
 
-// The home page is the one place the tab shows the bare brand name.
+// The one page competing for generic searches, so the title says what this is
+// rather than only who it is.
 export const metadata: Metadata = {
-  title: siteConfig.name,
+  title: siteConfig.seoTitle,
   description: siteConfig.description,
   alternates: { canonical: "/" },
+  openGraph: {
+    type: "website",
+    url: siteConfig.url,
+    siteName: siteConfig.name,
+    title: siteConfig.seoTitle,
+    description: siteConfig.description,
+    images: [siteConfig.ogImage],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: siteConfig.seoTitle,
+    description: siteConfig.description,
+    creator: "@ryancuff_",
+    images: [siteConfig.ogImage],
+  },
 }
 
 export default function HomePage() {
   return (
     <section className="relative overflow-hidden">
+      <JsonLd schema={siteSchema()} />
+
       {/* The same woven grid as before, now with beams running down it. The
           site's own hero is the best argument for a component. */}
       <GridBeams className="-z-10" lineOpacity={0.035} />
