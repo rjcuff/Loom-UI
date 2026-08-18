@@ -3,6 +3,7 @@
 import * as React from "react"
 
 import { cn } from "@/lib/utils"
+import { useInViewport } from "@/registry/lib/use-in-viewport"
 
 export interface CreditCardProps extends React.ComponentProps<"div"> {
   /** Which face to draw. Pair the two inside a flip card to turn it over. */
@@ -140,8 +141,12 @@ export function CreditCard({
   const palette = colors.length > 0 ? colors : DEFAULT_COLORS
   const shown = masked ? maskNumber(number) : number
 
+  const root = React.useRef<HTMLDivElement>(null)
+  const onScreen = useInViewport(root)
+
   return (
     <div
+      ref={root}
       data-slot="credit-card"
       data-side={side}
       className={cn(
@@ -164,7 +169,8 @@ export function CreditCard({
               key={`${color}-${index}`}
               className={cn(
                 "absolute rounded-full opacity-70 blur-2xl",
-                !disabled && "animate-aurora-drift motion-reduce:animate-none"
+                !disabled && "animate-aurora-drift motion-reduce:animate-none",
+                !onScreen && "[animation-play-state:paused]"
               )}
               style={{
                 width: `${blob.size}%`,

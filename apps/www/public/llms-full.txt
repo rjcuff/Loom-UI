@@ -9,6 +9,7 @@ Install: npx shadcn@latest add @loomui/aurora-backdrop
 import * as React from "react"
 
 import { cn } from "@/lib/utils"
+import { useInViewport } from "@/registry/lib/use-in-viewport"
 
 export interface AuroraBackdropProps extends React.ComponentProps<"div"> {
   /** Colours of the drifting blobs. One blob is drawn per colour. */
@@ -69,8 +70,14 @@ export function AuroraBackdrop({
     }))
   }, [colors, seed, duration])
 
+  const root = React.useRef<HTMLDivElement>(null)
+  // Large blurred gradients are the most expensive thing here to keep drifting
+  // for a viewport nobody is looking at.
+  const onScreen = useInViewport(root)
+
   return (
     <div
+      ref={root}
       data-slot="aurora-backdrop"
       aria-hidden="true"
       className={cn(
@@ -85,7 +92,8 @@ export function AuroraBackdrop({
           key={blob.key}
           className={cn(
             "absolute rounded-full",
-            !disabled && "animate-aurora-drift motion-reduce:animate-none"
+            !disabled && "animate-aurora-drift motion-reduce:animate-none",
+            !onScreen && "[animation-play-state:paused]"
           )}
           style={{
             width: `${blob.size}%`,
@@ -964,6 +972,7 @@ export function ConfettiButton({
       }}
       className={cn(
         "relative inline-flex items-center justify-center select-none",
+        "transition-transform duration-150 ease-[var(--ease-out-quart)] active:scale-[0.97] motion-reduce:transition-none",
         className
       )}
       style={style}
@@ -1235,6 +1244,7 @@ Install: npx shadcn@latest add @loomui/credit-card
 import * as React from "react"
 
 import { cn } from "@/lib/utils"
+import { useInViewport } from "@/registry/lib/use-in-viewport"
 
 export interface CreditCardProps extends React.ComponentProps<"div"> {
   /** Which face to draw. Pair the two inside a flip card to turn it over. */
@@ -1372,8 +1382,12 @@ export function CreditCard({
   const palette = colors.length > 0 ? colors : DEFAULT_COLORS
   const shown = masked ? maskNumber(number) : number
 
+  const root = React.useRef<HTMLDivElement>(null)
+  const onScreen = useInViewport(root)
+
   return (
     <div
+      ref={root}
       data-slot="credit-card"
       data-side={side}
       className={cn(
@@ -1396,7 +1410,8 @@ export function CreditCard({
               key={`${color}-${index}`}
               className={cn(
                 "absolute rounded-full opacity-70 blur-2xl",
-                !disabled && "animate-aurora-drift motion-reduce:animate-none"
+                !disabled && "animate-aurora-drift motion-reduce:animate-none",
+                !onScreen && "[animation-play-state:paused]"
               )}
               style={{
                 width: `${blob.size}%`,
@@ -2537,6 +2552,7 @@ Install: npx shadcn@latest add @loomui/grid-backdrop
 import * as React from "react"
 
 import { cn } from "@/lib/utils"
+import { useInViewport } from "@/registry/lib/use-in-viewport"
 
 export interface GridBackdropProps extends React.ComponentProps<"svg"> {
   /** Cell width in pixels. */
@@ -2593,8 +2609,12 @@ export function GridBackdrop({
     }))
   }, [disabled, squares, seed, width, height, duration])
 
+  const root = React.useRef<SVGSVGElement>(null)
+  const onScreen = useInViewport(root)
+
   return (
     <svg
+      ref={root}
       data-slot="grid-backdrop"
       aria-hidden="true"
       className={cn(
@@ -2630,7 +2650,10 @@ export function GridBackdrop({
             height={height - 1}
             x={cell.x + 1}
             y={cell.y + 1}
-            className="animate-grid-pulse opacity-0 motion-reduce:animate-none"
+            className={cn(
+              "animate-grid-pulse opacity-0 motion-reduce:animate-none",
+              !onScreen && "[animation-play-state:paused]"
+            )}
             style={{
               animationDuration: `${duration}s`,
               animationDelay: `${cell.delay}s`,
@@ -2672,6 +2695,7 @@ Install: npx shadcn@latest add @loomui/grid-beams
 import * as React from "react"
 
 import { cn } from "@/lib/utils"
+import { useInViewport } from "@/registry/lib/use-in-viewport"
 
 export interface GridBeamsProps extends React.ComponentProps<"div"> {
   /** Grid cell size in pixels. */
@@ -2803,6 +2827,7 @@ export function GridBeams({
     box.height,
   ])
 
+  const onScreen = useInViewport(ref)
   const mask = fade === true ? TOP_FADE : fade === false ? undefined : fade
 
   return (
@@ -2856,7 +2881,8 @@ export function GridBeams({
               "absolute motion-reduce:hidden",
               streak.horizontal
                 ? "animate-grid-beam-x left-0"
-                : "animate-grid-beam top-0"
+                : "animate-grid-beam top-0",
+              !onScreen && "[animation-play-state:paused]"
             )}
             style={
               {
@@ -4896,6 +4922,7 @@ Install: npx shadcn@latest add @loomui/marquee
 import * as React from "react"
 
 import { cn } from "@/lib/utils"
+import { useInViewport } from "@/registry/lib/use-in-viewport"
 
 export interface MarqueeProps extends React.ComponentProps<"div"> {
   /** Travel bottom to top instead of right to left. */
@@ -4955,6 +4982,9 @@ export function Marquee({
   style,
   ...props
 }: MarqueeProps) {
+  const root = React.useRef<HTMLDivElement>(null)
+  // A marquee nobody can see is 40 seconds of work per loop for nothing.
+  const onScreen = useInViewport(root)
   const mask = fade
     ? fadeMask(
         vertical ? "to bottom" : "to right",
@@ -4964,6 +4994,7 @@ export function Marquee({
 
   return (
     <div
+      ref={root}
       data-slot="marquee"
       className={cn(
         "group flex overflow-hidden",
@@ -4994,7 +5025,7 @@ export function Marquee({
               ? "animate-marquee-vertical flex-col"
               : "animate-marquee flex-row",
             reverse && "[animation-direction:reverse]",
-            paused && "[animation-play-state:paused]",
+            (paused || !onScreen) && "[animation-play-state:paused]",
             pauseOnHover && "group-hover:[animation-play-state:paused]",
             // A marquee that stops dead for reduced motion leaves half a row
             // cut off, so the whole track is frozen at its start instead.
@@ -5260,6 +5291,8 @@ export function RippleButton({
       }}
       className={cn(
         "relative isolate inline-flex items-center justify-center overflow-hidden select-none",
+        // The ripple says the press landed; the give says it landed on this.
+        "transition-transform duration-150 ease-[var(--ease-out-quart)] active:scale-[0.97] motion-reduce:transition-none",
         className
       )}
       style={style}
@@ -6859,6 +6892,7 @@ Install: npx shadcn@latest add @loomui/testimonial-wall
 import * as React from "react"
 
 import { cn } from "@/lib/utils"
+import { useInViewport } from "@/registry/lib/use-in-viewport"
 
 export interface TestimonialWallProps extends React.ComponentProps<"div"> {
   /** Columns at the widest breakpoint. Narrow screens drop the extras. */
@@ -6926,8 +6960,12 @@ export function TestimonialWall({
 
   const mask = fade ? fadeMask(fade === true ? "14%" : fade) : undefined
 
+  const root = React.useRef<HTMLDivElement>(null)
+  const onScreen = useInViewport(root)
+
   return (
     <div
+      ref={root}
       data-slot="testimonial-wall"
       className={cn("group flex h-[32rem] overflow-hidden", className)}
       style={{
@@ -6963,6 +7001,7 @@ export function TestimonialWall({
               aria-hidden={copy > 0 ? "true" : undefined}
               className={cn(
                 "animate-marquee-vertical flex shrink-0 flex-col",
+                !onScreen && "[animation-play-state:paused]",
                 // Every other column runs the other way, so neighbouring cards
                 // never travel together and the wall reads as depth.
                 index % 2 === 1 && "[animation-direction:reverse]",
@@ -7971,6 +8010,7 @@ Install: npx shadcn@latest add @loomui/weave-text
 import * as React from "react"
 
 import { cn } from "@/lib/utils"
+import { useInViewport } from "@/registry/lib/use-in-viewport"
 
 export interface WeaveTextProps extends React.ComponentProps<"span"> {
   /**
@@ -7995,6 +8035,8 @@ export function WeaveText({
   style,
   ...props
 }: WeaveTextProps) {
+  const root = React.useRef<HTMLSpanElement>(null)
+  const onScreen = useInViewport(root)
   const backgroundImage = React.useMemo(() => {
     const stops = colors.length > 0 ? colors : DEFAULT_COLORS
     return `linear-gradient(90deg, ${[...stops, stops[0]].join(", ")})`
@@ -8002,10 +8044,12 @@ export function WeaveText({
 
   return (
     <span
+      ref={root}
       data-slot="weave-text"
       className={cn(
         "inline-block bg-[length:200%_auto] bg-clip-text text-transparent",
         !paused && "animate-weave motion-reduce:animate-none",
+        !onScreen && "[animation-play-state:paused]",
         className
       )}
       style={{

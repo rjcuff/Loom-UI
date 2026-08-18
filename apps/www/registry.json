@@ -8,7 +8,8 @@
       "title": "Weave Text",
       "description": "Text filled with a slow-drifting gradient, woven from a palette you control.",
       "registryDependencies": [
-        "utils"
+        "utils",
+        "use-in-viewport"
       ],
       "files": [
         {
@@ -185,7 +186,8 @@
       "title": "Grid Backdrop",
       "description": "An SVG grid with cells that fade in and out at a deterministic, seeded scatter.",
       "registryDependencies": [
-        "utils"
+        "utils",
+        "use-in-viewport"
       ],
       "files": [
         {
@@ -236,7 +238,8 @@
       "title": "Grid Beams",
       "description": "A ruled grid with neon beams running down random lines, fading out toward the edges.",
       "registryDependencies": [
-        "utils"
+        "utils",
+        "use-in-viewport"
       ],
       "files": [
         {
@@ -275,7 +278,8 @@
       "title": "Aurora Backdrop",
       "description": "A wash of blurred colour that drifts behind content on cycles that never line up.",
       "registryDependencies": [
-        "utils"
+        "utils",
+        "use-in-viewport"
       ],
       "files": [
         {
@@ -569,7 +573,8 @@
       "title": "Marquee",
       "description": "A seamless scrolling row or column, in either direction, that pauses on hover.",
       "registryDependencies": [
-        "utils"
+        "utils",
+        "use-in-viewport"
       ],
       "files": [
         {
@@ -623,7 +628,8 @@
       "title": "Testimonial Wall",
       "description": "Columns of quotes drifting past each other at different speeds, faded at both ends.",
       "registryDependencies": [
-        "utils"
+        "utils",
+        "use-in-viewport"
       ],
       "files": [
         {
@@ -907,7 +913,8 @@
       "title": "Credit Card",
       "description": "A placeholder payment card with a contact plate, a number and an aurora drifting under the face.",
       "registryDependencies": [
-        "utils"
+        "utils",
+        "use-in-viewport"
       ],
       "files": [
         {
@@ -1727,6 +1734,18 @@
       "files": [
         {
           "path": "registry/lib/utils.ts",
+          "type": "registry:lib"
+        }
+      ]
+    },
+    {
+      "name": "use-in-viewport",
+      "type": "registry:lib",
+      "title": "useInViewport",
+      "description": "Tells a component whether it is on screen, so a looping animation can stop while nobody is watching it.",
+      "files": [
+        {
+          "path": "registry/lib/use-in-viewport.ts",
           "type": "registry:lib"
         }
       ]

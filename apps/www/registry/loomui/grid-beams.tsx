@@ -3,6 +3,7 @@
 import * as React from "react"
 
 import { cn } from "@/lib/utils"
+import { useInViewport } from "@/registry/lib/use-in-viewport"
 
 export interface GridBeamsProps extends React.ComponentProps<"div"> {
   /** Grid cell size in pixels. */
@@ -134,6 +135,7 @@ export function GridBeams({
     box.height,
   ])
 
+  const onScreen = useInViewport(ref)
   const mask = fade === true ? TOP_FADE : fade === false ? undefined : fade
 
   return (
@@ -187,7 +189,8 @@ export function GridBeams({
               "absolute motion-reduce:hidden",
               streak.horizontal
                 ? "animate-grid-beam-x left-0"
-                : "animate-grid-beam top-0"
+                : "animate-grid-beam top-0",
+              !onScreen && "[animation-play-state:paused]"
             )}
             style={
               {

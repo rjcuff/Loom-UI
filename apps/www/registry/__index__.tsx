@@ -10,7 +10,7 @@ export const Index: Record<string, any> = {
     title: "Weave Text",
     description: "Text filled with a slow-drifting gradient, woven from a palette you control.",
     dependencies: [],
-    registryDependencies: ["utils"],
+    registryDependencies: ["utils","use-in-viewport"],
     files: [{"path":"registry/loomui/weave-text.tsx","type":"registry:ui","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/loomui/weave-text")
@@ -115,7 +115,7 @@ export const Index: Record<string, any> = {
     title: "Grid Backdrop",
     description: "An SVG grid with cells that fade in and out at a deterministic, seeded scatter.",
     dependencies: [],
-    registryDependencies: ["utils"],
+    registryDependencies: ["utils","use-in-viewport"],
     files: [{"path":"registry/loomui/grid-backdrop.tsx","type":"registry:ui","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/loomui/grid-backdrop")
@@ -145,7 +145,7 @@ export const Index: Record<string, any> = {
     title: "Grid Beams",
     description: "A ruled grid with neon beams running down random lines, fading out toward the edges.",
     dependencies: [],
-    registryDependencies: ["utils"],
+    registryDependencies: ["utils","use-in-viewport"],
     files: [{"path":"registry/loomui/grid-beams.tsx","type":"registry:ui","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/loomui/grid-beams")
@@ -160,7 +160,7 @@ export const Index: Record<string, any> = {
     title: "Aurora Backdrop",
     description: "A wash of blurred colour that drifts behind content on cycles that never line up.",
     dependencies: [],
-    registryDependencies: ["utils"],
+    registryDependencies: ["utils","use-in-viewport"],
     files: [{"path":"registry/loomui/aurora-backdrop.tsx","type":"registry:ui","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/loomui/aurora-backdrop")
@@ -340,7 +340,7 @@ export const Index: Record<string, any> = {
     title: "Marquee",
     description: "A seamless scrolling row or column, in either direction, that pauses on hover.",
     dependencies: [],
-    registryDependencies: ["utils"],
+    registryDependencies: ["utils","use-in-viewport"],
     files: [{"path":"registry/loomui/marquee.tsx","type":"registry:ui","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/loomui/marquee")
@@ -370,7 +370,7 @@ export const Index: Record<string, any> = {
     title: "Testimonial Wall",
     description: "Columns of quotes drifting past each other at different speeds, faded at both ends.",
     dependencies: [],
-    registryDependencies: ["utils"],
+    registryDependencies: ["utils","use-in-viewport"],
     files: [{"path":"registry/loomui/testimonial-wall.tsx","type":"registry:ui","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/loomui/testimonial-wall")
@@ -505,7 +505,7 @@ export const Index: Record<string, any> = {
     title: "Credit Card",
     description: "A placeholder payment card with a contact plate, a number and an aurora drifting under the face.",
     dependencies: [],
-    registryDependencies: ["utils"],
+    registryDependencies: ["utils","use-in-viewport"],
     files: [{"path":"registry/loomui/credit-card.tsx","type":"registry:ui","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/loomui/credit-card")
@@ -1212,6 +1212,16 @@ export const Index: Record<string, any> = {
     dependencies: ["clsx","tailwind-merge"],
     registryDependencies: [],
     files: [{"path":"registry/lib/utils.ts","type":"registry:lib","target":""}],
+    component: null,
+  },
+  "use-in-viewport": {
+    name: "use-in-viewport",
+    type: "registry:lib",
+    title: "useInViewport",
+    description: "Tells a component whether it is on screen, so a looping animation can stop while nobody is watching it.",
+    dependencies: [],
+    registryDependencies: [],
+    files: [{"path":"registry/lib/use-in-viewport.ts","type":"registry:lib","target":""}],
     component: null,
   },
 }

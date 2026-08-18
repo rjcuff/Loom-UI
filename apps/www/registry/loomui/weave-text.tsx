@@ -3,6 +3,7 @@
 import * as React from "react"
 
 import { cn } from "@/lib/utils"
+import { useInViewport } from "@/registry/lib/use-in-viewport"
 
 export interface WeaveTextProps extends React.ComponentProps<"span"> {
   /**
@@ -27,6 +28,8 @@ export function WeaveText({
   style,
   ...props
 }: WeaveTextProps) {
+  const root = React.useRef<HTMLSpanElement>(null)
+  const onScreen = useInViewport(root)
   const backgroundImage = React.useMemo(() => {
     const stops = colors.length > 0 ? colors : DEFAULT_COLORS
     return `linear-gradient(90deg, ${[...stops, stops[0]].join(", ")})`
@@ -34,10 +37,12 @@ export function WeaveText({
 
   return (
     <span
+      ref={root}
       data-slot="weave-text"
       className={cn(
         "inline-block bg-[length:200%_auto] bg-clip-text text-transparent",
         !paused && "animate-weave motion-reduce:animate-none",
+        !onScreen && "[animation-play-state:paused]",
         className
       )}
       style={{

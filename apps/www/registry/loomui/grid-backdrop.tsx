@@ -3,6 +3,7 @@
 import * as React from "react"
 
 import { cn } from "@/lib/utils"
+import { useInViewport } from "@/registry/lib/use-in-viewport"
 
 export interface GridBackdropProps extends React.ComponentProps<"svg"> {
   /** Cell width in pixels. */
@@ -59,8 +60,12 @@ export function GridBackdrop({
     }))
   }, [disabled, squares, seed, width, height, duration])
 
+  const root = React.useRef<SVGSVGElement>(null)
+  const onScreen = useInViewport(root)
+
   return (
     <svg
+      ref={root}
       data-slot="grid-backdrop"
       aria-hidden="true"
       className={cn(
@@ -96,7 +101,10 @@ export function GridBackdrop({
             height={height - 1}
             x={cell.x + 1}
             y={cell.y + 1}
-            className="animate-grid-pulse opacity-0 motion-reduce:animate-none"
+            className={cn(
+              "animate-grid-pulse opacity-0 motion-reduce:animate-none",
+              !onScreen && "[animation-play-state:paused]"
+            )}
             style={{
               animationDuration: `${duration}s`,
               animationDelay: `${cell.delay}s`,

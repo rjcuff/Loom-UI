@@ -84,6 +84,8 @@ export function RippleButton({
       }}
       className={cn(
         "relative isolate inline-flex items-center justify-center overflow-hidden select-none",
+        // The ripple says the press landed; the give says it landed on this.
+        "transition-transform duration-150 ease-[var(--ease-out-quart)] active:scale-[0.97] motion-reduce:transition-none",
         className
       )}
       style={style}

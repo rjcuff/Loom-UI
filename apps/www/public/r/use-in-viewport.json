@@ -1,0 +1,14 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "use-in-viewport",
+  "type": "registry:lib",
+  "title": "useInViewport",
+  "description": "Tells a component whether it is on screen, so a looping animation can stop while nobody is watching it.",
+  "files": [
+    {
+      "path": "registry/lib/use-in-viewport.ts",
+      "content": "\"use client\"\n\nimport * as React from \"react\"\n\n/**\n * Whether the element is on screen. A looping animation that nobody can see is\n * work the browser does for nothing: CSS animations keep ticking while they are\n * scrolled away, and the compositor keeps the layers alive to do it.\n *\n * Starts `true` so the first paint is never a paused one, on the server or\n * where `IntersectionObserver` is missing.\n */\nexport function useInViewport<T extends Element>(\n  ref: React.RefObject<T | null>,\n  /** Grown by this much, so a loop is already running as it scrolls in. */\n  margin = \"200px\"\n) {\n  const [visible, setVisible] = React.useState(true)\n\n  React.useEffect(() => {\n    const node = ref.current\n    if (!node || typeof IntersectionObserver === \"undefined\") return\n\n    const observer = new IntersectionObserver(\n      ([entry]) => setVisible(entry.isIntersecting),\n      { rootMargin: margin }\n    )\n\n    observer.observe(node)\n    return () => observer.disconnect()\n  }, [ref, margin])\n\n  return visible\n}\n",
+      "type": "registry:lib"
+    }
+  ]
+}

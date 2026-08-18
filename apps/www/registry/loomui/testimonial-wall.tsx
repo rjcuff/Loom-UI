@@ -3,6 +3,7 @@
 import * as React from "react"
 
 import { cn } from "@/lib/utils"
+import { useInViewport } from "@/registry/lib/use-in-viewport"
 
 export interface TestimonialWallProps extends React.ComponentProps<"div"> {
   /** Columns at the widest breakpoint. Narrow screens drop the extras. */
@@ -70,8 +71,12 @@ export function TestimonialWall({
 
   const mask = fade ? fadeMask(fade === true ? "14%" : fade) : undefined
 
+  const root = React.useRef<HTMLDivElement>(null)
+  const onScreen = useInViewport(root)
+
   return (
     <div
+      ref={root}
       data-slot="testimonial-wall"
       className={cn("group flex h-[32rem] overflow-hidden", className)}
       style={{
@@ -107,6 +112,7 @@ export function TestimonialWall({
               aria-hidden={copy > 0 ? "true" : undefined}
               className={cn(
                 "animate-marquee-vertical flex shrink-0 flex-col",
+                !onScreen && "[animation-play-state:paused]",
                 // Every other column runs the other way, so neighbouring cards
                 // never travel together and the wall reads as depth.
                 index % 2 === 1 && "[animation-direction:reverse]",

@@ -14,4 +14,17 @@ export const lib: Registry["items"] = [
       },
     ],
   },
+  {
+    name: "use-in-viewport",
+    type: "registry:lib",
+    title: "useInViewport",
+    description:
+      "Tells a component whether it is on screen, so a looping animation can stop while nobody is watching it.",
+    files: [
+      {
+        path: "lib/use-in-viewport.ts",
+        type: "registry:lib",
+      },
+    ],
+  },
 ]

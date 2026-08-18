@@ -108,6 +108,7 @@ export function ConfettiButton({
       }}
       className={cn(
         "relative inline-flex items-center justify-center select-none",
+        "transition-transform duration-150 ease-[var(--ease-out-quart)] active:scale-[0.97] motion-reduce:transition-none",
         className
       )}
       style={style}

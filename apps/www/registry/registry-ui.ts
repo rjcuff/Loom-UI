@@ -21,7 +21,7 @@ export const ui: Registry["items"] = [
     title: "Weave Text",
     description:
       "Text filled with a slow-drifting gradient, woven from a palette you control.",
-    registryDependencies: ["utils"],
+    registryDependencies: ["utils", "use-in-viewport"],
     files: [
       {
         path: "loomui/weave-text.tsx",
@@ -194,7 +194,7 @@ export const ui: Registry["items"] = [
     title: "Grid Backdrop",
     description:
       "An SVG grid with cells that fade in and out at a deterministic, seeded scatter.",
-    registryDependencies: ["utils"],
+    registryDependencies: ["utils", "use-in-viewport"],
     files: [
       {
         path: "loomui/grid-backdrop.tsx",
@@ -243,7 +243,7 @@ export const ui: Registry["items"] = [
     title: "Grid Beams",
     description:
       "A ruled grid with neon beams running down random lines, fading out toward the edges.",
-    registryDependencies: ["utils"],
+    registryDependencies: ["utils", "use-in-viewport"],
     files: [
       {
         path: "loomui/grid-beams.tsx",
@@ -281,7 +281,7 @@ export const ui: Registry["items"] = [
     title: "Aurora Backdrop",
     description:
       "A wash of blurred colour that drifts behind content on cycles that never line up.",
-    registryDependencies: ["utils"],
+    registryDependencies: ["utils", "use-in-viewport"],
     files: [
       {
         path: "loomui/aurora-backdrop.tsx",
@@ -566,7 +566,7 @@ export const ui: Registry["items"] = [
     title: "Marquee",
     description:
       "A seamless scrolling row or column, in either direction, that pauses on hover.",
-    registryDependencies: ["utils"],
+    registryDependencies: ["utils", "use-in-viewport"],
     files: [
       {
         path: "loomui/marquee.tsx",
@@ -620,7 +620,7 @@ export const ui: Registry["items"] = [
     title: "Testimonial Wall",
     description:
       "Columns of quotes drifting past each other at different speeds, faded at both ends.",
-    registryDependencies: ["utils"],
+    registryDependencies: ["utils", "use-in-viewport"],
     files: [
       {
         path: "loomui/testimonial-wall.tsx",
@@ -910,7 +910,7 @@ export const ui: Registry["items"] = [
     title: "Credit Card",
     description:
       "A placeholder payment card with a contact plate, a number and an aurora drifting under the face.",
-    registryDependencies: ["utils"],
+    registryDependencies: ["utils", "use-in-viewport"],
     files: [
       {
         path: "loomui/credit-card.tsx",

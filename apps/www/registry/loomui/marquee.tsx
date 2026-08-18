@@ -3,6 +3,7 @@
 import * as React from "react"
 
 import { cn } from "@/lib/utils"
+import { useInViewport } from "@/registry/lib/use-in-viewport"
 
 export interface MarqueeProps extends React.ComponentProps<"div"> {
   /** Travel bottom to top instead of right to left. */
@@ -62,6 +63,9 @@ export function Marquee({
   style,
   ...props
 }: MarqueeProps) {
+  const root = React.useRef<HTMLDivElement>(null)
+  // A marquee nobody can see is 40 seconds of work per loop for nothing.
+  const onScreen = useInViewport(root)
   const mask = fade
     ? fadeMask(
         vertical ? "to bottom" : "to right",
@@ -71,6 +75,7 @@ export function Marquee({
 
   return (
     <div
+      ref={root}
       data-slot="marquee"
       className={cn(
         "group flex overflow-hidden",
@@ -101,7 +106,7 @@ export function Marquee({
               ? "animate-marquee-vertical flex-col"
               : "animate-marquee flex-row",
             reverse && "[animation-direction:reverse]",
-            paused && "[animation-play-state:paused]",
+            (paused || !onScreen) && "[animation-play-state:paused]",
             pauseOnHover && "group-hover:[animation-play-state:paused]",
             // A marquee that stops dead for reduced motion leaves half a row
             // cut off, so the whole track is frozen at its start instead.

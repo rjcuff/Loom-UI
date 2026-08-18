@@ -3,6 +3,7 @@
 import * as React from "react"
 
 import { cn } from "@/lib/utils"
+import { useInViewport } from "@/registry/lib/use-in-viewport"
 
 export interface AuroraBackdropProps extends React.ComponentProps<"div"> {
   /** Colours of the drifting blobs. One blob is drawn per colour. */
@@ -63,8 +64,14 @@ export function AuroraBackdrop({
     }))
   }, [colors, seed, duration])
 
+  const root = React.useRef<HTMLDivElement>(null)
+  // Large blurred gradients are the most expensive thing here to keep drifting
+  // for a viewport nobody is looking at.
+  const onScreen = useInViewport(root)
+
   return (
     <div
+      ref={root}
       data-slot="aurora-backdrop"
       aria-hidden="true"
       className={cn(
@@ -79,7 +86,8 @@ export function AuroraBackdrop({
           key={blob.key}
           className={cn(
             "absolute rounded-full",
-            !disabled && "animate-aurora-drift motion-reduce:animate-none"
+            !disabled && "animate-aurora-drift motion-reduce:animate-none",
+            !onScreen && "[animation-play-state:paused]"
           )}
           style={{
             width: `${blob.size}%`,
