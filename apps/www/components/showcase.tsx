@@ -117,11 +117,11 @@ export function Showcase() {
       <div className="mx-auto w-full max-w-5xl px-5 py-20 sm:py-24">
         <div className="mx-auto max-w-xl text-center">
           <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">
-            Six of them, running right now
+            Showcase
           </h2>
           <p className="text-muted-foreground mt-3 text-pretty">
-            Nothing here is a screenshot. Pick one and the whole thing is a
-            single file you paste into your project.
+            Take a look at some of the components that make up Loom UI. Each one
+            is a single file, with no runtime, and no dependencies beyond React.
           </p>
         </div>
 
@@ -133,16 +133,23 @@ export function Showcase() {
                 className={cn(
                   "group border-border bg-surface/40 focus-visible:ring-ring/60 block overflow-hidden rounded-xl border",
                   "focus-visible:ring-2 focus-visible:outline-none",
-                  // Hover only where there is a real pointer, on `ease`, and
-                  // quick. It is a hover, not an entrance.
-                  "ease transition-[transform,border-color] duration-200",
-                  "hover:border-muted-foreground/40 hover:-translate-y-0.5",
-                  "motion-reduce:transition-none"
+                  // Colour on the card, movement on the child below. Lifting a
+                  // parent that has animating children repaints all of them.
+                  "ease transition-colors duration-200",
+                  "hover:border-muted-foreground/40"
                 )}
               >
                 {/* Relative and clipping, so a piece that fills the cell has
-                    a box to fill and an edge to be cut off at. */}
-                <div className="relative grid h-44 place-items-center overflow-hidden px-4">
+                    a box to fill and an edge to be cut off at. The lift lives
+                    here rather than on the card. */}
+                <div
+                  className={cn(
+                    "relative grid h-44 place-items-center overflow-hidden px-4",
+                    "ease transition-transform duration-200 will-change-transform",
+                    "group-hover:-translate-y-1 group-active:translate-y-0",
+                    "motion-reduce:transition-none"
+                  )}
+                >
                   {piece.render()}
                 </div>
 

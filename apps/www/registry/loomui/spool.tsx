@@ -87,6 +87,9 @@ export function Spool({
   // against the shape's progress, not against a duration, so an interruption
   // cannot leave text showing at a size the box has not reached yet.
   const span = React.useRef(0)
+  // The scale the morph began at. The state on its way out is sized against
+  // this, so it fills the shape at the start and shrinks with it from there.
+  const start = React.useRef({ sx: 1, sy: 1 })
 
   const [leaving, setLeaving] = React.useState<string | null>(null)
 
@@ -102,11 +105,17 @@ export function Spool({
       root.style.borderRadius = `${radius / sx}px / ${radius / sy}px`
       wrap.style.transform = `scale(${1 / sx}, ${1 / sy})`
 
-      // The state on its way out rides the box rather than being held at true
-      // size like the incoming one. Nobody is reading it, and squashing with
-      // the shape is what guarantees it never reaches past the edge.
+      // The state on its way out fills the shape at the start and shrinks with
+      // it, rather than being held at true size like the incoming one. When the
+      // shape narrows it is also pulled in a little past that, or it reaches
+      // the edge before the fade has finished with it.
       const leaving = leavingRef.current
-      if (leaving) leaving.style.transform = `scale(${sx}, ${sy})`
+      if (leaving) {
+        const pull = sx > 1 ? 0.94 : 1
+        leaving.style.transform = `scale(${(sx / start.current.sx) * pull}, ${
+          sy / start.current.sy
+        })`
+      }
 
       const active = activeRef.current
       if (!active) return
@@ -120,8 +129,11 @@ export function Spool({
         span.current > 0 ? 1 - Math.min(gap / span.current, 1) : 1
       const shown = Math.max(0, Math.min((progress - 0.45) / 0.4, 1))
 
+      // Arrives a touch small and a touch out of focus. The blur is what stops
+      // a half sized word reading as a mistake while the shape catches up.
       active.style.opacity = `${shown}`
-      active.style.translate = `0 ${(1 - shown) * 3}px`
+      active.style.transform = `scale(${0.94 + 0.06 * shown})`
+      active.style.filter = shown < 1 ? `blur(${(1 - shown) * 3}px)` : ""
     },
     [radius]
   )
@@ -174,6 +186,7 @@ export function Spool({
 
     if (reduced) {
       span.current = 0
+      start.current = { sx: 1, sy: 1 }
       set({ sx: 1, sy: 1 })
       return
     }
@@ -183,6 +196,7 @@ export function Spool({
       sy: seen.height / last.height,
     }
     span.current = Math.max(Math.abs(1 - from.sx), Math.abs(1 - from.sy))
+    start.current = from
 
     set(from, {
       sx: seenRate.width / last.width,
