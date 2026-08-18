@@ -77,6 +77,12 @@ The root is only ever laid out at its natural size, so `offsetWidth` always
 reports what the contents want, never what is on screen. That is what makes a
 measurement taken halfway through a morph exact instead of a guess.
 
+It carries `width: max-content` for the same reason. A parent that can squeeze
+it, a narrow grid track or a flex row, would leave it measuring a box the
+contents had already been compressed into, and the shape would come out the
+size of the squeeze rather than the size of what it holds. If the space is
+genuinely too tight, let it overflow and clip it from the outside.
+
 ### Undoing the distortion
 
 A scaled box distorts everything inside it. Two things put it back.

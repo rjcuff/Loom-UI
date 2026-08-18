@@ -6428,7 +6428,11 @@ export function Spool({
       data-slot="spool"
       data-value={value}
       className={cn(
-        "bg-background text-foreground relative inline-flex overflow-hidden border shadow-lg",
+        // `w-max` is load bearing. The whole morph is measured off the root's
+        // own offset width, so a parent that can squeeze it, a narrow grid
+        // track or a flex row, would have it measuring a box the contents have
+        // already been compressed into.
+        "bg-background text-foreground relative inline-flex w-max overflow-hidden border shadow-lg",
         "origin-center [will-change:transform]",
         className
       )}
