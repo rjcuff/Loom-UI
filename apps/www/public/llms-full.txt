@@ -6454,9 +6454,12 @@ export function Spool({
             ref={leavingRef}
             aria-hidden="true"
             data-slot="spool-leaving"
-            className="pointer-events-none absolute inset-0 grid origin-center place-items-center overflow-hidden motion-reduce:hidden"
+            className="pointer-events-none absolute inset-0 grid origin-center place-items-center motion-reduce:hidden"
           >
-            {outgoing}
+            {/* Sized to its own content rather than to the box it is sitting
+                in. The box is already the next state's size, so anything laid
+                out against it rewraps on the way out. */}
+            <div className="w-max">{outgoing}</div>
           </div>
         ) : null}
       </div>
@@ -6532,16 +6535,34 @@ export default function SpoolDemo() {
         </SpoolItem>
 
         <SpoolItem value="playing" className="gap-3 pr-5">
-          <span className="bg-accent/15 text-accent grid size-6 place-items-center rounded-full text-[0.6rem]">
-            ▶
+          <span className="bg-accent/15 text-accent grid size-6 place-items-center rounded-full">
+            <svg
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              aria-hidden="true"
+              className="size-2.5"
+            >
+              <path d="M8 5v14l11-7z" />
+            </svg>
           </span>
           <span className="font-mono text-sm">shuttle.mp3</span>
           <Meter />
         </SpoolItem>
 
         <SpoolItem value="saved">
-          <span className="bg-accent/15 text-accent grid size-5 place-items-center rounded-full text-[0.65rem]">
-            ✓
+          <span className="bg-accent/15 text-accent grid size-5 place-items-center rounded-full">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="3.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+              className="size-2.5"
+            >
+              <path d="M20 6 9 17l-5-5" />
+            </svg>
           </span>
           <span className="text-sm font-medium">Saved. You are welcome</span>
         </SpoolItem>
@@ -7499,10 +7520,34 @@ export default function TerminalDemo() {
       <TerminalCommand>npx shadcn@latest add @loomui/terminal</TerminalCommand>
       <TerminalOutput delay={420}>Checking registry...</TerminalOutput>
       <TerminalOutput delay={520}>
-        <span className="text-accent">✔</span> Installed terminal.tsx
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="3"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          aria-hidden="true"
+          className="text-accent inline-block size-3"
+        >
+          <path d="M20 6 9 17l-5-5" />
+        </svg>{" "}
+        Installed terminal.tsx
       </TerminalOutput>
       <TerminalOutput delay={260}>
-        <span className="text-accent">✔</span> Updated app/globals.css
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="3"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          aria-hidden="true"
+          className="text-accent inline-block size-3"
+        >
+          <path d="M20 6 9 17l-5-5" />
+        </svg>{" "}
+        Updated app/globals.css
       </TerminalOutput>
       <TerminalCommand>pnpm dev</TerminalCommand>
       <TerminalOutput delay={380}>

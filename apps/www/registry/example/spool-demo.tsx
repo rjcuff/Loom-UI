@@ -61,16 +61,34 @@ export default function SpoolDemo() {
         </SpoolItem>
 
         <SpoolItem value="playing" className="gap-3 pr-5">
-          <span className="bg-accent/15 text-accent grid size-6 place-items-center rounded-full text-[0.6rem]">
-            ▶
+          <span className="bg-accent/15 text-accent grid size-6 place-items-center rounded-full">
+            <svg
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              aria-hidden="true"
+              className="size-2.5"
+            >
+              <path d="M8 5v14l11-7z" />
+            </svg>
           </span>
           <span className="font-mono text-sm">shuttle.mp3</span>
           <Meter />
         </SpoolItem>
 
         <SpoolItem value="saved">
-          <span className="bg-accent/15 text-accent grid size-5 place-items-center rounded-full text-[0.65rem]">
-            ✓
+          <span className="bg-accent/15 text-accent grid size-5 place-items-center rounded-full">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="3.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+              className="size-2.5"
+            >
+              <path d="M20 6 9 17l-5-5" />
+            </svg>
           </span>
           <span className="text-sm font-medium">Saved. You are welcome</span>
         </SpoolItem>

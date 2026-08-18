@@ -345,9 +345,12 @@ export function Spool({
             ref={leavingRef}
             aria-hidden="true"
             data-slot="spool-leaving"
-            className="pointer-events-none absolute inset-0 grid origin-center place-items-center overflow-hidden motion-reduce:hidden"
+            className="pointer-events-none absolute inset-0 grid origin-center place-items-center motion-reduce:hidden"
           >
-            {outgoing}
+            {/* Sized to its own content rather than to the box it is sitting
+                in. The box is already the next state's size, so anything laid
+                out against it rewraps on the way out. */}
+            <div className="w-max">{outgoing}</div>
           </div>
         ) : null}
       </div>
