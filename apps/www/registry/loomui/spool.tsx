@@ -83,6 +83,10 @@ export function Spool({
   const leaveTimer = React.useRef(0)
   const activeRef = React.useRef<HTMLDivElement>(null)
   const leavingRef = React.useRef<HTMLDivElement>(null)
+  // The pieces inside the active state, collected once per change. Each one
+  // arrives a beat after the last, which is the difference between contents
+  // landing and contents appearing.
+  const parts = React.useRef<HTMLElement[]>([])
   // How far from 1 the scale was when this morph began. The contents are faded
   // against the shape's progress, not against a duration, so an interruption
   // cannot leave text showing at a size the box has not reached yet.
@@ -127,13 +131,30 @@ export function Spool({
       const gap = Math.max(Math.abs(1 - sx), Math.abs(1 - sy))
       const progress =
         span.current > 0 ? 1 - Math.min(gap / span.current, 1) : 1
-      const shown = Math.max(0, Math.min((progress - 0.45) / 0.4, 1))
 
-      // Arrives a touch small and a touch out of focus. The blur is what stops
-      // a half sized word reading as a mistake while the shape catches up.
-      active.style.opacity = `${shown}`
-      active.style.transform = `scale(${0.94 + 0.06 * shown})`
-      active.style.filter = shown < 1 ? `blur(${(1 - shown) * 3}px)` : ""
+      // Scale, blur and opacity together. Any one of the three on its own reads
+      // as a fade; all three read as something arriving.
+      const dress = (node: HTMLElement, t: number) => {
+        node.style.opacity = `${t}`
+        node.style.transform = `scale(${0.92 + 0.08 * t})`
+        node.style.filter = t < 1 ? `blur(${(1 - t) * 3}px)` : ""
+      }
+
+      const at = (offset: number) =>
+        Math.max(0, Math.min((progress - 0.4 - offset) / 0.38, 1))
+
+      // Each piece lands a little after the one before it. Held against the
+      // shape's progress rather than a clock, so an interruption never leaves
+      // half of them arriving and half already there.
+      if (parts.current.length > 0) {
+        active.style.opacity = ""
+        active.style.transform = ""
+        active.style.filter = ""
+        parts.current.forEach((node, index) => dress(node, at(index * 0.07)))
+        return
+      }
+
+      dress(active, at(0))
     },
     [radius]
   )
@@ -176,6 +197,13 @@ export function Spool({
     }
 
     // React has already swapped the contents, so this is the new natural size.
+    const item = activeRef.current?.firstElementChild
+    parts.current = item
+      ? (Array.from(item.children).filter(
+          (node) => node instanceof HTMLElement
+        ) as HTMLElement[])
+      : []
+
     const last = measure()
     natural.current = last
     if (!last.width || !last.height) return

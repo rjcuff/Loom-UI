@@ -131,9 +131,21 @@ and either way the text turns up before the room does. Progress cannot have that
 problem. Contents start arriving at 45% and are solid by 85%, whatever the shape
 is doing and however many times you retargeted it on the way.
 
+Each piece inside the state gets its own beat. The icon lands, then the label,
+each one about 7% of the morph behind the last. Scale, blur and opacity move
+together on all of them, because any one of the three on its own reads as a
+fade while all three read as something arriving.
+
+The stagger is held against progress too, not a clock. Interrupt the morph
+halfway and you never end up with half the pieces arriving and half already
+sitting there.
+
 That is also why the fade is written onto the node instead of declared as a
 keyframe. A running animation outranks an inline style, so only one of them can
 own opacity, and only one of them knows where the shape is.
+
+The outgoing state blurs as it goes rather than only fading. Fading alone leaves
+the old words legible right until they vanish, which reads as a cut.
 
 The outgoing state is held just long enough to fade. It sits out of the flow, so
 it never has a say in the size being measured.

@@ -833,9 +833,12 @@ export const ui: Registry["items"] = [
       },
     },
     css: {
+      // Out of focus on the way out as well as down. Fading alone leaves the
+      // old words legible right up to the moment they vanish.
       "@keyframes spool-leave": {
         to: {
           opacity: "0",
+          filter: "blur(4px)",
         },
       },
     },

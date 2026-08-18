@@ -849,7 +849,8 @@
       "css": {
         "@keyframes spool-leave": {
           "to": {
-            "opacity": "0"
+            "opacity": "0",
+            "filter": "blur(4px)"
           }
         }
       }
