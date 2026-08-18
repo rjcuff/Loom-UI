@@ -104,15 +104,14 @@ animation that holds its last frame outranks inline styles for good, and the
 drag would have nothing left to move. The way out does fill, or the panel would
 snap back to open for the frame before it unmounts.
 
-Everything runs 500ms on `cubic-bezier(0.32, 0.72, 0, 1)`, the curve panels
-want: most of the distance is covered in the first third, so it lands softly
-without feeling slow. Arriving, settling back and leaving all share the one
+Everything runs 260ms on `cubic-bezier(0.32, 0.72, 0, 1)`, the curve panels
+want: most of the distance is covered in the first third, so it lands soft
+instead of stopping dead. Arriving, settling back and leaving all share the one
 duration, so no part of the drawer reads as a different mechanism.
 
-Three things arrive rather than one. The panel travels, the overlay fades and
-blurs the page behind it, and the contents settle into the panel 120ms later
-from 14px out — late enough to read as the drawer filling itself in, early
-enough that it never looks like a second animation.
+Two things arrive rather than one. The panel travels, and the contents settle
+into it 60ms later from 14px out — late enough to read as the drawer filling
+itself in, early enough that it never looks like a second animation.
 
 That last one is a three-stop keyframe: the fade completes at 60% so the tail of
 the travel is pure movement. Landing opacity and position together makes the

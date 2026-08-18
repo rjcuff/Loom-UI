@@ -20,7 +20,7 @@ export interface DrawerContentProps extends React.ComponentProps<
   dismissible?: boolean
 }
 
-/** Off screen, as a share of the panel, which is `size` across. */
+/** Off screen, as a share of the panel. */
 const CLOSED: Record<DrawerSide, string> = {
   top: "0 -100%",
   bottom: "0 100%",
@@ -28,11 +28,6 @@ const CLOSED: Record<DrawerSide, string> = {
   right: "100% 0",
 }
 
-/**
- * The panel covers most of the screen and, once open, rests against its edge.
- * There is one place to be, so the drag is one number in one direction and the
- * only thing it decides is whether the drawer stays or goes.
- */
 const PANEL: Record<DrawerSide, string> = {
   top: "inset-x-0 top-0 h-[var(--drawer-size)] w-full rounded-b-2xl border-b",
   bottom:
@@ -58,15 +53,15 @@ const HANDLE_POSITION: Record<DrawerSide, string> = {
 }
 
 /** Milliseconds. One duration for arriving, settling and leaving. */
-const TRANSITION_MS = 500
-/** Pixels per millisecond past which a flick closes the drawer on its own. */
+const TRANSITION_MS = 260
+/** Pixels per millisecond past which a flick closes on its own. */
 const VELOCITY_THRESHOLD = 0.4
-/** Share of the panel that has to be dragged away before it closes. */
+/** Share of the panel dragged away before it closes. */
 const CLOSE_THRESHOLD = 0.25
 /** After the content is scrolled, this long before a drag can start. */
 const SCROLL_LOCK_MS = 100
 /** The drag waits this long after opening, so the arrival can be scrolled. */
-const OPEN_GUARD_MS = 500
+const OPEN_GUARD_MS = 260
 /** Open: the whole panel on screen, against its edge. */
 const AT_REST = "0 0"
 
@@ -75,11 +70,7 @@ const isVertical = (side: DrawerSide) => side === "top" || side === "bottom"
 const outwardSign = (side: DrawerSide) =>
   side === "bottom" || side === "right" ? 1 : -1
 
-/**
- * Resistance past fully open. Logarithmic rather than linear, so the panel
- * gives at first and then firms up, which is what reads as a limit instead of
- * a loose edge.
- */
+/** Resistance past fully open: gives at first, then firms up. */
 const dampen = (distance: number) =>
   Math.max(8 * (Math.log(distance + 1) - 2), 0)
 
@@ -96,10 +87,9 @@ export function DrawerOverlay({
     <DialogPrimitive.Overlay
       data-slot="drawer-overlay"
       className={cn(
-        "fixed inset-0 z-50 bg-black/45 backdrop-blur-[3px]",
+        "fixed inset-0 z-50 bg-black/45",
         "data-[state=open]:animate-drawer-overlay-in data-[state=closed]:animate-drawer-overlay-out",
-        // While a drag owns the overlay its opacity is written inline, and a
-        // keyframe would outrank it.
+        // A drag writes opacity inline, and a keyframe would outrank it.
         "data-dragging:animate-none motion-reduce:animate-none",
         className
       )}
@@ -110,19 +100,12 @@ export function DrawerOverlay({
 
 /**
  * A panel that comes in from one edge and covers most of the screen, standing
- * in for a modal, and leaves when it is thrown back out.
+ * in for a modal. The whole face is the grip: press anywhere and drag.
  *
- * The whole panel is the grip, not just the notch: press anywhere and drag.
- * Content that scrolls keeps its scroll, so the drag only takes over once the
- * content underneath the finger has nothing left to give.
- *
- * The open and close animations are keyframes rather than transitions, since
- * the panel is only in the DOM while it is open and a transition has nothing to
- * start from. The way in does not fill forwards: an animation that holds its
- * last frame outranks inline styles for good, which would leave the drag with
- * nothing to move. The way out does fill, or the panel would snap back to open
- * for the frame before it unmounts. The drag writes `translate` straight onto
- * the node, so it costs no renders and the panel sits exactly under the finger.
+ * Open and close are keyframes, not transitions, since the panel is only in the
+ * DOM while it is open. The way in does not fill forwards — a held last frame
+ * outranks inline styles for good, leaving the drag nothing to move. The way
+ * out does, or the panel snaps back to open for the frame before it unmounts.
  */
 export function DrawerContent({
   side = "bottom",
@@ -148,13 +131,10 @@ export function DrawerContent({
   const startedAt = React.useRef(0)
   const openedAt = React.useRef(0)
   const scrolledAt = React.useRef(0)
-  // Once a drag is allowed it stays allowed until the finger lifts. Deciding
-  // again mid gesture is how a drag ends up handed back to the scroller
-  // halfway through.
+  /** Granted once per gesture. Deciding again mid drag hands it back. */
   const allowed = React.useRef(false)
-  // The gesture runs off refs rather than state. State lands a render later,
-  // and a click quick enough to land inside that gap used to leave the drag
-  // switched on, which handed the panel to every hover that followed.
+  // Refs, not state: state lands a render later, and a fast click inside that
+  // gap used to leave the drag switched on.
   const held = React.useRef<number | null>(null)
   const timer = React.useRef(0)
   const [dragging, setDragging] = React.useState(false)
@@ -177,8 +157,7 @@ export function DrawerContent({
       ? `0 ${distance * outward}px`
       : `${distance * outward}px 0`
 
-    // The page brightening as the panel is pulled away is most of what makes
-    // the two feel joined rather than stacked.
+    // The page brightening as the panel pulls away is what joins the two.
     if (overlay) {
       const size = measure()
       const gone = size > 0 ? Math.min(Math.max(distance / size, 0), 1) : 0
@@ -203,34 +182,25 @@ export function DrawerContent({
   }
 
   /**
-   * Whether this press belongs to the drag or to something inside the panel.
-   * Anything the content is still able to scroll wins, since a drawer that
-   * closes when a list was meant to move is the worst thing it can do.
+   * Whether this press is the drag or something inside the panel. Anything the
+   * content can still scroll wins.
    */
   const shouldDrag = (target: EventTarget | null, outwards: boolean) => {
     let node = target as HTMLElement | null
     if (!node) return false
 
-    // An opt out for anything that owns its own gesture: a slider, a map, a
-    // carousel.
     if (node.closest("[data-no-drag]")) return false
     if (node.tagName === "SELECT") return false
-
-    // A drawer from the side is not competing with vertical scrolling.
     if (!vertical) return true
-
-    // Already pulled away from the edge, so the gesture is plainly the drag.
+    // Already pulled away, so the gesture is plainly the drag.
     if (offset.current > 0) return true
 
     const now = Date.now()
-    // While the panel is still arriving, the press is for the content.
     if (now - openedAt.current < OPEN_GUARD_MS) return false
-    // Selecting text is not dragging.
     if (window.getSelection()?.toString()) return false
-    // A flick that just scrolled the content should not roll into a close.
     if (now - scrolledAt.current < SCROLL_LOCK_MS) return false
-    // Dragging further in is the content's to scroll, not the panel's to
-    // stretch. Overdrag is only reachable once the drag already owns the panel.
+    // Dragging further in belongs to the content. Overdrag is only reachable
+    // once the drag already owns the panel.
     if (!outwards) {
       scrolledAt.current = now
       return false
@@ -255,9 +225,8 @@ export function DrawerContent({
     if (!dismissible) return
     if (held.current !== null) return
 
-    // Captured on the pressed element rather than the panel, so a button under
-    // the finger still receives its click when the press turns out not to be a
-    // drag.
+    // Captured on the pressed element, not the panel, so a button under the
+    // finger still gets its click when the press is not a drag.
     const target = event.target as HTMLElement
     if (target.setPointerCapture) target.setPointerCapture(event.pointerId)
     held.current = event.pointerId
@@ -272,8 +241,7 @@ export function DrawerContent({
     onPointerMove?.(event)
     if (held.current !== event.pointerId) return
 
-    // A mouse that reports no button held is a mouse that let go somewhere this
-    // never heard about. Nothing should follow a pointer that is not pressed.
+    // A mouse reporting no button let go somewhere this never heard about.
     if (event.pointerType === "mouse" && event.buttons === 0) {
       handlePointerUp(event)
       return
@@ -289,9 +257,7 @@ export function DrawerContent({
 
       const node = panelRef.current
       if (node) node.style.transition = ""
-      // The finger has already moved by the time the drag is granted. Taking
-      // the origin from here rather than from the press keeps the panel from
-      // jumping to catch up.
+      // Re-origin here, or the panel jumps to catch up with the finger.
       origin.current = point
       return
     }
@@ -318,15 +284,13 @@ export function DrawerContent({
 
     const travelled = offset.current
     const elapsed = Math.max(event.timeStamp - startedAt.current, 1)
-    const velocity = travelled / elapsed
-    const flicked = velocity > VELOCITY_THRESHOLD
+    const flicked = travelled / elapsed > VELOCITY_THRESHOLD
     const far = travelled >= measure() * CLOSE_THRESHOLD
 
     if (dismissible && travelled > 0 && (flicked || far)) {
-      // The swipe carries on out and the drawer closes on arrival, rather than
-      // snapping back to play an exit it has already been given. `dragging`
-      // stays on until then, since it is what keeps the exit keyframes off a
-      // panel that is already on its way out.
+      // The swipe carries on out and closes on arrival, rather than snapping
+      // back to play an exit it has already been given. `dragging` stays on
+      // until then, which is what keeps the exit keyframes off it.
       glide(CLOSED[side], 0)
       timer.current = window.setTimeout(
         () => closeRef.current?.click(),
@@ -340,11 +304,9 @@ export function DrawerContent({
   }
 
   /**
-   * Every open starts against the edge, whatever the last one ended as. The
-   * drag writes `translate` onto the node itself, and React only rewrites that
-   * property when its own value changes, so a panel left part way out would
-   * come back part way out. The resting position is written rather than
-   * cleared: clearing removes the value React put there, and React will not put
+   * Every open starts against the edge. React only rewrites an inline property
+   * when its own value changes, so the resting position is written out rather
+   * than cleared — clearing removes what React put there, and it will not put
    * it back until it changes.
    */
   const park = () => {
@@ -383,8 +345,7 @@ export function DrawerContent({
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
         onPointerCancel={handlePointerUp}
-        // Radix fires this on every open, mounted fresh or not, which makes it
-        // the one hook that is guaranteed to run per opening.
+        // Radix fires this on every open, mounted fresh or not.
         onOpenAutoFocus={(event) => {
           park()
           onOpenAutoFocus?.(event)
@@ -405,9 +366,8 @@ export function DrawerContent({
         )}
         style={
           {
-            // Short of the whole screen on purpose. The sliver of page left
-            // showing is what keeps the rounded edge on screen, and what keeps
-            // a drawer from reading as a new page.
+            // Short of the whole screen on purpose: the sliver of page left
+            // showing keeps the rounded edge on screen.
             "--drawer-size": size ?? (vertical ? "90svh" : "26rem"),
             "--drawer-closed": CLOSED[side],
             "--drawer-rise": RISE[side],
@@ -423,12 +383,11 @@ export function DrawerContent({
           }}
           className={cn(
             "relative flex h-full w-full flex-col gap-4 overflow-y-auto overscroll-contain p-6",
-            // Only ever mounted while the drawer is open, so this plays once
-            // on arrival and needs no state to drive it.
-            "animate-drawer-rise motion-reduce:animate-none",
-            // The content keeps the scroll on its own axis. Everything else on
-            // the panel belongs to the drag.
+            // The content keeps the scroll on its own axis; the rest of the
+            // panel belongs to the drag.
             vertical ? "[touch-action:pan-y]" : "[touch-action:pan-x]",
+            // Only mounted while open, so this plays once on arrival.
+            "animate-drawer-rise motion-reduce:animate-none",
             showHandle && (vertical ? "pt-7" : "pl-7"),
             showHandle && side === "top" && "pt-6 pb-7",
             showHandle && side === "right" && "pr-6 pl-7",
@@ -464,8 +423,8 @@ export function DrawerContent({
           {children}
         </div>
 
-        {/* The swipe closes the drawer by pressing this, which keeps the panel
-            working whether the open state is Radix's or the caller's. */}
+        {/* The swipe closes by pressing this, so the panel works whether the
+            open state is Radix's or the caller's. */}
         <DialogPrimitive.Close ref={closeRef} className="sr-only" tabIndex={-1}>
           Close
         </DialogPrimitive.Close>

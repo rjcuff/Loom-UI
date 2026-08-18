@@ -816,14 +816,14 @@ export const ui: Registry["items"] = [
         "ease-drawer": EASE_DRAWER,
         // No fill mode on the way in: an animation holding its last frame
         // outranks inline styles for good, and the drag has nothing to move.
-        "animate-drawer-in": "drawer-in 500ms var(--ease-drawer)",
-        "animate-drawer-out": "drawer-out 500ms var(--ease-drawer) forwards",
+        "animate-drawer-in": "drawer-in 260ms var(--ease-drawer)",
+        "animate-drawer-out": "drawer-out 260ms var(--ease-drawer) forwards",
         "animate-drawer-rise":
-          "drawer-content-rise 420ms var(--ease-drawer) 120ms both",
+          "drawer-content-rise 240ms var(--ease-drawer) 60ms both",
         "animate-drawer-overlay-in":
-          "drawer-overlay-in 500ms var(--ease-drawer)",
+          "drawer-overlay-in 260ms var(--ease-drawer)",
         "animate-drawer-overlay-out":
-          "drawer-overlay-out 500ms var(--ease-drawer) forwards",
+          "drawer-overlay-out 260ms var(--ease-drawer) forwards",
       },
     },
     css: {
@@ -842,7 +842,6 @@ export const ui: Registry["items"] = [
       "@keyframes drawer-overlay-in": {
         from: {
           opacity: "0",
-          backdropFilter: "blur(0px)",
         },
         to: {
           opacity: "1",
@@ -854,7 +853,6 @@ export const ui: Registry["items"] = [
         },
         to: {
           opacity: "0",
-          backdropFilter: "blur(0px)",
         },
       },
       // The panel lands, then its contents settle into it. Three stops rather

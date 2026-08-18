@@ -164,7 +164,7 @@
   --ease-in-out-quart: cubic-bezier(0.77, 0, 0.175, 1);
   /* Leaves immediately and lands without a bounce. The curve panels want:
      nearly all the distance is covered in the first third of the duration,
-     which is why a 500ms drawer still lands without feeling slow. */
+     which is why a 260ms drawer lands soft instead of stopping dead. */
   --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
 
   --animate-weave: weave 8s linear infinite;
@@ -205,11 +205,11 @@
   --animate-terminal-print: terminal-print 240ms var(--ease-out-quart) both;
   /* No fill mode on the way in: an animation holding its last frame outranks
      inline styles for good, and the drag has nothing left to move. */
-  --animate-drawer-in: drawer-in 500ms var(--ease-drawer);
-  --animate-drawer-out: drawer-out 500ms var(--ease-drawer) forwards;
+  --animate-drawer-in: drawer-in 260ms var(--ease-drawer);
+  --animate-drawer-out: drawer-out 260ms var(--ease-drawer) forwards;
   --animate-drawer-rise: drawer-content-rise 420ms var(--ease-drawer) 120ms both;
-  --animate-drawer-overlay-in: drawer-overlay-in 500ms var(--ease-drawer);
-  --animate-drawer-overlay-out: drawer-overlay-out 500ms var(--ease-drawer)
+  --animate-drawer-overlay-in: drawer-overlay-in 260ms var(--ease-drawer);
+  --animate-drawer-overlay-out: drawer-overlay-out 260ms var(--ease-drawer)
     forwards;
 }
 
@@ -423,7 +423,6 @@
 @keyframes drawer-overlay-in {
   from {
     opacity: 0;
-    backdrop-filter: blur(0px);
   }
   to {
     opacity: 1;
@@ -436,7 +435,6 @@
   }
   to {
     opacity: 0;
-    backdrop-filter: blur(0px);
   }
 }
 
