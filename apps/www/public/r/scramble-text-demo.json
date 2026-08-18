@@ -10,7 +10,7 @@
   "files": [
     {
       "path": "registry/example/scramble-text-demo.tsx",
-      "content": "import { ScrambleText } from \"@/registry/loomui/scramble-text\"\n\nexport default function ScrambleTextDemo() {\n  return (\n    <div className=\"text-center\">\n      <p className=\"text-muted-foreground text-sm\">Now decoding</p>\n      <ScrambleText\n        text=\"LOOM UI\"\n        trigger=\"hover\"\n        className=\"mt-2 font-mono text-4xl font-semibold tracking-tight sm:text-5xl\"\n      />\n      <p className=\"text-muted-foreground mt-4 text-xs\">\n        Hover to run it again\n      </p>\n    </div>\n  )\n}\n",
+      "content": "import { ScrambleText } from \"@/registry/loomui/scramble-text\"\n\nexport default function ScrambleTextDemo() {\n  return (\n    <div className=\"text-center\">\n      <ScrambleText\n        text=\"LOOM UI\"\n        trigger=\"hover\"\n        className=\"mt-2 font-mono text-4xl font-semibold tracking-tight sm:text-5xl\"\n      />\n      <p className=\"text-muted-foreground mt-4 text-xs\">\n        Hover it. Again. We do not judge.\n      </p>\n    </div>\n  )\n}\n",
       "type": "registry:example"
     }
   ]

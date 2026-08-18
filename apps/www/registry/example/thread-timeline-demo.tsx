@@ -17,7 +17,7 @@ const ENTRIES = [
   {
     meta: "July",
     title: "Reduced motion",
-    body: "Every animation given a resting state worth looking at.",
+    body: "Every animation got a resting state worth looking at.",
   },
   {
     meta: "August",

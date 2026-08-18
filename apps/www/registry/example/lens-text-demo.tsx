@@ -13,9 +13,6 @@ export default function LensTextDemo() {
       >
         Hover me
       </LensText>
-      <p className="text-muted-foreground mt-6 text-xs">
-        Take the lens to the words
-      </p>
     </div>
   )
 }

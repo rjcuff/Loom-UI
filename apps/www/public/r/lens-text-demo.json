@@ -10,7 +10,7 @@
   "files": [
     {
       "path": "registry/example/lens-text-demo.tsx",
-      "content": "import { LensText } from \"@/registry/loomui/lens-text\"\n\nexport default function LensTextDemo() {\n  return (\n    <div className=\"text-center\">\n      <LensText\n        ring\n        size={130}\n        blur={8}\n        magnify={1.04}\n        follow={150}\n        className=\"text-5xl font-semibold tracking-tight sm:text-6xl\"\n      >\n        Hover me\n      </LensText>\n      <p className=\"text-muted-foreground mt-6 text-xs\">\n        Take the lens to the words\n      </p>\n    </div>\n  )\n}\n",
+      "content": "import { LensText } from \"@/registry/loomui/lens-text\"\n\nexport default function LensTextDemo() {\n  return (\n    <div className=\"text-center\">\n      <LensText\n        ring\n        size={130}\n        blur={8}\n        magnify={1.04}\n        follow={150}\n        className=\"text-5xl font-semibold tracking-tight sm:text-6xl\"\n      >\n        Hover me\n      </LensText>\n    </div>\n  )\n}\n",
       "type": "registry:example"
     }
   ]

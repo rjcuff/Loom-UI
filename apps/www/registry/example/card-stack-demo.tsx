@@ -46,7 +46,7 @@ export default function CardStackDemo() {
       </div>
 
       <p className="text-muted-foreground mt-3 text-center text-xs">
-        Scroll inside the panel.
+        Scroll inside the panel. It is a whole thing.
       </p>
     </div>
   )
