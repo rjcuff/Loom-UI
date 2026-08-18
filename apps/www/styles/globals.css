@@ -164,7 +164,7 @@
   --ease-in-out-quart: cubic-bezier(0.77, 0, 0.175, 1);
   /* Leaves immediately and lands without a bounce. The curve panels want:
      nearly all the distance is covered in the first third of the duration,
-     which is why a 340ms drawer still reads as instant. */
+     which is why a 500ms drawer still lands without feeling slow. */
   --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
 
   --animate-weave: weave 8s linear infinite;
@@ -181,16 +181,17 @@
   --animate-aurora-drift: aurora-drift 18s var(--ease-in-out-cubic) infinite;
   --animate-grid-beam: grid-beam 4s linear infinite;
   --animate-grid-beam-x: grid-beam-x 4s linear infinite;
-  --animate-split-flap-out: split-flap-out calc(var(--flap-duration, 62ms) * 0.5)
-    ease-in both;
+  --animate-split-flap-out: split-flap-out
+    calc(var(--flap-duration, 62ms) * 0.5) ease-in both;
   --animate-split-flap-in: split-flap-in calc(var(--flap-duration, 62ms) * 0.5)
     ease-out calc(var(--flap-duration, 62ms) * 0.5) both;
   --animate-loom-weave: loom-weave 700ms var(--ease-out-quart) both;
   --animate-ripple-expand: ripple-expand var(--ripple-duration, 620ms)
     var(--ease-out-quart) forwards;
-  --animate-confetti-drift: confetti-drift var(--confetti-duration, 900ms) linear
+  --animate-confetti-drift: confetti-drift var(--confetti-duration, 900ms)
+    linear forwards;
+  --animate-confetti-fall: confetti-fall var(--confetti-duration, 900ms)
     forwards;
-  --animate-confetti-fall: confetti-fall var(--confetti-duration, 900ms) forwards;
   --animate-loom-thread: loom-thread var(--loom-duration, 1400ms) ease-in-out
     infinite;
   --animate-loom-shuttle: loom-shuttle var(--loom-duration, 1400ms)
@@ -204,10 +205,11 @@
   --animate-terminal-print: terminal-print 240ms var(--ease-out-quart) both;
   /* No fill mode on the way in: an animation holding its last frame outranks
      inline styles for good, and the drag has nothing left to move. */
-  --animate-drawer-in: drawer-in 340ms var(--ease-drawer);
-  --animate-drawer-out: drawer-out 220ms var(--ease-drawer) forwards;
-  --animate-drawer-overlay-in: drawer-overlay-in 340ms var(--ease-drawer);
-  --animate-drawer-overlay-out: drawer-overlay-out 220ms var(--ease-drawer)
+  --animate-drawer-in: drawer-in 500ms var(--ease-drawer);
+  --animate-drawer-out: drawer-out 500ms var(--ease-drawer) forwards;
+  --animate-drawer-rise: drawer-content-rise 420ms var(--ease-drawer) 120ms both;
+  --animate-drawer-overlay-in: drawer-overlay-in 500ms var(--ease-drawer);
+  --animate-drawer-overlay-out: drawer-overlay-out 500ms var(--ease-drawer)
     forwards;
 }
 
@@ -421,6 +423,7 @@
 @keyframes drawer-overlay-in {
   from {
     opacity: 0;
+    backdrop-filter: blur(0px);
   }
   to {
     opacity: 1;
@@ -433,7 +436,61 @@
   }
   to {
     opacity: 0;
+    backdrop-filter: blur(0px);
   }
+}
+
+/* The panel lands, then its contents settle into it. Three stops rather than
+   two: the fade finishes early so the last of the travel is pure movement, and
+   the drawer reads as one thing arriving instead of two. */
+@keyframes drawer-content-rise {
+  from {
+    opacity: 0;
+    translate: var(--drawer-rise);
+  }
+  60% {
+    opacity: 1;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+/* The panel carries its own background past its edge, so an overdrag that
+   pushes it beyond the screen never opens a gap onto the page behind it. */
+[data-slot="drawer-content"]::after {
+  content: "";
+  position: absolute;
+  background: inherit;
+}
+
+[data-slot="drawer-content"][data-side="bottom"]::after {
+  top: 100%;
+  right: 0;
+  left: 0;
+  height: 200%;
+}
+
+[data-slot="drawer-content"][data-side="top"]::after {
+  bottom: 100%;
+  right: 0;
+  left: 0;
+  height: 200%;
+}
+
+[data-slot="drawer-content"][data-side="left"]::after {
+  top: 0;
+  right: 100%;
+  bottom: 0;
+  width: 200%;
+}
+
+[data-slot="drawer-content"][data-side="right"]::after {
+  top: 0;
+  bottom: 0;
+  left: 100%;
+  width: 200%;
 }
 
 @keyframes skeleton-shimmer {
@@ -634,7 +691,6 @@
   padding-inline: 1.25rem;
   border-left: 2px solid transparent;
 }
-
 
 [data-rehype-pretty-code-figure] [data-highlighted-line] {
   background-color: var(--code-highlight);

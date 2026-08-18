@@ -13,7 +13,7 @@ Install any component with `npx shadcn@latest add @loomui/<name>`.
 - [Confetti Button](https://loomui.design/docs/components/confetti-button): A button that throws a handful of paper into the air on press, each piece lobbed on its own arc.
 - [Count Up](https://loomui.design/docs/components/count-up): A number that counts to its value when it scrolls into view, without a render per frame.
 - [Credit Card](https://loomui.design/docs/components/credit-card): A placeholder payment card with a contact plate, a number and an aurora drifting under the face.
-- [Drawer](https://loomui.design/docs/components/drawer): A panel that comes in from any edge, with a notch you can take hold of and swipe it back out.
+- [Drawer](https://loomui.design/docs/components/drawer): A panel that comes in from any edge and covers most of the screen, dragged anywhere on its face to send it back out.
 - [Elastic Tabs](https://loomui.design/docs/components/elastic-tabs): A tab group whose pill stretches to cover both tabs before it contracts onto the one you picked.
 - [Flip Card](https://loomui.design/docs/components/flip-card): A card with two faces that turns in 3D when it is clicked, controlled or on its own.
 - [Grid Backdrop](https://loomui.design/docs/components/grid-backdrop): An SVG grid with cells that fade in and out at a deterministic, seeded scatter.

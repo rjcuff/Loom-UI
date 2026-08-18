@@ -802,7 +802,7 @@ export const ui: Registry["items"] = [
     type: "registry:ui",
     title: "Drawer",
     description:
-      "A panel that comes in from any edge, with a notch you can take hold of and swipe it back out.",
+      "A panel that comes in from any edge and covers most of the screen, dragged anywhere on its face to send it back out.",
     dependencies: ["@radix-ui/react-dialog"],
     registryDependencies: ["utils"],
     files: [
@@ -816,12 +816,14 @@ export const ui: Registry["items"] = [
         "ease-drawer": EASE_DRAWER,
         // No fill mode on the way in: an animation holding its last frame
         // outranks inline styles for good, and the drag has nothing to move.
-        "animate-drawer-in": "drawer-in 340ms var(--ease-drawer)",
-        "animate-drawer-out": "drawer-out 220ms var(--ease-drawer) forwards",
+        "animate-drawer-in": "drawer-in 500ms var(--ease-drawer)",
+        "animate-drawer-out": "drawer-out 500ms var(--ease-drawer) forwards",
+        "animate-drawer-rise":
+          "drawer-content-rise 420ms var(--ease-drawer) 120ms both",
         "animate-drawer-overlay-in":
-          "drawer-overlay-in 340ms var(--ease-drawer)",
+          "drawer-overlay-in 500ms var(--ease-drawer)",
         "animate-drawer-overlay-out":
-          "drawer-overlay-out 220ms var(--ease-drawer) forwards",
+          "drawer-overlay-out 500ms var(--ease-drawer) forwards",
       },
     },
     css: {
@@ -840,6 +842,7 @@ export const ui: Registry["items"] = [
       "@keyframes drawer-overlay-in": {
         from: {
           opacity: "0",
+          backdropFilter: "blur(0px)",
         },
         to: {
           opacity: "1",
@@ -851,7 +854,55 @@ export const ui: Registry["items"] = [
         },
         to: {
           opacity: "0",
+          backdropFilter: "blur(0px)",
         },
+      },
+      // The panel lands, then its contents settle into it. Three stops rather
+      // than two: the fade finishes early so the last of the travel is pure
+      // movement, and the drawer reads as one thing arriving, not two.
+      "@keyframes drawer-content-rise": {
+        from: {
+          opacity: "0",
+          translate: "var(--drawer-rise)",
+        },
+        "60%": {
+          opacity: "1",
+        },
+        to: {
+          opacity: "1",
+          translate: "0 0",
+        },
+      },
+      // The panel carries its own background past its edge, so an overdrag
+      // that pushes it beyond the screen never opens a gap onto the page.
+      '[data-slot="drawer-content"]::after': {
+        content: '""',
+        position: "absolute",
+        background: "inherit",
+      },
+      '[data-slot="drawer-content"][data-side="bottom"]::after': {
+        top: "100%",
+        right: "0",
+        left: "0",
+        height: "200%",
+      },
+      '[data-slot="drawer-content"][data-side="top"]::after': {
+        bottom: "100%",
+        right: "0",
+        left: "0",
+        height: "200%",
+      },
+      '[data-slot="drawer-content"][data-side="left"]::after': {
+        top: "0",
+        right: "100%",
+        bottom: "0",
+        width: "200%",
+      },
+      '[data-slot="drawer-content"][data-side="right"]::after': {
+        top: "0",
+        bottom: "0",
+        left: "100%",
+        width: "200%",
       },
     },
   },

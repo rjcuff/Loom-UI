@@ -488,7 +488,7 @@ export const Index: Record<string, any> = {
     name: "drawer",
     type: "registry:ui",
     title: "Drawer",
-    description: "A panel that comes in from any edge, with a notch you can take hold of and swipe it back out.",
+    description: "A panel that comes in from any edge and covers most of the screen, dragged anywhere on its face to send it back out.",
     dependencies: ["@radix-ui/react-dialog"],
     registryDependencies: ["utils"],
     files: [{"path":"registry/loomui/drawer.tsx","type":"registry:ui","target":""}],

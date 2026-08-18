@@ -99,26 +99,68 @@ missing frame is taken from wherever the panel currently is, so the same pair
 serves all four edges whether the drawer is at rest or part way out under a
 finger.
 
-Neither keyframe fills forwards, which matters more than it sounds. An animation
-that holds its last frame outranks inline styles for good, and the drag would
-have nothing left to move.
+The way in does not fill forwards, which matters more than it sounds. An
+animation that holds its last frame outranks inline styles for good, and the
+drag would have nothing left to move. The way out does fill, or the panel would
+snap back to open for the frame before it unmounts.
 
-Both run on `cubic-bezier(0.32, 0.72, 0, 1)`, the curve panels want: most of the
-distance is covered in the first third of the duration, so 340ms in still reads
-as instant while the landing stays soft. Out is 220ms, and the drag settles on
-the same curve, so a snap and an open are plainly the same movement.
+Everything runs 500ms on `cubic-bezier(0.32, 0.72, 0, 1)`, the curve panels
+want: most of the distance is covered in the first third, so it lands softly
+without feeling slow. Arriving, settling back and leaving all share the one
+duration, so no part of the drawer reads as a different mechanism.
 
-### The swipe
+Three things arrive rather than one. The panel travels, the overlay fades and
+blurs the page behind it, and the contents settle into the panel 120ms later
+from 14px out — late enough to read as the drawer filling itself in, early
+enough that it never looks like a second animation.
 
-The notch takes the gesture. Push it toward its edge and the panel follows the
-finger; there is nowhere further in to go, so a pull the other way is resisted
-rather than refused.
+That last one is a three-stop keyframe: the fade completes at 60% so the tail of
+the travel is pure movement. Landing opacity and position together makes the
+contents look like they stopped short.
+
+The notch answers the drag as well, widening and darkening while the panel is
+held, so the grip is visibly taken rather than just working.
+
+### The drag
+
+The whole face of the panel is the grip. Press anywhere and pull, and the notch
+is a signpost rather than the only handle.
+
+Content that scrolls keeps its scroll. Before a drag is granted, the press walks
+up from whatever was pressed looking for a scrollable ancestor: if one is found
+and it is not already at the top, the gesture belongs to it and the panel stays
+put. Once the drag is granted it holds until the finger lifts, since handing a
+gesture back mid-swipe is worse than never taking it.
+
+Three more things block a drag: an element inside `[data-no-drag]`, selected
+text, and the first 500ms after opening, so the arrival can be scrolled through.
+
+```tsx
+<div data-no-drag>
+  <Slider />
+</div>
+```
+
+Anything with its own gesture — a slider, a map, a carousel — opts out that way.
+
+### The snap
 
 There is one place to land, so the drag decides one thing: the drawer goes, or
-it goes back where it started. Past 40px it closes. A drag shorter than that
-decides nothing and the panel settles back, which is the one movement that is
-not a snap. A flick over 0.5px per millisecond decides on its own, however short
-it was.
+it goes back where it started.
+
+It closes if the pull passes a quarter of the panel, or if it is flicked faster
+than 0.4px per millisecond. A quarter rather than a fixed number of pixels,
+because 40px out of a drawer nine hundred tall is a hair trigger, and the same
+40px out of a short one is most of the way.
+
+Pulling the other way past fully open is resisted logarithmically, so the panel
+gives at first and firms up, which reads as a limit instead of a loose edge. The
+panel carries its own background 200% past its edge in an `::after`, so an
+overdrag never opens a gap onto the page behind it.
+
+The overlay tracks the drag: the page brightens as the panel is pulled away.
+That, more than the movement itself, is what makes the two read as joined rather
+than stacked.
 
 When the decision is _closed_, the swipe carries on out and the drawer closes on
 arrival rather than snapping back to play an exit it has already been given.
@@ -131,8 +173,7 @@ remembered between openings: every open starts against the edge.
 <DrawerContent showHandle={false} />
 ```
 
-Without the notch there is nothing to grab, and the drawer is closed with the
-overlay, `Escape` or a `DrawerClose`.
+Without the notch the panel still drags — the notch only says that it does.
 
 ### Holding it open
 

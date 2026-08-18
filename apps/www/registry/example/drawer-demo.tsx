@@ -22,7 +22,7 @@ export default function DrawerDemo() {
         <DrawerHeader>
           <DrawerTitle>Thread settings</DrawerTitle>
           <DrawerDescription>
-            Swipe the notch down, or tap outside, to send it away.
+            Drag anywhere on the panel to send it away.
           </DrawerDescription>
         </DrawerHeader>
 
