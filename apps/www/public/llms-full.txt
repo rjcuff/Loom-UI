@@ -6218,13 +6218,18 @@ export function Spool({
       root.style.borderRadius = `${radius / sx}px / ${radius / sy}px`
       wrap.style.transform = `scale(${1 / sx}, ${1 / sy})`
 
+      const gap = Math.max(Math.abs(1 - sx), Math.abs(1 - sy))
+      const progress =
+        span.current > 0 ? 1 - Math.min(gap / span.current, 1) : 1
+
       // The state on its way out fills the shape at the start and shrinks with
       // it, rather than being held at true size like the incoming one. When the
-      // shape narrows it is also pulled in a little past that, or it reaches
-      // the edge before the fade has finished with it.
+      // shape narrows it is pulled in a little past that as well, eased in over
+      // the morph. Applying it on the first frame is a visible pop, since the
+      // old contents were at their own size the frame before.
       const leaving = leavingRef.current
       if (leaving) {
-        const pull = sx > 1 ? 0.94 : 1
+        const pull = start.current.sx > 1 ? 1 - 0.06 * progress : 1
         leaving.style.transform = `scale(${(sx / start.current.sx) * pull}, ${
           sy / start.current.sy
         })`
@@ -6237,10 +6242,6 @@ export function Spool({
       // so until the shape has most of the way caught up they are wider than
       // what is holding them. Fading them against the shape's own progress is
       // what stops a word being shown half clipped.
-      const gap = Math.max(Math.abs(1 - sx), Math.abs(1 - sy))
-      const progress =
-        span.current > 0 ? 1 - Math.min(gap / span.current, 1) : 1
-
       // Scale, blur and opacity together. Any one of the three on its own reads
       // as a fade; all three read as something arriving.
       const dress = (node: HTMLElement, t: number) => {
@@ -6249,8 +6250,16 @@ export function Spool({
         node.style.filter = t < 1 ? `blur(${(1 - t) * 3}px)` : ""
       }
 
+      // Growing, the new contents are wider than the shape holding them, so
+      // they wait for the room. Shrinking, the room is already there and there
+      // is nothing to wait for. Making both wait leaves a gap after the old
+      // state has gone and before the new one starts, which is the flicker.
+      const growing = start.current.sx < 1
+      const gate = growing ? 0.4 : 0.02
+      const over = growing ? 0.38 : 0.5
+
       const at = (offset: number) =>
-        Math.max(0, Math.min((progress - 0.4 - offset) / 0.38, 1))
+        Math.max(0, Math.min((progress - gate - offset) / over, 1))
 
       // Each piece lands a little after the one before it. Held against the
       // shape's progress rather than a clock, so an interruption never leaves

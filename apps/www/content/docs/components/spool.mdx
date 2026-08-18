@@ -140,6 +140,13 @@ The stagger is held against progress too, not a clock. Interrupt the morph
 halfway and you never end up with half the pieces arriving and half already
 sitting there.
 
+How long they wait depends on which way the shape is going. Growing, the new
+contents are wider than the shape holding them, so they wait for the room.
+Shrinking, the room is already there and there is nothing to wait for, so they
+come straight in. Making both wait leaves a gap between the old state going and
+the new one arriving, and a gap that short does not read as a pause. It reads as
+a flicker.
+
 That is also why the fade is written onto the node instead of declared as a
 keyframe. A running animation outranks an inline style, so only one of them can
 own opacity, and only one of them knows where the shape is.

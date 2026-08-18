@@ -11,7 +11,7 @@ export function SiteFooter() {
           rel="noreferrer"
           className="hover:text-foreground underline underline-offset-4 transition-colors duration-150"
         >
-          Ryan
+          ryan
         </a>
         . Source code on{" "}
         <a
