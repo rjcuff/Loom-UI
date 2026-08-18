@@ -25,7 +25,7 @@ interface Ripple {
 export function RippleButton({
   children,
   className,
-  duration = 620,
+  duration = 280,
   color = "color-mix(in oklch, currentColor 22%, transparent)",
   onPointerDown,
   onKeyDown,

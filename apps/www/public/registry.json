@@ -399,7 +399,7 @@
       "cssVars": {
         "theme": {
           "ease-out-quart": "cubic-bezier(0.165, 0.84, 0.44, 1)",
-          "animate-ripple-expand": "ripple-expand var(--ripple-duration, 620ms) var(--ease-out-quart) forwards"
+          "animate-ripple-expand": "ripple-expand var(--ripple-duration, 280ms) var(--ease-out-quart) forwards"
         }
       },
       "css": {
@@ -1044,7 +1044,7 @@
       "cssVars": {
         "theme": {
           "ease-out-quart": "cubic-bezier(0.165, 0.84, 0.44, 1)",
-          "animate-bento-rise": "bento-rise 620ms var(--ease-out-quart) var(--bento-delay, 0ms) both"
+          "animate-bento-rise": "bento-rise 360ms var(--ease-out-quart) var(--bento-delay, 0ms) both"
         }
       },
       "css": {

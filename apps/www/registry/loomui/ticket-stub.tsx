@@ -55,7 +55,7 @@ export function TicketStub({
       className={cn(
         "relative",
         lift &&
-          "transition-transform duration-300 ease-[var(--ease-out-quart)] hover:-translate-y-1 hover:rotate-[-0.4deg] motion-reduce:transition-none",
+          "ease transition-transform duration-200 hover:-translate-y-1 hover:rotate-[-0.4deg] motion-reduce:transition-none",
         className
       )}
       style={{ filter: edge, ...style }}

@@ -113,7 +113,7 @@ export function BentoCard({
       data-slot="bento-card"
       className={cn(
         "border-border bg-card relative flex flex-col overflow-hidden rounded-xl border p-5",
-        "opacity-0 transition-[border-color,translate] duration-300 ease-[var(--ease-out-quart)]",
+        "ease opacity-0 transition-[border-color,translate] duration-200",
         "hover:border-muted-foreground/40 hover:-translate-y-0.5",
         // The tile is only allowed to arrive once the grid says the grid is on
         // screen, so a tile below the fold never plays to nobody.

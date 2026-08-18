@@ -102,7 +102,7 @@ export function TiltCard({
         className={cn(
           "relative isolate size-full rounded-[inherit]",
           !flat &&
-            "transition-transform duration-[240ms] ease-[var(--ease-out-quart)]"
+            "transition-transform duration-[240ms] ease-[var(--ease-out-quart)] will-change-transform"
         )}
         style={
           {

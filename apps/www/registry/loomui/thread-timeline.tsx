@@ -129,12 +129,12 @@ export function ThreadTimelineItem({
       <span
         data-slot="thread-timeline-node"
         aria-hidden="true"
-        className="bg-background border-muted-foreground/40 text-primary-foreground group-data-[reached]:border-primary group-data-[reached]:bg-primary absolute top-1 left-2 grid size-4 -translate-x-1/2 place-items-center rounded-full border-2 text-[0.5rem] font-medium transition duration-300 ease-[var(--ease-out-quart)] group-data-[reached]:scale-110 motion-reduce:transition-none"
+        className="bg-background border-muted-foreground/40 text-primary-foreground group-data-[reached]:border-primary group-data-[reached]:bg-primary absolute top-1 left-2 grid size-4 -translate-x-1/2 place-items-center rounded-full border-2 text-[0.5rem] font-medium transition duration-[240ms] ease-[var(--ease-out-quart)] group-data-[reached]:scale-110 motion-reduce:transition-none"
       >
         {marker}
       </span>
 
-      <div className="translate-x-1 opacity-55 transition duration-500 ease-[var(--ease-out-quart)] group-data-[reached]:translate-x-0 group-data-[reached]:opacity-100 motion-reduce:transition-none">
+      <div className="translate-x-1 opacity-55 transition duration-[240ms] ease-[var(--ease-out-quart)] group-data-[reached]:translate-x-0 group-data-[reached]:opacity-100 motion-reduce:transition-none">
         {meta ? (
           <div className="text-muted-foreground text-xs tracking-wide">
             {meta}

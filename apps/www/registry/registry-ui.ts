@@ -397,7 +397,7 @@ export const ui: Registry["items"] = [
       theme: {
         "ease-out-quart": EASE_OUT_QUART,
         "animate-ripple-expand":
-          "ripple-expand var(--ripple-duration, 620ms) var(--ease-out-quart) forwards",
+          "ripple-expand var(--ripple-duration, 280ms) var(--ease-out-quart) forwards",
       },
     },
     css: {
@@ -1039,7 +1039,7 @@ export const ui: Registry["items"] = [
       theme: {
         "ease-out-quart": EASE_OUT_QUART,
         "animate-bento-rise":
-          "bento-rise 620ms var(--ease-out-quart) var(--bento-delay, 0ms) both",
+          "bento-rise 360ms var(--ease-out-quart) var(--bento-delay, 0ms) both",
       },
     },
     css: {

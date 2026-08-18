@@ -186,7 +186,7 @@
   --animate-split-flap-in: split-flap-in calc(var(--flap-duration, 62ms) * 0.5)
     ease-out calc(var(--flap-duration, 62ms) * 0.5) both;
   --animate-loom-weave: loom-weave 700ms var(--ease-out-quart) both;
-  --animate-ripple-expand: ripple-expand var(--ripple-duration, 620ms)
+  --animate-ripple-expand: ripple-expand var(--ripple-duration, 280ms)
     var(--ease-out-quart) forwards;
   --animate-confetti-drift: confetti-drift var(--confetti-duration, 900ms)
     linear forwards;
@@ -200,7 +200,7 @@
     linear var(--shimmer-delay, 0ms) infinite;
   --animate-trail-fade: trail-fade var(--trail-duration, 900ms)
     var(--ease-out-quart) forwards;
-  --animate-bento-rise: bento-rise 620ms var(--ease-out-quart)
+  --animate-bento-rise: bento-rise 360ms var(--ease-out-quart)
     var(--bento-delay, 0ms) both;
   --animate-terminal-print: terminal-print 240ms var(--ease-out-quart) both;
   /* No fill mode on the way in: an animation holding its last frame outranks
