@@ -1645,6 +1645,7 @@ export function DrawerContent({
   dismissible = true,
   className,
   children,
+  onOpenAutoFocus,
   ...props
 }: DrawerContentProps) {
   const vertical = isVertical(side)
@@ -1778,6 +1779,25 @@ export function DrawerContent({
     glide(SETTLE_MS, restTranslate(side, open))
   }
 
+  /**
+   * Every open starts parked at `peek`, whatever the last one ended as. The
+   * drag writes `translate` onto the node itself, and React only rewrites that
+   * property when its own value changes, so a panel left open wide would come
+   * back open wide. The parked position is written out rather than cleared:
+   * clearing removes the value React put there, and React will not put it back
+   * until it changes.
+   */
+  const park = () => {
+    setDragging(false)
+    setExpanded(false)
+    held.current = null
+
+    const node = panelRef.current
+    if (!node) return
+    node.style.transition = ""
+    node.style.translate = restTranslate(side, false)
+  }
+
   const grabbable = dismissible || expandable
 
   return (
@@ -1791,6 +1811,12 @@ export function DrawerContent({
         data-side={side}
         data-expanded={expanded ? "" : undefined}
         data-dragging={dragging ? "" : undefined}
+        // Radix fires this on every open, mounted fresh or not, which makes it
+        // the one hook that is guaranteed to run per opening.
+        onOpenAutoFocus={(event) => {
+          park()
+          onOpenAutoFocus?.(event)
+        }}
         onEscapeKeyDown={
           dismissible ? undefined : (event) => event.preventDefault()
         }
