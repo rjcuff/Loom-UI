@@ -1351,7 +1351,7 @@ function PlaceholderBrand() {
 
 /**
  * A placeholder payment card. Nothing here is real and no real mark is drawn,
- * so it is safe in a mockup. One face per render — wrap two in a `FlipCard` for
+ * so it is safe in a mockup. One face per render, so wrap two in a `FlipCard` for
  * a card that turns.
  */
 export function CreditCard({
@@ -1903,7 +1903,7 @@ export function DrawerContent({
           }}
           className={cn(
             "relative flex h-full w-full flex-col gap-4 overflow-y-auto overscroll-contain p-6",
-            // The content keeps the scroll on its own axis; the rest of the
+            // The content keeps the scroll on its own axis. The rest of the
             // panel belongs to the drag.
             vertical ? "[touch-action:pan-y]" : "[touch-action:pan-x]",
             // Only mounted while open, so this plays once on arrival.
@@ -2141,7 +2141,7 @@ export function ElasticTabs({
 
   // Travel. The pill first stretches to cover both tabs, then contracts onto
   // the new one. Moving `left` and `width` straight to the target slides a
-  // fixed shape across; spanning first is what makes it read as elastic.
+  // fixed shape across. Spanning first is what makes it read as elastic.
   React.useEffect(() => {
     const target = measure(index)
     const from = pillRef.current
@@ -2233,7 +2233,7 @@ export function ElasticTabs({
           type="button"
           role="tab"
           aria-selected={position === index}
-          // Only the selected tab is in the tab order; the arrows move between
+          // Only the selected tab is in the tab order. The arrows move between
           // them, which is how a tablist is meant to be walked.
           tabIndex={position === index ? 0 : -1}
           onClick={() => select(position)}
@@ -3096,7 +3096,7 @@ export function HoldButton({
       return
     }
 
-    // Space scrolls and Enter fires a click; neither should stand in for the
+    // Space scrolls and Enter fires a click. Neither should stand in for the
     // hold this button exists to require.
     event.preventDefault()
     if (!event.repeat) {
@@ -3704,7 +3704,7 @@ const OPEN_FACTOR = 1.6
 const PANEL_PADDING = "0.28em 0.45em"
 
 function useMediaQuery(query: string, fallback: boolean) {
-  // Server and first client paint agree on `fallback`; the effect corrects it
+  // Server and first client paint agree on `fallback`. The effect corrects it
   // before anyone can interact, so there is no hydration mismatch.
   const [matches, setMatches] = React.useState(fallback)
 
@@ -3875,7 +3875,7 @@ export function LensText({
   }
 
   // Where the lens stops being fully opaque. At `feather: 0` the edge is a
-  // hard cut; at `1` it falls off from the centre.
+  // hard cut. At `1` it falls off from the centre.
   const core = `${Math.round((1 - clamp01(feather)) * 100)}%`
   const at = "var(--lens-x, 50%) var(--lens-y, 50%)"
 
@@ -4314,7 +4314,7 @@ const WAVE_LENGTH = 8
 const clamp = (value: number, min: number, max: number) =>
   Math.min(Math.max(value, min), max)
 
-/** Nearest step from `min`, so a range like 0–7 in 0.5s never lands off-grid. */
+/** Nearest step from `min`, so a range like 0 to 7 in 0.5s never lands off-grid. */
 function snap(value: number, min: number, max: number, step: number) {
   if (step <= 0) return clamp(value, min, max)
   return clamp(min + Math.round((value - min) / step) * step, min, max)
@@ -4341,7 +4341,7 @@ interface Motion {
 /**
  * Every dash is drawn from this each frame. A CSS transition restarted on every
  * pointer move never arrives, so there is none. `tau` is roughly how long the
- * gap to the target takes to close; frames are measured, not counted.
+ * gap to the target takes to close. Frames are measured, not counted.
  */
 function useMotion(target: number, tau: number): Motion {
   const [motion, setMotion] = React.useState<Motion>({
@@ -5259,7 +5259,7 @@ export function RippleButton({
       }}
       className={cn(
         "relative isolate inline-flex items-center justify-center overflow-hidden select-none",
-        // The ripple says the press landed; the give says it landed on this.
+        // The ripple says the press landed. The give says it landed on this.
         "transition-transform duration-150 ease-[var(--ease-out-quart)] active:scale-[0.97] motion-reduce:transition-none",
         className
       )}
@@ -6043,7 +6043,7 @@ export function Spool({
     }
 
     // Where the box actually is on screen this instant, and how fast it is
-    // going — both in pixels, which survive the change of scale below.
+    // going, both in pixels, which survive the change of scale below.
     const at = peek()
     const rate = speed()
     const seen = {
@@ -6095,7 +6095,7 @@ export function Spool({
 
   React.useEffect(() => () => window.clearTimeout(leaveTimer.current), [])
 
-  // Content that changes size on its own — a font landing, a longer label —
+  // Content that changes size on its own, a font landing or a longer label,
   // moves the natural box without any change of state, so keep it current or
   // the next morph starts from a stale number.
   React.useEffect(() => {
@@ -7187,7 +7187,7 @@ export default function TerminalDemo() {
   return (
     <Terminal title="~/acme-app" className="max-w-lg">
       <TerminalCommand>npx shadcn@latest add @loomui/terminal</TerminalCommand>
-      <TerminalOutput delay={420}>Checking registry…</TerminalOutput>
+      <TerminalOutput delay={420}>Checking registry...</TerminalOutput>
       <TerminalOutput delay={520}>
         <span className="text-accent">✔</span> Installed terminal.tsx
       </TerminalOutput>

@@ -59,9 +59,9 @@ glyphs would sit on a blurred set of glyphs and read as a halo rather than as
 focus.
 
 The blurred copy sits in a padded, rounded panel, and the blur goes on a span
-inside it rather than on the panel itself. Blur the panel and its glow spreads
-past its own edges, where the mask cuts it off square, a pane of frosted glass
-with four hard corners, which is the tell that this is two divs and not glass.
+inside it rather than on the panel itself. Blur the panel and its glow spreads past its own edges, where the mask cuts it
+off square. Frosted glass with four hard corners. That is the tell that this is
+two divs.
 
 Position and radius are written to CSS custom properties from a single
 `requestAnimationFrame` loop, never to React state. Moving the mouse across a
@@ -69,10 +69,9 @@ paragraph costs zero renders.
 
 ### Weight and pace
 
-`follow` is the time constant of that loop, in milliseconds. The lens eases
-toward the pointer instead of being pinned to it, and it opens and closes on
-the same clock at a slightly slower rate, so it reads as a piece of glass being
-moved rather than a mask being toggled:
+`follow` is the time constant of that loop, in milliseconds. The lens eases toward the pointer instead of being pinned to it, and opens and
+closes on the same clock a little slower. It reads as glass being moved rather
+than a mask being switched on.
 
 ```tsx
 <LensText follow={220}>Slow, heavy glass.</LensText>
@@ -85,9 +84,9 @@ to the pointer and snaps it open, which is also what
 
 ### Shaping the lens
 
-`size` is the diameter, `feather` is how much of it fades at the edge, `blur`
-is how far out of focus the rest of the text sits, and `radius` rounds the
-frosted panel:
+`size` is the diameter. `feather` is how much of it fades at the edge. `blur` is
+how far out of focus the rest of the text sits, and `radius` rounds the frosted
+panel.
 
 ```tsx
 <LensText size={180} feather={0.2} blur={10} radius="1em">
@@ -103,8 +102,8 @@ CSS length, and in `em` it tracks whatever type size it is wrapped around.
 
 ### Magnifying
 
-`magnify` scales the text under the lens, anchored to the pointer, so the lens
-reads as glass with a curve rather than a window:
+`magnify` scales the text under the lens, anchored to the pointer. The lens then
+reads as curved glass rather than a window.
 
 ```tsx
 <LensText ring magnify={1.08}>
@@ -134,11 +133,10 @@ gives the pointer something to hold.
 Any other `<span>` prop is forwarded.
 
 <Callout type="warning" title="Accessibility">
-  Blurred text is unreadable to anyone who cannot aim a pointer at it, so this
-  is a component for copy people can afford to miss: spoilers, teasers, a
-  redaction gag. Never put it on something load-bearing. On touch, pen and
-  coarse pointers the component detects the missing hover and renders the text
-  sharp instead, and `disabled` does the same on demand. The sharp copy is
-  `aria-hidden` and `pointer-events-none`, so a screen reader reads the words
-  once, unblurred.
+  Blurred text is unreadable to anyone who cannot aim a pointer at it. Use it
+  for copy people can afford to miss. Spoilers, teasers, a redaction gag. Never
+  put it on something load-bearing. On touch, pen and coarse pointers the
+  component detects the missing hover and renders the text sharp instead, and
+  `disabled` does the same on demand. The sharp copy is `aria-hidden` and
+  `pointer-events-none`, so a screen reader reads the words once, unblurred.
 </Callout>

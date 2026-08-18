@@ -59,19 +59,16 @@ import { HoldButton } from "@/components/ui/hold-button"
 </HoldButton>
 ```
 
-A hold is a confirmation dialog that costs no dialog. The user says yes by
-keeping their finger down, and the fill sweeping across the button is the only
-thing telling them how much longer that is, so it has to be there from the
-first frame of the press.
+A hold is a confirmation dialog that costs no dialog. The user says yes by keeping their finger down. The fill sweeping across the
+button is the only thing telling them how much longer, so it has to be there
+from the first frame of the press.
 
 The fill goes across linearly, because it is a promise about how much time is
-left. Letting go early runs it back out, eased and on its own quick clock, so
-an abandoned hold reads as a slip you can recover from rather than a state
-being dropped.
+left. Letting go early runs it back out on its own quick clock. An abandoned hold
+reads as a slip you can recover from, not a state being dropped.
 
-A completed hold does not run backwards. Rewinding a fill that already did its
-job reads as an undo of the thing that just happened, so it sits at full, fades
-off, and is reset to zero behind the fade.
+A completed hold does not run backwards. Rewinding a fill that already did its job reads as undoing what just happened.
+It sits at full, fades off, and resets to zero behind the fade.
 
 Progress lives in a ref and is written to a `--hold-progress` custom property
 inside a `requestAnimationFrame`. The fill is a `scaleX` on a clipped layer,

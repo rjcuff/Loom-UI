@@ -62,9 +62,8 @@ import { SpotlightCard } from "@/components/ui/spotlight-card"
 </SpotlightCard>
 ```
 
-Two layers light up, not one. The border ring is masked so only its 1px edge
-shows, and it is the layer doing most of the work: the surface wash on its own
-is too soft to register at a glance.
+Two layers light up, not one. The border ring is masked so only its 1px edge shows, and it does most of the
+work. The surface wash on its own is too soft to register at a glance.
 
 Pointer position is written to two CSS custom properties inside a
 `requestAnimationFrame`, never to React state. Moving the mouse across the card
@@ -75,10 +74,9 @@ a glow that eases toward the cursor reads as lag rather than polish.
 
 ### Making the card clickable
 
-`interactive` gives the card a pointer cursor and a focus ring. Put the real
-destination on an anchor inside and stretch it over the card, so the whole
-surface is the hit target while the accessible name and the `href` stay on a
-proper link:
+`interactive` gives the card a pointer cursor and a focus ring. Put the real destination on an anchor inside and stretch it over the card. The
+whole surface becomes the hit target while the accessible name and the `href`
+stay on a proper link.
 
 ```tsx
 <SpotlightCard interactive className="bg-card p-5">

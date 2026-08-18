@@ -55,8 +55,8 @@ On its own it is a blank device with a grey screen. Fill it with a screenshot:
 <IPhone src="/screenshot.png" alt="The app's home screen" />
 ```
 
-Or with live markup, which is the reason to use a frame built out of elements
-rather than an image of one:
+Or with live markup, which is the whole reason to build the frame out of
+elements instead of using a picture of one.
 
 ```tsx
 <IPhone width={280}>
@@ -76,12 +76,10 @@ Anything inside is clipped to the screen's radius and sits under the island.
 fixed size. The frame fills the space it is given and stops there, so it never
 pushes a narrow screen sideways.
 
-Everything else (the rim, both corner radii, the island, the four buttons) is
-a real device point expressed as a share of the frame's own width, in container
-units. That keeps the proportions exact at whatever width the frame ends up:
-a percentage `border-radius` would go elliptical on a box this tall, and a
-scale factor worked out in JavaScript would be wrong the moment the frame had
-to shrink to fit.
+Everything else is a real device measurement expressed as a share of the frame's
+own width, in container units. The rim, both corner radii, the island, the four
+buttons. That keeps the proportions exact at any width. A percentage `border-radius` would go elliptical on a box this tall. A scale
+factor worked out in JavaScript breaks the moment the frame has to shrink.
 
 The rim is a gradient rather than a flat fill. A solid band the same colour all
 the way round reads as a border. A gradient reads as metal catching light on

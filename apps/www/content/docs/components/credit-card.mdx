@@ -49,8 +49,8 @@ import { CreditCard } from "@/components/ui/credit-card"
 <CreditCard holder="Ada Lovelace" expiry="09/30" />
 ```
 
-Nothing on the card is real and no network mark is drawn, so it is safe to put
-in a mockup, a pricing page or a checkout screenshot. The default number is the
+Nothing on the card is real and no network mark is drawn. Safe for a mockup, a
+pricing page or a checkout screenshot. The default number is the
 one every payment provider reserves for test cards.
 
 ### The aurora
@@ -78,8 +78,8 @@ Every digit but the last four becomes a bullet, with the grouping left alone, so
 
 ### Turning it over
 
-The card draws one face at a time rather than owning a flip, so pair it with
-[Flip Card](/docs/components/flip-card) and both sides come from the same props:
+The card draws one face at a time rather than owning a flip. Pair it with [Flip
+Card](/docs/components/flip-card) and both sides come from the same props.
 
 ```tsx
 <FlipCard
@@ -96,7 +96,7 @@ The back has the magnetic stripe, the signature panel and the security code.
 | Prop        | Type                | Default            | Description                             |
 | ----------- | ------------------- | ------------------ | --------------------------------------- |
 | `side`      | `"front" \| "back"` | `"front"`          | Which face to draw.                     |
-| `number`    | `string`            | `"4242 4242 ..."`    | Number across the face.                 |
+| `number`    | `string`            | `"4242 4242 ..."`  | Number across the face.                 |
 | `holder`    | `string`            | `"A. Placeholder"` | Name along the bottom.                  |
 | `expiry`    | `string`            | `"04/29"`          | Expiry along the bottom.                |
 | `cvv`       | `string`            | `"123"`            | Security code on the back.              |

@@ -71,8 +71,8 @@ The layer is absolutely positioned, so it wants a positioned parent that clips:
 </section>
 ```
 
-The grid lines are drawn with `currentColor`, so they take their ink from the
-surface rather than carrying a colour that only reads on one theme. The beams
+The grid lines are drawn with `currentColor`. They take their ink from the
+surface instead of carrying a colour that only reads on one theme. The beams
 are the opposite: they are meant to be loud, and they keep their own colours in
 both themes.
 
@@ -94,9 +94,8 @@ of any size with no per-frame work at all. Once the beams are placed the whole
 effect is on the compositor.
 
 Beams sit on real grid lines, at multiples of `cellSize` from the edge, so they
-line up with the ruling exactly. Which lines exist depends on how big the
-container is, so the layer measures itself once with a `ResizeObserver` and
-picks from the lines that are actually on screen. The first and last are
+line up with the ruling exactly. Which lines exist depends on the container size. The layer measures itself once
+with a `ResizeObserver` and picks from the lines actually on screen. The first and last are
 skipped, because the layer clips and a beam on either would be sliced in half
 against the edge.
 

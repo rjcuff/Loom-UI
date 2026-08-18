@@ -70,9 +70,9 @@ Anything inside is clipped to the screen's radius.
 <IPad orientation="landscape" width={640} />
 ```
 
-`portrait` is 834 by 1194 points and `landscape` swaps them. The camera follows
-the top edge either way, and every other measurement is worked out against
-whichever side is the width, so the bezel stays the same thickness in both.
+`portrait` is 834 by 1194 points and `landscape` swaps them. The camera follows the top edge either way. Every other measurement works
+against whichever side is the width, so the bezel stays the same thickness in
+both.
 
 ### One number, and it shrinks
 
@@ -80,10 +80,9 @@ whichever side is the width, so the bezel stays the same thickness in both.
 and stops there, so it never pushes a narrow screen sideways.
 
 Everything else (the rim, both corner radii, the camera) is a real device
-point expressed as a share of the frame's own width, in container units. A
-percentage `border-radius` would go elliptical on a box this shape, and a scale
+point expressed as a share of the frame's own width, in container units. A percentage `border-radius` would go elliptical on a box this shape. A scale
 factor worked out in JavaScript would be wrong the moment the frame had to
-shrink to fit.
+shrink.
 
 The camera is drawn in the bezel rather than on the screen, which is where it
 sits and what keeps it clear of anything laid over the display.

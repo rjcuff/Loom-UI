@@ -64,15 +64,12 @@ import { UnfoldItem, UnfoldList } from "@/components/ui/unfold-list"
 </UnfoldList>
 ```
 
-A panel opens to whatever height its content happens to be. The row it sits in
-is a grid track animated from `0fr` to `1fr`, so nothing has to measure the
-content first, and nothing has a fixed height to keep in sync when the content
-changes, the window resizes, or a font finally loads.
+A panel opens to whatever height its content happens to be. The row it sits in is a grid track animated from `0fr` to `1fr`. Nothing has to measure the content first. There is no fixed height to keep in
+sync when the content changes, the window resizes, or a font finally loads.
 
 On top of that, the panel turns down onto the page from its top edge rather
-than sliding up from underneath. That is the difference between paper being
-unfolded and a drawer being opened, and it is why the content is tilted very
-slightly away from you until the fold finishes.
+than sliding up from underneath. That is the difference between paper unfolding and a drawer opening. It is why
+the content tilts very slightly away from you until the fold finishes.
 
 ### One at a time, or many
 
@@ -126,8 +123,8 @@ Any other `<div>` prop is forwarded.
 <Callout type="tip" title="Accessibility">
   Each row is a real button carrying `aria-expanded` and pointing at its panel
   with `aria-controls`; the panel is a labelled region pointing back at its row.
-  A closed panel is marked `inert`, so it is out of the tab order and off the
-  accessibility tree while still being able to animate closed, which `hidden`
-  would not allow. Under `prefers-reduced-motion` panels change state with no
-  fold at all.
+  A closed panel is marked `inert`. That takes it out of the tab order and off
+  the accessibility tree while it can still animate closed, which `hidden` would
+  not allow. Under `prefers-reduced-motion` panels change state with no fold at
+  all.
 </Callout>

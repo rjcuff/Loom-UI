@@ -58,9 +58,9 @@ or anywhere above it is enough.
 ### How it is sewn
 
 The visible path carries a dash pattern, because that is what makes it read as
-stitches rather than a line. Wiping a dashed path with its own dash offset is
-not possible (the two want the same property), so the reveal is a second copy
-of the path, stroked solid and wiped, used as a mask.
+stitches rather than a line. A dashed path cannot be wiped with its own dash offset, because both want the
+same property. So the reveal is a second copy of the path, stroked solid and
+wiped, used as a mask.
 
 `pathLength="1"` normalises the path, so the offset is simply the fraction left
 to sew and no geometry is ever measured.
@@ -77,9 +77,9 @@ round cap, one per stitch. Turn it off for bare thread.
 
 ### What drives it
 
-By default it follows its own box through the viewport: nothing at the moment
-its top edge sits on the bottom of the screen, fully sewn once its bottom edge
-has cleared the top.
+By default it follows its own box through the viewport. Nothing when its top
+edge sits on the bottom of the screen, fully sewn once its bottom edge clears
+the top.
 
 ```tsx
 <StitchPath target={sectionRef} />

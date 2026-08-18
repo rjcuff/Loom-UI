@@ -71,9 +71,9 @@ the whole effect.
 <ElasticTabs duration={420} />
 ```
 
-`duration` is the whole travel. The two halves are cut from it: the stretch
-holds for the first 45%, and each phase transitions over a little more than
-half, so they overlap rather than landing in two visible steps.
+`duration` is the whole travel. The two halves are cut from it. The stretch holds for the first 45%, and each
+phase transitions over a little more than half, so they overlap instead of
+landing in two visible steps.
 
 Positions come from `offsetLeft` and `offsetWidth`, re-read by a
 `ResizeObserver` on the group, so a row that wraps or a label that changes

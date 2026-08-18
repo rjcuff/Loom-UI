@@ -55,15 +55,15 @@ hold. Drag anywhere on the track and the rise follows the pointer.
 
 ### The rise
 
-The rise is centred on a dash rather than on the raw value. A peak landing
-between two dashes lifts one side harder than the other and leaves no middle to
-read the value off, which is the one thing the peak is there to do. Snapping it
+The rise is centred on a dash rather than on the raw value. A peak landing between two dashes lifts one side harder than the other and
+leaves no middle to read the value off. Reading the value is the one thing the
+peak is there for. Snapping it
 to the nearest dash means the same number rise on each side, always, with the
 readout sitting over the dash in the middle of them.
 
-From there each dash is measured in whole dashes from that middle and put
-through a cosine bell: full rise at the middle, none `reach` dashes out, eased
-across the gap so the peak has no corner at either end.
+Each dash is then measured in whole dashes from that middle and put through a
+cosine bell. Full rise at the middle, nothing `reach` dashes out, eased across
+the gap so the peak has no corner at either end.
 
 It stays deliberately small. Three dashes either side move, growing by about a
 third, which says where the value is without turning an input into a chart.
@@ -84,12 +84,12 @@ transition. A transition would be restarted on every pointer move and never
 arrive, which is what makes a slider feel like it is lagging behind the finger.
 
 On each frame the loop eases the value toward the target and hands back how fast
-it is travelling. That speed drives a ripple, `sin(distance - time)` falling
-away along the row, so a fast drag throws a strong wave, a slow one barely
-disturbs the dashes, and the row settles the moment the value does.
+it is travelling. That speed drives a ripple, `sin(distance - time)` falling away along the row. A
+fast drag throws a strong wave, a slow one barely disturbs the dashes, and the
+row settles the moment the value does.
 
 Dashes grow from the middle of the track in both directions, not up from its
-floor, so the peak reads as a shape rather than as a bar chart.
+floor. The peak reads as a shape rather than a bar chart.
 
 ### The number
 

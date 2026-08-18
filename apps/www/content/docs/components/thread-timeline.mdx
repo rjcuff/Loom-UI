@@ -73,9 +73,9 @@ by `line` and sitting at 55% of the screen height by default.
 ```
 
 A node lights the moment its own centre crosses that line, and the thread is
-drawn to the same place. Because both read the same number, a node can never
-light ahead of the thread that is meant to reach it, which is the thing that
-gives a timeline built out of separate observers away.
+drawn to the same place. Because both read the same number, a node can never light ahead of the thread
+meant to reach it. That mismatch is what gives away a timeline built out of
+separate observers.
 
 Measurement is one `requestAnimationFrame` per scroll event on the list, and
 the result is written straight to the DOM as a `--thread-progress` custom
@@ -94,8 +94,8 @@ however many entries there are.
 `meta` is the small line above the title, usually a date.
 
 Under `prefers-reduced-motion` the thread is drawn complete and every entry is
-marked reached on mount, so nothing is left greyed out waiting for a scroll
-that will not animate.
+marked reached on mount. Nothing is left greyed out waiting for a scroll that
+will not animate.
 
 ## Props
 

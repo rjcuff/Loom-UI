@@ -83,9 +83,8 @@ import { LoomLoader } from "@/components/ui/loom-loader"
 <LoomLoader />
 ```
 
-A spinner says only that something is happening. This one says the same thing,
-in the shape of the work: warp threads drawn down the frame one after another,
-and a shuttle carrying the weft across them.
+A spinner says only that something is happening. This one says the same thing in the shape of the work. Warp threads drawn down
+the frame one after another, and a shuttle carrying the weft across them.
 
 The threads are drawn and pulled off rather than faded in and out. A thread
 that fades is a thread that never went anywhere, and the loop stops reading as
@@ -116,9 +115,8 @@ inline indicator. Seven fills a page-level one. Past about nine the threads are
 closer together than the stroke is wide and the frame turns into a block.
 
 `duration` is one thread's whole trip, drawn and pulled off, and it also sets
-the shuttle's crossing. Each thread starts a fraction of that behind the one
-before it, which is what makes five lines read as a weave rather than as five
-lines blinking together.
+the shuttle's crossing. Each thread starts a fraction behind the one before it. That is what makes five
+lines read as a weave instead of five lines blinking together.
 
 ## Props
 
@@ -134,7 +132,7 @@ Any other `<div>` prop is forwarded.
 <Callout type="tip" title="Accessibility">
   The root is a `role="status"` with an accessible name, so a screen reader is
   told the page is busy without the SVG being described stroke by stroke. Under
-  `prefers-reduced-motion` the threads hold fully drawn: a woven glyph rather
-  than an empty frame, since a loader that renders as nothing is worse than one
-  that does not move.
+  `prefers-reduced-motion` the threads hold fully drawn. A woven glyph rather
+  than an empty frame, because a loader that renders as nothing is worse than
+  one that does not move.
 </Callout>

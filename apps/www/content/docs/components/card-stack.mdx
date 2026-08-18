@@ -56,20 +56,17 @@ import { CardStack, CardStackItem } from "@/components/ui/card-stack"
 </CardStack>
 ```
 
-Each card is pinned a little lower than the one before it, so a covered card
-keeps a strip of itself on screen and the pile reads as a pile rather than as
-one card that keeps changing its mind.
+Each card pins a little lower than the one before it. A covered card keeps a
+strip of itself on screen, so the pile reads as a pile rather than one card that
+keeps changing its mind.
 
-The scroll distance comes from the cards themselves. A card that is 320 pixels
-tall gives 320 pixels of travel before the next one has finished covering it,
-which means pacing the section is a matter of sizing its cards, not of tuning a
-number.
+The scroll distance comes from the cards themselves. A card 320 pixels tall gives 320 pixels of travel before the next one covers it.
+Pace the section by sizing the cards, not by tuning a number.
 
 ### How a card knows it is buried
 
-A pinned card stops moving, so it cannot measure its own progress. It is
-measured from the card _after_ it instead: how far that card has travelled from
-the bottom of the scrollport to its own pin is exactly how buried this one is.
+A pinned card stops moving, so it cannot measure its own progress. It is measured from the card _after_ it. How far that card has travelled to its
+own pin is exactly how buried this one is.
 The last card has nothing above it and never shrinks.
 
 That progress is written to each card as `--card-progress`, a number from `0`
@@ -96,14 +93,12 @@ the card in front through it has stopped looking like paper.
 
 `scale` shrinks a covered card, and it is off by default on purpose. A shrink
 only reads as depth if `peek` is large enough to show a real strip of the card
-behind it. At a 10 or 15 pixel peek all you see is the top edge, and an edge
-that is narrower than the card in front of it reads as a misalignment rather
-than as distance. Raise `peek` to 30 or more first, then add a `scale` of
+behind it. At a 10 or 15 pixel peek all you see is the top edge. An edge narrower than the
+card in front of it reads as a misalignment, not as distance. Raise `peek` to 30 or more first, then add a `scale` of
 around `0.04`, and check the two together.
 
-Progress is smoothstepped before it is written out, so a card starts and stops
-being buried gently instead of shrinking at a constant rate from the first
-pixel of scroll to the last.
+Progress is smoothstepped before it is written out. A card starts and stops
+being buried gently instead of shrinking at a flat rate the whole way down.
 
 ### The last card
 
@@ -112,13 +107,12 @@ pixel of scroll to the last.
 ```
 
 `tail` is how long the last card holds its pin once it lands, in pixels of
-scroll. Without it the stack ends the moment the last card arrives, and every
-pinned card is dragged up out of the panel on the final few pixels of scroll.
+scroll. Without it the stack ends the moment the last card arrives, and every pinned
+card gets dragged out of the panel on the last few pixels of scroll.
 
 The tail is a real element in the flow rather than padding on the wrapper, and
-it has to be. A sticky box is held inside its containing block's _content_ box,
-so padding on the stack buys the scroll distance without extending the range
-the cards are allowed to stay pinned in. The cards reach the end of that range
+it has to be. A sticky box is held inside its containing block's _content_ box. Padding on the
+stack buys scroll distance without extending how long the cards stay pinned. The cards reach the end of that range
 and get pushed, which looks exactly like the last card overshooting the line
 the others stopped on.
 
@@ -145,9 +139,8 @@ in.
 
 ### CardStackItem
 
-Takes any `<div>` prop. Put the card's own border, padding and fill on the
-element you render inside it, not on the item itself, so the sticky box stays
-the full width of the column.
+Takes any `<div>` prop. Put the card's border, padding and fill on the element inside it, not on the
+item. That keeps the sticky box the full width of the column.
 
 <Callout type="tip" title="Accessibility">
   Nothing is hidden or unmounted as the stack scrolls, so every card is in the

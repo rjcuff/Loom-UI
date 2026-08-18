@@ -65,9 +65,8 @@ import { Magnetic } from "@/components/ui/magnetic"
 </Magnetic>
 ```
 
-With `asChild` the styles and the pull merge onto your own element, so the
-button keeps its own hit target instead of gaining a wrapper that changes
-layout.
+With `asChild` the styles and the pull merge onto your own element. The button
+keeps its hit target instead of gaining a wrapper that changes layout.
 
 The pointer listener sits on `window`, not on the element. That is deliberate:
 the pull has to begin before the cursor arrives, or there is no effect to

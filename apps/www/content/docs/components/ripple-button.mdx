@@ -74,8 +74,8 @@ A ripple is feedback about where the press landed, not decoration, so it starts
 at the pointer rather than the middle of the button. Starting it in the middle
 every time throws away the only information the effect carries.
 
-Each circle is sized from the press point to the furthest corner, which is why
-a press near an edge throws a bigger circle than one in the middle. Both finish
+Each circle is sized from the press point to the furthest corner. That is why a
+press near an edge throws a bigger circle than one in the middle. Both finish
 covering the button, and both finish at the same moment, so the button never
 looks like it was pressed harder in one place than another.
 
@@ -98,9 +98,9 @@ stack, so a fast series of clicks overlaps instead of cutting the last one off.
 </RippleButton>
 ```
 
-`color` defaults to 22% of `currentColor`, which means a ripple picks up the
-button's own text colour and works on a dark face and a light one without being
-told which it is on. Keep whatever you replace it with translucent. The circle
+`color` defaults to 22% of `currentColor`. The ripple picks up the button's own
+text colour, so it works on a dark face and a light one without being told
+which. Keep whatever you replace it with translucent. The circle
 passes under the label, and a solid one takes the label with it.
 
 Under about `300`ms the ripple is gone before the eye finds it. Past about

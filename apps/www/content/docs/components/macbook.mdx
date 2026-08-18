@@ -67,9 +67,9 @@ housing.
 
 ### The parts that name it
 
-Two details do the work. The camera housing is bezel that intrudes into the
-display, so it is drawn over the screen rather than around it, cutting a hole
-in the frame instead puts a step in the bezel that no machine has.
+Two details do the work. The camera housing is bezel intruding into the display, so it is drawn over the
+screen rather than around it. Cutting a hole in the frame instead puts a step in
+the bezel that no real machine has.
 
 The base is a little wider than the lid, with a shallow scoop in its front
 edge. Without the overhang the lid reads as floating above a bar. With it, the
@@ -88,11 +88,10 @@ gap under it.
 `width` is a maximum, not a fixed size. The frame fills the space it is given
 and stops there, so it never pushes a narrow screen sideways.
 
-Everything else (the lid, both corner radii, the housing, the base, the
-scoop) is a real device point expressed as a share of the whole machine's
-width, in container units. That keeps the lid and the base in step with each
-other at any size, which a scale factor worked out in JavaScript would not once
-the frame had to shrink to fit.
+Everything else is a real device measurement expressed as a share of the
+machine's width, in container units. The lid, both corner radii, the housing,
+the base, the scoop. That keeps the lid and the base in step at any size. A scale factor worked out
+in JavaScript would not, once the frame had to shrink to fit.
 
 The component is not client-side. There is no state and no listener, so it
 renders on the server and costs nothing on the client.

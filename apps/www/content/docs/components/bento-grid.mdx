@@ -86,10 +86,9 @@ onto spans, because that would be a second grammar for the one you have.
 
 ### Arrival
 
-The grid owns the arrival, not the tiles. It hands each tile its place in the
-order by writing `--bento-delay` onto it, so a tile stays plain markup and can
-be wrapped, reordered or pulled into its own component without carrying an
-index around behind it.
+The grid owns the arrival, not the tiles. It writes `--bento-delay` onto each tile to give it a place in the order. The
+tile stays plain markup, so you can wrap it, reorder it or pull it into its own
+component without dragging an index along behind it.
 
 Nothing runs until the grid is on screen. A grid below the fold that has
 already played its arrival by the time you reach it has spent the effect on
@@ -106,9 +105,9 @@ assemble rather than deliberate.
 
 ### Composing
 
-`BentoCard` gives you a title, a description, an icon slot and a footer, and
-anything you pass as children lands between the description and the footer, so
-a chart or a mockup goes straight in.
+`BentoCard` gives you a title, a description, an icon slot and a footer.
+Children land between the description and the footer, so a chart or a mockup
+drops straight in.
 
 For the pointer highlight, wrap a tile in
 [`spotlight-card`](/docs/components/spotlight-card) rather than reaching for a
@@ -139,8 +138,7 @@ component and stays that way.
 Any other `<div>` prop is forwarded.
 
 <Callout type="tip" title="Accessibility">
-  Tiles are in the document from the start and only their opacity and offset
-  are animated, so nothing is hidden from a screen reader while it waits its
-  turn. Under `prefers-reduced-motion` the grid renders finished. Titles are
+  Tiles are in the document from the start. Only opacity and offset animate, so
+nothing is hidden from a screen reader while it waits its turn. Under `prefers-reduced-motion` the grid renders finished. Titles are
   `<h3>`, so check that fits under whatever heading the section already has.
 </Callout>

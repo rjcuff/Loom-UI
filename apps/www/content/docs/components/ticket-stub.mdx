@@ -56,9 +56,8 @@ own markup. The component supplies the paper, not the layout.
 
 ### The notches
 
-Two radial gradients, each transparent inside its radius, used as a mask. The
-masks are composited with `intersect` rather than stacked, because layered
-masks add up: without it only the last one declared takes a bite and the ticket
+Two radial gradients, each transparent inside its radius, used as a mask. The masks are composited with `intersect` rather than stacked, because layered
+masks add up. Without it only the last one declared takes a bite, and the ticket
 comes out notched at one end.
 
 ```tsx
@@ -78,9 +77,8 @@ notches unoutlined and the ticket flat.
 
 The outline is four drop shadows offset a pixel in each direction, in
 `--border`. A filter traces the element's alpha, so the line follows the curve
-of every bite rather than the rectangle the paper started as. It is also the
-only edge that survives dark mode, where a card the same value as the page
-behind it has nothing but its outline to separate them.
+of every bite rather than the rectangle the paper started as. It is also the only edge that survives dark mode, where a card the same value as
+the page has nothing but its outline to separate the two.
 
 ### Orientation
 
@@ -92,9 +90,8 @@ behind it has nothing but its outline to separate them.
 top to bottom. `vertical` is a tall one with the stub below and the tear
 running across. The notches and the perforation both follow.
 
-`lift={false}` drops the hover, which is a small rise and a fraction of a
-degree of rotation, enough to read as paper, not enough to read as a card
-game.
+`lift={false}` drops the hover. It is a small rise and a fraction of a degree of
+rotation. Enough to read as paper, not enough to read as a card game.
 
 ## Props
 
@@ -110,7 +107,7 @@ game.
 Any other `<div>` prop is forwarded.
 
 <Callout type="tip" title="Accessibility">
-  The perforation is `aria-hidden` and the mask only removes paper, never
-  content, but it does remove paper, so keep text clear of the notches or it
-  will be clipped along with them.
+  The perforation is `aria-hidden`, and the mask only removes paper, never
+  content. It does remove paper though, so keep text clear of the notches or it
+  gets clipped too.
 </Callout>

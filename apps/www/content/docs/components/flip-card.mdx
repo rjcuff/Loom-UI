@@ -78,9 +78,9 @@ between a card being thrown over and a card being rotated by a computer.
 
 ### Driving it yourself
 
-Left alone, the card owns its state and every click turns it. Pass `flipped`
-and it does what you say instead, which is what a game of pairs needs: a card
-turns face up when you pick it, and turns itself back when the pair misses.
+Left alone, the card owns its state and every click turns it. Pass `flipped` and it does what you say instead. That is what a game of pairs
+needs. A card turns face up when you pick it, and turns back when the pair
+misses.
 
 ```tsx
 const [flipped, setFlipped] = React.useState(false)
@@ -93,9 +93,8 @@ modes, so it is the right place to hang a sound or a counter.
 
 ### Axis and weight
 
-`axis="x"` turns the card top over bottom instead of left over right. `depth`
-is the perspective in pixels: lower numbers exaggerate the near edge and make
-the card feel like it is being thrown at you, higher numbers flatten it out.
+`axis="x"` turns the card top over bottom instead of left over right. `depth` is the perspective in pixels. Lower numbers exaggerate the near edge and
+make the card feel thrown at you. Higher numbers flatten it out.
 
 ```tsx
 <FlipCard axis="x" depth={600} duration={560} front={...} back={...} />
@@ -121,7 +120,6 @@ Any other `<button>` prop is forwarded, `disabled` included.
 
 <Callout type="tip" title="Accessibility">
   The card is a real `<button>` with `aria-pressed`, so it is reachable by
-  keyboard, announces which way it is turned, and needs no invented role. Both
-  faces stay in the DOM, and whichever one is turned away is `aria-hidden`, so
-  a screen reader reads the face you are looking at rather than both at once.
+  keyboard, announces which way it is turned, and needs no invented role. Both faces stay in the DOM. Whichever one is turned away is `aria-hidden`, so a
+screen reader reads the face you are looking at instead of both at once.
 </Callout>
