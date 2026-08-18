@@ -798,6 +798,52 @@ export const ui: Registry["items"] = [
     // CSS transition restarted on every pointer move never arrives.
   },
   {
+    name: "spool",
+    type: "registry:ui",
+    title: "Spool",
+    description:
+      "A container that changes shape to fit whatever it is showing, on a spring that carries its velocity through an interruption.",
+    registryDependencies: ["utils", "use-spring"],
+    files: [
+      {
+        path: "loomui/spool.tsx",
+        type: "registry:ui",
+      },
+    ],
+    cssVars: {
+      theme: {
+        "ease-out-quart": EASE_OUT_QUART,
+        "animate-spool-enter":
+          "spool-enter 180ms var(--ease-out-quart) 40ms both",
+        "animate-spool-leave":
+          "spool-leave 140ms var(--ease-out-quart) forwards",
+      },
+    },
+    css: {
+      // The shape lands first, then what is in it. Three stops so the fade is
+      // done before the travel is, and the contents settle rather than sliding
+      // to a stop.
+      "@keyframes spool-enter": {
+        from: {
+          opacity: "0",
+          translate: "0 4px",
+        },
+        "60%": {
+          opacity: "1",
+        },
+        to: {
+          opacity: "1",
+          translate: "0 0",
+        },
+      },
+      "@keyframes spool-leave": {
+        to: {
+          opacity: "0",
+        },
+      },
+    },
+  },
+  {
     name: "drawer",
     type: "registry:ui",
     title: "Drawer",

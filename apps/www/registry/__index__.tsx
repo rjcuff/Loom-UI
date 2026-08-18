@@ -484,6 +484,21 @@ export const Index: Record<string, any> = {
       return { default: mod.default ?? mod[exportName] }
     }),
   },
+  "spool": {
+    name: "spool",
+    type: "registry:ui",
+    title: "Spool",
+    description: "A container that changes shape to fit whatever it is showing, on a spring that carries its velocity through an interruption.",
+    dependencies: [],
+    registryDependencies: ["utils","use-spring"],
+    files: [{"path":"registry/loomui/spool.tsx","type":"registry:ui","target":""}],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/loomui/spool")
+      const exportName =
+        Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
+      return { default: mod.default ?? mod[exportName] }
+    }),
+  },
   "drawer": {
     name: "drawer",
     type: "registry:ui",
@@ -1084,6 +1099,21 @@ export const Index: Record<string, any> = {
       return { default: mod.default ?? mod[exportName] }
     }),
   },
+  "spool-demo": {
+    name: "spool-demo",
+    type: "registry:example",
+    title: "Spool Demo",
+    description: "A pill that changes shape to fit three different states, and can be interrupted part way.",
+    dependencies: [],
+    registryDependencies: ["@loomui/spool"],
+    files: [{"path":"registry/example/spool-demo.tsx","type":"registry:example","target":""}],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/example/spool-demo")
+      const exportName =
+        Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
+      return { default: mod.default ?? mod[exportName] }
+    }),
+  },
   "drawer-demo": {
     name: "drawer-demo",
     type: "registry:example",
@@ -1212,6 +1242,16 @@ export const Index: Record<string, any> = {
     dependencies: ["clsx","tailwind-merge"],
     registryDependencies: [],
     files: [{"path":"registry/lib/utils.ts","type":"registry:lib","target":""}],
+    component: null,
+  },
+  "use-spring": {
+    name: "use-spring",
+    type: "registry:lib",
+    title: "useSpring",
+    description: "A spring over named numbers, driven onto a callback rather than through state, that carries velocity across every retarget.",
+    dependencies: [],
+    registryDependencies: [],
+    files: [{"path":"registry/lib/use-spring.ts","type":"registry:lib","target":""}],
     component: null,
   },
   "use-in-viewport": {

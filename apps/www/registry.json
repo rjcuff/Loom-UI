@@ -810,6 +810,49 @@
       ]
     },
     {
+      "name": "spool",
+      "type": "registry:ui",
+      "title": "Spool",
+      "description": "A container that changes shape to fit whatever it is showing, on a spring that carries its velocity through an interruption.",
+      "registryDependencies": [
+        "utils",
+        "use-spring"
+      ],
+      "files": [
+        {
+          "path": "registry/loomui/spool.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "cssVars": {
+        "theme": {
+          "ease-out-quart": "cubic-bezier(0.165, 0.84, 0.44, 1)",
+          "animate-spool-enter": "spool-enter 180ms var(--ease-out-quart) 40ms both",
+          "animate-spool-leave": "spool-leave 140ms var(--ease-out-quart) forwards"
+        }
+      },
+      "css": {
+        "@keyframes spool-enter": {
+          "from": {
+            "opacity": "0",
+            "translate": "0 4px"
+          },
+          "60%": {
+            "opacity": "1"
+          },
+          "to": {
+            "opacity": "1",
+            "translate": "0 0"
+          }
+        },
+        "@keyframes spool-leave": {
+          "to": {
+            "opacity": "0"
+          }
+        }
+      }
+    },
+    {
       "name": "drawer",
       "type": "registry:ui",
       "title": "Drawer",
@@ -1603,6 +1646,21 @@
       ]
     },
     {
+      "name": "spool-demo",
+      "type": "registry:example",
+      "title": "Spool Demo",
+      "description": "A pill that changes shape to fit three different states, and can be interrupted part way.",
+      "registryDependencies": [
+        "@loomui/spool"
+      ],
+      "files": [
+        {
+          "path": "registry/example/spool-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
       "name": "drawer-demo",
       "type": "registry:example",
       "title": "Drawer Demo",
@@ -1734,6 +1792,18 @@
       "files": [
         {
           "path": "registry/lib/utils.ts",
+          "type": "registry:lib"
+        }
+      ]
+    },
+    {
+      "name": "use-spring",
+      "type": "registry:lib",
+      "title": "useSpring",
+      "description": "A spring over named numbers, driven onto a callback rather than through state, that carries velocity across every retarget.",
+      "files": [
+        {
+          "path": "registry/lib/use-spring.ts",
           "type": "registry:lib"
         }
       ]

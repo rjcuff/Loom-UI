@@ -34,6 +34,7 @@ Install any component with `npx shadcn@latest add @loomui/<name>`.
 - [Scramble Text](https://loomui.design/docs/components/scramble-text): A string that resolves out of random glyphs, left to right, on mount, on scroll, or on hover.
 - [Shimmer Skeleton](https://loomui.design/docs/components/shimmer-skeleton): A placeholder block with a shimmer that passes across it while the real thing loads.
 - [Split Flap](https://loomui.design/docs/components/split-flap): A departure board that flaps through its glyphs, one cell behind the last, until it lands on the value.
+- [Spool](https://loomui.design/docs/components/spool): A container that changes shape to fit whatever it is showing, on a spring that carries its velocity through an interruption.
 - [Spotlight Card](https://loomui.design/docs/components/spotlight-card): A surface with a soft highlight that follows the pointer and fades out on leave.
 - [Stagger Text](https://loomui.design/docs/components/stagger-text): Words or characters that rise into place one after another, on mount or on scroll.
 - [Sticker Peel](https://loomui.design/docs/components/sticker-peel): A card whose corner lifts off the page on hover, folded back over the crease to show its backing.

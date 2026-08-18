@@ -133,6 +133,11 @@ export const docsConfig: DocsConfig = {
           badge: { text: "New", variant: "new" },
         },
         {
+          title: "Spool",
+          href: "/docs/components/spool",
+          badge: { text: "New", variant: "new" },
+        },
+        {
           title: "Sticker Peel",
           href: "/docs/components/sticker-peel",
         },

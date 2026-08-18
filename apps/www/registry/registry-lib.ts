@@ -15,6 +15,19 @@ export const lib: Registry["items"] = [
     ],
   },
   {
+    name: "use-spring",
+    type: "registry:lib",
+    title: "useSpring",
+    description:
+      "A spring over named numbers, driven onto a callback rather than through state, that carries velocity across every retarget.",
+    files: [
+      {
+        path: "lib/use-spring.ts",
+        type: "registry:lib",
+      },
+    ],
+  },
+  {
     name: "use-in-viewport",
     type: "registry:lib",
     title: "useInViewport",

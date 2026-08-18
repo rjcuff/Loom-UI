@@ -1,0 +1,17 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "spool-demo",
+  "type": "registry:example",
+  "title": "Spool Demo",
+  "description": "A pill that changes shape to fit three different states, and can be interrupted part way.",
+  "registryDependencies": [
+    "@loomui/spool"
+  ],
+  "files": [
+    {
+      "path": "registry/example/spool-demo.tsx",
+      "content": "\"use client\"\n\nimport * as React from \"react\"\n\nimport { Spool, SpoolItem } from \"@/registry/loomui/spool\"\n\nconst STATES = [\"idle\", \"playing\", \"saved\"] as const\n\nconst BUTTON =\n  \"border-border bg-background hover:bg-accent hover:text-accent-foreground focus-visible:ring-ring/60 inline-flex cursor-pointer items-center justify-center rounded-md border px-3 py-1.5 text-xs font-medium transition-colors duration-150 ease focus-visible:ring-2 focus-visible:outline-none active:scale-[0.97]\"\n\n/** Five bars on five clocks, so the meter never pulses as one block. */\nfunction Meter() {\n  return (\n    <span aria-hidden=\"true\" className=\"flex items-end gap-[3px]\">\n      {[0.9, 1.4, 0.7, 1.2, 1].map((rate, index) => (\n        <span\n          key={index}\n          className=\"bg-accent animate-spool-meter w-[3px] rounded-full\"\n          style={{\n            height: \"0.9rem\",\n            animationDuration: `${rate}s`,\n            animationDelay: `${index * -0.31}s`,\n          }}\n        />\n      ))}\n    </span>\n  )\n}\n\nexport default function SpoolDemo() {\n  const [value, setValue] = React.useState<string>(\"idle\")\n\n  return (\n    <div className=\"flex flex-col items-center gap-7\">\n      <Spool value={value}>\n        <SpoolItem value=\"idle\">\n          <span className=\"bg-muted-foreground/40 size-2 rounded-full\" />\n          <span className=\"text-sm font-medium\">Weaving</span>\n        </SpoolItem>\n\n        <SpoolItem value=\"playing\" className=\"gap-3 pr-5\">\n          <span className=\"bg-accent/15 text-accent grid size-6 place-items-center rounded-full text-[0.6rem]\">\n            ▶\n          </span>\n          <span className=\"font-mono text-sm\">shuttle.mp3</span>\n          <Meter />\n        </SpoolItem>\n\n        <SpoolItem value=\"saved\">\n          <span className=\"bg-accent/15 text-accent grid size-5 place-items-center rounded-full text-[0.65rem]\">\n            ✓\n          </span>\n          <span className=\"text-sm font-medium\">Saved</span>\n        </SpoolItem>\n      </Spool>\n\n      <div className=\"flex gap-2\">\n        {STATES.map((state) => (\n          <button\n            key={state}\n            type=\"button\"\n            onClick={() => setValue(state)}\n            data-active={value === state ? \"\" : undefined}\n            className={`${BUTTON} data-active:border-accent/50 data-active:text-accent`}\n          >\n            {state}\n          </button>\n        ))}\n      </div>\n    </div>\n  )\n}\n",
+      "type": "registry:example"
+    }
+  ]
+}

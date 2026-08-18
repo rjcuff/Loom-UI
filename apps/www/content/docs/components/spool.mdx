@@ -1,0 +1,150 @@
+---
+title: Spool
+date: 2026-08-18
+description: A container that changes shape to fit whatever it is showing, on a spring that carries its velocity through an interruption.
+---
+
+<ComponentPreview name="spool-demo" />
+
+## Installation
+
+<Tabs defaultValue="cli">
+
+<TabsList>
+  <TabsTrigger value="cli">CLI</TabsTrigger>
+  <TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @loomui/spool
+```
+
+</TabsContent>
+
+<TabsContent value="manual">
+
+<Steps>
+
+<Step>Copy the component into your project.</Step>
+
+<ComponentSource name="spool" />
+
+<Step>Update the import paths to match your setup.</Step>
+
+</Steps>
+
+</TabsContent>
+
+</Tabs>
+
+## Usage
+
+```tsx
+import { Spool, SpoolItem } from "@/components/ui/spool"
+```
+
+```tsx
+const [state, setState] = React.useState("idle")
+
+<Spool value={state}>
+  <SpoolItem value="idle">Weaving</SpoolItem>
+  <SpoolItem value="saved">Saved</SpoolItem>
+</Spool>
+```
+
+Each `SpoolItem` is one state. Only the one matching `value` is in the DOM, and
+the shape follows whatever is inside it — the contents are never poured into a
+size decided in advance.
+
+### The size is never animated
+
+Animating `width` and `height` lays the page out on every frame, which is the
+one thing a shape-changing component must not do. So it doesn't.
+
+The box is set to its new size **once**, in the same commit that swaps the
+contents. Then the difference is played back as a transform: measure the old
+box, measure the new one, start at the ratio between them and spring to `1`.
+Layout happens once per change. Every frame in between belongs to the
+compositor.
+
+```tsx
+set({ sx: seen.width / last.width, sy: seen.height / last.height })
+to({ sx: 1, sy: 1 })
+```
+
+The root is only ever laid out at its natural size, so `offsetWidth` is always
+the size the contents want, never the size currently on screen. That is what
+makes a measurement taken halfway through a morph exact rather than a guess.
+
+### Undoing the distortion
+
+A scaled box distorts everything in it, so two things put it back.
+
+The contents sit in a wrapper scaled by the inverse, which holds them at their
+true size the whole way across. And the corner radius is divided per axis:
+
+```css
+border-radius: calc(r / sx) / calc(r / sy);
+```
+
+Two values either side of a slash are the horizontal and vertical radii. Divide
+each by its own axis and a corner that is being squashed stays a circle instead
+of turning into an oval. It is the one line that separates this from looking
+like a stretched picture of a pill.
+
+### Why a spring
+
+A curve has a fixed duration and a fixed start. Retarget one halfway and it
+begins again from a standstill, which is the exact moment a moving thing stops
+feeling like a moving thing.
+
+A spring has neither. It carries velocity, so a state that changes while the
+shape is still travelling keeps the motion it already had. Press the buttons
+above quickly and the shape never once stops to start again.
+
+```tsx
+<Spool spring={{ duration: 0.42, bounce: 0.18 }} />
+```
+
+`duration` is roughly how long it settles, and `bounce` is how far it goes past
+the target on the way. `0` arrives and stops. Above `0` overshoots and returns.
+Keep it under `0.3` for anything not meant to be playful.
+
+### The contents have their own clock
+
+The shape lands first and the contents settle into it a moment later, over
+180ms, from 4px down. The outgoing state is held just long enough to fade — out
+of the flow, so it never has a say in the size being measured.
+
+The enter is a three-stop keyframe: the fade completes at 60% so the tail of the
+travel is pure movement. Landing opacity and position together makes contents
+look like they stopped short.
+
+```tsx
+<Spool fade={140} />
+```
+
+## Parts
+
+| Part        | Description                                   |
+| ----------- | --------------------------------------------- |
+| `Spool`     | The shape. Owns the morph and the spring.     |
+| `SpoolItem` | One state's contents. Sized by what is in it. |
+
+## Props
+
+`Spool` takes everything a `div` takes, plus:
+
+| Prop     | Type            | Default                        | Description                             |
+| -------- | --------------- | ------------------------------ | --------------------------------------- |
+| `value`  | `string`        | required                       | Which state is showing.                 |
+| `spring` | `SpringOptions` | `{duration: .42, bounce: .18}` | How the shape travels.                  |
+| `radius` | `number`        | `999`                          | Corner radius, kept circular.           |
+| `fade`   | `number`        | `140`                          | Milliseconds the outgoing state leaves. |
+
+<Callout type="tip" title="Reduced motion">
+  With reduced motion the shape jumps straight to its new size and the contents
+  arrive without the settle. Nothing is animated, and nothing is hidden.
+</Callout>

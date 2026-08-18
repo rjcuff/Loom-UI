@@ -424,6 +424,20 @@ export const examples: Registry["items"] = [
     ],
   },
   {
+    name: "spool-demo",
+    type: "registry:example",
+    title: "Spool Demo",
+    description:
+      "A pill that changes shape to fit three different states, and can be interrupted part way.",
+    registryDependencies: ["@loomui/spool"],
+    files: [
+      {
+        path: "example/spool-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "drawer-demo",
     type: "registry:example",
     title: "Drawer Demo",
