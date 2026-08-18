@@ -33,6 +33,85 @@ export const docsConfig: DocsConfig = {
       ],
     },
     {
+      title: "Interface",
+      items: [
+        {
+          title: "Drawer",
+          href: "/docs/components/drawer",
+        },
+        {
+          title: "Spool",
+          href: "/docs/components/spool",
+          badge: { text: "New", variant: "new" },
+        },
+        {
+          title: "Progress Ring",
+          href: "/docs/components/progress-ring",
+          badge: { text: "New", variant: "new" },
+        },
+        {
+          title: "Elastic Tabs",
+          href: "/docs/components/elastic-tabs",
+        },
+        {
+          title: "Unfold List",
+          href: "/docs/components/unfold-list",
+        },
+        {
+          title: "Loom Slider",
+          href: "/docs/components/loom-slider",
+        },
+        {
+          title: "Compare Slider",
+          href: "/docs/components/compare-slider",
+        },
+        {
+          title: "Loom Loader",
+          href: "/docs/components/loom-loader",
+        },
+        {
+          title: "Shimmer Skeleton",
+          href: "/docs/components/shimmer-skeleton",
+        },
+        {
+          title: "Reading Progress",
+          href: "/docs/components/reading-progress",
+        },
+        {
+          title: "Bento Grid",
+          href: "/docs/components/bento-grid",
+        },
+        {
+          title: "Card Stack",
+          href: "/docs/components/card-stack",
+        },
+        {
+          title: "Marquee",
+          href: "/docs/components/marquee",
+        },
+        {
+          title: "Testimonial Wall",
+          href: "/docs/components/testimonial-wall",
+        },
+        {
+          title: "Terminal",
+          href: "/docs/components/terminal",
+        },
+        {
+          title: "Thread Timeline",
+          href: "/docs/components/thread-timeline",
+        },
+        {
+          title: "Ticket Stub",
+          href: "/docs/components/ticket-stub",
+        },
+        {
+          title: "Logo Loom",
+          href: "/docs/components/logo-loom",
+        },
+      ],
+    },
+    {
       title: "Text",
       items: [
         {
@@ -66,6 +145,35 @@ export const docsConfig: DocsConfig = {
       ],
     },
     {
+      title: "Effects",
+      items: [
+        {
+          title: "Magnetic",
+          href: "/docs/components/magnetic",
+        },
+        {
+          title: "Image Trail",
+          href: "/docs/components/image-trail",
+        },
+        {
+          title: "Sticker Peel",
+          href: "/docs/components/sticker-peel",
+        },
+        {
+          title: "Tilt Card",
+          href: "/docs/components/tilt-card",
+        },
+        {
+          title: "Spotlight Card",
+          href: "/docs/components/spotlight-card",
+        },
+        {
+          title: "Flip Card",
+          href: "/docs/components/flip-card",
+        },
+      ],
+    },
+    {
       title: "Buttons",
       items: [
         {
@@ -79,105 +187,6 @@ export const docsConfig: DocsConfig = {
         {
           title: "Confetti Button",
           href: "/docs/components/confetti-button",
-        },
-      ],
-    },
-    {
-      title: "Inputs",
-      items: [
-        {
-          title: "Loom Slider",
-          href: "/docs/components/loom-slider",
-        },
-        {
-          title: "Compare Slider",
-          href: "/docs/components/compare-slider",
-        },
-      ],
-    },
-    {
-      title: "Navigation",
-      items: [
-        {
-          title: "Drawer",
-          href: "/docs/components/drawer",
-        },
-        {
-          title: "Elastic Tabs",
-          href: "/docs/components/elastic-tabs",
-        },
-        {
-          title: "Unfold List",
-          href: "/docs/components/unfold-list",
-        },
-      ],
-    },
-    {
-      title: "Status",
-      items: [
-        {
-          title: "Progress Ring",
-          href: "/docs/components/progress-ring",
-          badge: { text: "New", variant: "new" },
-        },
-        {
-          title: "Spool",
-          href: "/docs/components/spool",
-          badge: { text: "New", variant: "new" },
-        },
-        {
-          title: "Loom Loader",
-          href: "/docs/components/loom-loader",
-        },
-        {
-          title: "Shimmer Skeleton",
-          href: "/docs/components/shimmer-skeleton",
-        },
-        {
-          title: "Reading Progress",
-          href: "/docs/components/reading-progress",
-        },
-      ],
-    },
-    {
-      title: "Cards",
-      items: [
-        {
-          title: "Spotlight Card",
-          href: "/docs/components/spotlight-card",
-        },
-        {
-          title: "Tilt Card",
-          href: "/docs/components/tilt-card",
-        },
-        {
-          title: "Flip Card",
-          href: "/docs/components/flip-card",
-        },
-        {
-          title: "Card Stack",
-          href: "/docs/components/card-stack",
-        },
-        {
-          title: "Ticket Stub",
-          href: "/docs/components/ticket-stub",
-        },
-      ],
-    },
-    {
-      title: "Cursor",
-      items: [
-        {
-          title: "Magnetic",
-          href: "/docs/components/magnetic",
-        },
-        {
-          title: "Image Trail",
-          href: "/docs/components/image-trail",
-        },
-        {
-          title: "Sticker Peel",
-          href: "/docs/components/sticker-peel",
         },
       ],
     },
@@ -199,35 +208,6 @@ export const docsConfig: DocsConfig = {
         {
           title: "Stitch Path",
           href: "/docs/components/stitch-path",
-        },
-      ],
-    },
-    {
-      title: "Sections",
-      items: [
-        {
-          title: "Bento Grid",
-          href: "/docs/components/bento-grid",
-        },
-        {
-          title: "Testimonial Wall",
-          href: "/docs/components/testimonial-wall",
-        },
-        {
-          title: "Marquee",
-          href: "/docs/components/marquee",
-        },
-        {
-          title: "Logo Loom",
-          href: "/docs/components/logo-loom",
-        },
-        {
-          title: "Thread Timeline",
-          href: "/docs/components/thread-timeline",
-        },
-        {
-          title: "Terminal",
-          href: "/docs/components/terminal",
         },
       ],
     },
