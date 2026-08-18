@@ -17,7 +17,7 @@ export interface SpoolProps extends Omit<
   spring?: SpringOptions
   /** Corner radius in pixels. Kept circular through the morph. */
   radius?: number
-  /** Milliseconds the outgoing content takes to leave. */
+  /** Milliseconds the outgoing state stays mounted for. */
   fade?: number
 }
 
@@ -25,6 +25,13 @@ export interface SpoolItemProps extends React.ComponentProps<"div"> {
   /** Matches the `value` on the parent. */
   value: string
 }
+
+/** Milliseconds the outgoing state takes to leave. */
+const EXIT_MS = 120
+/** Milliseconds a piece takes to arrive once the old state has gone. */
+const ENTER_MS = 170
+/** Milliseconds between one piece landing and the next. */
+const STAGGER_MS = 45
 
 /**
  * One state's contents. Sized by whatever is inside it: the shape follows the
@@ -68,7 +75,7 @@ export function Spool({
   children,
   spring,
   radius = 999,
-  fade = 140,
+  fade = 200,
   className,
   style,
   ...props
@@ -87,6 +94,10 @@ export function Spool({
   // arrives a beat after the last, which is the difference between contents
   // landing and contents appearing.
   const parts = React.useRef<HTMLElement[]>([])
+  /** When this morph began, and where the shape was on the last frame. */
+  const morphAt = React.useRef(0)
+  const held = React.useRef({ sx: 1, sy: 1 })
+  const topUp = React.useRef(0)
   // How far from 1 the scale was when this morph began. The contents are faded
   // against the shape's progress, not against a duration, so an interruption
   // cannot leave text showing at a size the box has not reached yet.
@@ -109,6 +120,8 @@ export function Spool({
       root.style.borderRadius = `${radius / sx}px / ${radius / sy}px`
       wrap.style.transform = `scale(${1 / sx}, ${1 / sy})`
 
+      held.current = { sx, sy }
+      const elapsed = performance.now() - morphAt.current
       const gap = Math.max(Math.abs(1 - sx), Math.abs(1 - sy))
       const progress =
         span.current > 0 ? 1 - Math.min(gap / span.current, 1) : 1
@@ -124,33 +137,41 @@ export function Spool({
         leaving.style.transform = `scale(${(sx / start.current.sx) * pull}, ${
           sy / start.current.sy
         })`
+
+        const going = Math.max(0, 1 - elapsed / EXIT_MS)
+        leaving.style.opacity = `${going}`
+        leaving.style.filter = going > 0 ? `blur(${(1 - going) * 4}px)` : ""
       }
 
       const active = activeRef.current
       if (!active) return
 
-      // The contents are held at true size while the box is not yet its size,
-      // so until the shape has most of the way caught up they are wider than
-      // what is holding them. Fading them against the shape's own progress is
-      // what stops a word being shown half clipped.
       // Scale, blur and opacity together. Any one of the three on its own reads
-      // as a fade; all three read as something arriving.
+      // as a fade; all three read as something arriving. The blur stays small:
+      // a wide one spreads badly and costs more than it is worth in Safari.
       const dress = (node: HTMLElement, t: number) => {
         node.style.opacity = `${t}`
-        node.style.transform = `scale(${0.92 + 0.08 * t})`
+        node.style.transform = `scale(${0.9 + 0.1 * t})`
         node.style.filter = t < 1 ? `blur(${(1 - t) * 3}px)` : ""
       }
 
-      // Growing, the new contents are wider than the shape holding them, so
-      // they wait for the room. Shrinking, the room is already there and there
-      // is nothing to wait for. Making both wait leaves a gap after the old
-      // state has gone and before the new one starts, which is the flicker.
-      const growing = start.current.sx < 1
-      const gate = growing ? 0.4 : 0.02
-      const over = growing ? 0.38 : 0.5
+      // One state at a time. The old one is gone before the new one starts, so
+      // the two are never both legible at once.
+      //
+      // On a clock rather than on the shape's progress. A spring covers most of
+      // its distance in the first third, so a handoff written in progress lands
+      // almost all at once and reads as a twitch.
+      const handoff = (offset: number) =>
+        Math.max(0, Math.min((elapsed - EXIT_MS - offset) / ENTER_MS, 1))
 
-      const at = (offset: number) =>
-        Math.max(0, Math.min((progress - gate - offset) / over, 1))
+      // Growing, the contents are still wider than the shape holding them, so
+      // they wait for the room as well. Shrinking, the room is already there.
+      const growing = start.current.sx < 1
+      const room = growing
+        ? Math.max(0, Math.min((progress - 0.3) / 0.4, 1))
+        : 1
+
+      const at = (index: number) => Math.min(handoff(index * STAGGER_MS), room)
 
       // Each piece lands a little after the one before it. Held against the
       // shape's progress rather than a clock, so an interruption never leaves
@@ -159,7 +180,7 @@ export function Spool({
         active.style.opacity = ""
         active.style.transform = ""
         active.style.filter = ""
-        parts.current.forEach((node, index) => dress(node, at(index * 0.07)))
+        parts.current.forEach((node, index) => dress(node, at(index)))
         return
       }
 
@@ -234,13 +255,28 @@ export function Spool({
     }
     span.current = Math.max(Math.abs(1 - from.sx), Math.abs(1 - from.sy))
     start.current = from
+    morphAt.current = performance.now()
 
     set(from, {
       sx: seenRate.width / last.width,
       sy: seenRate.height / last.height,
     })
     to({ sx: 1, sy: 1 })
-  }, [value, measure, peek, speed, set, to])
+
+    // The spring can settle before the contents have finished arriving, and it
+    // is the spring that drives the paint. Keep painting from the last shape
+    // until the handoff is done, or the pieces are stranded half there.
+    cancelAnimationFrame(topUp.current)
+    const window_ms =
+      EXIT_MS + ENTER_MS + parts.current.length * STAGGER_MS + 60
+    const finish = () => {
+      paint(held.current)
+      if (performance.now() - morphAt.current < window_ms) {
+        topUp.current = requestAnimationFrame(finish)
+      }
+    }
+    topUp.current = requestAnimationFrame(finish)
+  }, [value, measure, peek, speed, set, to, paint])
 
   React.useLayoutEffect(() => {
     if (previous.current === value) return
@@ -252,7 +288,13 @@ export function Spool({
     leaveTimer.current = window.setTimeout(() => setLeaving(null), fade)
   }, [value, fade])
 
-  React.useEffect(() => () => window.clearTimeout(leaveTimer.current), [])
+  React.useEffect(
+    () => () => {
+      window.clearTimeout(leaveTimer.current)
+      cancelAnimationFrame(topUp.current)
+    },
+    []
+  )
 
   // Content that changes size on its own, a font landing or a longer label,
   // moves the natural box without any change of state, so keep it current or
@@ -303,8 +345,7 @@ export function Spool({
             ref={leavingRef}
             aria-hidden="true"
             data-slot="spool-leaving"
-            className="animate-spool-leave pointer-events-none absolute inset-0 grid origin-center place-items-center overflow-hidden motion-reduce:hidden"
-            style={{ animationDuration: `${fade}ms` }}
+            className="pointer-events-none absolute inset-0 grid origin-center place-items-center overflow-hidden motion-reduce:hidden"
           >
             {outgoing}
           </div>

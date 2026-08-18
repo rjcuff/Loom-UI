@@ -4,15 +4,17 @@ import * as React from "react"
 import Link from "next/link"
 
 import { cn } from "@/lib/utils"
-import { LoomLoader } from "@/registry/loomui/loom-loader"
+import { CountUp } from "@/registry/loomui/count-up"
 import { ProgressRing } from "@/registry/loomui/progress-ring"
 import { SplitFlap } from "@/registry/loomui/split-flap"
 import { Spool, SpoolItem } from "@/registry/loomui/spool"
-import { Typewriter } from "@/registry/loomui/typewriter"
+import { StaggerText } from "@/registry/loomui/stagger-text"
 import { WeaveText } from "@/registry/loomui/weave-text"
 
 const BOARD = ["LISBON", "OSAKA", "REYKJAVIK", "MONTREAL"]
 const RING = [20, 64, 38, 92]
+const LINES = ["Woven in place", "One file, yours", "No runtime"]
+const TALLY = [48291, 1204, 99640]
 const SPOOL_STATES = ["idle", "playing", "saved"]
 
 /** Advances an index on an interval, and stops while the tab is hidden. */
@@ -38,6 +40,31 @@ function BoardPreview() {
 function RingPreview() {
   const index = useCycle(RING.length, 1900)
   return <ProgressRing value={RING[index]} size={104} label="Threads wound" />
+}
+
+// Both of these run once and stop, so the key remounts them to run again.
+function LinesPreview() {
+  const index = useCycle(LINES.length, 3400)
+  return (
+    <StaggerText
+      key={index}
+      by="character"
+      className="text-2xl font-semibold tracking-tight sm:text-3xl"
+    >
+      {LINES[index]}
+    </StaggerText>
+  )
+}
+
+function TallyPreview() {
+  const index = useCycle(TALLY.length, 3000)
+  return (
+    <CountUp
+      key={index}
+      value={TALLY[index]}
+      className="text-3xl font-semibold tracking-tight tabular-nums sm:text-4xl"
+    />
+  )
 }
 
 function SpoolPreview() {
@@ -89,10 +116,10 @@ const PIECES = [
     ),
   },
   {
-    name: "Loom Loader",
-    href: "/docs/components/loom-loader",
-    line: "Warp threads down, shuttle across.",
-    render: () => <LoomLoader className="size-16" />,
+    name: "Count Up",
+    href: "/docs/components/count-up",
+    line: "Numbers that arrive rather than appear.",
+    render: () => <TallyPreview />,
   },
   {
     name: "Progress Ring",
@@ -101,14 +128,10 @@ const PIECES = [
     render: () => <RingPreview />,
   },
   {
-    name: "Typewriter",
-    href: "/docs/components/typewriter",
-    line: "Types, waits, deletes, goes again.",
-    render: () => (
-      <span className="font-mono text-xl sm:text-2xl">
-        <Typewriter words={["ships today", "no runtime", "one file"]} />
-      </span>
-    ),
+    name: "Stagger Text",
+    href: "/docs/components/stagger-text",
+    line: "Letters landing one after another.",
+    render: () => <LinesPreview />,
   },
 ]
 

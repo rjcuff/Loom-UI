@@ -140,12 +140,14 @@ The stagger is held against progress too, not a clock. Interrupt the morph
 halfway and you never end up with half the pieces arriving and half already
 sitting there.
 
-How long they wait depends on which way the shape is going. Growing, the new
-contents are wider than the shape holding them, so they wait for the room.
-Shrinking, the room is already there and there is nothing to wait for, so they
-come straight in. Making both wait leaves a gap between the old state going and
-the new one arriving, and a gap that short does not read as a pause. It reads as
-a flicker.
+One state is on screen at a time. The old one is gone by 120ms, the pieces of
+the new one start there and land 45ms apart. Growing, they wait for the room as
+well, since the contents are still wider than the shape holding them.
+
+That handoff runs on a clock rather than on the shape's progress, and it is the
+one part of the component that does. A spring covers most of its distance in
+the first third, so a handoff written in progress fires almost at once and reads
+as a twitch rather than a handover.
 
 That is also why the fade is written onto the node instead of declared as a
 keyframe. A running animation outranks an inline style, so only one of them can
