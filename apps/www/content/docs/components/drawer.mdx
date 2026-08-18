@@ -1,7 +1,7 @@
 ---
 title: Drawer
 date: 2026-08-17
-description: A panel that comes in from any edge, with a notch you can take hold of and swipe it back out.
+description: A panel that comes in from any edge and covers most of the screen, with a notch you swipe to send it back out.
 ---
 
 <ComponentPreview name="drawer-demo" />
@@ -81,24 +81,23 @@ The preview above comes from the bottom, which is what a drawer is for most of
 the time. The other three edges are a prop away:
 
 ```tsx
-<DrawerContent side="left" peek="20rem" />
+<DrawerContent side="left" size="20rem" />
 ```
 
-The panel is always `full` in size and parked so that only `peek` of it shows.
-Dragging is then one number in one direction, and opening all the way is that
-same movement carried further rather than a resize part way through a gesture.
-
-`peek` is `60svh` from the top or bottom and `26rem` from the sides. `full` is
-`95svh`, or `95vw` from the sides: short of the whole screen on purpose, since a
-sliver of the page left showing is what keeps a drawer from reading as a new
-page. The corners round on the inside edge only.
+The drawer stands in for a modal, so it opens to one place and covers most of
+the screen: `size` is `90svh` from the top or bottom, `26rem` from the sides.
+Short of the whole screen on purpose, since the sliver of page left showing is
+what keeps the rounded edge on screen and what keeps a drawer from reading as a
+new page. The corners round on the inside edge only, and they stay rounded the
+whole time the panel is open.
 
 ### The animation
 
 The panel is only in the DOM while it is open, so a transition would have
 nothing to start from. It animates with keyframes instead, one frame each: the
 missing frame is taken from wherever the panel currently is, so the same pair
-serves all four edges whether the drawer is parked or dragged wide open.
+serves all four edges whether the drawer is at rest or part way out under a
+finger.
 
 Neither keyframe fills forwards, which matters more than it sounds. An animation
 that holds its last frame outranks inline styles for good, and the drag would
@@ -109,32 +108,24 @@ distance is covered in the first third of the duration, so 340ms in still reads
 as instant while the landing stays soft. Out is 220ms, and the drag settles on
 the same curve, so a snap and an open are plainly the same movement.
 
-### The swipe and the snap
+### The swipe
 
-The notch takes the gesture, in both directions. Pull it open and the panel
-follows the finger; push it toward the edge and it goes back out. Past `full`
-there is nowhere left to go, so the pull is resisted rather than refused.
+The notch takes the gesture. Push it toward its edge and the panel follows the
+finger; there is nowhere further in to go, so a pull the other way is resisted
+rather than refused.
 
-There are two places to land and nothing in between. Pull it and it opens to
-`full`; push it and it closes. A drag of less than 40px decides nothing and the
-panel goes back where it started, which is the one movement that is not a snap.
-A flick over 0.5px per millisecond decides on its own, however short it was.
+There is one place to land, so the drag decides one thing: the drawer goes, or
+it goes back where it started. Past 40px it closes. A drag shorter than that
+decides nothing and the panel settles back, which is the one movement that is
+not a snap. A flick over 0.5px per millisecond decides on its own, however short
+it was.
 
 When the decision is _closed_, the swipe carries on out and the drawer closes on
 arrival rather than snapping back to play an exit it has already been given.
 
-Nothing is remembered. A drawer dragged open and then closed opens at `peek`
-again next time, because where you left it last is not where you are starting
-from now.
-
-```tsx
-<DrawerContent expandable={false} />
-```
-
-That leaves one decision: the drawer is dragged closed, or it stays at `peek`.
-
 `translate` is written straight onto the node during a drag, so the gesture
-costs no renders and the panel sits exactly under the finger.
+costs no renders and the panel sits exactly under the finger. Nothing is
+remembered between openings: every open starts against the edge.
 
 ```tsx
 <DrawerContent showHandle={false} />
@@ -185,9 +176,7 @@ const [open, setOpen] = React.useState(false)
 | Prop          | Type                                     | Default           | Description                                 |
 | ------------- | ---------------------------------------- | ----------------- | ------------------------------------------- |
 | `side`        | `"top" \| "right" \| "bottom" \| "left"` | `"bottom"`        | Edge the drawer comes in from.              |
-| `peek`        | `string`                                 | `60svh` / `26rem` | How much shows when it opens.               |
-| `full`        | `string`                                 | `95svh` / `95vw`  | How much shows once it is dragged open.     |
-| `expandable`  | `boolean`                                | `true`            | Let the drag snap it open to `full`.        |
+| `size`        | `string`                                 | `90svh` / `26rem` | How much of the screen it covers.           |
 | `showHandle`  | `boolean`                                | `true`            | Draw the notch you take hold of.            |
 | `dismissible` | `boolean`                                | `true`            | Allow swipe, overlay and `Escape` to close. |
 | `className`   | `string`                                 | none              | Merged onto the panel.                      |

@@ -405,7 +405,7 @@
 
 /* One frame each, on purpose. The missing frame is taken from wherever the
    panel currently is, so the same pair serves all four edges and works whether
-   the drawer is parked at its peek or has been dragged wide open. */
+   the drawer is resting against its edge or part way out under a finger. */
 @keyframes drawer-in {
   from {
     translate: var(--drawer-closed);

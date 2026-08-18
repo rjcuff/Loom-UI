@@ -12,19 +12,15 @@ export interface DrawerContentProps extends React.ComponentProps<
 > {
   /** Edge the drawer comes in from. */
   side?: DrawerSide
-  /** How much shows when it opens. Any CSS length. */
-  peek?: string
-  /** How much shows once it is dragged open. Any CSS length. */
-  full?: string
-  /** Let the drag snap the drawer open to `full`. */
-  expandable?: boolean
+  /** How much of the screen it covers when open. Any CSS length. */
+  size?: string
   /** Draw the notch you take hold of. */
   showHandle?: boolean
   /** Allow the swipe, the overlay and `Escape` to close the drawer. */
   dismissible?: boolean
 }
 
-/** Off screen, as a share of the panel, which is `full` in size. */
+/** Off screen, as a share of the panel, which is `size` across. */
 const CLOSED: Record<DrawerSide, string> = {
   top: "0 -100%",
   bottom: "0 100%",
@@ -33,25 +29,17 @@ const CLOSED: Record<DrawerSide, string> = {
 }
 
 /**
- * The panel is always `full` in size and parked so that only `peek` of it shows.
- * Dragging is then one number in one direction, and opening all the way is the
- * same movement carried further rather than a resize.
+ * The panel covers most of the screen and, once open, rests against its edge.
+ * There is one place to be, so the drag is one number in one direction and the
+ * only thing it decides is whether the drawer stays or goes.
  */
 const PANEL: Record<DrawerSide, string> = {
-  top: "inset-x-0 top-0 h-[var(--drawer-full)] w-full flex-col rounded-b-2xl border-b",
+  top: "inset-x-0 top-0 h-[var(--drawer-size)] w-full rounded-b-2xl border-b",
   bottom:
-    "inset-x-0 bottom-0 h-[var(--drawer-full)] w-full flex-col rounded-t-2xl border-t",
-  left: "inset-y-0 left-0 h-full w-[var(--drawer-full)] flex-row rounded-r-2xl border-r",
+    "inset-x-0 bottom-0 h-[var(--drawer-size)] w-full rounded-t-2xl border-t",
+  left: "inset-y-0 left-0 h-full w-[var(--drawer-size)] rounded-r-2xl border-r",
   right:
-    "inset-y-0 right-0 h-full w-[var(--drawer-full)] flex-row rounded-l-2xl border-l",
-}
-
-/** The part of the panel that is on screen at rest, holding the content. */
-const STRIP: Record<DrawerSide, string> = {
-  top: "mt-auto w-full",
-  bottom: "w-full",
-  left: "ml-auto h-full",
-  right: "h-full",
+    "inset-y-0 right-0 h-full w-[var(--drawer-size)] rounded-l-2xl border-l",
 }
 
 const HANDLE_POSITION: Record<DrawerSide, string> = {
@@ -71,23 +59,13 @@ const CLOSE_MS = 220
 const FLICK = 0.5
 /** Travel before a drag counts as a decision rather than a nudge. */
 const DECIDE_PX = 40
+/** Open: the whole panel on screen, against its edge. */
+const AT_REST = "0 0"
 
 const isVertical = (side: DrawerSide) => side === "top" || side === "bottom"
 /** Which way is out: down and right are positive, up and left are not. */
 const outwardSign = (side: DrawerSide) =>
   side === "bottom" || side === "right" ? 1 : -1
-
-/** Where the panel sits when it is parked at `peek`, per side. */
-function restTranslate(side: DrawerSide, expanded: boolean) {
-  if (expanded) return "0 0"
-  const gap = "calc(var(--drawer-full) - var(--drawer-peek))"
-  const back = `calc(-1 * ${gap})`
-
-  if (side === "bottom") return `0 ${gap}`
-  if (side === "top") return `0 ${back}`
-  if (side === "right") return `${gap} 0`
-  return `${back} 0`
-}
 
 export const Drawer = DialogPrimitive.Root
 export const DrawerTrigger = DialogPrimitive.Trigger
@@ -112,8 +90,8 @@ export function DrawerOverlay({
 }
 
 /**
- * A panel that comes in from one edge, opens further when it is pulled, and
- * leaves when it is thrown back out.
+ * A panel that comes in from one edge and covers most of the screen, standing
+ * in for a modal, and leaves when it is thrown back out.
  *
  * The open and close animations are keyframes rather than transitions, since
  * the panel is only in the DOM while it is open and a transition has nothing to
@@ -124,9 +102,7 @@ export function DrawerOverlay({
  */
 export function DrawerContent({
   side = "bottom",
-  peek,
-  full,
-  expandable = true,
+  size,
   showHandle = true,
   dismissible = true,
   className,
@@ -138,7 +114,6 @@ export function DrawerContent({
   const outward = outwardSign(side)
 
   const panelRef = React.useRef<HTMLDivElement>(null)
-  const stripRef = React.useRef<HTMLDivElement>(null)
   const closeRef = React.useRef<HTMLButtonElement>(null)
   const origin = React.useRef(0)
   const offset = React.useRef(0)
@@ -150,7 +125,6 @@ export function DrawerContent({
   const held = React.useRef<number | null>(null)
   const timer = React.useRef(0)
   const [dragging, setDragging] = React.useState(false)
-  const [expanded, setExpanded] = React.useState(false)
 
   React.useEffect(() => () => window.clearTimeout(timer.current), [])
 
@@ -169,21 +143,15 @@ export function DrawerContent({
     node.style.translate = translate
   }
 
-  /** Distance out from fully open, in pixels: 0 is open, `size` is gone. */
+  /** How far the panel travels before it is gone, in pixels. */
   const measure = () => {
     const panel = panelRef.current
-    const strip = stripRef.current
-    const size = panel ? (vertical ? panel.offsetHeight : panel.offsetWidth) : 0
-    const shown = strip
-      ? vertical
-        ? strip.offsetHeight
-        : strip.offsetWidth
-      : size
-    return { size, rest: size - shown }
+    if (!panel) return 0
+    return vertical ? panel.offsetHeight : panel.offsetWidth
   }
 
   const handlePointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
-    if (!dismissible && !expandable) return
+    if (!dismissible) return
     if (held.current !== null) return
 
     event.currentTarget.setPointerCapture(event.pointerId)
@@ -192,9 +160,8 @@ export function DrawerContent({
     const node = panelRef.current
     if (node) node.style.transition = ""
 
-    const { rest } = measure()
     origin.current = vertical ? event.clientY : event.clientX
-    offset.current = expanded ? 0 : rest
+    offset.current = 0
     velocity.current = 0
     stamp.current = event.timeStamp
     setDragging(true)
@@ -210,17 +177,14 @@ export function DrawerContent({
       return
     }
 
-    const { size, rest } = measure()
+    const size = measure()
     const point = vertical ? event.clientY : event.clientX
-    const travelled = (point - origin.current) * outward
     const elapsed = Math.max(event.timeStamp - stamp.current, 1)
-    const base = expanded ? 0 : rest
-    const limit = expandable ? 0 : rest
 
-    let next = base + travelled
-    // Past fully open there is nowhere left to go, so the pull is resisted
-    // rather than refused and the panel never looks stuck to the finger.
-    if (next < limit) next = limit + (next - limit) / 6
+    let next = (point - origin.current) * outward
+    // Open is as far in as the panel goes, so a pull past it is resisted rather
+    // than refused and the panel never looks stuck to the finger.
+    if (next < 0) next = next / 6
 
     velocity.current = (next - offset.current) / elapsed
     stamp.current = event.timeStamp
@@ -236,15 +200,11 @@ export function DrawerContent({
       event.currentTarget.releasePointerCapture(event.pointerId)
     }
 
-    const { rest } = measure()
-    const travelled = offset.current - (expanded ? 0 : rest)
     const flicked = Math.abs(velocity.current) > FLICK
-
-    // Two places to land and nothing in between: pulled open, or gone. A drag
-    // that decides nothing goes back where it started, which is the one thing
-    // that is not a snap.
-    const away = flicked ? velocity.current > 0 : travelled > DECIDE_PX
-    const toward = flicked ? velocity.current < 0 : travelled < -DECIDE_PX
+    // One place to land, so the drag decides one thing: gone, or back where it
+    // started. A short drag that was not flicked decides nothing, which is the
+    // one movement that is not a snap.
+    const away = flicked ? velocity.current > 0 : offset.current > DECIDE_PX
 
     if (dismissible && away) {
       // The swipe carries on out and the drawer closes on arrival, rather than
@@ -259,32 +219,27 @@ export function DrawerContent({
       return
     }
 
-    const open = expandable && (toward || expanded)
     setDragging(false)
-    setExpanded(open)
-    glide(SETTLE_MS, restTranslate(side, open))
+    glide(SETTLE_MS, AT_REST)
   }
 
   /**
-   * Every open starts parked at `peek`, whatever the last one ended as. The
+   * Every open starts against the edge, whatever the last one ended as. The
    * drag writes `translate` onto the node itself, and React only rewrites that
-   * property when its own value changes, so a panel left open wide would come
-   * back open wide. The parked position is written out rather than cleared:
-   * clearing removes the value React put there, and React will not put it back
-   * until it changes.
+   * property when its own value changes, so a panel left part way out would
+   * come back part way out. The resting position is written rather than
+   * cleared: clearing removes the value React put there, and React will not put
+   * it back until it changes.
    */
   const park = () => {
     setDragging(false)
-    setExpanded(false)
     held.current = null
 
     const node = panelRef.current
     if (!node) return
     node.style.transition = ""
-    node.style.translate = restTranslate(side, false)
+    node.style.translate = AT_REST
   }
-
-  const grabbable = dismissible || expandable
 
   return (
     <DrawerPortal>
@@ -295,7 +250,6 @@ export function DrawerContent({
         ref={panelRef}
         data-slot="drawer-content"
         data-side={side}
-        data-expanded={expanded ? "" : undefined}
         data-dragging={dragging ? "" : undefined}
         // Radix fires this on every open, mounted fresh or not, which makes it
         // the one hook that is guaranteed to run per opening.
@@ -310,40 +264,28 @@ export function DrawerContent({
           dismissible ? undefined : (event) => event.preventDefault()
         }
         className={cn(
-          "bg-background text-foreground fixed z-50 flex border shadow-2xl outline-none",
+          "bg-background text-foreground fixed z-50 flex flex-col border shadow-2xl outline-none",
           PANEL[side],
           "data-[state=open]:animate-drawer-in data-[state=closed]:animate-drawer-out",
           "data-dragging:animate-none motion-reduce:animate-none",
-          expanded && "rounded-none",
           className
         )}
         style={
           {
-            "--drawer-peek": peek ?? (vertical ? "60svh" : "26rem"),
-            // Short of the whole screen on purpose: a sliver of the page left
-            // showing is what keeps a drawer from reading as a new page.
-            "--drawer-full": full ?? (vertical ? "95svh" : "95vw"),
+            // Short of the whole screen on purpose. The sliver of page left
+            // showing is what keeps the rounded edge on screen, and what keeps
+            // a drawer from reading as a new page.
+            "--drawer-size": size ?? (vertical ? "90svh" : "26rem"),
             "--drawer-closed": CLOSED[side],
-            translate: restTranslate(side, expanded),
+            translate: AT_REST,
           } as React.CSSProperties
         }
         {...props}
       >
         <div
-          ref={stripRef}
           data-slot="drawer-strip"
           className={cn(
-            "relative flex flex-col gap-4 p-6",
-            STRIP[side],
-            // Expanded, the panel is the strip. Parked, the strip is the part
-            // of it that is on screen, and the rest waits off the edge.
-            expanded
-              ? vertical
-                ? "h-full"
-                : "w-full"
-              : vertical
-                ? "h-[var(--drawer-peek)]"
-                : "w-[var(--drawer-peek)]",
+            "relative flex h-full w-full flex-col gap-4 overflow-y-auto p-6",
             showHandle && (vertical ? "pt-7" : "pl-7"),
             showHandle && side === "top" && "pt-6 pb-7",
             showHandle && side === "right" && "pr-6 pl-7",
@@ -359,12 +301,14 @@ export function DrawerContent({
               onPointerUp={handlePointerUp}
               onPointerCancel={handlePointerUp}
               className={cn(
-                "absolute flex items-center p-3",
+                "absolute z-10 flex items-center p-3",
                 HANDLE_POSITION[side],
-                grabbable ? "cursor-grab active:cursor-grabbing" : "cursor-auto"
+                dismissible
+                  ? "cursor-grab active:cursor-grabbing"
+                  : "cursor-auto"
               )}
               // The notch owns the gesture on its axis, so dragging it never
-              // scrolls whatever is behind the drawer as well.
+              // scrolls the panel or the page behind it as well.
               style={{ touchAction: "none" }}
             >
               <span
