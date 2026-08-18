@@ -469,6 +469,51 @@ export const Index: Record<string, any> = {
       return { default: mod.default ?? mod[exportName] }
     }),
   },
+  "loom-slider": {
+    name: "loom-slider",
+    type: "registry:ui",
+    title: "Loom Slider",
+    description: "A row of dashes where the one you are holding stands tallest, with the rise travelling the track as you drag.",
+    dependencies: [],
+    registryDependencies: ["utils"],
+    files: [{"path":"registry/loomui/loom-slider.tsx","type":"registry:ui","target":""}],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/loomui/loom-slider")
+      const exportName =
+        Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
+      return { default: mod.default ?? mod[exportName] }
+    }),
+  },
+  "drawer": {
+    name: "drawer",
+    type: "registry:ui",
+    title: "Drawer",
+    description: "A panel that comes in from any edge, with a notch you can take hold of and swipe it back out.",
+    dependencies: ["@radix-ui/react-dialog"],
+    registryDependencies: ["utils"],
+    files: [{"path":"registry/loomui/drawer.tsx","type":"registry:ui","target":""}],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/loomui/drawer")
+      const exportName =
+        Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
+      return { default: mod.default ?? mod[exportName] }
+    }),
+  },
+  "credit-card": {
+    name: "credit-card",
+    type: "registry:ui",
+    title: "Credit Card",
+    description: "A placeholder payment card with a contact plate, a number and an aurora drifting under the face.",
+    dependencies: [],
+    registryDependencies: ["utils"],
+    files: [{"path":"registry/loomui/credit-card.tsx","type":"registry:ui","target":""}],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/loomui/credit-card")
+      const exportName =
+        Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
+      return { default: mod.default ?? mod[exportName] }
+    }),
+  },
   "shimmer-skeleton": {
     name: "shimmer-skeleton",
     type: "registry:ui",
@@ -1019,6 +1064,51 @@ export const Index: Record<string, any> = {
     files: [{"path":"registry/example/loom-loader-demo.tsx","type":"registry:example","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/example/loom-loader-demo")
+      const exportName =
+        Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
+      return { default: mod.default ?? mod[exportName] }
+    }),
+  },
+  "loom-slider-demo": {
+    name: "loom-slider-demo",
+    type: "registry:example",
+    title: "Loom Slider Demo",
+    description: "A tension control read off the dash standing tallest.",
+    dependencies: [],
+    registryDependencies: ["@loomui/loom-slider"],
+    files: [{"path":"registry/example/loom-slider-demo.tsx","type":"registry:example","target":""}],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/example/loom-slider-demo")
+      const exportName =
+        Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
+      return { default: mod.default ?? mod[exportName] }
+    }),
+  },
+  "drawer-demo": {
+    name: "drawer-demo",
+    type: "registry:example",
+    title: "Drawer Demo",
+    description: "A drawer from the bottom edge, pulled open or swiped away by its notch.",
+    dependencies: [],
+    registryDependencies: ["@loomui/drawer"],
+    files: [{"path":"registry/example/drawer-demo.tsx","type":"registry:example","target":""}],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/example/drawer-demo")
+      const exportName =
+        Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
+      return { default: mod.default ?? mod[exportName] }
+    }),
+  },
+  "credit-card-demo": {
+    name: "credit-card-demo",
+    type: "registry:example",
+    title: "Credit Card Demo",
+    description: "The placeholder card with its aurora drifting.",
+    dependencies: [],
+    registryDependencies: ["@loomui/credit-card"],
+    files: [{"path":"registry/example/credit-card-demo.tsx","type":"registry:example","target":""}],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/example/credit-card-demo")
       const exportName =
         Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
       return { default: mod.default ?? mod[exportName] }

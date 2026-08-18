@@ -7,6 +7,10 @@ import { type Registry } from "shadcn/schema"
  */
 const EASE_OUT_QUART = "cubic-bezier(0.165, 0.84, 0.44, 1)"
 const EASE_IN_OUT_CUBIC = "cubic-bezier(0.645, 0.045, 0.355, 1)"
+/** Leaves fast and lands slowly, which is what makes a panel feel light. */
+const EASE_OUT_EXPO = "cubic-bezier(0.19, 1, 0.22, 1)"
+/** Covers most of the distance in the first third. The curve panels want. */
+const EASE_DRAWER = "cubic-bezier(0.32, 0.72, 0, 1)"
 /** Overshoots and settles back, which is what makes a turn feel thrown. */
 const EASE_BACK_OUT = "cubic-bezier(0.34, 1.32, 0.52, 1)"
 
@@ -773,6 +777,114 @@ export const ui: Registry["items"] = [
         },
         to: {
           transform: "translateX(var(--loom-sweep, 30px))",
+        },
+      },
+    },
+  },
+  {
+    name: "loom-slider",
+    type: "registry:ui",
+    title: "Loom Slider",
+    description:
+      "A row of dashes where the one you are holding stands tallest, with the rise travelling the track as you drag.",
+    registryDependencies: ["utils"],
+    files: [
+      {
+        path: "loomui/loom-slider.tsx",
+        type: "registry:ui",
+      },
+    ],
+    // No keyframes: the dashes are drawn from one animation frame loop, since a
+    // CSS transition restarted on every pointer move never arrives.
+  },
+  {
+    name: "drawer",
+    type: "registry:ui",
+    title: "Drawer",
+    description:
+      "A panel that comes in from any edge, with a notch you can take hold of and swipe it back out.",
+    dependencies: ["@radix-ui/react-dialog"],
+    registryDependencies: ["utils"],
+    files: [
+      {
+        path: "loomui/drawer.tsx",
+        type: "registry:ui",
+      },
+    ],
+    cssVars: {
+      theme: {
+        "ease-drawer": EASE_DRAWER,
+        // No fill mode on the way in: an animation holding its last frame
+        // outranks inline styles for good, and the drag has nothing to move.
+        "animate-drawer-in": "drawer-in 340ms var(--ease-drawer)",
+        "animate-drawer-out": "drawer-out 220ms var(--ease-drawer) forwards",
+        "animate-drawer-overlay-in":
+          "drawer-overlay-in 340ms var(--ease-drawer)",
+        "animate-drawer-overlay-out":
+          "drawer-overlay-out 220ms var(--ease-drawer) forwards",
+      },
+    },
+    css: {
+      // One frame each. The missing frame comes from wherever the panel is, so
+      // the same pair serves all four edges, parked or dragged wide open.
+      "@keyframes drawer-in": {
+        from: {
+          translate: "var(--drawer-closed)",
+        },
+      },
+      "@keyframes drawer-out": {
+        to: {
+          translate: "var(--drawer-closed)",
+        },
+      },
+      "@keyframes drawer-overlay-in": {
+        from: {
+          opacity: "0",
+        },
+        to: {
+          opacity: "1",
+        },
+      },
+      "@keyframes drawer-overlay-out": {
+        from: {
+          opacity: "1",
+        },
+        to: {
+          opacity: "0",
+        },
+      },
+    },
+  },
+  {
+    name: "credit-card",
+    type: "registry:ui",
+    title: "Credit Card",
+    description:
+      "A placeholder payment card with a contact plate, a number and an aurora drifting under the face.",
+    registryDependencies: ["utils"],
+    files: [
+      {
+        path: "loomui/credit-card.tsx",
+        type: "registry:ui",
+      },
+    ],
+    cssVars: {
+      theme: {
+        "ease-in-out-cubic": EASE_IN_OUT_CUBIC,
+        "animate-aurora-drift":
+          "aurora-drift 18s var(--ease-in-out-cubic) infinite",
+      },
+    },
+    css: {
+      "@keyframes aurora-drift": {
+        "0%, 100%": {
+          transform: "translate(0%, 0%) scale(1)",
+        },
+        "33%": {
+          transform: "translate(26%, -22%) scale(1.35)",
+        },
+        "66%": {
+          transform: "translate(-24%, 18%) scale(0.75)",
         },
       },
     },

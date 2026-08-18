@@ -1,0 +1,157 @@
+---
+title: Loom Slider
+date: 2026-08-17
+description: A row of dashes where the one you are holding stands tallest, with the rise travelling the track as you drag.
+---
+
+<ComponentPreview name="loom-slider-demo" />
+
+## Installation
+
+<Tabs defaultValue="cli">
+
+<TabsList>
+  <TabsTrigger value="cli">CLI</TabsTrigger>
+  <TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @loomui/loom-slider
+```
+
+</TabsContent>
+
+<TabsContent value="manual">
+
+<Steps>
+
+<Step>Copy the component into your project.</Step>
+
+<ComponentSource name="loom-slider" />
+
+<Step>Update the import paths to match your setup.</Step>
+
+</Steps>
+
+</TabsContent>
+
+</Tabs>
+
+## Usage
+
+```tsx
+import { LoomSlider } from "@/components/ui/loom-slider"
+```
+
+```tsx
+<LoomSlider label="Thread tension" defaultValue={50} />
+```
+
+There is no knob. The dash sitting at the value is the tallest thing on the
+track, its neighbours rise behind it, and that shape is what says where to take
+hold. Drag anywhere on the track and the rise follows the pointer.
+
+### The rise
+
+The rise is centred on a dash rather than on the raw value. A peak landing
+between two dashes lifts one side harder than the other and leaves no middle to
+read the value off, which is the one thing the peak is there to do. Snapping it
+to the nearest dash means the same number rise on each side, always, with the
+readout sitting over the dash in the middle of them.
+
+From there each dash is measured in whole dashes from that middle and put
+through a cosine bell: full rise at the middle, none `reach` dashes out, eased
+across the gap so the peak has no corner at either end.
+
+It stays deliberately small. Three dashes either side move, growing by about a
+third, which says where the value is without turning an input into a chart.
+
+`reach` is how far it spreads:
+
+```tsx
+<LoomSlider reach={6} tickCount={49} />
+```
+
+A wider reach gives a long, shallow swell. A reach of `2` lifts one dash each
+side of the value and nothing else.
+
+### The wave
+
+Every dash is drawn from a single animation frame loop rather than from a CSS
+transition. A transition would be restarted on every pointer move and never
+arrive, which is what makes a slider feel like it is lagging behind the finger.
+
+On each frame the loop eases the value toward the target and hands back how fast
+it is travelling. That speed drives a ripple, `sin(distance - time)` falling
+away along the row, so a fast drag throws a strong wave, a slow one barely
+disturbs the dashes, and the row settles the moment the value does.
+
+Dashes grow from the middle of the track in both directions, not up from its
+floor, so the peak reads as a shape rather than as a bar chart.
+
+### The number
+
+The readout sits over the dash the rise is centred on, so the number and the
+tallest dash never drift a few pixels apart. The number itself counts rather
+than snapping, which is what turns a jump across the track into the number
+travelling there.
+
+```tsx
+<LoomSlider
+  min={0}
+  max={5000}
+  step={50}
+  defaultValue={1500}
+  formatValue={(value) => `$${value.toLocaleString()}`}
+/>
+```
+
+`formatValue` also becomes the `aria-valuetext`, so the number a screen reader
+announces is the one on screen.
+
+### Controlled
+
+```tsx
+const [value, setValue] = React.useState(50)
+
+<LoomSlider value={value} onValueChange={setValue} />
+```
+
+Leave `value` out and the slider owns it. `defaultValue` sets where it starts.
+Every value is snapped to `step` from `min`, whether it arrived from a key, a
+drag, or a prop.
+
+## Props
+
+| Prop            | Type                        | Default   | Description                                       |
+| --------------- | --------------------------- | --------- | ------------------------------------------------- |
+| `value`         | `number`                    | none      | The current value. Leave out to run uncontrolled. |
+| `defaultValue`  | `number`                    | `50`      | Starting value when uncontrolled.                 |
+| `onValueChange` | `(value: number) => void`   | none      | Called with the value moved to.                   |
+| `min`           | `number`                    | `0`       | Low end of the range.                             |
+| `max`           | `number`                    | `100`     | High end of the range.                            |
+| `step`          | `number`                    | `1`       | Smallest movement the value can make.             |
+| `tickCount`     | `number`                    | `41`      | How many dashes are strung across the track.      |
+| `reach`         | `number`                    | `4`       | How many dashes either side the rise covers.      |
+| `showValue`     | `boolean`                   | `true`    | Show the number above the track.                  |
+| `formatValue`   | `(value: number) => string` | none      | Turns the value into the text shown.              |
+| `label`         | `string`                    | `"Value"` | Name for the slider.                              |
+| `disabled`      | `boolean`                   | `false`   | Render at the value, refuse input.                |
+| `className`     | `string`                    | none      | Merged onto the wrapper. Width goes here.         |
+
+Any other `<div>` prop is forwarded.
+
+<Callout type="tip" title="Accessibility">
+  The track is a real `role="slider"`, reachable by tab and moved with the
+  arrows, `Page Up`, `Page Down`, `Home` and `End`. Shift moves ten steps at
+  once. Give it a `label` that says what is being set. The dashes are decoration
+  and are hidden from assistive tech.
+</Callout>
+
+<Callout title="Reduced motion">
+  With reduced motion the frame loop never runs: the value lands where it is
+  put, the wave never appears, and the dashes take their lengths at once. What
+  is left is a still row with the peak sitting on the value.
+</Callout>

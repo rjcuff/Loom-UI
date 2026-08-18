@@ -162,6 +162,10 @@
   --ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
   --ease-in-out-cubic: cubic-bezier(0.645, 0.045, 0.355, 1);
   --ease-in-out-quart: cubic-bezier(0.77, 0, 0.175, 1);
+  /* Leaves immediately and lands without a bounce. The curve panels want:
+     nearly all the distance is covered in the first third of the duration,
+     which is why a 340ms drawer still reads as instant. */
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
 
   --animate-weave: weave 8s linear infinite;
   --animate-rise: rise 600ms var(--ease-out-quart) both;
@@ -198,6 +202,13 @@
   --animate-bento-rise: bento-rise 620ms var(--ease-out-quart)
     var(--bento-delay, 0ms) both;
   --animate-terminal-print: terminal-print 240ms var(--ease-out-quart) both;
+  /* No fill mode on the way in: an animation holding its last frame outranks
+     inline styles for good, and the drag has nothing left to move. */
+  --animate-drawer-in: drawer-in 340ms var(--ease-drawer);
+  --animate-drawer-out: drawer-out 220ms var(--ease-drawer) forwards;
+  --animate-drawer-overlay-in: drawer-overlay-in 340ms var(--ease-drawer);
+  --animate-drawer-overlay-out: drawer-overlay-out 220ms var(--ease-drawer)
+    forwards;
 }
 
 @keyframes weave {
@@ -389,6 +400,39 @@
   }
   to {
     transform: translateX(var(--loom-sweep, 30px));
+  }
+}
+
+/* One frame each, on purpose. The missing frame is taken from wherever the
+   panel currently is, so the same pair serves all four edges and works whether
+   the drawer is parked at its peek or has been dragged wide open. */
+@keyframes drawer-in {
+  from {
+    translate: var(--drawer-closed);
+  }
+}
+
+@keyframes drawer-out {
+  to {
+    translate: var(--drawer-closed);
+  }
+}
+
+@keyframes drawer-overlay-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes drawer-overlay-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
   }
 }
 

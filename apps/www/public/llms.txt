@@ -12,6 +12,8 @@ Install any component with `npx shadcn@latest add @loomui/<name>`.
 - [Compare Slider](https://loomui.design/docs/components/compare-slider): Two versions of the same frame, split by a divider you drag, or move with the arrow keys.
 - [Confetti Button](https://loomui.design/docs/components/confetti-button): A button that throws a handful of paper into the air on press, each piece lobbed on its own arc.
 - [Count Up](https://loomui.design/docs/components/count-up): A number that counts to its value when it scrolls into view, without a render per frame.
+- [Credit Card](https://loomui.design/docs/components/credit-card): A placeholder payment card with a contact plate, a number and an aurora drifting under the face.
+- [Drawer](https://loomui.design/docs/components/drawer): A panel that comes in from any edge, with a notch you can take hold of and swipe it back out.
 - [Elastic Tabs](https://loomui.design/docs/components/elastic-tabs): A tab group whose pill stretches to cover both tabs before it contracts onto the one you picked.
 - [Flip Card](https://loomui.design/docs/components/flip-card): A card with two faces that turns in 3D when it is clicked, controlled or on its own.
 - [Grid Backdrop](https://loomui.design/docs/components/grid-backdrop): An SVG grid with cells that fade in and out at a deterministic, seeded scatter.
@@ -23,6 +25,7 @@ Install any component with `npx shadcn@latest add @loomui/<name>`.
 - [Lens Text](https://loomui.design/docs/components/lens-text): Text held out of focus until the pointer passes over it like a magnifying glass.
 - [Logo Loom](https://loomui.design/docs/components/logo-loom): A logo row woven into place, every other mark arriving from the other side of the thread.
 - [Loom Loader](https://loomui.design/docs/components/loom-loader): Threads drawn through a frame and pulled off the far side, with a shuttle crossing them.
+- [Loom Slider](https://loomui.design/docs/components/loom-slider): A row of dashes where the one you are holding stands tallest, with the rise travelling the track as you drag.
 - [MacBook](https://loomui.design/docs/components/macbook): A laptop frame with the camera housing cut into the display and the scoop cut into its base.
 - [Magnetic](https://loomui.design/docs/components/magnetic): A wrapper that pulls its child toward the pointer as the pointer gets close.
 - [Marquee](https://loomui.design/docs/components/marquee): A seamless scrolling row or column, in either direction, that pauses on hover.

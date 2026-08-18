@@ -411,6 +411,46 @@ export const examples: Registry["items"] = [
     ],
   },
   {
+    name: "loom-slider-demo",
+    type: "registry:example",
+    title: "Loom Slider Demo",
+    description: "A tension control read off the dash standing tallest.",
+    registryDependencies: ["@loomui/loom-slider"],
+    files: [
+      {
+        path: "example/loom-slider-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "drawer-demo",
+    type: "registry:example",
+    title: "Drawer Demo",
+    description:
+      "A drawer from the bottom edge, pulled open or swiped away by its notch.",
+    registryDependencies: ["@loomui/drawer"],
+    files: [
+      {
+        path: "example/drawer-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "credit-card-demo",
+    type: "registry:example",
+    title: "Credit Card Demo",
+    description: "The placeholder card with its aurora drifting.",
+    registryDependencies: ["@loomui/credit-card"],
+    files: [
+      {
+        path: "example/credit-card-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "shimmer-skeleton-demo",
     type: "registry:example",
     title: "Shimmer Skeleton Demo",

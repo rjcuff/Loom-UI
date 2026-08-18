@@ -1,0 +1,200 @@
+---
+title: Drawer
+date: 2026-08-17
+description: A panel that comes in from any edge, with a notch you can take hold of and swipe it back out.
+---
+
+<ComponentPreview name="drawer-demo" />
+
+## Installation
+
+<Tabs defaultValue="cli">
+
+<TabsList>
+  <TabsTrigger value="cli">CLI</TabsTrigger>
+  <TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @loomui/drawer
+```
+
+</TabsContent>
+
+<TabsContent value="manual">
+
+<Steps>
+
+<Step>Install the dependency.</Step>
+
+```bash
+npm install @radix-ui/react-dialog
+```
+
+<Step>Copy the component into your project.</Step>
+
+<ComponentSource name="drawer" />
+
+<Step>Update the import paths to match your setup.</Step>
+
+</Steps>
+
+</TabsContent>
+
+</Tabs>
+
+## Usage
+
+```tsx
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/components/ui/drawer"
+```
+
+```tsx
+<Drawer>
+  <DrawerTrigger>Open</DrawerTrigger>
+  <DrawerContent side="bottom">
+    <DrawerHeader>
+      <DrawerTitle>Filters</DrawerTitle>
+      <DrawerDescription>Narrow the list down.</DrawerDescription>
+    </DrawerHeader>
+    <DrawerClose>Done</DrawerClose>
+  </DrawerContent>
+</Drawer>
+```
+
+Give every drawer a `DrawerTitle`. It is what a screen reader announces on the
+way in, and it is the one part of the panel that is not optional.
+
+### Sides and size
+
+The preview above comes from the bottom, which is what a drawer is for most of
+the time. The other three edges are a prop away:
+
+```tsx
+<DrawerContent side="left" peek="20rem" />
+```
+
+The panel is always `full` in size and parked so that only `peek` of it shows.
+Dragging is then one number in one direction, and opening all the way is that
+same movement carried further rather than a resize part way through a gesture.
+
+`peek` is `60svh` from the top or bottom and `26rem` from the sides. `full` is
+`95svh`, or `95vw` from the sides: short of the whole screen on purpose, since a
+sliver of the page left showing is what keeps a drawer from reading as a new
+page. The corners round on the inside edge only.
+
+### The animation
+
+The panel is only in the DOM while it is open, so a transition would have
+nothing to start from. It animates with keyframes instead, one frame each: the
+missing frame is taken from wherever the panel currently is, so the same pair
+serves all four edges whether the drawer is parked or dragged wide open.
+
+Neither keyframe fills forwards, which matters more than it sounds. An animation
+that holds its last frame outranks inline styles for good, and the drag would
+have nothing left to move.
+
+Both run on `cubic-bezier(0.32, 0.72, 0, 1)`, the curve panels want: most of the
+distance is covered in the first third of the duration, so 340ms in still reads
+as instant while the landing stays soft. Out is 220ms, and the drag settles on
+the same curve, so a snap and an open are plainly the same movement.
+
+### The swipe and the snap
+
+The notch takes the gesture, in both directions. Pull it open and the panel
+follows the finger; push it toward the edge and it goes back out. Past `full`
+there is nowhere left to go, so the pull is resisted rather than refused.
+
+There are two places to land and nothing in between. Pull it and it opens to
+`full`; push it and it closes. A drag of less than 40px decides nothing and the
+panel goes back where it started, which is the one movement that is not a snap.
+A flick over 0.5px per millisecond decides on its own, however short it was.
+
+When the decision is _closed_, the swipe carries on out and the drawer closes on
+arrival rather than snapping back to play an exit it has already been given.
+
+Nothing is remembered. A drawer dragged open and then closed opens at `peek`
+again next time, because where you left it last is not where you are starting
+from now.
+
+```tsx
+<DrawerContent expandable={false} />
+```
+
+That leaves one decision: the drawer is dragged closed, or it stays at `peek`.
+
+`translate` is written straight onto the node during a drag, so the gesture
+costs no renders and the panel sits exactly under the finger.
+
+```tsx
+<DrawerContent showHandle={false} />
+```
+
+Without the notch there is nothing to grab, and the drawer is closed with the
+overlay, `Escape` or a `DrawerClose`.
+
+### Holding it open
+
+```tsx
+<DrawerContent dismissible={false} />
+```
+
+The swipe, the overlay and `Escape` all stop closing it. Leave a `DrawerClose`
+in the panel, or the only way out is unmounting it.
+
+### Controlled
+
+```tsx
+const [open, setOpen] = React.useState(false)
+
+<Drawer open={open} onOpenChange={setOpen}>
+  <DrawerContent>…</DrawerContent>
+</Drawer>
+```
+
+`Drawer` is Radix's dialog root, so `open`, `defaultOpen`, `onOpenChange` and
+`modal` all behave the way they do there.
+
+## Parts
+
+| Part                | Description                                       |
+| ------------------- | ------------------------------------------------- |
+| `Drawer`            | The root. Owns the open state.                    |
+| `DrawerTrigger`     | Opens it. Renders a button.                       |
+| `DrawerContent`     | The panel itself, plus the overlay and the notch. |
+| `DrawerHeader`      | Stacks the title and description.                 |
+| `DrawerTitle`       | Required. The accessible name of the panel.       |
+| `DrawerDescription` | Optional supporting line.                         |
+| `DrawerFooter`      | Pushes its children to the far end of the panel.  |
+| `DrawerClose`       | Closes it. Renders a button.                      |
+
+## Props
+
+`DrawerContent` takes everything Radix's `Dialog.Content` takes, plus:
+
+| Prop          | Type                                     | Default           | Description                                 |
+| ------------- | ---------------------------------------- | ----------------- | ------------------------------------------- |
+| `side`        | `"top" \| "right" \| "bottom" \| "left"` | `"bottom"`        | Edge the drawer comes in from.              |
+| `peek`        | `string`                                 | `60svh` / `26rem` | How much shows when it opens.               |
+| `full`        | `string`                                 | `95svh` / `95vw`  | How much shows once it is dragged open.     |
+| `expandable`  | `boolean`                                | `true`            | Let the drag snap it open to `full`.        |
+| `showHandle`  | `boolean`                                | `true`            | Draw the notch you take hold of.            |
+| `dismissible` | `boolean`                                | `true`            | Allow swipe, overlay and `Escape` to close. |
+| `className`   | `string`                                 | none              | Merged onto the panel.                      |
+
+<Callout type="tip" title="Accessibility">
+  The panel is a real modal dialog: focus is trapped inside it, moved back to
+  the trigger on close, and the page behind it is inert. The notch is a pointer
+  affordance and is hidden from assistive tech, so nothing is reachable only by
+  swiping. With reduced motion the panel arrives without the slide.
+</Callout>

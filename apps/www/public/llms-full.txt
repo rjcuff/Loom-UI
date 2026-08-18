@@ -1224,6 +1224,753 @@ export default function CountUpDemo() {
 }
 
 
+===== COMPONENT: credit-card =====
+Title: Credit Card
+Description: A placeholder payment card with a contact plate, a number and an aurora drifting under the face.
+Install: npx shadcn@latest add @loomui/credit-card
+
+--- file: loomui/credit-card.tsx ---
+"use client"
+
+import * as React from "react"
+
+import { cn } from "@/lib/utils"
+
+export interface CreditCardProps extends React.ComponentProps<"div"> {
+  /** Which face to draw. Pair the two inside a flip card to turn it over. */
+  side?: "front" | "back"
+  /** Number across the face. Grouped however you write it. */
+  number?: string
+  /** Name along the bottom. */
+  holder?: string
+  /** Expiry along the bottom. */
+  expiry?: string
+  /** Security code on the back. */
+  cvv?: string
+  /** Name in the top left. */
+  issuer?: React.ReactNode
+  /** Mark in the bottom right. Leave it out for the placeholder rings. */
+  brand?: React.ReactNode
+  /** Show only the last four digits. */
+  masked?: boolean
+  /** Colours of the aurora drifting under the face. One blob per colour. */
+  colors?: string[]
+  /** Seconds for one drift of a single blob. */
+  duration?: number
+  /** Render the face still, with no drift. */
+  disabled?: boolean
+}
+
+const DEFAULT_COLORS = ["#22d3ee", "#6366f1", "#c084fc", "#14b8a6"]
+
+/**
+ * Fixed rather than random. A card is one frame, and four blobs placed by hand
+ * cover it better than four that happen to land in the same corner.
+ */
+const BLOB_LAYOUT = [
+  { size: 78, x: 12, y: 18, speed: 1, delay: 0 },
+  { size: 66, x: 82, y: 26, speed: 1.35, delay: -6 },
+  { size: 88, x: 68, y: 88, speed: 0.85, delay: -11 },
+  { size: 58, x: 34, y: 76, speed: 1.6, delay: -3 },
+]
+
+/** Keeps the last four and turns the rest into bullets, groups intact. */
+function maskNumber(number: string) {
+  const digits = number.replace(/\D/g, "")
+  const hidden = Math.max(digits.length - 4, 0)
+  let seen = 0
+
+  return number.replace(/\d/g, (digit) => {
+    seen += 1
+    return seen <= hidden ? "•" : digit
+  })
+}
+
+/** The contact plate. Drawn rather than shipped as an image so it stays sharp. */
+function Chip() {
+  return (
+    <svg
+      viewBox="0 0 40 30"
+      aria-hidden="true"
+      className="h-6 w-8 drop-shadow-sm sm:h-8 sm:w-11"
+    >
+      <rect
+        width="40"
+        height="30"
+        rx="5"
+        fill="url(#loom-card-chip)"
+        stroke="rgba(0,0,0,0.18)"
+      />
+      <g stroke="rgba(0,0,0,0.28)" strokeWidth="1" fill="none">
+        <path d="M14 0v30M26 0v30M0 11h14M26 11h14M0 19h14M26 19h14" />
+      </g>
+      <defs>
+        <linearGradient id="loom-card-chip" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#f6e7bd" />
+          <stop offset="45%" stopColor="#d9b466" />
+          <stop offset="100%" stopColor="#f2dfae" />
+        </linearGradient>
+      </defs>
+    </svg>
+  )
+}
+
+/** The contactless arcs. */
+function Contactless() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      aria-hidden="true"
+      className="size-4 opacity-80 sm:size-6"
+    >
+      <path d="M8 5.5a9 9 0 0 1 0 13" />
+      <path d="M12 3a13 13 0 0 1 0 18" />
+      <path d="M4 8.5a5 5 0 0 1 0 7" />
+    </svg>
+  )
+}
+
+/** Stands in for a network mark without pretending to be one. */
+function PlaceholderBrand() {
+  return (
+    <span aria-hidden="true" className="flex items-center">
+      <span className="size-5 rounded-full bg-white/70 sm:size-7" />
+      <span className="-ml-2 size-5 rounded-full bg-white/35 sm:-ml-3 sm:size-7" />
+    </span>
+  )
+}
+
+/**
+ * A placeholder payment card: the plate, the arcs, a number and a name, over an
+ * aurora that drifts under the whole face. Nothing here is a real card and no
+ * real mark is drawn, so it is safe to put in a mockup or a pricing page.
+ *
+ * The two faces are separate renders rather than a flip built in, so a card
+ * that turns is `<FlipCard front={<CreditCard />} back={<CreditCard side="back" />} />`
+ * and this component stays one face.
+ */
+export function CreditCard({
+  side = "front",
+  number = "4242 4242 4242 4242",
+  holder = "A. Placeholder",
+  expiry = "04/29",
+  cvv = "123",
+  issuer = "Loom",
+  brand,
+  masked = false,
+  colors = DEFAULT_COLORS,
+  duration = 16,
+  disabled = false,
+  className,
+  style,
+  ...props
+}: CreditCardProps) {
+  const palette = colors.length > 0 ? colors : DEFAULT_COLORS
+  const shown = masked ? maskNumber(number) : number
+
+  return (
+    <div
+      data-slot="credit-card"
+      data-side={side}
+      className={cn(
+        "relative isolate aspect-[1.586] w-full max-w-[26rem] overflow-hidden rounded-2xl bg-neutral-950 text-white shadow-xl ring-1 ring-white/15 select-none",
+        className
+      )}
+      style={style}
+      {...props}
+    >
+      {/* The aurora. Blobs sit well inside the face and drift across it, each
+          on its own cycle so the wash never reads as a loop. */}
+      <span
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 overflow-hidden"
+      >
+        {palette.map((color, index) => {
+          const blob = BLOB_LAYOUT[index % BLOB_LAYOUT.length]
+          return (
+            <span
+              key={`${color}-${index}`}
+              className={cn(
+                "absolute rounded-full opacity-70 blur-2xl",
+                !disabled && "animate-aurora-drift motion-reduce:animate-none"
+              )}
+              style={{
+                width: `${blob.size}%`,
+                height: `${blob.size}%`,
+                left: `${blob.x}%`,
+                top: `${blob.y}%`,
+                translate: "-50% -50%",
+                background: `radial-gradient(closest-side, ${color}, transparent)`,
+                animationDuration: `${duration * blob.speed}s`,
+                animationDelay: `${blob.delay}s`,
+              }}
+            />
+          )
+        })}
+      </span>
+
+      {/* Glass over the colour, which is what gives the face its plastic edge. */}
+      <span
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 bg-linear-to-br from-white/20 via-transparent to-black/30"
+      />
+
+      {side === "front" ? (
+        <div className="relative flex h-full flex-col justify-between p-4 sm:p-6">
+          <div className="flex items-start justify-between">
+            <span className="text-xs font-semibold tracking-[0.2em] uppercase sm:text-sm">
+              {issuer}
+            </span>
+            <Contactless />
+          </div>
+
+          <div className="flex flex-col gap-2.5 sm:gap-4">
+            <Chip />
+            {/* Tighter tracking on a phone: the number is the widest thing on
+                the face and it has to hold one line at any card width. */}
+            <div className="font-mono text-sm tracking-[0.1em] tabular-nums drop-shadow-sm sm:text-xl sm:tracking-[0.16em]">
+              {shown}
+            </div>
+          </div>
+
+          <div className="flex items-end justify-between gap-3 sm:gap-4">
+            <div className="min-w-0">
+              <div className="text-[0.5rem] tracking-[0.18em] uppercase opacity-60 sm:text-[0.6rem]">
+                Card holder
+              </div>
+              <div className="truncate text-xs font-medium tracking-wide uppercase sm:text-sm">
+                {holder}
+              </div>
+            </div>
+
+            <div className="shrink-0 text-right">
+              <div className="text-[0.5rem] tracking-[0.18em] uppercase opacity-60 sm:text-[0.6rem]">
+                Expires
+              </div>
+              <div className="text-xs font-medium tabular-nums sm:text-sm">
+                {expiry}
+              </div>
+            </div>
+
+            {brand ?? <PlaceholderBrand />}
+          </div>
+        </div>
+      ) : (
+        <div className="relative flex h-full flex-col">
+          <span
+            aria-hidden="true"
+            className="mt-5 h-9 w-full bg-black/85 sm:mt-7 sm:h-11"
+          />
+
+          <div className="flex items-center gap-2.5 px-4 pt-4 sm:gap-3 sm:px-6 sm:pt-5">
+            {/* The signature panel: a light strip with the code sitting on it,
+                the way it is printed rather than the way it is styled. */}
+            <span
+              aria-hidden="true"
+              className="h-7 flex-1 rounded-sm bg-[repeating-linear-gradient(45deg,rgba(255,255,255,0.9)_0_6px,rgba(226,232,240,0.9)_6px_12px)] sm:h-9"
+            />
+            <span className="rounded-sm bg-white px-2 py-0.5 font-mono text-xs text-neutral-900 tabular-nums sm:px-2.5 sm:py-1 sm:text-sm">
+              {cvv}
+            </span>
+          </div>
+
+          <div className="mt-auto flex items-end justify-between p-4 sm:p-6">
+            <p className="max-w-[60%] text-[0.5rem] leading-relaxed opacity-60 sm:text-[0.6rem]">
+              Not a real card. For layout and demonstration only.
+            </p>
+            {brand ?? <PlaceholderBrand />}
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
+
+===== EXAMPLE: credit-card-demo =====
+Title: Credit Card Demo
+
+--- file: example/credit-card-demo.tsx ---
+import { CreditCard } from "@/registry/loomui/credit-card"
+
+export default function CreditCardDemo() {
+  return (
+    <div className="w-full max-w-md px-6">
+      <CreditCard />
+    </div>
+  )
+}
+
+
+===== COMPONENT: drawer =====
+Title: Drawer
+Description: A panel that comes in from any edge, with a notch you can take hold of and swipe it back out.
+Install: npx shadcn@latest add @loomui/drawer
+
+--- file: loomui/drawer.tsx ---
+"use client"
+
+import * as React from "react"
+import * as DialogPrimitive from "@radix-ui/react-dialog"
+
+import { cn } from "@/lib/utils"
+
+export type DrawerSide = "top" | "right" | "bottom" | "left"
+
+export interface DrawerContentProps extends React.ComponentProps<
+  typeof DialogPrimitive.Content
+> {
+  /** Edge the drawer comes in from. */
+  side?: DrawerSide
+  /** How much shows when it opens. Any CSS length. */
+  peek?: string
+  /** How much shows once it is dragged open. Any CSS length. */
+  full?: string
+  /** Let the drag snap the drawer open to `full`. */
+  expandable?: boolean
+  /** Draw the notch you take hold of. */
+  showHandle?: boolean
+  /** Allow the swipe, the overlay and `Escape` to close the drawer. */
+  dismissible?: boolean
+}
+
+/** Off screen, as a share of the panel, which is `full` in size. */
+const CLOSED: Record<DrawerSide, string> = {
+  top: "0 -100%",
+  bottom: "0 100%",
+  left: "-100% 0",
+  right: "100% 0",
+}
+
+/**
+ * The panel is always `full` in size and parked so that only `peek` of it shows.
+ * Dragging is then one number in one direction, and opening all the way is the
+ * same movement carried further rather than a resize.
+ */
+const PANEL: Record<DrawerSide, string> = {
+  top: "inset-x-0 top-0 h-[var(--drawer-full)] w-full flex-col rounded-b-2xl border-b",
+  bottom:
+    "inset-x-0 bottom-0 h-[var(--drawer-full)] w-full flex-col rounded-t-2xl border-t",
+  left: "inset-y-0 left-0 h-full w-[var(--drawer-full)] flex-row rounded-r-2xl border-r",
+  right:
+    "inset-y-0 right-0 h-full w-[var(--drawer-full)] flex-row rounded-l-2xl border-l",
+}
+
+/** The part of the panel that is on screen at rest, holding the content. */
+const STRIP: Record<DrawerSide, string> = {
+  top: "mt-auto w-full",
+  bottom: "w-full",
+  left: "ml-auto h-full",
+  right: "h-full",
+}
+
+const HANDLE_POSITION: Record<DrawerSide, string> = {
+  top: "inset-x-0 bottom-0 justify-center",
+  bottom: "inset-x-0 top-0 justify-center",
+  left: "inset-y-0 right-0 flex-col justify-center",
+  right: "inset-y-0 left-0 flex-col justify-center",
+}
+
+/**
+ * Milliseconds. The settle is shorter than the way in, because the panel is
+ * already most of the way to where it is going by the time the finger lifts.
+ */
+const SETTLE_MS = 260
+const CLOSE_MS = 220
+/** Pixels per millisecond past which a flick decides the snap on its own. */
+const FLICK = 0.5
+/** Travel before a drag counts as a decision rather than a nudge. */
+const DECIDE_PX = 40
+
+const isVertical = (side: DrawerSide) => side === "top" || side === "bottom"
+/** Which way is out: down and right are positive, up and left are not. */
+const outwardSign = (side: DrawerSide) =>
+  side === "bottom" || side === "right" ? 1 : -1
+
+/** Where the panel sits when it is parked at `peek`, per side. */
+function restTranslate(side: DrawerSide, expanded: boolean) {
+  if (expanded) return "0 0"
+  const gap = "calc(var(--drawer-full) - var(--drawer-peek))"
+  const back = `calc(-1 * ${gap})`
+
+  if (side === "bottom") return `0 ${gap}`
+  if (side === "top") return `0 ${back}`
+  if (side === "right") return `${gap} 0`
+  return `${back} 0`
+}
+
+export const Drawer = DialogPrimitive.Root
+export const DrawerTrigger = DialogPrimitive.Trigger
+export const DrawerClose = DialogPrimitive.Close
+export const DrawerPortal = DialogPrimitive.Portal
+
+export function DrawerOverlay({
+  className,
+  ...props
+}: React.ComponentProps<typeof DialogPrimitive.Overlay>) {
+  return (
+    <DialogPrimitive.Overlay
+      data-slot="drawer-overlay"
+      className={cn(
+        "fixed inset-0 z-50 bg-black/45",
+        "data-[state=open]:animate-drawer-overlay-in data-[state=closed]:animate-drawer-overlay-out motion-reduce:animate-none",
+        className
+      )}
+      {...props}
+    />
+  )
+}
+
+/**
+ * A panel that comes in from one edge, opens further when it is pulled, and
+ * leaves when it is thrown back out.
+ *
+ * The open and close animations are keyframes rather than transitions, since
+ * the panel is only in the DOM while it is open and a transition has nothing to
+ * start from. Neither one fills forwards: an animation that holds its last
+ * frame outranks inline styles for good, which would leave the drag with
+ * nothing to move. The drag writes `translate` straight onto the node, so it
+ * costs no renders and the panel sits exactly under the finger.
+ */
+export function DrawerContent({
+  side = "bottom",
+  peek,
+  full,
+  expandable = true,
+  showHandle = true,
+  dismissible = true,
+  className,
+  children,
+  ...props
+}: DrawerContentProps) {
+  const vertical = isVertical(side)
+  const outward = outwardSign(side)
+
+  const panelRef = React.useRef<HTMLDivElement>(null)
+  const stripRef = React.useRef<HTMLDivElement>(null)
+  const closeRef = React.useRef<HTMLButtonElement>(null)
+  const origin = React.useRef(0)
+  const offset = React.useRef(0)
+  const stamp = React.useRef(0)
+  const velocity = React.useRef(0)
+  // The gesture runs off refs rather than state. State lands a render later,
+  // and a click quick enough to land inside that gap used to leave the drag
+  // switched on, which handed the panel to every hover that followed.
+  const held = React.useRef<number | null>(null)
+  const timer = React.useRef(0)
+  const [dragging, setDragging] = React.useState(false)
+  const [expanded, setExpanded] = React.useState(false)
+
+  React.useEffect(() => () => window.clearTimeout(timer.current), [])
+
+  const move = (distance: number) => {
+    const node = panelRef.current
+    if (!node) return
+    node.style.translate = vertical
+      ? `0 ${distance * outward}px`
+      : `${distance * outward}px 0`
+  }
+
+  const glide = (duration: number, translate: string) => {
+    const node = panelRef.current
+    if (!node) return
+    node.style.transition = `translate ${duration}ms var(--ease-drawer)`
+    node.style.translate = translate
+  }
+
+  /** Distance out from fully open, in pixels: 0 is open, `size` is gone. */
+  const measure = () => {
+    const panel = panelRef.current
+    const strip = stripRef.current
+    const size = panel ? (vertical ? panel.offsetHeight : panel.offsetWidth) : 0
+    const shown = strip
+      ? vertical
+        ? strip.offsetHeight
+        : strip.offsetWidth
+      : size
+    return { size, rest: size - shown }
+  }
+
+  const handlePointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
+    if (!dismissible && !expandable) return
+    if (held.current !== null) return
+
+    event.currentTarget.setPointerCapture(event.pointerId)
+    held.current = event.pointerId
+
+    const node = panelRef.current
+    if (node) node.style.transition = ""
+
+    const { rest } = measure()
+    origin.current = vertical ? event.clientY : event.clientX
+    offset.current = expanded ? 0 : rest
+    velocity.current = 0
+    stamp.current = event.timeStamp
+    setDragging(true)
+  }
+
+  const handlePointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
+    if (held.current !== event.pointerId) return
+
+    // A mouse that reports no button held is a mouse that let go somewhere this
+    // never heard about. Nothing should follow a pointer that is not pressed.
+    if (event.pointerType === "mouse" && event.buttons === 0) {
+      handlePointerUp(event)
+      return
+    }
+
+    const { size, rest } = measure()
+    const point = vertical ? event.clientY : event.clientX
+    const travelled = (point - origin.current) * outward
+    const elapsed = Math.max(event.timeStamp - stamp.current, 1)
+    const base = expanded ? 0 : rest
+    const limit = expandable ? 0 : rest
+
+    let next = base + travelled
+    // Past fully open there is nowhere left to go, so the pull is resisted
+    // rather than refused and the panel never looks stuck to the finger.
+    if (next < limit) next = limit + (next - limit) / 6
+
+    velocity.current = (next - offset.current) / elapsed
+    stamp.current = event.timeStamp
+    offset.current = Math.min(next, size)
+    move(offset.current)
+  }
+
+  const handlePointerUp = (event: React.PointerEvent<HTMLDivElement>) => {
+    if (held.current !== event.pointerId) return
+    held.current = null
+
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId)
+    }
+
+    const { rest } = measure()
+    const travelled = offset.current - (expanded ? 0 : rest)
+    const flicked = Math.abs(velocity.current) > FLICK
+
+    // Two places to land and nothing in between: pulled open, or gone. A drag
+    // that decides nothing goes back where it started, which is the one thing
+    // that is not a snap.
+    const away = flicked ? velocity.current > 0 : travelled > DECIDE_PX
+    const toward = flicked ? velocity.current < 0 : travelled < -DECIDE_PX
+
+    if (dismissible && away) {
+      // The swipe carries on out and the drawer closes on arrival, rather than
+      // snapping back to play an exit it has already been given. `dragging`
+      // stays on until then, since it is what keeps the exit keyframes off a
+      // panel that is already on its way out.
+      glide(CLOSE_MS, CLOSED[side])
+      timer.current = window.setTimeout(
+        () => closeRef.current?.click(),
+        CLOSE_MS - 20
+      )
+      return
+    }
+
+    const open = expandable && (toward || expanded)
+    setDragging(false)
+    setExpanded(open)
+    glide(SETTLE_MS, restTranslate(side, open))
+  }
+
+  const grabbable = dismissible || expandable
+
+  return (
+    <DrawerPortal>
+      <DrawerOverlay
+        onClick={dismissible ? undefined : (event) => event.preventDefault()}
+      />
+      <DialogPrimitive.Content
+        ref={panelRef}
+        data-slot="drawer-content"
+        data-side={side}
+        data-expanded={expanded ? "" : undefined}
+        data-dragging={dragging ? "" : undefined}
+        onEscapeKeyDown={
+          dismissible ? undefined : (event) => event.preventDefault()
+        }
+        onInteractOutside={
+          dismissible ? undefined : (event) => event.preventDefault()
+        }
+        className={cn(
+          "bg-background text-foreground fixed z-50 flex border shadow-2xl outline-none",
+          PANEL[side],
+          "data-[state=open]:animate-drawer-in data-[state=closed]:animate-drawer-out",
+          "data-dragging:animate-none motion-reduce:animate-none",
+          expanded && "rounded-none",
+          className
+        )}
+        style={
+          {
+            "--drawer-peek": peek ?? (vertical ? "60svh" : "26rem"),
+            // Short of the whole screen on purpose: a sliver of the page left
+            // showing is what keeps a drawer from reading as a new page.
+            "--drawer-full": full ?? (vertical ? "95svh" : "95vw"),
+            "--drawer-closed": CLOSED[side],
+            translate: restTranslate(side, expanded),
+          } as React.CSSProperties
+        }
+        {...props}
+      >
+        <div
+          ref={stripRef}
+          data-slot="drawer-strip"
+          className={cn(
+            "relative flex flex-col gap-4 p-6",
+            STRIP[side],
+            // Expanded, the panel is the strip. Parked, the strip is the part
+            // of it that is on screen, and the rest waits off the edge.
+            expanded
+              ? vertical
+                ? "h-full"
+                : "w-full"
+              : vertical
+                ? "h-[var(--drawer-peek)]"
+                : "w-[var(--drawer-peek)]",
+            showHandle && (vertical ? "pt-7" : "pl-7"),
+            showHandle && side === "top" && "pt-6 pb-7",
+            showHandle && side === "right" && "pr-6 pl-7",
+            showHandle && side === "left" && "pr-7 pl-6"
+          )}
+        >
+          {showHandle ? (
+            <div
+              aria-hidden="true"
+              data-slot="drawer-handle"
+              onPointerDown={handlePointerDown}
+              onPointerMove={handlePointerMove}
+              onPointerUp={handlePointerUp}
+              onPointerCancel={handlePointerUp}
+              className={cn(
+                "absolute flex items-center p-3",
+                HANDLE_POSITION[side],
+                grabbable ? "cursor-grab active:cursor-grabbing" : "cursor-auto"
+              )}
+              // The notch owns the gesture on its axis, so dragging it never
+              // scrolls whatever is behind the drawer as well.
+              style={{ touchAction: "none" }}
+            >
+              <span
+                className={cn(
+                  "bg-muted-foreground/40 rounded-full",
+                  vertical ? "h-1.5 w-12" : "h-12 w-1.5"
+                )}
+              />
+            </div>
+          ) : null}
+
+          {children}
+        </div>
+
+        {/* The swipe closes the drawer by pressing this, which keeps the panel
+            working whether the open state is Radix's or the caller's. */}
+        <DialogPrimitive.Close ref={closeRef} className="sr-only" tabIndex={-1}>
+          Close
+        </DialogPrimitive.Close>
+      </DialogPrimitive.Content>
+    </DrawerPortal>
+  )
+}
+
+export function DrawerHeader({
+  className,
+  ...props
+}: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="drawer-header"
+      className={cn("flex flex-col gap-1.5", className)}
+      {...props}
+    />
+  )
+}
+
+export function DrawerFooter({
+  className,
+  ...props
+}: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="drawer-footer"
+      className={cn("mt-auto flex flex-col gap-2", className)}
+      {...props}
+    />
+  )
+}
+
+export function DrawerTitle({
+  className,
+  ...props
+}: React.ComponentProps<typeof DialogPrimitive.Title>) {
+  return (
+    <DialogPrimitive.Title
+      data-slot="drawer-title"
+      className={cn("text-lg font-semibold tracking-tight", className)}
+      {...props}
+    />
+  )
+}
+
+export function DrawerDescription({
+  className,
+  ...props
+}: React.ComponentProps<typeof DialogPrimitive.Description>) {
+  return (
+    <DialogPrimitive.Description
+      data-slot="drawer-description"
+      className={cn("text-muted-foreground text-sm", className)}
+      {...props}
+    />
+  )
+}
+
+
+===== EXAMPLE: drawer-demo =====
+Title: Drawer Demo
+
+--- file: example/drawer-demo.tsx ---
+"use client"
+
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/registry/loomui/drawer"
+
+const BUTTON =
+  "border-border bg-background hover:bg-accent hover:text-accent-foreground focus-visible:ring-ring/60 inline-flex cursor-pointer items-center justify-center rounded-md border px-4 py-2 text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:outline-none active:scale-[0.98]"
+
+export default function DrawerDemo() {
+  return (
+    <Drawer>
+      <DrawerTrigger className={BUTTON}>Open drawer</DrawerTrigger>
+
+      <DrawerContent side="bottom">
+        <DrawerHeader>
+          <DrawerTitle>Thread settings</DrawerTitle>
+          <DrawerDescription>
+            Pull the notch up to open it out, or swipe it down to send it away.
+          </DrawerDescription>
+        </DrawerHeader>
+
+        <DrawerClose className={`${BUTTON} mt-auto self-start`}>
+          Done
+        </DrawerClose>
+      </DrawerContent>
+    </Drawer>
+  )
+}
+
+
 ===== COMPONENT: elastic-tabs =====
 Title: Elastic Tabs
 Description: A tab group whose pill stretches to cover both tabs before it contracts onto the one you picked.
@@ -3431,6 +4178,359 @@ export default function LoomLoaderDemo() {
           </span>
         </div>
       ))}
+    </div>
+  )
+}
+
+
+===== COMPONENT: loom-slider =====
+Title: Loom Slider
+Description: A row of dashes where the one you are holding stands tallest, with the rise travelling the track as you drag.
+Install: npx shadcn@latest add @loomui/loom-slider
+
+--- file: loomui/loom-slider.tsx ---
+"use client"
+
+import * as React from "react"
+
+import { cn } from "@/lib/utils"
+
+export interface LoomSliderProps extends Omit<
+  React.ComponentProps<"div">,
+  "onChange" | "defaultValue"
+> {
+  /** The current value. Leave it out to let the slider own it. */
+  value?: number
+  /** Starting value when the slider owns it. */
+  defaultValue?: number
+  /** Called with the value the slider moved to. */
+  onValueChange?: (value: number) => void
+  /** Low end of the range. */
+  min?: number
+  /** High end of the range. */
+  max?: number
+  /** Smallest movement the value can make. */
+  step?: number
+  /** How many dashes are strung across the track. */
+  tickCount?: number
+  /** How many dashes either side of the value the rise reaches across. */
+  reach?: number
+  /** Show the value above the dash it belongs to. */
+  showValue?: boolean
+  /** Turns the value into the text shown above the track. */
+  formatValue?: (value: number) => string
+  /** Name for the slider. */
+  label?: string
+  /** Render at the current value, but refuse input. */
+  disabled?: boolean
+}
+
+/**
+ * Dash lengths as a share of the track's height, measured from its middle. The
+ * row is close to even on purpose: the rise only has to say where the value is,
+ * and a dash that towers over its neighbours turns the track into a chart.
+ */
+const BASE_LENGTH = 30
+const PEAK_LENGTH = 36
+const WAVE_LENGTH = 8
+
+const clamp = (value: number, min: number, max: number) =>
+  Math.min(Math.max(value, min), max)
+
+/** Nearest step from `min`, so a range like 0–7 in 0.5s never lands off-grid. */
+function snap(value: number, min: number, max: number, step: number) {
+  if (step <= 0) return clamp(value, min, max)
+  return clamp(min + Math.round((value - min) / step) * step, min, max)
+}
+
+/**
+ * A bell centred on the value: 1 at the dash being held, 0 once `reach` dashes
+ * away. Cosine rather than linear, so the rise has no corner at either end.
+ */
+function bell(distance: number, reach: number) {
+  if (distance >= reach) return 0
+  return (1 + Math.cos((distance / reach) * Math.PI)) / 2
+}
+
+interface Motion {
+  /** Where the value is now, on its way to the target. */
+  value: number
+  /** Units per millisecond, which is how hard the wave is driven. */
+  velocity: number
+  /** Milliseconds the slider has been in motion, used as the wave's phase. */
+  elapsed: number
+}
+
+/**
+ * Every dash is drawn from this on each frame, so the slider is animated in one
+ * place. Nothing is left to a CSS transition: the value changes on every
+ * pointer move, and a transition that restarts each frame never arrives.
+ *
+ * `tau` is roughly how long it takes to close the gap to the target. Frames are
+ * measured rather than counted, so the ease is the same on a 60Hz panel and a
+ * 120Hz one.
+ */
+function useMotion(target: number, tau: number): Motion {
+  const [motion, setMotion] = React.useState<Motion>({
+    value: target,
+    velocity: 0,
+    elapsed: 0,
+  })
+  const valueRef = React.useRef(target)
+  const elapsedRef = React.useRef(0)
+
+  React.useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      valueRef.current = target
+      setMotion({ value: target, velocity: 0, elapsed: elapsedRef.current })
+      return
+    }
+
+    let frame = 0
+    let last = performance.now()
+
+    const tick = (now: number) => {
+      // A tab that was in the background hands back one enormous frame. Capping
+      // it keeps that from registering as a violent flick of the slider.
+      const delta = Math.min(now - last, 64)
+      last = now
+      elapsedRef.current += delta
+
+      const remaining = target - valueRef.current
+      if (Math.abs(remaining) < 0.002) {
+        valueRef.current = target
+        setMotion({ value: target, velocity: 0, elapsed: elapsedRef.current })
+        return
+      }
+
+      const movement = remaining * (1 - Math.exp(-delta / tau))
+      valueRef.current += movement
+      setMotion({
+        value: valueRef.current,
+        velocity: movement / delta,
+        elapsed: elapsedRef.current,
+      })
+      frame = requestAnimationFrame(tick)
+    }
+
+    frame = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(frame)
+  }, [target, tau])
+
+  return motion
+}
+
+/**
+ * A row of dashes rather than a bar. The dash on the value is the longest and
+ * its neighbours fall away behind it, each growing from the middle of the track
+ * rather than standing on its floor, so the grab point reads without a knob
+ * drawn over it. Moving the value sends a wave out along the row, and the wave
+ * is as strong as the movement that caused it.
+ */
+export function LoomSlider({
+  value,
+  defaultValue = 50,
+  onValueChange,
+  min = 0,
+  max = 100,
+  step = 1,
+  tickCount = 41,
+  reach = 4,
+  showValue = true,
+  formatValue,
+  label = "Value",
+  disabled = false,
+  className,
+  style,
+  ...props
+}: LoomSliderProps) {
+  const [own, setOwn] = React.useState(() => snap(defaultValue, min, max, step))
+  const [dragging, setDragging] = React.useState(false)
+  const trackRef = React.useRef<HTMLDivElement>(null)
+
+  const isControlled = value !== undefined
+  const current = snap(isControlled ? value : own, min, max, step)
+  // Close behind the finger while dragging, unhurried when a key or a click
+  // sends the value somewhere else and the trip is worth watching.
+  const motion = useMotion(current, dragging ? 45 : 110)
+
+  const span = max === min ? 1 : max - min
+  /** Where the value sits along the track, 0 to 1. */
+  const ratio = clamp((motion.value - min) / span, 0, 1)
+  /** How hard the row is being driven, 0 at rest and 1 on a fast drag. */
+  const energy = clamp((Math.abs(motion.velocity) / span) * 900, 0, 1)
+
+  // The rise is centred on a dash, not on the raw ratio. Landing between two
+  // dashes lifts one side harder than the other and leaves no middle to read
+  // the value off, which is the whole job of the peak.
+  const peakIndex = Math.round(ratio * (tickCount - 1))
+  const peak = tickCount > 1 ? peakIndex / (tickCount - 1) : 0
+
+  const commit = (next: number) => {
+    if (disabled) return
+    const snapped = snap(next, min, max, step)
+    if (!isControlled) setOwn(snapped)
+    if (snapped !== current) onValueChange?.(snapped)
+  }
+
+  const commitFromPointer = (event: React.PointerEvent<HTMLDivElement>) => {
+    const track = trackRef.current
+    if (!track) return
+    const rect = track.getBoundingClientRect()
+    const position = (event.clientX - rect.left) / rect.width
+    commit(min + clamp(position, 0, 1) * (max - min))
+  }
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    const distance = event.shiftKey ? step * 10 : step
+
+    if (event.key === "ArrowLeft" || event.key === "ArrowDown") {
+      commit(current - distance)
+    } else if (event.key === "ArrowRight" || event.key === "ArrowUp") {
+      commit(current + distance)
+    } else if (event.key === "PageDown") {
+      commit(current - step * 10)
+    } else if (event.key === "PageUp") {
+      commit(current + step * 10)
+    } else if (event.key === "Home") {
+      commit(min)
+    } else if (event.key === "End") {
+      commit(max)
+    } else {
+      return
+    }
+
+    event.preventDefault()
+  }
+
+  const ticks = React.useMemo(
+    () => Array.from({ length: tickCount }, (_, index) => index),
+    [tickCount]
+  )
+
+  return (
+    <div
+      data-slot="loom-slider"
+      data-dragging={dragging ? "" : undefined}
+      className={cn("w-full select-none", disabled && "opacity-50", className)}
+      style={style}
+      {...props}
+    >
+      {showValue ? (
+        <div className="relative mb-3 h-7">
+          <div
+            data-slot="loom-slider-value"
+            className="text-foreground absolute top-0 text-2xl leading-none font-semibold tabular-nums"
+            // Sits over the dash the rise is centred on, so the number and the
+            // tallest dash are never a few pixels out from each other.
+            style={{ left: `${peak * 100}%`, translate: "-50% 0" }}
+          >
+            {formatValue
+              ? formatValue(current)
+              : Math.round(motion.value).toLocaleString()}
+          </div>
+        </div>
+      ) : null}
+
+      <div
+        ref={trackRef}
+        role="slider"
+        tabIndex={disabled ? -1 : 0}
+        aria-label={label}
+        aria-orientation="horizontal"
+        aria-valuemin={min}
+        aria-valuemax={max}
+        aria-valuenow={current}
+        aria-valuetext={formatValue?.(current)}
+        aria-disabled={disabled || undefined}
+        onKeyDown={handleKeyDown}
+        onPointerDown={(event) => {
+          if (disabled) return
+          event.currentTarget.setPointerCapture(event.pointerId)
+          setDragging(true)
+          commitFromPointer(event)
+        }}
+        onPointerMove={(event) => {
+          if (dragging) commitFromPointer(event)
+        }}
+        onPointerUp={(event) => {
+          event.currentTarget.releasePointerCapture(event.pointerId)
+          setDragging(false)
+        }}
+        onPointerCancel={() => setDragging(false)}
+        className={cn(
+          "ring-ring/60 relative flex h-16 items-center justify-between rounded-md outline-none focus-visible:ring-2",
+          disabled ? "cursor-not-allowed" : "cursor-ew-resize"
+        )}
+        // Only the axis the value travels on is claimed, so a finger that lands
+        // on the track can still scroll the page.
+        style={{ touchAction: "pan-y" }}
+      >
+        {ticks.map((index) => {
+          const position = tickCount > 1 ? index / (tickCount - 1) : 0
+          // A whole number of dashes from the peak, so the same count rises on
+          // either side and `reach` means the same thing however many dashes
+          // are strung across the track.
+          const distance = Math.abs(index - peakIndex)
+          const weight = bell(distance, reach)
+
+          // The wave: one travelling ripple, strongest at the value and dying
+          // out along the row, and only there at all while the value moves.
+          const ripple =
+            energy > 0
+              ? Math.sin(distance * 0.8 - motion.elapsed * 0.013) *
+                Math.exp(-distance / 7) *
+                WAVE_LENGTH *
+                energy
+              : 0
+
+          const length = Math.max(
+            6,
+            BASE_LENGTH + weight * PEAK_LENGTH + ripple
+          )
+
+          return (
+            <span
+              key={index}
+              aria-hidden="true"
+              data-slot="loom-slider-tick"
+              className={cn(
+                "w-[3px] shrink-0 rounded-full",
+                index <= peakIndex ? "bg-primary" : "bg-muted-foreground"
+              )}
+              style={{
+                height: `${length}%`,
+                opacity: clamp(0.45 + weight * 0.55 + energy * 0.1, 0, 1),
+              }}
+            />
+          )
+        })}
+      </div>
+    </div>
+  )
+}
+
+
+===== EXAMPLE: loom-slider-demo =====
+Title: Loom Slider Demo
+
+--- file: example/loom-slider-demo.tsx ---
+"use client"
+
+import * as React from "react"
+
+import { LoomSlider } from "@/registry/loomui/loom-slider"
+
+export default function LoomSliderDemo() {
+  const [value, setValue] = React.useState(50)
+
+  return (
+    <div className="w-full max-w-md px-6">
+      <LoomSlider
+        label="Thread tension"
+        value={value}
+        onValueChange={setValue}
+      />
     </div>
   )
 }

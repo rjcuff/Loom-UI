@@ -1,0 +1,17 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "loom-slider-demo",
+  "type": "registry:example",
+  "title": "Loom Slider Demo",
+  "description": "A tension control read off the dash standing tallest.",
+  "registryDependencies": [
+    "@loomui/loom-slider"
+  ],
+  "files": [
+    {
+      "path": "registry/example/loom-slider-demo.tsx",
+      "content": "\"use client\"\n\nimport * as React from \"react\"\n\nimport { LoomSlider } from \"@/registry/loomui/loom-slider\"\n\nexport default function LoomSliderDemo() {\n  const [value, setValue] = React.useState(50)\n\n  return (\n    <div className=\"w-full max-w-md px-6\">\n      <LoomSlider\n        label=\"Thread tension\"\n        value={value}\n        onValueChange={setValue}\n      />\n    </div>\n  )\n}\n",
+      "type": "registry:example"
+    }
+  ]
+}

@@ -100,12 +100,10 @@ export const docsConfig: DocsConfig = {
         {
           title: "Ripple Button",
           href: "/docs/components/ripple-button",
-          badge: { text: "New", variant: "new" },
         },
         {
           title: "Confetti Button",
           href: "/docs/components/confetti-button",
-          badge: { text: "New", variant: "new" },
         },
       ],
     },
@@ -125,18 +123,26 @@ export const docsConfig: DocsConfig = {
           href: "/docs/components/compare-slider",
         },
         {
+          title: "Loom Slider",
+          href: "/docs/components/loom-slider",
+          badge: { text: "New", variant: "new" },
+        },
+        {
+          title: "Drawer",
+          href: "/docs/components/drawer",
+          badge: { text: "New", variant: "new" },
+        },
+        {
           title: "Sticker Peel",
           href: "/docs/components/sticker-peel",
         },
         {
           title: "Elastic Tabs",
           href: "/docs/components/elastic-tabs",
-          badge: { text: "New", variant: "new" },
         },
         {
           title: "Ticket Stub",
           href: "/docs/components/ticket-stub",
-          badge: { text: "New", variant: "new" },
         },
         {
           title: "Magnetic",
@@ -153,12 +159,10 @@ export const docsConfig: DocsConfig = {
         {
           title: "Unfold List",
           href: "/docs/components/unfold-list",
-          badge: { text: "New", variant: "new" },
         },
         {
           title: "Image Trail",
           href: "/docs/components/image-trail",
-          badge: { text: "New", variant: "new" },
         },
       ],
     },
@@ -168,12 +172,10 @@ export const docsConfig: DocsConfig = {
         {
           title: "Loom Loader",
           href: "/docs/components/loom-loader",
-          badge: { text: "New", variant: "new" },
         },
         {
           title: "Shimmer Skeleton",
           href: "/docs/components/shimmer-skeleton",
-          badge: { text: "New", variant: "new" },
         },
       ],
     },
@@ -191,22 +193,18 @@ export const docsConfig: DocsConfig = {
         {
           title: "Logo Loom",
           href: "/docs/components/logo-loom",
-          badge: { text: "New", variant: "new" },
         },
         {
           title: "Bento Grid",
           href: "/docs/components/bento-grid",
-          badge: { text: "New", variant: "new" },
         },
         {
           title: "Card Stack",
           href: "/docs/components/card-stack",
-          badge: { text: "New", variant: "new" },
         },
         {
           title: "Terminal",
           href: "/docs/components/terminal",
-          badge: { text: "New", variant: "new" },
         },
       ],
     },
@@ -214,19 +212,21 @@ export const docsConfig: DocsConfig = {
       title: "Mockups",
       items: [
         {
+          title: "Credit Card",
+          href: "/docs/components/credit-card",
+          badge: { text: "New", variant: "new" },
+        },
+        {
           title: "iPhone",
           href: "/docs/components/iphone",
-          badge: { text: "New", variant: "new" },
         },
         {
           title: "iPad",
           href: "/docs/components/ipad",
-          badge: { text: "New", variant: "new" },
         },
         {
           title: "MacBook",
           href: "/docs/components/macbook",
-          badge: { text: "New", variant: "new" },
         },
       ],
     },
