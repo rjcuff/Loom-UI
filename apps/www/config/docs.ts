@@ -52,10 +52,6 @@ export const docsConfig: DocsConfig = {
           href: "/docs/components/scramble-text",
         },
         {
-          title: "Count Up",
-          href: "/docs/components/count-up",
-        },
-        {
           title: "Lens Text",
           href: "/docs/components/lens-text",
         },
@@ -63,30 +59,9 @@ export const docsConfig: DocsConfig = {
           title: "Split Flap",
           href: "/docs/components/split-flap",
         },
-      ],
-    },
-    {
-      title: "Backgrounds",
-      items: [
         {
-          title: "Grid Backdrop",
-          href: "/docs/components/grid-backdrop",
-        },
-        {
-          title: "Spotlight Card",
-          href: "/docs/components/spotlight-card",
-        },
-        {
-          title: "Grid Beams",
-          href: "/docs/components/grid-beams",
-        },
-        {
-          title: "Aurora Backdrop",
-          href: "/docs/components/aurora-backdrop",
-        },
-        {
-          title: "Stitch Path",
-          href: "/docs/components/stitch-path",
+          title: "Count Up",
+          href: "/docs/components/count-up",
         },
       ],
     },
@@ -108,8 +83,69 @@ export const docsConfig: DocsConfig = {
       ],
     },
     {
-      title: "Interaction",
+      title: "Inputs",
       items: [
+        {
+          title: "Loom Slider",
+          href: "/docs/components/loom-slider",
+        },
+        {
+          title: "Compare Slider",
+          href: "/docs/components/compare-slider",
+        },
+      ],
+    },
+    {
+      title: "Navigation",
+      items: [
+        {
+          title: "Drawer",
+          href: "/docs/components/drawer",
+        },
+        {
+          title: "Elastic Tabs",
+          href: "/docs/components/elastic-tabs",
+        },
+        {
+          title: "Unfold List",
+          href: "/docs/components/unfold-list",
+        },
+      ],
+    },
+    {
+      title: "Status",
+      items: [
+        {
+          title: "Progress Ring",
+          href: "/docs/components/progress-ring",
+          badge: { text: "New", variant: "new" },
+        },
+        {
+          title: "Spool",
+          href: "/docs/components/spool",
+          badge: { text: "New", variant: "new" },
+        },
+        {
+          title: "Loom Loader",
+          href: "/docs/components/loom-loader",
+        },
+        {
+          title: "Shimmer Skeleton",
+          href: "/docs/components/shimmer-skeleton",
+        },
+        {
+          title: "Reading Progress",
+          href: "/docs/components/reading-progress",
+        },
+      ],
+    },
+    {
+      title: "Cards",
+      items: [
+        {
+          title: "Spotlight Card",
+          href: "/docs/components/spotlight-card",
+        },
         {
           title: "Tilt Card",
           href: "/docs/components/tilt-card",
@@ -119,71 +155,50 @@ export const docsConfig: DocsConfig = {
           href: "/docs/components/flip-card",
         },
         {
-          title: "Compare Slider",
-          href: "/docs/components/compare-slider",
-        },
-        {
-          title: "Loom Slider",
-          href: "/docs/components/loom-slider",
-        },
-        {
-          title: "Drawer",
-          href: "/docs/components/drawer",
-        },
-        {
-          title: "Spool",
-          href: "/docs/components/spool",
-          badge: { text: "New", variant: "new" },
-        },
-        {
-          title: "Progress Ring",
-          href: "/docs/components/progress-ring",
-          badge: { text: "New", variant: "new" },
-        },
-        {
-          title: "Sticker Peel",
-          href: "/docs/components/sticker-peel",
-        },
-        {
-          title: "Elastic Tabs",
-          href: "/docs/components/elastic-tabs",
+          title: "Card Stack",
+          href: "/docs/components/card-stack",
         },
         {
           title: "Ticket Stub",
           href: "/docs/components/ticket-stub",
         },
+      ],
+    },
+    {
+      title: "Cursor",
+      items: [
         {
           title: "Magnetic",
           href: "/docs/components/magnetic",
         },
         {
-          title: "Marquee",
-          href: "/docs/components/marquee",
-        },
-        {
-          title: "Reading Progress",
-          href: "/docs/components/reading-progress",
-        },
-        {
-          title: "Unfold List",
-          href: "/docs/components/unfold-list",
-        },
-        {
           title: "Image Trail",
           href: "/docs/components/image-trail",
+        },
+        {
+          title: "Sticker Peel",
+          href: "/docs/components/sticker-peel",
         },
       ],
     },
     {
-      title: "Feedback",
+      title: "Backgrounds",
       items: [
         {
-          title: "Loom Loader",
-          href: "/docs/components/loom-loader",
+          title: "Aurora Backdrop",
+          href: "/docs/components/aurora-backdrop",
         },
         {
-          title: "Shimmer Skeleton",
-          href: "/docs/components/shimmer-skeleton",
+          title: "Grid Beams",
+          href: "/docs/components/grid-beams",
+        },
+        {
+          title: "Grid Backdrop",
+          href: "/docs/components/grid-backdrop",
+        },
+        {
+          title: "Stitch Path",
+          href: "/docs/components/stitch-path",
         },
       ],
     },
@@ -191,24 +206,24 @@ export const docsConfig: DocsConfig = {
       title: "Sections",
       items: [
         {
+          title: "Bento Grid",
+          href: "/docs/components/bento-grid",
+        },
+        {
           title: "Testimonial Wall",
           href: "/docs/components/testimonial-wall",
         },
         {
-          title: "Thread Timeline",
-          href: "/docs/components/thread-timeline",
+          title: "Marquee",
+          href: "/docs/components/marquee",
         },
         {
           title: "Logo Loom",
           href: "/docs/components/logo-loom",
         },
         {
-          title: "Bento Grid",
-          href: "/docs/components/bento-grid",
-        },
-        {
-          title: "Card Stack",
-          href: "/docs/components/card-stack",
+          title: "Thread Timeline",
+          href: "/docs/components/thread-timeline",
         },
         {
           title: "Terminal",
@@ -220,10 +235,6 @@ export const docsConfig: DocsConfig = {
       title: "Mockups",
       items: [
         {
-          title: "Credit Card",
-          href: "/docs/components/credit-card",
-        },
-        {
           title: "iPhone",
           href: "/docs/components/iphone",
         },
@@ -234,6 +245,10 @@ export const docsConfig: DocsConfig = {
         {
           title: "MacBook",
           href: "/docs/components/macbook",
+        },
+        {
+          title: "Credit Card",
+          href: "/docs/components/credit-card",
         },
       ],
     },
