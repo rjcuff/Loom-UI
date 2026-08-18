@@ -817,13 +817,13 @@ export const ui: Registry["items"] = [
         // No fill mode on the way in: an animation holding its last frame
         // outranks inline styles for good, and the drag has nothing to move.
         "animate-drawer-in": "drawer-in 260ms var(--ease-drawer)",
-        "animate-drawer-out": "drawer-out 260ms var(--ease-drawer) forwards",
+        "animate-drawer-out": "drawer-out 200ms var(--ease-drawer) forwards",
         "animate-drawer-rise":
-          "drawer-content-rise 240ms var(--ease-drawer) 60ms both",
+          "drawer-content-rise 200ms var(--ease-drawer) 60ms both",
         "animate-drawer-overlay-in":
           "drawer-overlay-in 260ms var(--ease-drawer)",
         "animate-drawer-overlay-out":
-          "drawer-overlay-out 260ms var(--ease-drawer) forwards",
+          "drawer-overlay-out 200ms var(--ease-drawer) forwards",
       },
     },
     css: {

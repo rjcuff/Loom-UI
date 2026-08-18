@@ -1566,16 +1566,18 @@ const HANDLE_POSITION: Record<DrawerSide, string> = {
   right: "inset-y-0 left-0 flex-col justify-center",
 }
 
-/** Milliseconds. One duration for arriving, settling and leaving. */
-const TRANSITION_MS = 260
+/** Milliseconds. Arriving and settling back. */
+const OPEN_MS = 260
+/** Leaving. An exit can be quicker than an entrance without feeling cut off. */
+const CLOSE_MS = 200
 /** Pixels per millisecond past which a flick closes on its own. */
-const VELOCITY_THRESHOLD = 0.4
+const VELOCITY_THRESHOLD = 0.2
 /** Share of the panel dragged away before it closes. */
 const CLOSE_THRESHOLD = 0.25
 /** After the content is scrolled, this long before a drag can start. */
 const SCROLL_LOCK_MS = 100
 /** The drag waits this long after opening, so the arrival can be scrolled. */
-const OPEN_GUARD_MS = 260
+const OPEN_GUARD_MS = OPEN_MS
 /** Open: the whole panel on screen, against its edge. */
 const AT_REST = "0 0"
 
@@ -1680,10 +1682,12 @@ export function DrawerContent({
     }
   }
 
-  const glide = (translate: string, opacity: number) => {
+  const glide = (translate: string, opacity: number, duration: number) => {
     const node = panelRef.current
     const overlay = overlayRef.current
-    const ease = `${TRANSITION_MS}ms var(--ease-drawer)`
+    // The panel and the overlay move as one unit, so they share the curve and
+    // the duration exactly.
+    const ease = `${duration}ms var(--ease-drawer)`
 
     if (node) {
       node.style.transition = `translate ${ease}`
@@ -1805,16 +1809,16 @@ export function DrawerContent({
       // The swipe carries on out and closes on arrival, rather than snapping
       // back to play an exit it has already been given. `dragging` stays on
       // until then, which is what keeps the exit keyframes off it.
-      glide(CLOSED[side], 0)
+      glide(CLOSED[side], 0, CLOSE_MS)
       timer.current = window.setTimeout(
         () => closeRef.current?.click(),
-        TRANSITION_MS - 20
+        CLOSE_MS - 20
       )
       return
     }
 
     setDragging(false)
-    glide(AT_REST, 1)
+    glide(AT_REST, 1, OPEN_MS)
   }
 
   /**
@@ -1924,11 +1928,13 @@ export function DrawerContent({
             >
               <span
                 className={cn(
-                  "bg-muted-foreground/40 rounded-full transition-[background-color,width,height] duration-200 ease-out",
+                  // Scale, not width: transform and opacity are the only two
+                  // properties that skip layout and paint.
+                  "bg-muted-foreground/40 ease rounded-full transition-[background-color,scale] duration-200 motion-reduce:transition-none",
                   "group-data-dragging:bg-muted-foreground/70",
                   vertical
-                    ? "h-1.5 w-12 group-data-dragging:w-16"
-                    : "h-12 w-1.5 group-data-dragging:h-16"
+                    ? "h-1.5 w-12 group-data-dragging:scale-x-125"
+                    : "h-12 w-1.5 group-data-dragging:scale-y-125"
                 )}
               />
             </div>

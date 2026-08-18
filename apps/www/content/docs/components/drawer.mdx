@@ -104,10 +104,15 @@ animation that holds its last frame outranks inline styles for good, and the
 drag would have nothing left to move. The way out does fill, or the panel would
 snap back to open for the frame before it unmounts.
 
-Everything runs 260ms on `cubic-bezier(0.32, 0.72, 0, 1)`, the curve panels
-want: most of the distance is covered in the first third, so it lands soft
-instead of stopping dead. Arriving, settling back and leaving all share the one
-duration, so no part of the drawer reads as a different mechanism.
+Arriving and settling back run 260ms on `cubic-bezier(0.32, 0.72, 0, 1)`, the
+curve panels want: most of the distance is covered in the first third, so it
+lands soft instead of stopping dead. Leaving runs 200ms — an exit can be quicker
+than an entrance without feeling cut off, since nobody is waiting to read what
+is on its way out.
+
+The panel and the overlay always share a curve and a duration exactly. Two
+things that move as one unit and animate on different timing stop reading as one
+unit.
 
 Two things arrive rather than one. The panel travels, and the contents settle
 into it 60ms later from 14px out — late enough to read as the drawer filling
@@ -117,8 +122,11 @@ That last one is a three-stop keyframe: the fade completes at 60% so the tail of
 the travel is pure movement. Landing opacity and position together makes the
 contents look like they stopped short.
 
-The notch answers the drag as well, widening and darkening while the panel is
-held, so the grip is visibly taken rather than just working.
+The notch answers the drag as well, stretching and darkening while the panel is
+held, so the grip is visibly taken rather than just working. It scales rather
+than resizing: `transform` and `opacity` are the only two properties that skip
+layout and paint, and a notch that reflows on every drag is a notch that stutters
+on every drag.
 
 ### The drag
 
@@ -148,7 +156,7 @@ There is one place to land, so the drag decides one thing: the drawer goes, or
 it goes back where it started.
 
 It closes if the pull passes a quarter of the panel, or if it is flicked faster
-than 0.4px per millisecond. A quarter rather than a fixed number of pixels,
+than 0.2px per millisecond. A quarter rather than a fixed number of pixels,
 because 40px out of a drawer nine hundred tall is a hair trigger, and the same
 40px out of a short one is most of the way.
 
