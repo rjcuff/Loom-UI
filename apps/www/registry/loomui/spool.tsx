@@ -37,7 +37,11 @@ const STAGGER_MS = 45
  * One state's contents. Sized by whatever is inside it: the shape follows the
  * content rather than the content being poured into a shape.
  */
-export function SpoolItem({ className, ...props }: SpoolItemProps) {
+export function SpoolItem({
+  value: _value,
+  className,
+  ...props
+}: SpoolItemProps) {
   return (
     <div
       data-slot="spool-item"
@@ -133,10 +137,13 @@ export function Spool({
       // old contents were at their own size the frame before.
       const leaving = leavingRef.current
       if (leaving) {
+        // One constant scale for the whole morph. Outside the counter scaled
+        // wrapper the only correction it needs is for the scale the shape
+        // started at, and that does not change while the morph runs.
         const pull = start.current.sx > 1 ? 1 - 0.06 * progress : 1
-        leaving.style.transform = `scale(${(sx / start.current.sx) * pull}, ${
-          sy / start.current.sy
-        })`
+        leaving.style.transform = `translate(-50%, -50%) scale(${
+          pull / start.current.sx
+        }, ${1 / start.current.sy})`
 
         const going = Math.max(0, 1 - elapsed / EXIT_MS)
         leaving.style.opacity = `${going}`
@@ -330,34 +337,29 @@ export function Spool({
       style={{ borderRadius: radius, ...style }}
       {...props}
     >
-      <div
-        ref={wrapRef}
-        data-slot="spool-wrap"
-        className="relative origin-center [will-change:transform]"
-      >
+      <div ref={wrapRef} data-slot="spool-wrap" className="origin-center">
         {active ? (
           <div key={value} ref={activeRef} data-slot="spool-active">
             {active}
           </div>
         ) : null}
-
-        {/* The state on its way out, held only long enough to fade. Inside the
-            wrapper so it is undistorted like everything else, and out of the
-            flow so it never has a say in the size being measured. */}
-        {outgoing ? (
-          <div
-            ref={leavingRef}
-            aria-hidden="true"
-            data-slot="spool-leaving"
-            className="pointer-events-none absolute inset-0 grid origin-center place-items-center motion-reduce:hidden"
-          >
-            {/* Sized to its own content rather than to the box it is sitting
-                in. The box is already the next state's size, so anything laid
-                out against it rewraps on the way out. */}
-            <div className="w-max">{outgoing}</div>
-          </div>
-        ) : null}
       </div>
+
+      {/* The state on its way out. Outside the wrapper, so nothing counter
+          scales it and it needs no correction for a scale that is still
+          changing. Pinned to the shape's centre rather than laid out in a box
+          that is already the next state's size, and `w-max` so it keeps the
+          width it was written at instead of rewrapping into whatever is left. */}
+      {outgoing ? (
+        <div
+          ref={leavingRef}
+          aria-hidden="true"
+          data-slot="spool-leaving"
+          className="pointer-events-none absolute top-1/2 left-1/2 w-max origin-center motion-reduce:hidden"
+        >
+          {outgoing}
+        </div>
+      ) : null}
     </div>
   )
 }
