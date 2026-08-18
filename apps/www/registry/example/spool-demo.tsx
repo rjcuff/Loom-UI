@@ -90,7 +90,7 @@ export default function SpoolDemo() {
               <path d="M20 6 9 17l-5-5" />
             </svg>
           </span>
-          <span className="text-sm font-medium">Saved. You are welcome</span>
+          <span className="text-sm font-medium">Saved</span>
         </SpoolItem>
       </Spool>
 
