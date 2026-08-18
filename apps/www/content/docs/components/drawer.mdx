@@ -77,70 +77,57 @@ way in, and it is the one part of the panel that is not optional.
 
 ### Sides and size
 
-The preview above comes from the bottom, which is what a drawer is for most of
-the time. The other three edges are a prop away:
+The preview comes from the bottom, which is what a drawer is for most of the
+time. The other three edges are a prop away.
 
 ```tsx
 <DrawerContent side="left" size="20rem" />
 ```
 
-The drawer stands in for a modal, so it opens to one place and covers most of
-the screen: `size` is `90svh` from the top or bottom, `26rem` from the sides.
-Short of the whole screen on purpose, since the sliver of page left showing is
-what keeps the rounded edge on screen and what keeps a drawer from reading as a
-new page. The corners round on the inside edge only, and they stay rounded the
-whole time the panel is open.
+It stands in for a modal, so it opens to one place and covers most of the
+screen. `size` is `90svh` top or bottom, `26rem` from the sides. Short of the
+whole screen on purpose. That sliver of page still showing is what keeps the
+rounded edge visible and stops the drawer reading as a new page.
 
 ### The animation
 
-The panel is only in the DOM while it is open, so a transition would have
-nothing to start from. It animates with keyframes instead, one frame each: the
-missing frame is taken from wherever the panel currently is, so the same pair
-serves all four edges whether the drawer is at rest or part way out under a
-finger.
+The panel is only in the DOM while it is open, so a transition has nothing to
+start from. It uses keyframes instead, one frame each. The missing frame comes
+from wherever the panel currently is, so one pair covers all four edges whether
+the drawer is resting or halfway out under a finger.
 
-The way in does not fill forwards, which matters more than it sounds. An
-animation that holds its last frame outranks inline styles for good, and the
-drag would have nothing left to move. The way out does fill, or the panel would
-snap back to open for the frame before it unmounts.
+The way in does not fill forwards. An animation that holds its last frame
+outranks inline styles for good, and the drag would have nothing left to move.
+The way out does fill, or the panel snaps back to open for one frame before it
+unmounts.
 
-Arriving and settling back run 260ms on `cubic-bezier(0.32, 0.72, 0, 1)`, the
-curve panels want: most of the distance is covered in the first third, so it
-lands soft instead of stopping dead. Leaving runs 200ms — an exit can be quicker
-than an entrance without feeling cut off, since nobody is waiting to read what
-is on its way out.
+Arriving and settling back take 260ms on `cubic-bezier(0.32, 0.72, 0, 1)`. Most
+of the distance is covered in the first third, so it lands soft instead of
+stopping dead. Leaving takes 200ms, because nobody is waiting to read what is on
+its way out.
 
-The panel and the overlay always share a curve and a duration exactly. Two
-things that move as one unit and animate on different timing stop reading as one
-unit.
+The panel and the overlay always share a curve and a duration. Two things that
+move as one unit but animate on different timing stop reading as one unit.
 
-Two things arrive rather than one. The panel travels, and the contents settle
-into it 60ms later from 14px out — late enough to read as the drawer filling
-itself in, early enough that it never looks like a second animation.
+The contents follow the panel in by 60ms, from 14px out. Late enough to read as
+the drawer filling itself in, early enough not to look like a second animation.
 
-That last one is a three-stop keyframe: the fade completes at 60% so the tail of
-the travel is pure movement. Landing opacity and position together makes the
-contents look like they stopped short.
-
-The notch answers the drag as well, stretching and darkening while the panel is
-held, so the grip is visibly taken rather than just working. It scales rather
-than resizing: `transform` and `opacity` are the only two properties that skip
-layout and paint, and a notch that reflows on every drag is a notch that stutters
-on every drag.
+The notch stretches and darkens while you hold it. It scales rather than
+resizing, because `transform` and `opacity` are the only properties that skip
+layout, and a notch that reflows on every drag stutters on every drag.
 
 ### The drag
 
-The whole face of the panel is the grip. Press anywhere and pull, and the notch
-is a signpost rather than the only handle.
+The whole face is the grip. Press anywhere and pull. The notch is a signpost,
+not the only handle.
 
 Content that scrolls keeps its scroll. Before a drag is granted, the press walks
-up from whatever was pressed looking for a scrollable ancestor: if one is found
-and it is not already at the top, the gesture belongs to it and the panel stays
-put. Once the drag is granted it holds until the finger lifts, since handing a
-gesture back mid-swipe is worse than never taking it.
+up looking for a scrollable ancestor. Find one that is not already at the top
+and the gesture belongs to it. Once a drag is granted it holds until you let go,
+because handing a gesture back halfway is worse than never taking it.
 
-Three more things block a drag: an element inside `[data-no-drag]`, selected
-text, and the first 500ms after opening, so the arrival can be scrolled through.
+Three other things block a drag. Anything inside `[data-no-drag]`, selected
+text, and the first 260ms after opening so the arrival can be scrolled through.
 
 ```tsx
 <div data-no-drag>
@@ -148,39 +135,39 @@ text, and the first 500ms after opening, so the arrival can be scrolled through.
 </div>
 ```
 
-Anything with its own gesture — a slider, a map, a carousel — opts out that way.
+That is the opt out for anything with its own gesture. A slider, a map, a
+carousel.
 
 ### The snap
 
-There is one place to land, so the drag decides one thing: the drawer goes, or
-it goes back where it started.
+One place to land, so the drag decides one thing. The drawer goes, or it goes
+back where it started.
 
-It closes if the pull passes a quarter of the panel, or if it is flicked faster
-than 0.2px per millisecond. A quarter rather than a fixed number of pixels,
-because 40px out of a drawer nine hundred tall is a hair trigger, and the same
-40px out of a short one is most of the way.
+It closes if you pull past a quarter of the panel, or flick faster than 0.2px
+per millisecond. A quarter rather than a fixed distance, because 40px out of a
+drawer nine hundred tall is a hair trigger, and the same 40px out of a short one
+is most of the way.
 
-Pulling the other way past fully open is resisted logarithmically, so the panel
-gives at first and firms up, which reads as a limit instead of a loose edge. The
-panel carries its own background 200% past its edge in an `::after`, so an
-overdrag never opens a gap onto the page behind it.
+Pull the other way past fully open and the resistance is logarithmic, so it
+gives at first and then firms up. That reads as a limit rather than a loose
+edge. The panel also carries its own background 200% past its edge in an
+`::after`, so overdragging never opens a gap onto the page behind it.
 
-The overlay tracks the drag: the page brightens as the panel is pulled away.
-That, more than the movement itself, is what makes the two read as joined rather
-than stacked.
+The overlay tracks the drag, so the page brightens as the panel pulls away. That
+does more to join the two than the movement itself.
 
-When the decision is _closed_, the swipe carries on out and the drawer closes on
-arrival rather than snapping back to play an exit it has already been given.
+When the answer is closed, the swipe carries on out and the drawer closes on
+arrival. No snapping back to play an exit it has already been given.
 
 `translate` is written straight onto the node during a drag, so the gesture
-costs no renders and the panel sits exactly under the finger. Nothing is
-remembered between openings: every open starts against the edge.
+costs no renders and the panel sits exactly under your finger. Nothing is
+remembered between openings. Every open starts against the edge.
 
 ```tsx
 <DrawerContent showHandle={false} />
 ```
 
-Without the notch the panel still drags — the notch only says that it does.
+Without the notch the panel still drags. The notch only says that it does.
 
 ### Holding it open
 
@@ -197,7 +184,7 @@ in the panel, or the only way out is unmounting it.
 const [open, setOpen] = React.useState(false)
 
 <Drawer open={open} onOpenChange={setOpen}>
-  <DrawerContent>…</DrawerContent>
+  <DrawerContent>...</DrawerContent>
 </Drawer>
 ```
 

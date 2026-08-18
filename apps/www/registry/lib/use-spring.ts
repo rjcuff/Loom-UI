@@ -4,8 +4,8 @@ import * as React from "react"
 
 export interface SpringOptions {
   /**
-   * Seconds to settle, roughly. Not a hard duration — a spring has no fixed
-   * end — but the number you would have reached for with one.
+   * Seconds to settle, roughly. A spring has no fixed end, but this is the
+   * number you would have reached for with a duration.
    */
   duration?: number
   /**
@@ -138,7 +138,7 @@ export function useSpring(
 
   /**
    * Put the values somewhere directly. Pass `carry` to keep them moving as
-   * they land there — that is what a remeasure needs, since the numbers change
+   * they land there. That is what a remeasure needs, since the numbers change
    * meaning but the motion they describe does not.
    */
   const set = React.useCallback(

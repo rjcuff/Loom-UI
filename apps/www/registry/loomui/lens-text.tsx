@@ -43,7 +43,7 @@ const OPEN_FACTOR = 1.6
 const PANEL_PADDING = "0.28em 0.45em"
 
 function useMediaQuery(query: string, fallback: boolean) {
-  // Server and first client paint agree on `fallback`; the effect corrects it
+  // Server and first client paint agree on `fallback`. The effect corrects it
   // before anyone can interact, so there is no hydration mismatch.
   const [matches, setMatches] = React.useState(fallback)
 
@@ -214,7 +214,7 @@ export function LensText({
   }
 
   // Where the lens stops being fully opaque. At `feather: 0` the edge is a
-  // hard cut; at `1` it falls off from the centre.
+  // hard cut. At `1` it falls off from the centre.
   const core = `${Math.round((1 - clamp01(feather)) * 100)}%`
   const at = "var(--lens-x, 50%) var(--lens-y, 50%)"
 

@@ -46,7 +46,7 @@ const WAVE_LENGTH = 8
 const clamp = (value: number, min: number, max: number) =>
   Math.min(Math.max(value, min), max)
 
-/** Nearest step from `min`, so a range like 0–7 in 0.5s never lands off-grid. */
+/** Nearest step from `min`, so a range like 0 to 7 in 0.5s never lands off-grid. */
 function snap(value: number, min: number, max: number, step: number) {
   if (step <= 0) return clamp(value, min, max)
   return clamp(min + Math.round((value - min) / step) * step, min, max)
@@ -73,7 +73,7 @@ interface Motion {
 /**
  * Every dash is drawn from this each frame. A CSS transition restarted on every
  * pointer move never arrives, so there is none. `tau` is roughly how long the
- * gap to the target takes to close; frames are measured, not counted.
+ * gap to the target takes to close. Frames are measured, not counted.
  */
 function useMotion(target: number, tau: number): Motion {
   const [motion, setMotion] = React.useState<Motion>({

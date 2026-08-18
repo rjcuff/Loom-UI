@@ -383,7 +383,7 @@ export function DrawerContent({
           }}
           className={cn(
             "relative flex h-full w-full flex-col gap-4 overflow-y-auto overscroll-contain p-6",
-            // The content keeps the scroll on its own axis; the rest of the
+            // The content keeps the scroll on its own axis. The rest of the
             // panel belongs to the drag.
             vertical ? "[touch-action:pan-y]" : "[touch-action:pan-x]",
             // Only mounted while open, so this plays once on arrival.

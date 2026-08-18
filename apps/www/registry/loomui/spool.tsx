@@ -144,7 +144,7 @@ export function Spool({
     }
 
     // Where the box actually is on screen this instant, and how fast it is
-    // going — both in pixels, which survive the change of scale below.
+    // going, both in pixels, which survive the change of scale below.
     const at = peek()
     const rate = speed()
     const seen = {
@@ -196,7 +196,7 @@ export function Spool({
 
   React.useEffect(() => () => window.clearTimeout(leaveTimer.current), [])
 
-  // Content that changes size on its own — a font landing, a longer label —
+  // Content that changes size on its own, a font landing or a longer label,
   // moves the natural box without any change of state, so keep it current or
   // the next morph starts from a stale number.
   React.useEffect(() => {

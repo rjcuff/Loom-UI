@@ -178,7 +178,7 @@ export function HoldButton({
       return
     }
 
-    // Space scrolls and Enter fires a click; neither should stand in for the
+    // Space scrolls and Enter fires a click. Neither should stand in for the
     // hold this button exists to require.
     event.preventDefault()
     if (!event.repeat) {

@@ -8,7 +8,7 @@ export default function TerminalDemo() {
   return (
     <Terminal title="~/acme-app" className="max-w-lg">
       <TerminalCommand>npx shadcn@latest add @loomui/terminal</TerminalCommand>
-      <TerminalOutput delay={420}>Checking registry…</TerminalOutput>
+      <TerminalOutput delay={420}>Checking registry...</TerminalOutput>
       <TerminalOutput delay={520}>
         <span className="text-accent">✔</span> Installed terminal.tsx
       </TerminalOutput>

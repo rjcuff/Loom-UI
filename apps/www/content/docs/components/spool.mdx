@@ -55,90 +55,88 @@ const [state, setState] = React.useState("idle")
 ```
 
 Each `SpoolItem` is one state. Only the one matching `value` is in the DOM, and
-the shape follows whatever is inside it — the contents are never poured into a
+the shape follows whatever is inside it. The contents are never poured into a
 size decided in advance.
 
 ### The size is never animated
 
 Animating `width` and `height` lays the page out on every frame, which is the
-one thing a shape-changing component must not do. So it doesn't.
+one thing a shape that changes size must not do.
 
-The box is set to its new size **once**, in the same commit that swaps the
-contents. Then the difference is played back as a transform: measure the old
-box, measure the new one, start at the ratio between them and spring to `1`.
-Layout happens once per change. Every frame in between belongs to the
-compositor.
+So the box is set to its new size **once**, in the same commit that swaps the
+contents. The difference then replays as a transform. Measure the old box,
+measure the new one, start at the ratio between them and spring to `1`. Layout
+runs once per change. Every frame in between belongs to the compositor.
 
 ```tsx
 set({ sx: seen.width / last.width, sy: seen.height / last.height })
 to({ sx: 1, sy: 1 })
 ```
 
-The root is only ever laid out at its natural size, so `offsetWidth` is always
-the size the contents want, never the size currently on screen. That is what
-makes a measurement taken halfway through a morph exact rather than a guess.
+The root is only ever laid out at its natural size, so `offsetWidth` always
+reports what the contents want, never what is on screen. That is what makes a
+measurement taken halfway through a morph exact instead of a guess.
 
 ### Undoing the distortion
 
-A scaled box distorts everything in it, so two things put it back.
+A scaled box distorts everything inside it. Two things put it back.
 
-The contents sit in a wrapper scaled by the inverse, which holds them at their
-true size the whole way across. And the corner radius is divided per axis:
+The contents sit in a wrapper on the inverse scale, which holds them at true
+size the whole way across. And the corner radius is divided per axis.
 
 ```css
 border-radius: calc(r / sx) / calc(r / sy);
 ```
 
-Two values either side of a slash are the horizontal and vertical radii. Divide
-each by its own axis and a corner that is being squashed stays a circle instead
-of turning into an oval. It is the one line that separates this from looking
-like a stretched picture of a pill.
+The two values either side of the slash are the horizontal and vertical radii.
+Divide each by its own axis and a corner being squashed stays a circle instead
+of going oval. That one line is the difference between this and a stretched
+picture of a pill.
 
 ### Why a spring
 
-A curve has a fixed duration and a fixed start. Retarget one halfway and it
-begins again from a standstill, which is the exact moment a moving thing stops
-feeling like a moving thing.
+A curve has a fixed duration and a fixed start. Retarget one halfway through and
+it begins again from a standstill, which is the moment a moving thing stops
+looking like it was ever moving.
 
 A spring has neither. It carries velocity, so a state that changes while the
-shape is still travelling keeps the motion it already had. Press the buttons
-above quickly and the shape never once stops to start again.
+shape is still travelling keeps the motion it already had. Click the pill
+mid morph and watch it never once stop to start again.
 
 ```tsx
 <Spool spring={{ duration: 0.42, bounce: 0.18 }} />
 ```
 
-`duration` is roughly how long it settles, and `bounce` is how far it goes past
-the target on the way. `0` arrives and stops. Above `0` overshoots and returns.
-Keep it under `0.3` for anything not meant to be playful.
+`duration` is roughly how long it settles. `bounce` is how far it overshoots on
+the way. `0` arrives and stops. Above `0` passes the target and comes back. Keep
+it under `0.3` for anything not meant to be playful.
 
-### The contents fade against the shape, not against a clock
+### The contents fade against the shape, not a clock
 
-Holding the contents at true size has a consequence: while the box is at half
-its size, what is inside it is already at full size, and therefore wider than
-the thing holding it. Left alone that shows up as words clipped down the middle.
+Holding the contents at true size has a catch. While the box is at half size,
+what is inside it is already full size, and wider than the thing holding it.
+Left alone, that shows up as words clipped down the middle.
 
-So the shape clips, and the contents are faded in against **how far along the
-morph is** rather than against a duration:
+So the shape clips, and the contents fade in against **how far along the morph
+is** rather than against a duration.
 
 ```tsx
 const gap = Math.max(Math.abs(1 - sx), Math.abs(1 - sy))
 const progress = 1 - Math.min(gap / span, 1)
 ```
 
-Tying it to a fixed 180ms would have worked for exactly one pair of sizes. A
-morph across a bigger gap takes longer, an interrupted one takes a different
-length again, and either way the text would appear before there was room for it.
-Progress has no such problem: at 45% of the way there the contents start
-arriving, and they are solid by 85%, whatever the shape is doing or how many
-times it was retargeted on the way.
+A fixed 180ms would have been right for exactly one pair of sizes. A wider gap
+takes the spring longer, an interrupted morph takes a different length again,
+and either way the text turns up before the room does. Progress cannot have that
+problem. Contents start arriving at 45% and are solid by 85%, whatever the shape
+is doing and however many times you retargeted it on the way.
 
-That is also why the fade is written straight onto the node rather than
-declared as a keyframe. A running animation outranks an inline style, so the
-two cannot both own opacity — and only one of them knows where the shape is.
+That is also why the fade is written onto the node instead of declared as a
+keyframe. A running animation outranks an inline style, so only one of them can
+own opacity, and only one of them knows where the shape is.
 
-The outgoing state is held just long enough to fade, out of the flow so it never
-has a say in the size being measured.
+The outgoing state is held just long enough to fade. It sits out of the flow, so
+it never has a say in the size being measured.
 
 ```tsx
 <Spool fade={140} />

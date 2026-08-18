@@ -84,7 +84,7 @@ export function ElasticTabs({
 
   // Travel. The pill first stretches to cover both tabs, then contracts onto
   // the new one. Moving `left` and `width` straight to the target slides a
-  // fixed shape across; spanning first is what makes it read as elastic.
+  // fixed shape across. Spanning first is what makes it read as elastic.
   React.useEffect(() => {
     const target = measure(index)
     const from = pillRef.current
@@ -176,7 +176,7 @@ export function ElasticTabs({
           type="button"
           role="tab"
           aria-selected={position === index}
-          // Only the selected tab is in the tab order; the arrows move between
+          // Only the selected tab is in the tab order. The arrows move between
           // them, which is how a tablist is meant to be walked.
           tabIndex={position === index ? 0 : -1}
           onClick={() => select(position)}

@@ -61,7 +61,7 @@ export const siteConfig = {
 export type SiteConfig = typeof siteConfig
 
 export interface Announcement {
-  /** The line itself. Keep it to one short clause — it has to fit on a phone. */
+  /** The line itself. Keep it to one short clause. It has to fit on a phone. */
   text: string
   href: string
 }

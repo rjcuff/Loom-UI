@@ -115,7 +115,7 @@ function PlaceholderBrand() {
 
 /**
  * A placeholder payment card. Nothing here is real and no real mark is drawn,
- * so it is safe in a mockup. One face per render — wrap two in a `FlipCard` for
+ * so it is safe in a mockup. One face per render, so wrap two in a `FlipCard` for
  * a card that turns.
  */
 export function CreditCard({

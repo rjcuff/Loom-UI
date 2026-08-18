@@ -112,7 +112,7 @@ and at `size-24`, and nothing has to measure the SVG at runtime.
 ```
 
 `strands` is how many warp threads are on the frame. Three reads as a small
-inline indicator; seven fills a page-level one. Past about nine the threads are
+inline indicator. Seven fills a page-level one. Past about nine the threads are
 closer together than the stroke is wide and the frame turns into a block.
 
 `duration` is one thread's whole trip, drawn and pulled off, and it also sets
