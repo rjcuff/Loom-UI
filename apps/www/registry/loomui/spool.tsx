@@ -82,6 +82,7 @@ export function Spool({
   const previous = React.useRef(value)
   const leaveTimer = React.useRef(0)
   const activeRef = React.useRef<HTMLDivElement>(null)
+  const leavingRef = React.useRef<HTMLDivElement>(null)
   // How far from 1 the scale was when this morph began. The contents are faded
   // against the shape's progress, not against a duration, so an interruption
   // cannot leave text showing at a size the box has not reached yet.
@@ -100,6 +101,12 @@ export function Spool({
       // rectangle it started as.
       root.style.borderRadius = `${radius / sx}px / ${radius / sy}px`
       wrap.style.transform = `scale(${1 / sx}, ${1 / sy})`
+
+      // The state on its way out rides the box rather than being held at true
+      // size like the incoming one. Nobody is reading it, and squashing with
+      // the shape is what guarantees it never reaches past the edge.
+      const leaving = leavingRef.current
+      if (leaving) leaving.style.transform = `scale(${sx}, ${sy})`
 
       const active = activeRef.current
       if (!active) return
@@ -242,9 +249,10 @@ export function Spool({
             flow so it never has a say in the size being measured. */}
         {outgoing ? (
           <div
+            ref={leavingRef}
             aria-hidden="true"
             data-slot="spool-leaving"
-            className="animate-spool-leave pointer-events-none absolute inset-0 grid place-items-center motion-reduce:hidden"
+            className="animate-spool-leave pointer-events-none absolute inset-0 grid origin-center place-items-center overflow-hidden motion-reduce:hidden"
             style={{ animationDuration: `${fade}ms` }}
           >
             {outgoing}

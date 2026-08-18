@@ -33,8 +33,10 @@ export interface GridBeamsProps extends React.ComponentProps<"div"> {
 const DEFAULT_COLORS = ["#22d3ee", "#38bdf8", "#a855f7", "#f472b6"]
 
 /** Matches the hero: bright at the top, gone by the middle. */
+/** Rounded off rather than ramped: a two-stop ramp meets full opacity at a
+ *  point the eye reads as a hard line. */
 const TOP_FADE =
-  "radial-gradient(ellipse 70% 50% at 50% 0%, black, transparent)"
+  "radial-gradient(ellipse 75% 55% at 50% 0%, black 30%, rgba(0,0,0,0.5) 65%, transparent 100%)"
 
 /** Mulberry32. Deterministic so a seed always gives the same layout. */
 function createRandom(seed: number) {

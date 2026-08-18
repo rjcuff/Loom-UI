@@ -875,10 +875,9 @@ export const ui: Registry["items"] = [
           opacity: "1",
         },
       },
+      // One frame. The missing `from` comes from wherever the overlay is, so a
+      // drag that already faded it does not get yanked back to full first.
       "@keyframes drawer-overlay-out": {
-        from: {
-          opacity: "1",
-        },
         to: {
           opacity: "0",
         },
