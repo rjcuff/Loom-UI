@@ -112,15 +112,33 @@ above quickly and the shape never once stops to start again.
 the target on the way. `0` arrives and stops. Above `0` overshoots and returns.
 Keep it under `0.3` for anything not meant to be playful.
 
-### The contents have their own clock
+### The contents fade against the shape, not against a clock
 
-The shape lands first and the contents settle into it a moment later, over
-180ms, from 4px down. The outgoing state is held just long enough to fade — out
-of the flow, so it never has a say in the size being measured.
+Holding the contents at true size has a consequence: while the box is at half
+its size, what is inside it is already at full size, and therefore wider than
+the thing holding it. Left alone that shows up as words clipped down the middle.
 
-The enter is a three-stop keyframe: the fade completes at 60% so the tail of the
-travel is pure movement. Landing opacity and position together makes contents
-look like they stopped short.
+So the shape clips, and the contents are faded in against **how far along the
+morph is** rather than against a duration:
+
+```tsx
+const gap = Math.max(Math.abs(1 - sx), Math.abs(1 - sy))
+const progress = 1 - Math.min(gap / span, 1)
+```
+
+Tying it to a fixed 180ms would have worked for exactly one pair of sizes. A
+morph across a bigger gap takes longer, an interrupted one takes a different
+length again, and either way the text would appear before there was room for it.
+Progress has no such problem: at 45% of the way there the contents start
+arriving, and they are solid by 85%, whatever the shape is doing or how many
+times it was retargeted on the way.
+
+That is also why the fade is written straight onto the node rather than
+declared as a keyframe. A running animation outranks an inline style, so the
+two cannot both own opacity — and only one of them knows where the shape is.
+
+The outgoing state is held just long enough to fade, out of the flow so it never
+has a say in the size being measured.
 
 ```tsx
 <Spool fade={140} />

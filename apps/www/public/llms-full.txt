@@ -6023,6 +6023,11 @@ export function Spool({
   const natural = React.useRef({ width: 0, height: 0 })
   const previous = React.useRef(value)
   const leaveTimer = React.useRef(0)
+  const activeRef = React.useRef<HTMLDivElement>(null)
+  // How far from 1 the scale was when this morph began. The contents are faded
+  // against the shape's progress, not against a duration, so an interruption
+  // cannot leave text showing at a size the box has not reached yet.
+  const span = React.useRef(0)
 
   const [leaving, setLeaving] = React.useState<string | null>(null)
 
@@ -6037,6 +6042,21 @@ export function Spool({
       // rectangle it started as.
       root.style.borderRadius = `${radius / sx}px / ${radius / sy}px`
       wrap.style.transform = `scale(${1 / sx}, ${1 / sy})`
+
+      const active = activeRef.current
+      if (!active) return
+
+      // The contents are held at true size while the box is not yet its size,
+      // so until the shape has most of the way caught up they are wider than
+      // what is holding them. Fading them against the shape's own progress is
+      // what stops a word being shown half clipped.
+      const gap = Math.max(Math.abs(1 - sx), Math.abs(1 - sy))
+      const progress =
+        span.current > 0 ? 1 - Math.min(gap / span.current, 1) : 1
+      const shown = Math.max(0, Math.min((progress - 0.45) / 0.4, 1))
+
+      active.style.opacity = `${shown}`
+      active.style.translate = `0 ${(1 - shown) * 3}px`
     },
     [radius]
   )
@@ -6088,14 +6108,21 @@ export function Spool({
       window.matchMedia("(prefers-reduced-motion: reduce)").matches
 
     if (reduced) {
+      span.current = 0
       set({ sx: 1, sy: 1 })
       return
     }
 
-    set(
-      { sx: seen.width / last.width, sy: seen.height / last.height },
-      { sx: seenRate.width / last.width, sy: seenRate.height / last.height }
-    )
+    const from = {
+      sx: seen.width / last.width,
+      sy: seen.height / last.height,
+    }
+    span.current = Math.max(Math.abs(1 - from.sx), Math.abs(1 - from.sy))
+
+    set(from, {
+      sx: seenRate.width / last.width,
+      sy: seenRate.height / last.height,
+    })
     to({ sx: 1, sy: 1 })
   }, [value, measure, peek, speed, set, to])
 
@@ -6134,7 +6161,7 @@ export function Spool({
       data-slot="spool"
       data-value={value}
       className={cn(
-        "bg-background text-foreground relative inline-flex border shadow-lg",
+        "bg-background text-foreground relative inline-flex overflow-hidden border shadow-lg",
         "origin-center [will-change:transform]",
         className
       )}
@@ -6147,11 +6174,7 @@ export function Spool({
         className="relative origin-center [will-change:transform]"
       >
         {active ? (
-          <div
-            key={value}
-            data-slot="spool-active"
-            className="animate-spool-enter motion-reduce:animate-none"
-          >
+          <div key={value} ref={activeRef} data-slot="spool-active">
             {active}
           </div>
         ) : null}

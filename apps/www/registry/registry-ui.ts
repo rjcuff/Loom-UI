@@ -813,29 +813,11 @@ export const ui: Registry["items"] = [
     cssVars: {
       theme: {
         "ease-out-quart": EASE_OUT_QUART,
-        "animate-spool-enter":
-          "spool-enter 180ms var(--ease-out-quart) 40ms both",
         "animate-spool-leave":
           "spool-leave 140ms var(--ease-out-quart) forwards",
       },
     },
     css: {
-      // The shape lands first, then what is in it. Three stops so the fade is
-      // done before the travel is, and the contents settle rather than sliding
-      // to a stop.
-      "@keyframes spool-enter": {
-        from: {
-          opacity: "0",
-          translate: "0 4px",
-        },
-        "60%": {
-          opacity: "1",
-        },
-        to: {
-          opacity: "1",
-          translate: "0 0",
-        },
-      },
       "@keyframes spool-leave": {
         to: {
           opacity: "0",
