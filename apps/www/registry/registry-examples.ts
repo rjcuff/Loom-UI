@@ -424,6 +424,19 @@ export const examples: Registry["items"] = [
     ],
   },
   {
+    name: "progress-ring-demo",
+    type: "registry:example",
+    title: "Progress Ring Demo",
+    description: "A ring stepping through five values without ever settling.",
+    registryDependencies: ["@loomui/progress-ring"],
+    files: [
+      {
+        path: "example/progress-ring-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "spool-demo",
     type: "registry:example",
     title: "Spool Demo",

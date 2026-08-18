@@ -4,14 +4,15 @@ import * as React from "react"
 import Link from "next/link"
 
 import { cn } from "@/lib/utils"
-import { GridBeams } from "@/registry/loomui/grid-beams"
 import { LoomLoader } from "@/registry/loomui/loom-loader"
+import { ProgressRing } from "@/registry/loomui/progress-ring"
 import { SplitFlap } from "@/registry/loomui/split-flap"
 import { Spool, SpoolItem } from "@/registry/loomui/spool"
 import { Typewriter } from "@/registry/loomui/typewriter"
 import { WeaveText } from "@/registry/loomui/weave-text"
 
 const BOARD = ["LISBON", "OSAKA", "REYKJAVIK", "MONTREAL"]
+const RING = [20, 64, 38, 92]
 const SPOOL_STATES = ["idle", "playing", "saved"]
 
 /** Advances an index on an interval, and stops while the tab is hidden. */
@@ -32,6 +33,11 @@ function useCycle(length: number, every: number) {
 function BoardPreview() {
   const index = useCycle(BOARD.length, 3200)
   return <SplitFlap value={BOARD[index]} padTo={9} />
+}
+
+function RingPreview() {
+  const index = useCycle(RING.length, 1900)
+  return <ProgressRing value={RING[index]} size={104} label="Threads wound" />
 }
 
 function SpoolPreview() {
@@ -89,10 +95,10 @@ const PIECES = [
     render: () => <LoomLoader className="size-16" />,
   },
   {
-    name: "Grid Beams",
-    href: "/docs/components/grid-beams",
-    line: "Light running the lines of a grid.",
-    render: () => <GridBeams cellSize={34} beams={6} length="40%" />,
+    name: "Progress Ring",
+    href: "/docs/components/progress-ring",
+    line: "Springs to the number, never restarts.",
+    render: () => <RingPreview />,
   },
   {
     name: "Typewriter",

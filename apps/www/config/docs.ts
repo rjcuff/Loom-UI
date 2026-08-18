@@ -125,16 +125,19 @@ export const docsConfig: DocsConfig = {
         {
           title: "Loom Slider",
           href: "/docs/components/loom-slider",
-          badge: { text: "New", variant: "new" },
         },
         {
           title: "Drawer",
           href: "/docs/components/drawer",
-          badge: { text: "New", variant: "new" },
         },
         {
           title: "Spool",
           href: "/docs/components/spool",
+          badge: { text: "New", variant: "new" },
+        },
+        {
+          title: "Progress Ring",
+          href: "/docs/components/progress-ring",
           badge: { text: "New", variant: "new" },
         },
         {
@@ -219,7 +222,6 @@ export const docsConfig: DocsConfig = {
         {
           title: "Credit Card",
           href: "/docs/components/credit-card",
-          badge: { text: "New", variant: "new" },
         },
         {
           title: "iPhone",

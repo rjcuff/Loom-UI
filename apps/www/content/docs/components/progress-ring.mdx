@@ -1,0 +1,133 @@
+---
+title: Progress Ring
+date: 2026-08-18
+description: A circular progress ring whose value springs to its target, so a number that changes mid travel keeps the speed it already had.
+---
+
+<ComponentPreview name="progress-ring-demo" />
+
+## Installation
+
+<Tabs defaultValue="cli">
+
+<TabsList>
+  <TabsTrigger value="cli">CLI</TabsTrigger>
+  <TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @loomui/progress-ring
+```
+
+</TabsContent>
+
+<TabsContent value="manual">
+
+<Steps>
+
+<Step>Copy the component into your project.</Step>
+
+<ComponentSource name="progress-ring" />
+
+<Step>Update the import paths to match your setup.</Step>
+
+</Steps>
+
+</TabsContent>
+
+</Tabs>
+
+## Usage
+
+```tsx
+import { ProgressRing } from "@/components/ui/progress-ring"
+```
+
+```tsx
+<ProgressRing value={64} label="Threads wound" />
+```
+
+Give it a `label` whenever the ring is the only thing saying what it measures.
+It renders as a real `progressbar`, so the number is announced whether or not
+anyone can see it.
+
+### Why it springs
+
+Most progress rings tween. Set a new value halfway through the last one and the
+ring stops dead, then starts again from nothing. On a number that updates while
+you watch, that reads as stuttering rather than progress.
+
+This one springs. A target that lands mid travel keeps the speed the ring
+already had, so it bends toward the new number instead of restarting.
+
+```tsx
+<ProgressRing value={value} spring={{ duration: 0.6, bounce: 0 }} />
+```
+
+`duration` is roughly how long it settles. `bounce` overshoots past the target
+and comes back. It is `0` by default, because a ring that sails past 90 and
+returns is lying about the number for a moment.
+
+### The one paint
+
+The arc is drawn by walking the stroke's own dash offset around the circle.
+That is a paint rather than a composite, which is the one place this steps
+outside transform and opacity.
+
+There is no way to draw a partial arc without it. It stays cheap because only
+the stroke is repainted, and nothing about it touches layout.
+
+The value is written straight onto the node and the number onto its text, so
+the ring animates without a single re-render.
+
+### Size and weight
+
+```tsx
+<ProgressRing value={72} size={180} thickness={14} />
+```
+
+`size` is the outside diameter and `thickness` is the stroke, both in pixels.
+Everything else is worked out from them, so the ring stays in proportion at any
+size and the number in the middle scales with it.
+
+### Something other than a number
+
+```tsx
+<ProgressRing value={38} center={<Icon />} />
+```
+
+`center` replaces the number entirely. Pass `showValue={false}` to have neither
+and keep just the ring.
+
+### Scales and formats
+
+```tsx
+<ProgressRing value={7} max={9} format={(v) => `${v.toFixed(1)}s`} />
+```
+
+`max` is what a full ring means. `format` turns the animating value into the
+text in the middle, so it can count in seconds, bytes or anything else while
+the ring fills.
+
+## Props
+
+| Prop        | Type                        | Default | Description                             |
+| ----------- | --------------------------- | ------- | --------------------------------------- |
+| `value`     | `number`                    | none    | Where the ring is now.                  |
+| `max`       | `number`                    | `100`   | What a full ring means.                 |
+| `size`      | `number`                    | `120`   | Outside diameter in pixels.             |
+| `thickness` | `number`                    | `10`    | Stroke width in pixels.                 |
+| `spring`    | `SpringOptions`             | `.6/0`  | How the value travels.                  |
+| `showValue` | `boolean`                   | `true`  | Print the number in the middle.         |
+| `format`    | `(value: number) => string` | none    | Turns the value into the middle text.   |
+| `center`    | `ReactNode`                 | none    | Sits in the middle instead of a number. |
+| `label`     | `string`                    | none    | Accessible name.                        |
+| `disabled`  | `boolean`                   | `false` | Render at the value without animating.  |
+
+<Callout type="tip" title="Reduced motion">
+  With reduced motion the ring is drawn at its value straight away, and every
+  later change lands the same way. The number is still correct, it just never
+  travels to get there.
+</Callout>

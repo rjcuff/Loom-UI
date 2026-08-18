@@ -798,6 +798,21 @@ export const ui: Registry["items"] = [
     // CSS transition restarted on every pointer move never arrives.
   },
   {
+    name: "progress-ring",
+    type: "registry:ui",
+    title: "Progress Ring",
+    description:
+      "A circular progress ring whose value springs to its target, so a number that changes mid travel keeps the speed it already had.",
+    registryDependencies: ["utils", "use-spring"],
+    files: [
+      {
+        path: "loomui/progress-ring.tsx",
+        type: "registry:ui",
+      },
+    ],
+    // No keyframes. The spring owns every frame.
+  },
+  {
     name: "spool",
     type: "registry:ui",
     title: "Spool",

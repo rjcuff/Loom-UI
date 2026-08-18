@@ -484,6 +484,21 @@ export const Index: Record<string, any> = {
       return { default: mod.default ?? mod[exportName] }
     }),
   },
+  "progress-ring": {
+    name: "progress-ring",
+    type: "registry:ui",
+    title: "Progress Ring",
+    description: "A circular progress ring whose value springs to its target, so a number that changes mid travel keeps the speed it already had.",
+    dependencies: [],
+    registryDependencies: ["utils","use-spring"],
+    files: [{"path":"registry/loomui/progress-ring.tsx","type":"registry:ui","target":""}],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/loomui/progress-ring")
+      const exportName =
+        Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
+      return { default: mod.default ?? mod[exportName] }
+    }),
+  },
   "spool": {
     name: "spool",
     type: "registry:ui",
@@ -1094,6 +1109,21 @@ export const Index: Record<string, any> = {
     files: [{"path":"registry/example/loom-slider-demo.tsx","type":"registry:example","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/example/loom-slider-demo")
+      const exportName =
+        Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
+      return { default: mod.default ?? mod[exportName] }
+    }),
+  },
+  "progress-ring-demo": {
+    name: "progress-ring-demo",
+    type: "registry:example",
+    title: "Progress Ring Demo",
+    description: "A ring stepping through five values without ever settling.",
+    dependencies: [],
+    registryDependencies: ["@loomui/progress-ring"],
+    files: [{"path":"registry/example/progress-ring-demo.tsx","type":"registry:example","target":""}],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/example/progress-ring-demo")
       const exportName =
         Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
       return { default: mod.default ?? mod[exportName] }

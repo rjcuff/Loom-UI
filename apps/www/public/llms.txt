@@ -29,6 +29,7 @@ Install any component with `npx shadcn@latest add @loomui/<name>`.
 - [MacBook](https://loomui.design/docs/components/macbook): A laptop frame with the camera housing cut into the display and the scoop cut into its base.
 - [Magnetic](https://loomui.design/docs/components/magnetic): A wrapper that pulls its child toward the pointer as the pointer gets close.
 - [Marquee](https://loomui.design/docs/components/marquee): A seamless scrolling row or column, in either direction, that pauses on hover.
+- [Progress Ring](https://loomui.design/docs/components/progress-ring): A circular progress ring whose value springs to its target, so a number that changes mid travel keeps the speed it already had.
 - [Reading Progress](https://loomui.design/docs/components/reading-progress): A pinned bar that tracks how far through the page, or a chosen element, the reader is.
 - [Ripple Button](https://loomui.design/docs/components/ripple-button): A button that sends a circle out from wherever it was pressed, sized to reach the furthest corner.
 - [Scramble Text](https://loomui.design/docs/components/scramble-text): A string that resolves out of random glyphs, left to right, on mount, on scroll, or on hover.
