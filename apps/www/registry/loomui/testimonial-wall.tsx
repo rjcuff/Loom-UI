@@ -23,10 +23,9 @@ export interface TestimonialWallProps extends React.ComponentProps<"div"> {
 }
 
 /**
- * Alpha sampled off a smoothstep curve. A two-stop gradient ramps its alpha
- * linearly, and the eye reads the point where that ramp meets full opacity as a
- * hard line. Sampling the curve rounds both ends off, so the fade runs out
- * instead of stopping.
+ * Alpha sampled off a smoothstep curve. A two-stop gradient ramps linearly, and
+ * the eye reads where that ramp meets full opacity as a hard line. Sampling the
+ * curve rounds both ends off, so the fade runs out instead of stopping.
  */
 const FADE_STOPS = [0, 0.0608, 0.216, 0.5, 0.784, 0.939, 1]
 

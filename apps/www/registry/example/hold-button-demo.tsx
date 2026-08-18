@@ -4,19 +4,14 @@ import * as React from "react"
 
 import { HoldButton } from "@/registry/loomui/hold-button"
 
-/** How long the confirmation sits there before the button is offered again. */
 const CONFIRM_MS = 1500
-/** Exits run shorter than entrances: leaving should not be dwelt on. */
+/** Exits run shorter than entrances. */
 const EXIT_MS = 150
 const ENTER_MS = 200
-/** Just enough that the two are never both half-there, smearing into each other. */
+/** Enough that the two are never both half there, smearing together. */
 const ENTER_DELAY = 120
 
-/**
- * Both halves share one grid cell, so nothing moves and nothing reflows: the
- * swap is opacity and only opacity. Anything that also slid or scaled had two
- * things to get right at once, and got one of them wrong.
- */
+/** One grid cell for both halves, so the swap is opacity and nothing else. */
 const SWAP =
   "col-start-1 row-start-1 will-change-[opacity] transition-opacity ease-[var(--ease-out-quart)] motion-reduce:transition-none"
 
@@ -32,8 +27,7 @@ export default function HoldButtonDemo() {
   )
 
   const handleHold = () => {
-    // A keyboard user held this with Space. Hand focus back when it returns,
-    // or the swap quietly drops them on the body.
+    // Held with Space? Hand focus back, or the swap drops them on the body.
     hadFocus.current = document.activeElement === button.current
     setDone(true)
 
@@ -41,10 +35,8 @@ export default function HoldButtonDemo() {
       setTimeout(() => setDone(false), CONFIRM_MS),
       setTimeout(
         () => {
-          if (hadFocus.current) {
-            // Focusing scrolls by default, which yanks the page mid-swap.
-            button.current?.focus({ preventScroll: true })
-          }
+          // Focusing scrolls by default, which yanks the page mid swap.
+          if (hadFocus.current) button.current?.focus({ preventScroll: true })
         },
         CONFIRM_MS + ENTER_DELAY + ENTER_MS
       ),
@@ -88,13 +80,12 @@ export default function HoldButtonDemo() {
         >
           <path d="M20 6 9 17l-5-5" />
         </svg>
-        Successfully deleted
+        Gone. No takebacks
       </span>
 
-      {/* The visible confirmation is decoration on a swap; this is the part a
-          screen reader is told about, and only when it changes. */}
+      {/* The visible half is decoration. This is what is announced. */}
       <span role="status" className="sr-only">
-        {done ? "Successfully deleted" : ""}
+        {done ? "Deleted" : ""}
       </span>
     </div>
   )

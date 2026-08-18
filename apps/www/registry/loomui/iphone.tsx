@@ -20,10 +20,8 @@ const DEVICE_WIDTH = 393
 const DEVICE_HEIGHT = 852
 
 /**
- * Every measurement is a share of the frame's own width. Container units keep
- * that share exact at any size. A percentage border-radius would go elliptical
- * on a box this tall, and a scale factor worked out in JS would be wrong the
- * moment the frame had to shrink to fit.
+ * Every measurement is a share of the frame's own width, in container units. A
+ * percentage radius would go elliptical on a box this tall.
  */
 const cq = (points: number) =>
   `${((points / DEVICE_WIDTH) * 100).toFixed(4)}cqw`

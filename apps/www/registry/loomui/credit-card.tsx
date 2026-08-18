@@ -114,13 +114,9 @@ function PlaceholderBrand() {
 }
 
 /**
- * A placeholder payment card: the plate, the arcs, a number and a name, over an
- * aurora that drifts under the whole face. Nothing here is a real card and no
- * real mark is drawn, so it is safe to put in a mockup or a pricing page.
- *
- * The two faces are separate renders rather than a flip built in, so a card
- * that turns is `<FlipCard front={<CreditCard />} back={<CreditCard side="back" />} />`
- * and this component stays one face.
+ * A placeholder payment card. Nothing here is real and no real mark is drawn,
+ * so it is safe in a mockup. One face per render — wrap two in a `FlipCard` for
+ * a card that turns.
  */
 export function CreditCard({
   side = "front",

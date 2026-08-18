@@ -4,30 +4,29 @@ const CARDS = [
   {
     step: "01",
     title: "Cut",
-    body: "Every piece is measured against the finished garment, not the bolt it came off.",
+    body: "Measure against the thing you are making, not the roll it came off.",
   },
   {
     step: "02",
     title: "Pin",
-    body: "Nothing is sewn until the whole thing has been laid out and pinned down.",
+    body: "Lay it all out first. Sewing is where mistakes get expensive.",
   },
   {
     step: "03",
     title: "Sew",
-    body: "One seam at a time, each one pressed flat before the next one starts.",
+    body: "One seam at a time, pressed flat before the next one starts.",
   },
   {
     step: "04",
     title: "Finish",
-    body: "The hem, the lining, and the label. The parts nobody sees hold it together.",
+    body: "Hem, lining, label. The parts nobody sees are the parts holding it together.",
   },
 ]
 
 export default function CardStackDemo() {
   return (
     <div className="w-full max-w-md">
-      {/* The stack measures itself against the nearest scrolling box, so it
-          works in a panel like this one as well as against the page. */}
+      {/* Measures against the nearest scrolling box, so a panel works too. */}
       <div className="h-72 [scrollbar-width:none] overflow-y-auto rounded-xl [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
         <CardStack offset={10} peek={18} tail={120}>
           {CARDS.map((card) => (

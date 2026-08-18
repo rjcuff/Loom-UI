@@ -29,10 +29,8 @@ function smooth(t: number) {
 }
 
 /**
- * Sticky positions itself against the nearest scrolling ancestor, not always
- * the page, so the measurements have to be taken against that same box or a
- * stack inside a scrolling panel would be measured against a viewport it never
- * moves through.
+ * Sticky positions against the nearest scrolling ancestor, not always the page,
+ * so the measurements have to be taken against that same box.
  */
 function findScrollport(node: HTMLElement) {
   let parent = node.parentElement
@@ -47,11 +45,9 @@ function findScrollport(node: HTMLElement) {
 }
 
 /**
- * Each card is pinned a little lower than the one before it, so a covered card
- * keeps a strip of itself on screen and the stack reads as a stack.
- *
- * A card's progress is measured from the card *after* it, because a pinned card
- * stops moving: how far it is buried is only knowable from what is burying it.
+ * Each card pins a little lower than the last, so a covered one keeps a strip on
+ * screen. Progress is measured from the card *after* it: a pinned card stops
+ * moving, so only what is burying it knows how buried it is.
  */
 export function CardStack({
   children,

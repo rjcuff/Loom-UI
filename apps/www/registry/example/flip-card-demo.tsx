@@ -4,10 +4,10 @@ import * as React from "react"
 
 import { FlipCard } from "@/registry/loomui/flip-card"
 
-/** Fixed order rather than shuffled, so the server and the client agree. */
+/** Fixed order, not shuffled, so the server and the client agree. */
 const DECK = ["🫐", "🍑", "🍑", "🫐"]
 const MISS_DELAY = 700
-/** The card's own turn, so the match ring waits for both cards to land. */
+/** The card's own turn. The match ring waits for both to land. */
 const FLIP_MS = 480
 
 const FACE =
@@ -16,8 +16,7 @@ const FACE =
 export default function FlipCardDemo() {
   const [faceUp, setFaceUp] = React.useState<number[]>([])
   const [matched, setMatched] = React.useState<number[]>([])
-  // Matched cards that have finished turning. The ring waits for the turn so
-  // it lands on a card that is already face up, not on one mid-flight.
+  // The ring waits for the turn, so it lands on a card already face up.
   const [landed, setLanded] = React.useState<number[]>([])
   const timer = React.useRef<ReturnType<typeof setTimeout>>(undefined)
   const ring = React.useRef<ReturnType<typeof setTimeout>>(undefined)
@@ -105,10 +104,10 @@ export default function FlipCardDemo() {
           onClick={reset}
           className="text-muted-foreground hover:text-foreground cursor-pointer text-xs underline underline-offset-4"
         >
-          Both pairs. Play again
+          Nailed it. Again?
         </button>
       ) : (
-        <p className="text-muted-foreground text-xs">Find both pairs</p>
+        <p className="text-muted-foreground text-xs">Two pairs. Go.</p>
       )}
     </div>
   )

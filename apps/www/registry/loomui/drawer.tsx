@@ -101,13 +101,11 @@ export function DrawerOverlay({
 }
 
 /**
- * A panel that comes in from one edge and covers most of the screen, standing
- * in for a modal. The whole face is the grip: press anywhere and drag.
+ * A panel from one edge, standing in for a modal. The whole face is the grip.
  *
- * Open and close are keyframes, not transitions, since the panel is only in the
- * DOM while it is open. The way in does not fill forwards — a held last frame
- * outranks inline styles for good, leaving the drag nothing to move. The way
- * out does, or the panel snaps back to open for the frame before it unmounts.
+ * Keyframes rather than transitions, since the panel is only in the DOM while
+ * open. The way in does not fill forwards, or the held last frame would outrank
+ * the drag's inline styles. The way out does, or it snaps back before unmount.
  */
 export function DrawerContent({
   side = "bottom",
@@ -308,10 +306,8 @@ export function DrawerContent({
   }
 
   /**
-   * Every open starts against the edge. React only rewrites an inline property
-   * when its own value changes, so the resting position is written out rather
-   * than cleared — clearing removes what React put there, and it will not put
-   * it back until it changes.
+   * Every open starts against the edge. Written out rather than cleared: React
+   * only rewrites an inline property when its own value changes.
    */
   const park = () => {
     setDragging(false)

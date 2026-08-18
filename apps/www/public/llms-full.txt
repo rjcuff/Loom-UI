@@ -378,10 +378,8 @@ function smooth(t: number) {
 }
 
 /**
- * Sticky positions itself against the nearest scrolling ancestor, not always
- * the page, so the measurements have to be taken against that same box or a
- * stack inside a scrolling panel would be measured against a viewport it never
- * moves through.
+ * Sticky positions against the nearest scrolling ancestor, not always the page,
+ * so the measurements have to be taken against that same box.
  */
 function findScrollport(node: HTMLElement) {
   let parent = node.parentElement
@@ -396,11 +394,9 @@ function findScrollport(node: HTMLElement) {
 }
 
 /**
- * Each card is pinned a little lower than the one before it, so a covered card
- * keeps a strip of itself on screen and the stack reads as a stack.
- *
- * A card's progress is measured from the card *after* it, because a pinned card
- * stops moving: how far it is buried is only knowable from what is burying it.
+ * Each card pins a little lower than the last, so a covered one keeps a strip on
+ * screen. Progress is measured from the card *after* it: a pinned card stops
+ * moving, so only what is burying it knows how buried it is.
  */
 export function CardStack({
   children,
@@ -554,30 +550,29 @@ const CARDS = [
   {
     step: "01",
     title: "Cut",
-    body: "Every piece is measured against the finished garment, not the bolt it came off.",
+    body: "Measure against the thing you are making, not the roll it came off.",
   },
   {
     step: "02",
     title: "Pin",
-    body: "Nothing is sewn until the whole thing has been laid out and pinned down.",
+    body: "Lay it all out first. Sewing is where mistakes get expensive.",
   },
   {
     step: "03",
     title: "Sew",
-    body: "One seam at a time, each one pressed flat before the next one starts.",
+    body: "One seam at a time, pressed flat before the next one starts.",
   },
   {
     step: "04",
     title: "Finish",
-    body: "The hem, the lining, and the label. The parts nobody sees hold it together.",
+    body: "Hem, lining, label. The parts nobody sees are the parts holding it together.",
   },
 ]
 
 export default function CardStackDemo() {
   return (
     <div className="w-full max-w-md">
-      {/* The stack measures itself against the nearest scrolling box, so it
-          works in a panel like this one as well as against the page. */}
+      {/* Measures against the nearest scrolling box, so a panel works too. */}
       <div className="h-72 [scrollbar-width:none] overflow-y-auto rounded-xl [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
         <CardStack offset={10} peek={18} tail={120}>
           {CARDS.map((card) => (
@@ -1355,13 +1350,9 @@ function PlaceholderBrand() {
 }
 
 /**
- * A placeholder payment card: the plate, the arcs, a number and a name, over an
- * aurora that drifts under the whole face. Nothing here is a real card and no
- * real mark is drawn, so it is safe to put in a mockup or a pricing page.
- *
- * The two faces are separate renders rather than a flip built in, so a card
- * that turns is `<FlipCard front={<CreditCard />} back={<CreditCard side="back" />} />`
- * and this component stays one face.
+ * A placeholder payment card. Nothing here is real and no real mark is drawn,
+ * so it is safe in a mockup. One face per render — wrap two in a `FlipCard` for
+ * a card that turns.
  */
 export function CreditCard({
   side = "front",
@@ -1630,13 +1621,11 @@ export function DrawerOverlay({
 }
 
 /**
- * A panel that comes in from one edge and covers most of the screen, standing
- * in for a modal. The whole face is the grip: press anywhere and drag.
+ * A panel from one edge, standing in for a modal. The whole face is the grip.
  *
- * Open and close are keyframes, not transitions, since the panel is only in the
- * DOM while it is open. The way in does not fill forwards — a held last frame
- * outranks inline styles for good, leaving the drag nothing to move. The way
- * out does, or the panel snaps back to open for the frame before it unmounts.
+ * Keyframes rather than transitions, since the panel is only in the DOM while
+ * open. The way in does not fill forwards, or the held last frame would outrank
+ * the drag's inline styles. The way out does, or it snaps back before unmount.
  */
 export function DrawerContent({
   side = "bottom",
@@ -1837,10 +1826,8 @@ export function DrawerContent({
   }
 
   /**
-   * Every open starts against the edge. React only rewrites an inline property
-   * when its own value changes, so the resting position is written out rather
-   * than cleared — clearing removes what React put there, and it will not put
-   * it back until it changes.
+   * Every open starts against the edge. Written out rather than cleared: React
+   * only rewrites an inline property when its own value changes.
    */
   const park = () => {
     setDragging(false)
@@ -2430,10 +2417,10 @@ import * as React from "react"
 
 import { FlipCard } from "@/registry/loomui/flip-card"
 
-/** Fixed order rather than shuffled, so the server and the client agree. */
+/** Fixed order, not shuffled, so the server and the client agree. */
 const DECK = ["🫐", "🍑", "🍑", "🫐"]
 const MISS_DELAY = 700
-/** The card's own turn, so the match ring waits for both cards to land. */
+/** The card's own turn. The match ring waits for both to land. */
 const FLIP_MS = 480
 
 const FACE =
@@ -2442,8 +2429,7 @@ const FACE =
 export default function FlipCardDemo() {
   const [faceUp, setFaceUp] = React.useState<number[]>([])
   const [matched, setMatched] = React.useState<number[]>([])
-  // Matched cards that have finished turning. The ring waits for the turn so
-  // it lands on a card that is already face up, not on one mid-flight.
+  // The ring waits for the turn, so it lands on a card already face up.
   const [landed, setLanded] = React.useState<number[]>([])
   const timer = React.useRef<ReturnType<typeof setTimeout>>(undefined)
   const ring = React.useRef<ReturnType<typeof setTimeout>>(undefined)
@@ -2531,10 +2517,10 @@ export default function FlipCardDemo() {
           onClick={reset}
           className="text-muted-foreground hover:text-foreground cursor-pointer text-xs underline underline-offset-4"
         >
-          Both pairs. Play again
+          Nailed it. Again?
         </button>
       ) : (
-        <p className="text-muted-foreground text-xs">Find both pairs</p>
+        <p className="text-muted-foreground text-xs">Two pairs. Go.</p>
       )}
     </div>
   )
@@ -3184,19 +3170,14 @@ import * as React from "react"
 
 import { HoldButton } from "@/registry/loomui/hold-button"
 
-/** How long the confirmation sits there before the button is offered again. */
 const CONFIRM_MS = 1500
-/** Exits run shorter than entrances: leaving should not be dwelt on. */
+/** Exits run shorter than entrances. */
 const EXIT_MS = 150
 const ENTER_MS = 200
-/** Just enough that the two are never both half-there, smearing into each other. */
+/** Enough that the two are never both half there, smearing together. */
 const ENTER_DELAY = 120
 
-/**
- * Both halves share one grid cell, so nothing moves and nothing reflows: the
- * swap is opacity and only opacity. Anything that also slid or scaled had two
- * things to get right at once, and got one of them wrong.
- */
+/** One grid cell for both halves, so the swap is opacity and nothing else. */
 const SWAP =
   "col-start-1 row-start-1 will-change-[opacity] transition-opacity ease-[var(--ease-out-quart)] motion-reduce:transition-none"
 
@@ -3212,8 +3193,7 @@ export default function HoldButtonDemo() {
   )
 
   const handleHold = () => {
-    // A keyboard user held this with Space. Hand focus back when it returns,
-    // or the swap quietly drops them on the body.
+    // Held with Space? Hand focus back, or the swap drops them on the body.
     hadFocus.current = document.activeElement === button.current
     setDone(true)
 
@@ -3221,10 +3201,8 @@ export default function HoldButtonDemo() {
       setTimeout(() => setDone(false), CONFIRM_MS),
       setTimeout(
         () => {
-          if (hadFocus.current) {
-            // Focusing scrolls by default, which yanks the page mid-swap.
-            button.current?.focus({ preventScroll: true })
-          }
+          // Focusing scrolls by default, which yanks the page mid swap.
+          if (hadFocus.current) button.current?.focus({ preventScroll: true })
         },
         CONFIRM_MS + ENTER_DELAY + ENTER_MS
       ),
@@ -3268,13 +3246,12 @@ export default function HoldButtonDemo() {
         >
           <path d="M20 6 9 17l-5-5" />
         </svg>
-        Successfully deleted
+        Gone. No takebacks
       </span>
 
-      {/* The visible confirmation is decoration on a swap; this is the part a
-          screen reader is told about, and only when it changes. */}
+      {/* The visible half is decoration. This is what is announced. */}
       <span role="status" className="sr-only">
-        {done ? "Successfully deleted" : ""}
+        {done ? "Deleted" : ""}
       </span>
     </div>
   )
@@ -3575,10 +3552,8 @@ const DEVICE_WIDTH = 393
 const DEVICE_HEIGHT = 852
 
 /**
- * Every measurement is a share of the frame's own width. Container units keep
- * that share exact at any size. A percentage border-radius would go elliptical
- * on a box this tall, and a scale factor worked out in JS would be wrong the
- * moment the frame had to shrink to fit.
+ * Every measurement is a share of the frame's own width, in container units. A
+ * percentage radius would go elliptical on a box this tall.
  */
 const cq = (points: number) =>
   `${((points / DEVICE_WIDTH) * 100).toFixed(4)}cqw`
@@ -4364,13 +4339,9 @@ interface Motion {
 }
 
 /**
- * Every dash is drawn from this on each frame, so the slider is animated in one
- * place. Nothing is left to a CSS transition: the value changes on every
- * pointer move, and a transition that restarts each frame never arrives.
- *
- * `tau` is roughly how long it takes to close the gap to the target. Frames are
- * measured rather than counted, so the ease is the same on a 60Hz panel and a
- * 120Hz one.
+ * Every dash is drawn from this each frame. A CSS transition restarted on every
+ * pointer move never arrives, so there is none. `tau` is roughly how long the
+ * gap to the target takes to close; frames are measured, not counted.
  */
 function useMotion(target: number, tau: number): Motion {
   const [motion, setMotion] = React.useState<Motion>({
@@ -4423,11 +4394,9 @@ function useMotion(target: number, tau: number): Motion {
 }
 
 /**
- * A row of dashes rather than a bar. The dash on the value is the longest and
- * its neighbours fall away behind it, each growing from the middle of the track
- * rather than standing on its floor, so the grab point reads without a knob
- * drawn over it. Moving the value sends a wave out along the row, and the wave
- * is as strong as the movement that caused it.
+ * A row of dashes rather than a bar. The dash on the value is longest and its
+ * neighbours fall away behind it, so the grab point reads without a knob.
+ * Moving it sends a wave along the row, as strong as the move that caused it.
  */
 export function LoomSlider({
   value,
@@ -4944,10 +4913,9 @@ export interface MarqueeProps extends React.ComponentProps<"div"> {
 }
 
 /**
- * Alpha sampled off a smoothstep curve. A two-stop gradient ramps its alpha
- * linearly, and the eye reads the point where that ramp meets full opacity as a
- * hard diagonal line. Sampling the curve rounds both ends of the ramp off, so
- * the fade runs out instead of stopping.
+ * Alpha sampled off a smoothstep curve. A two-stop gradient ramps linearly, and
+ * the eye reads where that ramp meets full opacity as a hard line. Sampling the
+ * curve rounds both ends off, so the fade runs out instead of stopping.
  */
 const FADE_STOPS = [0, 0.0608, 0.216, 0.5, 0.784, 0.939, 1]
 
@@ -5988,22 +5956,11 @@ function findItem(children: React.ReactNode, value: string) {
 }
 
 /**
- * A container that changes shape to fit whatever it is showing, on a spring.
+ * A shape that changes to fit what it holds.
  *
- * The size is never animated. Animating width and height would lay the page out
- * on every frame, so the box is set to its new size once, in the same commit
- * that swaps the contents, and the difference is played back as a transform:
- * measure the old box, measure the new one, start at the ratio between them and
- * spring to 1. Layout happens once per change, and every frame in between is
- * the compositor's.
- *
- * A scaled box distorts, so two things undo it. The contents sit in a wrapper
- * scaled by the inverse, which keeps them at their true size throughout. The
- * corner radius is divided by each axis separately — `border-radius: x / y` —
- * which is what keeps a squashed corner circular instead of oval.
- *
- * Because it is a spring rather than a curve, a change that lands mid-flight
- * carries the velocity it already had. The shape never stops to start again.
+ * The size is never animated. The box is set once, in the commit that swaps the
+ * contents, and the difference replays as a transform: start at the ratio
+ * between old and new, spring to 1. Layout runs once per change.
  */
 export function Spool({
   value,
@@ -6208,10 +6165,8 @@ import * as React from "react"
 
 import { Spool, SpoolItem } from "@/registry/loomui/spool"
 
-const STATES = ["idle", "playing", "saved"] as const
-
-const BUTTON =
-  "border-border bg-background hover:bg-accent hover:text-accent-foreground focus-visible:ring-ring/60 inline-flex cursor-pointer items-center justify-center rounded-md border px-3 py-1.5 text-xs font-medium transition-colors duration-150 ease focus-visible:ring-2 focus-visible:outline-none active:scale-[0.97]"
+const STATES = ["idle", "playing", "saved"]
+const DWELL = 2600
 
 /** Five bars on five clocks, so the meter never pulses as one block. */
 function Meter() {
@@ -6220,9 +6175,8 @@ function Meter() {
       {[0.9, 1.4, 0.7, 1.2, 1].map((rate, index) => (
         <span
           key={index}
-          className="bg-accent animate-spool-meter w-[3px] rounded-full"
+          className="bg-accent animate-spool-meter h-3.5 w-[3px] rounded-full"
           style={{
-            height: "0.9rem",
             animationDuration: `${rate}s`,
             animationDelay: `${index * -0.31}s`,
           }}
@@ -6233,14 +6187,38 @@ function Meter() {
 }
 
 export default function SpoolDemo() {
-  const [value, setValue] = React.useState<string>("idle")
+  const [index, setIndex] = React.useState(0)
+  const value = STATES[index]
+
+  const advance = React.useCallback(
+    () => setIndex((current) => (current + 1) % STATES.length),
+    []
+  )
+
+  React.useEffect(() => {
+    const timer = window.setInterval(advance, DWELL)
+    return () => window.clearInterval(timer)
+  }, [advance])
 
   return (
-    <div className="flex flex-col items-center gap-7">
-      <Spool value={value}>
+    <div className="flex flex-col items-center gap-4">
+      <Spool
+        value={value}
+        role="button"
+        tabIndex={0}
+        aria-label="Next state"
+        onClick={advance}
+        onKeyDown={(event) => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault()
+            advance()
+          }
+        }}
+        className="focus-visible:ring-ring/60 cursor-pointer focus-visible:ring-2 focus-visible:outline-none"
+      >
         <SpoolItem value="idle">
           <span className="bg-muted-foreground/40 size-2 rounded-full" />
-          <span className="text-sm font-medium">Weaving</span>
+          <span className="text-sm font-medium">Idle, and smug about it</span>
         </SpoolItem>
 
         <SpoolItem value="playing" className="gap-3 pr-5">
@@ -6255,23 +6233,13 @@ export default function SpoolDemo() {
           <span className="bg-accent/15 text-accent grid size-5 place-items-center rounded-full text-[0.65rem]">
             ✓
           </span>
-          <span className="text-sm font-medium">Saved</span>
+          <span className="text-sm font-medium">Saved. You are welcome</span>
         </SpoolItem>
       </Spool>
 
-      <div className="flex gap-2">
-        {STATES.map((state) => (
-          <button
-            key={state}
-            type="button"
-            onClick={() => setValue(state)}
-            data-active={value === state ? "" : undefined}
-            className={`${BUTTON} data-active:border-accent/50 data-active:text-accent`}
-          >
-            {state}
-          </button>
-        ))}
-      </div>
+      <p className="text-muted-foreground text-xs">
+        Impatient? Click it mid-morph.
+      </p>
     </div>
   )
 }
@@ -7266,10 +7234,9 @@ export interface TestimonialWallProps extends React.ComponentProps<"div"> {
 }
 
 /**
- * Alpha sampled off a smoothstep curve. A two-stop gradient ramps its alpha
- * linearly, and the eye reads the point where that ramp meets full opacity as a
- * hard line. Sampling the curve rounds both ends off, so the fade runs out
- * instead of stopping.
+ * Alpha sampled off a smoothstep curve. A two-stop gradient ramps linearly, and
+ * the eye reads where that ramp meets full opacity as a hard line. Sampling the
+ * curve rounds both ends off, so the fade runs out instead of stopping.
  */
 const FADE_STOPS = [0, 0.0608, 0.216, 0.5, 0.784, 0.939, 1]
 

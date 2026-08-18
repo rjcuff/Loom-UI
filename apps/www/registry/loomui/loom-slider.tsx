@@ -71,13 +71,9 @@ interface Motion {
 }
 
 /**
- * Every dash is drawn from this on each frame, so the slider is animated in one
- * place. Nothing is left to a CSS transition: the value changes on every
- * pointer move, and a transition that restarts each frame never arrives.
- *
- * `tau` is roughly how long it takes to close the gap to the target. Frames are
- * measured rather than counted, so the ease is the same on a 60Hz panel and a
- * 120Hz one.
+ * Every dash is drawn from this each frame. A CSS transition restarted on every
+ * pointer move never arrives, so there is none. `tau` is roughly how long the
+ * gap to the target takes to close; frames are measured, not counted.
  */
 function useMotion(target: number, tau: number): Motion {
   const [motion, setMotion] = React.useState<Motion>({
@@ -130,11 +126,9 @@ function useMotion(target: number, tau: number): Motion {
 }
 
 /**
- * A row of dashes rather than a bar. The dash on the value is the longest and
- * its neighbours fall away behind it, each growing from the middle of the track
- * rather than standing on its floor, so the grab point reads without a knob
- * drawn over it. Moving the value sends a wave out along the row, and the wave
- * is as strong as the movement that caused it.
+ * A row of dashes rather than a bar. The dash on the value is longest and its
+ * neighbours fall away behind it, so the grab point reads without a knob.
+ * Moving it sends a wave along the row, as strong as the move that caused it.
  */
 export function LoomSlider({
   value,

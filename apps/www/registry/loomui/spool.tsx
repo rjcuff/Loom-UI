@@ -57,22 +57,11 @@ function findItem(children: React.ReactNode, value: string) {
 }
 
 /**
- * A container that changes shape to fit whatever it is showing, on a spring.
+ * A shape that changes to fit what it holds.
  *
- * The size is never animated. Animating width and height would lay the page out
- * on every frame, so the box is set to its new size once, in the same commit
- * that swaps the contents, and the difference is played back as a transform:
- * measure the old box, measure the new one, start at the ratio between them and
- * spring to 1. Layout happens once per change, and every frame in between is
- * the compositor's.
- *
- * A scaled box distorts, so two things undo it. The contents sit in a wrapper
- * scaled by the inverse, which keeps them at their true size throughout. The
- * corner radius is divided by each axis separately — `border-radius: x / y` —
- * which is what keeps a squashed corner circular instead of oval.
- *
- * Because it is a spring rather than a curve, a change that lands mid-flight
- * carries the velocity it already had. The shape never stops to start again.
+ * The size is never animated. The box is set once, in the commit that swaps the
+ * contents, and the difference replays as a transform: start at the ratio
+ * between old and new, spring to 1. Layout runs once per change.
  */
 export function Spool({
   value,
