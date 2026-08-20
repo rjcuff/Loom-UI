@@ -451,6 +451,34 @@ export const examples: Registry["items"] = [
     ],
   },
   {
+    name: "icon-morph-demo",
+    type: "registry:example",
+    title: "Icon Morph Demo",
+    description:
+      "Five icon pairs, each one shape travelling rather than two shapes trading places.",
+    registryDependencies: ["@loomui/icon-morph"],
+    files: [
+      {
+        path: "example/icon-morph-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "photo-stamp-demo",
+    type: "registry:example",
+    title: "Photo Stamp Demo",
+    description:
+      "A stamp that lifts its photo out of the frame at full size over a blurred page.",
+    registryDependencies: ["@loomui/photo-stamp"],
+    files: [
+      {
+        path: "example/photo-stamp-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "drawer-demo",
     type: "registry:example",
     title: "Drawer Demo",

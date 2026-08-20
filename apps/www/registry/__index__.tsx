@@ -514,6 +514,36 @@ export const Index: Record<string, any> = {
       return { default: mod.default ?? mod[exportName] }
     }),
   },
+  "icon-morph": {
+    name: "icon-morph",
+    type: "registry:ui",
+    title: "Icon Morph",
+    description: "One icon that turns into another by moving its own pieces, so there is never a frame with both glyphs on screen.",
+    dependencies: [],
+    registryDependencies: ["utils"],
+    files: [{"path":"registry/loomui/icon-morph.tsx","type":"registry:ui","target":""}],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/loomui/icon-morph")
+      const exportName =
+        Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
+      return { default: mod.default ?? mod[exportName] }
+    }),
+  },
+  "photo-stamp": {
+    name: "photo-stamp",
+    type: "registry:ui",
+    title: "Photo Stamp",
+    description: "A photo that lifts off the page at full size over a blurred backdrop, the same element the whole way.",
+    dependencies: [],
+    registryDependencies: ["utils","use-spring"],
+    files: [{"path":"registry/loomui/photo-stamp.tsx","type":"registry:ui","target":""}],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/loomui/photo-stamp")
+      const exportName =
+        Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
+      return { default: mod.default ?? mod[exportName] }
+    }),
+  },
   "drawer": {
     name: "drawer",
     type: "registry:ui",
@@ -1139,6 +1169,36 @@ export const Index: Record<string, any> = {
     files: [{"path":"registry/example/spool-demo.tsx","type":"registry:example","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/example/spool-demo")
+      const exportName =
+        Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
+      return { default: mod.default ?? mod[exportName] }
+    }),
+  },
+  "icon-morph-demo": {
+    name: "icon-morph-demo",
+    type: "registry:example",
+    title: "Icon Morph Demo",
+    description: "Five icon pairs, each one shape travelling rather than two shapes trading places.",
+    dependencies: [],
+    registryDependencies: ["@loomui/icon-morph"],
+    files: [{"path":"registry/example/icon-morph-demo.tsx","type":"registry:example","target":""}],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/example/icon-morph-demo")
+      const exportName =
+        Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
+      return { default: mod.default ?? mod[exportName] }
+    }),
+  },
+  "photo-stamp-demo": {
+    name: "photo-stamp-demo",
+    type: "registry:example",
+    title: "Photo Stamp Demo",
+    description: "A stamp that lifts its photo out of the frame at full size over a blurred page.",
+    dependencies: [],
+    registryDependencies: ["@loomui/photo-stamp"],
+    files: [{"path":"registry/example/photo-stamp-demo.tsx","type":"registry:example","target":""}],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/example/photo-stamp-demo")
       const exportName =
         Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
       return { default: mod.default ?? mod[exportName] }

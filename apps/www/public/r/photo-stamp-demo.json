@@ -1,0 +1,17 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "photo-stamp-demo",
+  "type": "registry:example",
+  "title": "Photo Stamp Demo",
+  "description": "A stamp that lifts its photo out of the frame at full size over a blurred page.",
+  "registryDependencies": [
+    "@loomui/photo-stamp"
+  ],
+  "files": [
+    {
+      "path": "registry/example/photo-stamp-demo.tsx",
+      "content": "import { PhotoStamp } from \"@/registry/loomui/photo-stamp\"\n\n/**\n * Stock photography at full size. The open state is the file's real size, so a\n * thumbnail-resolution source would arrive soft.\n */\nconst PHOTO = \"https://picsum.photos/id/1015/1600/1200\"\n\nexport default function PhotoStampDemo() {\n  return (\n    <div className=\"flex flex-col items-center gap-4\">\n      <PhotoStamp\n        src={PHOTO}\n        alt=\"A river cutting through a valley\"\n        imageClassName=\"h-36 w-52\"\n      />\n      <p className=\"text-muted-foreground text-xs\">\n        Click it. The photo you clicked is the photo that opens.\n      </p>\n    </div>\n  )\n}\n",
+      "type": "registry:example"
+    }
+  ]
+}

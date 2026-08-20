@@ -1,0 +1,208 @@
+---
+title: Photo Stamp
+date: 2026-08-19
+description: A photo that lifts off the page at full size over a blurred backdrop, the same element the whole way.
+---
+
+<ComponentPreview name="photo-stamp-demo" />
+
+## Installation
+
+<Tabs defaultValue="cli">
+
+<TabsList>
+  <TabsTrigger value="cli">CLI</TabsTrigger>
+  <TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @loomui/photo-stamp
+```
+
+</TabsContent>
+
+<TabsContent value="manual">
+
+<Steps>
+
+<Step>Copy the component into your project.</Step>
+
+<ComponentSource name="photo-stamp" />
+
+<Step>Update the import paths to match your setup.</Step>
+
+</Steps>
+
+</TabsContent>
+
+</Tabs>
+
+## Usage
+
+```tsx
+import { PhotoStamp } from "@/components/ui/photo-stamp"
+```
+
+```tsx
+<PhotoStamp
+  src="/photos/gorge.jpg"
+  alt="A river cutting through a valley"
+  caption="Gorge, 06:14"
+  imageClassName="h-28 w-40"
+/>
+```
+
+Ship the full-size file. The open state is the photo at its real size, so a
+thumbnail-resolution source arrives soft at the end of a journey that spent the
+whole way looking sharp.
+
+## How it works
+
+### One photo, not two
+
+The obvious build is a small photo and a big photo that trade places. It is
+also the one that never quite works: for a frame or two both exist, and the
+seam between them is the only thing anyone sees.
+
+There is one photo here. It is measured where it sits on the page, drawn at its
+final size, and put back down onto that spot with a transform. Then the
+transform is released.
+
+```tsx
+const scale = geo.scale + (1 - geo.scale) * p
+const x = (geo.from.x - geo.to.x) * (1 - p)
+const y = (geo.from.y - geo.to.y) * (1 - p)
+```
+
+`from` is the rect the resting photo reported. `to` is the box it is going to.
+Nothing in between is measured, because nothing in between is laid out.
+
+### The open box borrows the photo's own aspect
+
+The open size is fitted to the viewport at the aspect the photo already has on
+the page, not the aspect of the file. A thumbnail cropping a landscape photo
+into a square keeps that crop the whole way up.
+
+That is what makes one number enough. Both boxes share an aspect, so the scale
+is the same on both axes, and none of the un-distorting a two-axis morph needs
+has to happen at all.
+
+### The corner is written every frame
+
+A scaled box scales its corners with it. Left alone, a 10px radius on a photo
+that starts at a quarter size arrives four times too round and shrinks back
+down over the course of the lift, which reads as the corners breathing.
+
+```tsx
+node.style.borderRadius = `${radius / scale}px`
+```
+
+Dividing by the scale the photo is at right now holds the corner at one size in
+screen pixels. This is the one property here that is not on the compositor. It
+is a paint on a single element, driven by the same loop that is already
+painting, and it is the difference between a photo and a picture of a photo
+being zoomed.
+
+### Why a spring, and what it costs
+
+The lift can be interrupted. Click to close while it is still going up and a
+curve would stop dead and start again from nothing. A spring carries the
+velocity it already had.
+
+```tsx
+<PhotoStamp spring={{ duration: 0.5, bounce: 0 }} />
+```
+
+`bounce` stays at `0` by default. A photograph overshooting its own frame is a
+personality the photograph did not ask for. Raise it if the surface is a
+marketing page rather than a gallery.
+
+The cost is that a spring has no fixed end, so the close cannot unmount on a
+timer. It unmounts when the value it is travelling on reaches zero, which is
+also the frame the photo is back where it started.
+
+The close runs at 80% of the open's duration, because an exit should be quicker
+than the entrance it undoes. Retargeting the spring's stiffness mid-flight
+rather than starting a second animation is what lets a close that interrupts an
+open keep the speed the photo already had.
+
+The photo is also remeasured at the moment the close begins, not reused from
+when it opened. Where it has to land is wherever the page is showing it now.
+
+### The veil is on a clock
+
+Only the photo is on the spring. The blur behind it and the caption under it
+are CSS animations, because they are a running order rather than something
+that has to match where the photo is.
+
+A spring covers most of its distance in the first third, so anything sequenced
+against its progress fires almost at once and reads as a twitch.
+
+Both veil keyframes name one end and let the browser fill the other:
+
+```css
+@keyframes photo-stamp-veil-out {
+  to {
+    opacity: 0;
+  }
+}
+```
+
+The exit therefore starts from wherever the veil actually is. Written from
+`opacity: 1` instead, an exit interrupting an entrance would flash back to full
+for a frame first.
+
+### The page is held still without taking its scrollbar away
+
+The usual scroll lock puts `overflow: hidden` on the root. That removes the
+scrollbar, the viewport gets wider by its width, and everything positioned
+against the viewport moves: a fixed header, a sticky sidebar, anything centred.
+
+It all moves back when the lock is released, and the lock is released on the
+last frame of the close. That is the single frame in the whole interaction that
+has to be perfectly still, and instead the photo lands into a page jumping
+sideways. It reads as the photo snapping at the end, which is not where the
+fault is.
+
+So nothing is locked. The gestures are refused instead:
+
+```tsx
+window.addEventListener("wheel", block, { passive: false })
+window.addEventListener("touchmove", block, { passive: false })
+```
+
+React attaches `wheel` and `touchmove` passively at the root, so an `onWheel`
+prop cannot refuse them. These have to be native listeners. Scroll keys are
+turned away in the dialog's own `keydown`.
+
+The layout is untouched from the first frame to the last. Nothing is measured,
+nothing is compensated, nothing moves.
+
+`focus()` scrolls its target into view by default, which is the same jolt by
+another route. Both the focus into the dialog and the focus back onto the photo
+pass `preventScroll: true`.
+
+## Props
+
+`PhotoStamp` takes everything a `figure` takes, plus:
+
+| Prop             | Type            | Default                     | Description                                    |
+| ---------------- | --------------- | --------------------------- | ---------------------------------------------- |
+| `src`            | `string`        | required                    | The photo, at full size.                       |
+| `alt`            | `string`        | required                    | Also the trigger's accessible name.            |
+| `caption`        | `ReactNode`     | none                        | Sits under the photo, in both states.          |
+| `radius`         | `number`        | `10`                        | Corner radius, held steady in screen pixels.   |
+| `fill`           | `number`        | `0.72`                      | How much of the viewport the open photo fills. |
+| `spring`         | `SpringOptions` | `{duration: .5, bounce: 0}` | How the photo travels.                         |
+| `imageClassName` | `string`        | `h-24 w-32`                 | Sizes the photo at rest.                       |
+
+Escape closes it, so does the backdrop, the photo itself, and the button in the
+corner. Focus moves into the dialog on open and back to the photo on close.
+
+<Callout type="tip" title="Reduced motion">
+  With reduced motion the photo is already open on the first frame and closes on
+  the last. The veil and the caption appear without their entrances. Nothing is
+  hidden and nothing waits.
+</Callout>

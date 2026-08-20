@@ -844,6 +844,74 @@ export const ui: Registry["items"] = [
     },
   },
   {
+    name: "icon-morph",
+    type: "registry:ui",
+    title: "Icon Morph",
+    description:
+      "One icon that turns into another by moving its own pieces, so there is never a frame with both glyphs on screen.",
+    registryDependencies: ["utils"],
+    files: [
+      {
+        path: "loomui/icon-morph.tsx",
+        type: "registry:ui",
+      },
+    ],
+    cssVars: {
+      theme: {
+        "ease-out-quart": EASE_OUT_QUART,
+      },
+    },
+  },
+  {
+    name: "photo-stamp",
+    type: "registry:ui",
+    title: "Photo Stamp",
+    description:
+      "A photo that lifts off the page at full size over a blurred backdrop, the same element the whole way.",
+    registryDependencies: ["utils", "use-spring"],
+    files: [
+      {
+        path: "loomui/photo-stamp.tsx",
+        type: "registry:ui",
+      },
+    ],
+    cssVars: {
+      theme: {
+        "ease-out-quart": EASE_OUT_QUART,
+        "animate-photo-stamp-veil-in":
+          "photo-stamp-veil-in 240ms var(--ease-out-quart)",
+        // Long enough that the veil is not gone while the card is still on its
+        // way home, short enough that it never has to be cut off at the end.
+        "animate-photo-stamp-veil-out":
+          "photo-stamp-veil-out 300ms var(--ease-out-quart) forwards",
+        // Backwards, not both. An entrance that holds its last frame outranks
+        // the inline styles the photo is painted with.
+        "animate-photo-stamp-caption-in":
+          "photo-stamp-caption-in 240ms var(--ease-out-quart) 160ms backwards",
+      },
+    },
+    css: {
+      // One frame each, so the missing end is taken from wherever the veil
+      // actually is. An exit written from opacity 1 flashes back to full first.
+      "@keyframes photo-stamp-veil-in": {
+        from: {
+          opacity: "0",
+        },
+      },
+      "@keyframes photo-stamp-veil-out": {
+        to: {
+          opacity: "0",
+        },
+      },
+      "@keyframes photo-stamp-caption-in": {
+        from: {
+          opacity: "0",
+          translate: "0 6px",
+        },
+      },
+    },
+  },
+  {
     name: "drawer",
     type: "registry:ui",
     title: "Drawer",

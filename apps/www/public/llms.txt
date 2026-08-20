@@ -19,6 +19,7 @@ Install any component with `npx shadcn@latest add @loomui/<name>`.
 - [Grid Backdrop](https://loomui.design/docs/components/grid-backdrop): An SVG grid with cells that fade in and out at a deterministic, seeded scatter.
 - [Grid Beams](https://loomui.design/docs/components/grid-beams): A ruled grid with neon beams running down random lines, fading out toward the edges.
 - [Hold Button](https://loomui.design/docs/components/hold-button): A button that fires only after a deliberate press and hold, with a fill sweeping across to count out the wait.
+- [Icon Morph](https://loomui.design/docs/components/icon-morph): One icon that turns into another by moving its own pieces, so there is never a frame with both glyphs on screen.
 - [Image Trail](https://loomui.design/docs/components/image-trail): Images dropped along the pointer's path, spaced by distance travelled rather than by time.
 - [iPad](https://loomui.design/docs/components/ipad): A tablet frame drawn from the real measurements, upright or on its side, with a screen you put anything in.
 - [iPhone](https://loomui.design/docs/components/iphone): A device frame drawn from the real measurements, with a screen you put anything in.
@@ -29,6 +30,7 @@ Install any component with `npx shadcn@latest add @loomui/<name>`.
 - [MacBook](https://loomui.design/docs/components/macbook): A laptop frame with the camera housing cut into the display and the scoop cut into its base.
 - [Magnetic](https://loomui.design/docs/components/magnetic): A wrapper that pulls its child toward the pointer as the pointer gets close.
 - [Marquee](https://loomui.design/docs/components/marquee): A seamless scrolling row or column, in either direction, that pauses on hover.
+- [Photo Stamp](https://loomui.design/docs/components/photo-stamp): A photo that lifts off the page at full size over a blurred backdrop, the same element the whole way.
 - [Progress Ring](https://loomui.design/docs/components/progress-ring): A circular progress ring whose value springs to its target, so a number that changes mid travel keeps the speed it already had.
 - [Reading Progress](https://loomui.design/docs/components/reading-progress): A pinned bar that tracks how far through the page, or a chosen element, the reader is.
 - [Ripple Button](https://loomui.design/docs/components/ripple-button): A button that sends a circle out from wherever it was pressed, sized to reach the furthest corner.

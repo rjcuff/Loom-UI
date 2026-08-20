@@ -1,0 +1,17 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "icon-morph-demo",
+  "type": "registry:example",
+  "title": "Icon Morph Demo",
+  "description": "Five icon pairs, each one shape travelling rather than two shapes trading places.",
+  "registryDependencies": [
+    "@loomui/icon-morph"
+  ],
+  "files": [
+    {
+      "path": "registry/example/icon-morph-demo.tsx",
+      "content": "\"use client\"\n\nimport * as React from \"react\"\n\nimport { IconMorph, type IconMorphSet } from \"@/registry/loomui/icon-morph\"\n\nconst SETS: { set: IconMorphSet; off: string; on: string }[] = [\n  { set: \"menu\", off: \"Open menu\", on: \"Close menu\" },\n  { set: \"plus\", off: \"Add thread\", on: \"Cancel\" },\n  { set: \"play\", off: \"Play\", on: \"Pause\" },\n  { set: \"chevron\", off: \"Continue\", on: \"Done\" },\n]\n\nexport default function IconMorphDemo() {\n  const [active, setActive] = React.useState<Record<string, boolean>>({})\n\n  return (\n    <div className=\"flex flex-col items-center gap-4\">\n      <div className=\"flex items-center gap-2\">\n        {SETS.map(({ set, off, on }) => (\n          <button\n            key={set}\n            type=\"button\"\n            aria-pressed={active[set] ?? false}\n            aria-label={active[set] ? on : off}\n            onClick={() =>\n              setActive((current) => ({ ...current, [set]: !current[set] }))\n            }\n            className=\"ease-out-quart text-foreground/70 hover:text-foreground flex size-11 items-center justify-center transition-colors duration-180\"\n          >\n            <IconMorph set={set} active={active[set] ?? false} />\n          </button>\n        ))}\n      </div>\n      <p className=\"text-muted-foreground text-xs\">\n        One shape the whole way. Nothing crossfades.\n      </p>\n    </div>\n  )\n}\n",
+      "type": "registry:example"
+    }
+  ]
+}

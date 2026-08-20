@@ -1,0 +1,159 @@
+---
+title: Icon Morph
+date: 2026-08-19
+description: One icon that turns into another by moving its own pieces, so there is never a frame with both glyphs on screen.
+---
+
+<ComponentPreview name="icon-morph-demo" />
+
+## Installation
+
+<Tabs defaultValue="cli">
+
+<TabsList>
+  <TabsTrigger value="cli">CLI</TabsTrigger>
+  <TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @loomui/icon-morph
+```
+
+</TabsContent>
+
+<TabsContent value="manual">
+
+<Steps>
+
+<Step>Copy the component into your project.</Step>
+
+<ComponentSource name="icon-morph" />
+
+<Step>Update the import paths to match your setup.</Step>
+
+</Steps>
+
+</TabsContent>
+
+</Tabs>
+
+## Usage
+
+```tsx
+import { IconMorph } from "@/components/ui/icon-morph"
+```
+
+```tsx
+const [open, setOpen] = React.useState(false)
+
+<button aria-label={open ? "Close menu" : "Open menu"} onClick={() => setOpen(!open)}>
+  <IconMorph set="menu" active={open} />
+</button>
+```
+
+The icon is decorative and carries `aria-hidden`. The label belongs on whatever
+wraps it, and it changes with the state, because a button that reads "Open menu"
+while showing a close icon is worse than no label at all.
+
+## Sets
+
+| `set`     | `active` false | `active` true |
+| --------- | -------------- | ------------- |
+| `menu`    | hamburger      | close         |
+| `plus`    | plus           | close         |
+| `play`    | play           | pause         |
+| `chevron` | chevron        | tick          |
+
+## How it works
+
+### Do not crossfade two icons
+
+The usual icon swap fades one glyph out while the other fades in. For a frame
+or two both are legible, stacked on top of each other, and that reads as a
+rendering fault rather than a transition. It is the same mistake as covering a
+gap between two states by overlapping them.
+
+Nothing here fades into anything. Every set is drawn from pieces that belong to
+both shapes, and those pieces travel. The hamburger's top bar **is** the top
+arm of the X. The plus is an X that has not been turned yet.
+
+### Rotation is a rotation, not a straight line
+
+Where a piece ends up somewhere it could have turned to, it turns.
+
+```tsx
+<path d="M4 6h16" style={pose("12px 6px", "translateY(6px) rotate(45deg)")} />
+```
+
+Each bar spins about its own centre and then slides to the middle. The origin
+is given in viewBox units and `transform-box: view-box` is stated rather than
+assumed, since browsers have shipped different initial values for it.
+
+Interpolating those same two bars point by point would drag their ends through
+the middle instead, and the arms would go visibly short halfway across.
+
+### Where the outline itself changes, animate the outline
+
+A triangle is not a rotated pair of bars, so `play` cannot be a transform. That
+pair morphs through the CSS `d` property, which interpolates between two
+`path()` values as long as they hold the same commands in the same order.
+
+The triangle is cut down its middle so both states are two four-point
+quadrilaterals. The right half of the triangle is a quad with its two
+right-hand points sitting on top of each other, which is how a tip and a bar
+end up with the same point count.
+
+```tsx
+const PLAY_RIGHT = "M13 8.75L18 12L18 12L13 15.25Z"
+const PAUSE_RIGHT = "M14 5L17 5L17 19L14 19Z"
+```
+
+`chevron` is the same idea with less work: three points in both states, so one
+path covers the journey.
+
+This is the one thing in loom that animates a property the compositor does not
+own. `d` is a paint-level change, which would matter on a large shape and does
+not on a 24px icon. The `d` attribute carries the same value, so a browser
+without the CSS property draws the right shape and cuts to it instead.
+
+### The escape hatch has to be a class
+
+`duration` is a custom property set on the root, so it reaches pieces nested
+inside a mask. The transition itself is a class, not an inline style.
+
+```tsx
+"transition-[transform,opacity] [transition-duration:var(--icon-morph-duration)] motion-reduce:transition-none"
+```
+
+An inline `transition` would outrank `motion-reduce:transition-none` and the
+reduced-motion escape would quietly stop working. The rule is worth keeping
+anywhere a component writes styles from JavaScript: whatever the user's setting
+has to be able to override must live at the same specificity it does.
+
+## Props
+
+`IconMorph` takes everything an `svg` takes, plus:
+
+| Prop          | Type           | Default  | Description                             |
+| ------------- | -------------- | -------- | --------------------------------------- |
+| `set`         | `IconMorphSet` | `"menu"` | Which pair of shapes to travel between. |
+| `active`      | `boolean`      | `false`  | `false` shows the first shape.          |
+| `duration`    | `number`       | `220`    | Milliseconds for the morph.             |
+| `strokeWidth` | `number`       | `2`      | Stroke weight, in viewBox units.        |
+
+Size it with a class. It defaults to `size-6` and takes the current colour.
+
+```tsx
+<IconMorph
+  set="chevron"
+  active={done}
+  className="text-muted-foreground size-5"
+/>
+```
+
+<Callout type="tip" title="Reduced motion">
+  With reduced motion the icon cuts between the two shapes. No piece travels,
+  nothing fades, and both shapes stay exactly as legible as they were.
+</Callout>

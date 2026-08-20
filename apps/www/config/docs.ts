@@ -45,6 +45,16 @@ export const docsConfig: DocsConfig = {
           badge: { text: "New", variant: "new" },
         },
         {
+          title: "Photo Stamp",
+          href: "/docs/components/photo-stamp",
+          badge: { text: "New", variant: "new" },
+        },
+        {
+          title: "Icon Morph",
+          href: "/docs/components/icon-morph",
+          badge: { text: "New", variant: "new" },
+        },
+        {
           title: "Progress Ring",
           href: "/docs/components/progress-ring",
           badge: { text: "New", variant: "new" },

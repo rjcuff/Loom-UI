@@ -856,6 +856,68 @@
       }
     },
     {
+      "name": "icon-morph",
+      "type": "registry:ui",
+      "title": "Icon Morph",
+      "description": "One icon that turns into another by moving its own pieces, so there is never a frame with both glyphs on screen.",
+      "registryDependencies": [
+        "utils"
+      ],
+      "files": [
+        {
+          "path": "registry/loomui/icon-morph.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "cssVars": {
+        "theme": {
+          "ease-out-quart": "cubic-bezier(0.165, 0.84, 0.44, 1)"
+        }
+      }
+    },
+    {
+      "name": "photo-stamp",
+      "type": "registry:ui",
+      "title": "Photo Stamp",
+      "description": "A photo that lifts off the page at full size over a blurred backdrop, the same element the whole way.",
+      "registryDependencies": [
+        "utils",
+        "use-spring"
+      ],
+      "files": [
+        {
+          "path": "registry/loomui/photo-stamp.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "cssVars": {
+        "theme": {
+          "ease-out-quart": "cubic-bezier(0.165, 0.84, 0.44, 1)",
+          "animate-photo-stamp-veil-in": "photo-stamp-veil-in 240ms var(--ease-out-quart)",
+          "animate-photo-stamp-veil-out": "photo-stamp-veil-out 300ms var(--ease-out-quart) forwards",
+          "animate-photo-stamp-caption-in": "photo-stamp-caption-in 240ms var(--ease-out-quart) 160ms backwards"
+        }
+      },
+      "css": {
+        "@keyframes photo-stamp-veil-in": {
+          "from": {
+            "opacity": "0"
+          }
+        },
+        "@keyframes photo-stamp-veil-out": {
+          "to": {
+            "opacity": "0"
+          }
+        },
+        "@keyframes photo-stamp-caption-in": {
+          "from": {
+            "opacity": "0",
+            "translate": "0 6px"
+          }
+        }
+      }
+    },
+    {
       "name": "drawer",
       "type": "registry:ui",
       "title": "Drawer",
@@ -1671,6 +1733,36 @@
       "files": [
         {
           "path": "registry/example/spool-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "icon-morph-demo",
+      "type": "registry:example",
+      "title": "Icon Morph Demo",
+      "description": "Five icon pairs, each one shape travelling rather than two shapes trading places.",
+      "registryDependencies": [
+        "@loomui/icon-morph"
+      ],
+      "files": [
+        {
+          "path": "registry/example/icon-morph-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "photo-stamp-demo",
+      "type": "registry:example",
+      "title": "Photo Stamp Demo",
+      "description": "A stamp that lifts its photo out of the frame at full size over a blurred page.",
+      "registryDependencies": [
+        "@loomui/photo-stamp"
+      ],
+      "files": [
+        {
+          "path": "registry/example/photo-stamp-demo.tsx",
           "type": "registry:example"
         }
       ]
