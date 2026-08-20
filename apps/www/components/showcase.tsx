@@ -55,6 +55,31 @@ function Tick() {
   )
 }
 
+/**
+ * True on a phone.
+ *
+ * The grid holds its arrival until it is scrolled to, which is right on a
+ * desktop where it is about one screen tall and wrong on a phone where it is
+ * six. There the whole section sits blank behind the fold, and the first thing
+ * anyone scrolling gets is a wall of nothing.
+ *
+ * Matches Tailwind's `sm`, so the breakpoint here and the one the grid lays
+ * itself out on cannot drift apart.
+ */
+function useSmallScreen() {
+  const [small, setSmall] = React.useState(false)
+
+  React.useEffect(() => {
+    const query = window.matchMedia("(max-width: 639px)")
+    const read = () => setSmall(query.matches)
+    read()
+    query.addEventListener("change", read)
+    return () => query.removeEventListener("change", read)
+  }, [])
+
+  return small
+}
+
 /** The caption under a tile. The component itself is the argument above it. */
 function Caption({ name, line }: { name: string; line: string }) {
   return (
@@ -207,10 +232,15 @@ const SOURCES = [
  * translated while it animates.
  */
 export function Showcase() {
+  const small = useSmallScreen()
+
   return (
     <section aria-label="Components, running">
       <div className="mx-auto w-full max-w-6xl px-5 pb-20 sm:pb-24">
-        <BentoGrid className="sm:grid-cols-4">
+        {/* On a phone the tiles are simply there. The charts inside still
+            wait for their own moment, so nothing is spent on a reveal nobody
+            is looking at. */}
+        <BentoGrid startOnView={!small} className="sm:grid-cols-4">
           <Tile
             name="Trend Stack"
             line="Stacked series, revealed left to right."

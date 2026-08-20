@@ -44,7 +44,12 @@ export function BentoGrid({
   }, [stagger, children])
 
   React.useEffect(() => {
+    // Said rather than assumed. `active` is seeded from these on the first
+    // render only, so turning either of them off afterwards left the tiles
+    // waiting on an observer that this branch had already decided not to set
+    // up, and they stayed at zero opacity for good.
     if (!startOnView || disabled) {
+      setActive(true)
       return
     }
 
