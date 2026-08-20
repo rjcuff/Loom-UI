@@ -3,7 +3,7 @@
   "name": "light-curtain-demo",
   "type": "registry:example",
   "title": "Light Curtain Demo",
-  "description": "Columns hanging from the top of a panel, drifting past each other.",
+  "description": "An aurora hanging from the top of a panel, leaning across itself.",
   "registryDependencies": [
     "@loomui/light-curtain"
   ],

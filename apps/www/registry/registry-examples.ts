@@ -126,7 +126,7 @@ export const examples: Registry["items"] = [
     type: "registry:example",
     title: "Light Curtain Demo",
     description:
-      "Columns hanging from the top of a panel, drifting past each other.",
+      "An aurora hanging from the top of a panel, leaning across itself.",
     registryDependencies: ["@loomui/light-curtain"],
     files: [
       {

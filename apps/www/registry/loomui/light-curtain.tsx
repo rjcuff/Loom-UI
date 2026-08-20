@@ -6,27 +6,25 @@ import { cn } from "@/lib/utils"
 import { useInViewport } from "@/registry/lib/use-in-viewport"
 
 export interface LightCurtainProps extends React.ComponentProps<"div"> {
-  /** How many columns hang from the top edge. */
-  beams?: number
-  /** Colours the columns are drawn from, one picked per column. */
+  /** How many bands of colour are layered into the wash. */
+  bands?: number
+  /** Colours the bands are drawn from, one picked per band. */
   colors?: string[]
-  /** Seconds for one column to fall the length of its travel. */
+  /** Seconds for one band to lean out and back. */
   duration?: number
-  /** How far a column drifts sideways on the way down, as a CSS length. */
+  /** How far a band drifts sideways, as a CSS length. */
   drift?: string
-  /** How far a column falls, as a CSS length. */
-  fall?: string
-  /** How far down the columns reach, as a percentage of the container. */
+  /** How far down the wash reaches, as a percentage of the container. */
   reach?: string
-  /** Brightest a column gets. */
+  /** Brightest the wash gets. */
   intensity?: number
   /** Softening pass over the whole layer, in pixels. */
   blur?: number
   /** Fade the layer out downwards. `true` for the default, or pass a CSS mask. */
   fade?: boolean | string
-  /** Changes which columns are drawn. Same seed, same layout, every render. */
+  /** Changes how the bands are laid out. Same seed, same wash, every render. */
   seed?: number
-  /** Render the columns still. */
+  /** Render the wash still. */
   disabled?: boolean
 }
 
@@ -38,11 +36,7 @@ const DEFAULT_COLORS = ["#22d3ee", "#38bdf8", "#a855f7", "#f472b6"]
  * point the eye reads as a hard line across the page.
  */
 const BOTTOM_FADE =
-  "linear-gradient(to bottom, black 0%, rgba(0,0,0,0.85) 45%, rgba(0,0,0,0.35) 72%, transparent 100%)"
-
-/** Feathers a column's two long sides so it has no edge to catch on. */
-const SIDE_FEATHER =
-  "linear-gradient(to right, transparent 0%, rgba(0,0,0,0.6) 22%, black 50%, rgba(0,0,0,0.6) 78%, transparent 100%)"
+  "linear-gradient(to bottom, black 0%, rgba(0,0,0,0.82) 42%, rgba(0,0,0,0.3) 72%, transparent 100%)"
 
 /** Mulberry32. Deterministic so a seed always gives the same layout. */
 function createRandom(seed: number) {
@@ -57,27 +51,28 @@ function createRandom(seed: number) {
 }
 
 /**
- * Columns of light falling from the top edge, each on its own clock.
+ * An aurora hanging from the top edge: broad bands of colour leaning across
+ * each other and falling away down the page.
  *
- * There is no blur on the individual columns and no hard edge to hide. Each
- * one is a radial gradient that is already soft on every side, which costs a
- * paint rather than a filter pass per column, and leaves the drift free to be
- * a plain transform.
+ * The bands are wide and overlapping on purpose. Narrow ones read as separate
+ * beams, and separate beams that come and go read as something loading. An
+ * aurora is one moving sheet, so what moves here is the shape of the sheet
+ * rather than any object in it. Each band widens, narrows and leans on its own
+ * clock, and the silhouette they add up to is never the same twice.
  *
  * Sizes, colours, offsets and timings all come out of a seeded generator, so
  * the layout is the same on the server as in the browser and the same on every
- * render. Fed real randomness, every column would jump to a new place the next
+ * render. Fed real randomness, the whole wash would rearrange itself the next
  * time anything above it re-rendered.
  */
 export function LightCurtain({
-  beams = 7,
+  bands = 5,
   colors = DEFAULT_COLORS,
-  duration = 9,
-  drift = "2rem",
-  fall = "9rem",
-  reach = "72%",
-  intensity = 0.85,
-  blur = 18,
+  duration = 16,
+  drift = "5rem",
+  reach = "85%",
+  intensity = 0.55,
+  blur = 64,
   fade = true,
   seed = 1,
   disabled = false,
@@ -88,33 +83,32 @@ export function LightCurtain({
   const ref = React.useRef<HTMLDivElement>(null)
   const visible = useInViewport(ref)
 
-  const columns = React.useMemo(() => {
+  const veils = React.useMemo(() => {
     const random = createRandom(seed)
 
-    return Array.from({ length: beams }, (_, index) => {
-      // Spread across the width first, then nudged, so no two land on top of
-      // each other however the generator falls.
-      const lane = ((index + 0.5) / beams) * 100
-      const offset = (random() - 0.5) * (100 / beams) * 0.9
+    return Array.from({ length: bands }, (_, index) => {
+      // Spread across the width, then nudged. Every band is far wider than its
+      // own share of the row, so they always overlap into one sheet.
+      const lane = ((index + 0.5) / bands) * 100
+      const width = 46 + random() * 38
 
       return {
         key: index,
-        left: lane + offset,
-        // Narrow. Wide columns overlap into one wash and stop reading as
-        // separate beams at all.
-        width: 4 + random() * 7,
-        // Tall enough to still be crossing the panel at the end of the fall.
-        height: 95 + random() * 55,
+        left: lane + (random() - 0.5) * (100 / bands) - width / 2,
+        width,
+        height: 70 + random() * 45,
         color: colors[Math.floor(random() * colors.length) % colors.length],
-        // Never a whole number of seconds apart, so the columns do not fall
-        // into step with each other and start arriving as one.
-        duration: duration * (0.72 + random() * 0.66),
+        // Never a whole number of seconds apart, so the bands do not fall into
+        // step and start breathing as one.
+        duration: duration * (0.7 + random() * 0.7),
         delay: -random() * duration * 2,
-        low: intensity * (0.35 + random() * 0.25),
-        high: intensity * (0.78 + random() * 0.22),
+        narrow: 0.82 + random() * 0.12,
+        wide: 1.12 + random() * 0.16,
+        low: intensity * (0.45 + random() * 0.2),
+        high: intensity * (0.82 + random() * 0.18),
       }
     })
-  }, [beams, colors, duration, intensity, seed])
+  }, [bands, colors, duration, intensity, seed])
 
   const mask = fade === true ? BOTTOM_FADE : fade || undefined
 
@@ -127,53 +121,45 @@ export function LightCurtain({
         "pointer-events-none absolute inset-0 overflow-hidden",
         className
       )}
-      style={{
-        maskImage: mask,
-        WebkitMaskImage: mask,
-        ...style,
-      }}
+      style={{ maskImage: mask, WebkitMaskImage: mask, ...style }}
       {...props}
     >
-      {/* One softening pass over the whole layer rather than one per column.
-          The blur is static: nothing animates it, and the columns drift
-          underneath it on transforms that never re-run it. */}
+      {/* One softening pass over the whole sheet rather than one per band. It
+          is what turns five overlapping gradients into a single wash, and it is
+          static: the bands lean underneath it on transforms that never re-run
+          it. */}
       <div
         className="absolute inset-0"
         style={{ filter: blur > 0 ? `blur(${blur}px)` : undefined }}
       >
-        {columns.map((column) => (
+        {veils.map((veil) => (
           <div
-            key={column.key}
+            key={veil.key}
             className={cn(
-              // Starts above the top edge, so a column is never seen to begin.
-              "absolute -top-[8%] will-change-transform",
+              // Pinned to the top edge and scaled from it, so a band that
+              // widens never lifts off the edge the light comes in at.
+              "absolute top-0 origin-top will-change-transform",
               !disabled && "animate-light-curtain",
               "motion-reduce:animate-none"
             )}
             style={
               {
-                left: `${column.left}%`,
-                width: `${column.width}%`,
-                height: `${column.height}%`,
+                left: `${veil.left}%`,
+                width: `${veil.width}%`,
+                height: `${veil.height}%`,
                 maxHeight: reach,
-                // Two gradients doing two different jobs. Down the column, a
-                // linear ramp carries the colour the whole way and lets go at
-                // the bottom. Across it, a mask feathers both sides.
-                //
-                // A radial gradient does both at once and neither well: the
-                // colour pools near the top and the column reads as a blob
-                // rather than as light falling.
-                backgroundImage: `linear-gradient(to bottom, ${column.color}, transparent 88%)`,
-                maskImage: SIDE_FEATHER,
-                WebkitMaskImage: SIDE_FEATHER,
-                opacity: disabled ? column.high : undefined,
-                animationDuration: `${column.duration}s`,
-                animationDelay: `${column.delay}s`,
+                // Soft on every side by construction, so the blur has no edge
+                // to hide and the sheet has no seam in it.
+                backgroundImage: `radial-gradient(ellipse 62% 100% at 50% 0%, ${veil.color}, transparent 74%)`,
+                opacity: disabled ? veil.high : undefined,
+                animationDuration: `${veil.duration}s`,
+                animationDelay: `${veil.delay}s`,
                 animationPlayState: visible ? undefined : "paused",
                 "--curtain-drift": drift,
-                "--curtain-fall": fall,
-                "--curtain-low": column.low,
-                "--curtain-high": column.high,
+                "--curtain-narrow": veil.narrow,
+                "--curtain-wide": veil.wide,
+                "--curtain-low": veil.low,
+                "--curtain-high": veil.high,
               } as React.CSSProperties
             }
           />

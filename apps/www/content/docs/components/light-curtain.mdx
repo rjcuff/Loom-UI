@@ -1,7 +1,7 @@
 ---
 title: Light Curtain
 date: 2026-08-20
-description: Columns of light falling from the top edge, each drifting sideways on the way down and on its own clock.
+description: An aurora hanging from the top edge, broad bands of colour leaning across each other and falling away down the page.
 ---
 
 <ComponentPreview name="light-curtain-demo" />
@@ -62,26 +62,48 @@ can sit on one page without arguing.
 
 ## How it works
 
-### Two gradients, two jobs
+### One sheet, not a row of beams
 
-Down the column, a linear ramp carries the colour the whole way and lets go at
-the bottom. Across it, a mask feathers both sides.
+The bands are wide and overlapping on purpose. Each one is far wider than its
+own share of the row, so they always add up to a single wash rather than to
+five things standing next to each other.
 
-```tsx
-backgroundImage: `linear-gradient(to bottom, ${color}, transparent 88%)`
-maskImage: "linear-gradient(to right, transparent, black 50%, transparent)"
+Narrow bands read as separate beams, and separate beams that come and go read
+as something loading. An aurora is one moving sheet. What moves here is the
+shape of the sheet, not any object in it: each band widens, narrows and leans
+on its own clock, and the silhouette they add up to is never the same twice.
+
+```css
+0%,
+100% {
+  translate: calc(var(--curtain-drift) * -1) 0;
+  scale: var(--curtain-narrow) 1;
+}
+50% {
+  translate: var(--curtain-drift) 0;
+  scale: var(--curtain-wide) 1;
+}
 ```
 
-One radial gradient does both at once and neither well. The colour pools near
-the top, and the column reads as a blob sitting under the header rather than as
-light falling past it.
+Both ends of the run are identical, so the loop has no seam and nothing ever
+blinks out and starts again.
 
-Drawing hard-edged columns and blurring each one instead would cost a filter
-pass per column and pin every one of them to its own layer. Gradients cost a
-paint, and the drift on top of them stays a plain transform.
+### Rooted at the top edge
 
-There is one blur over the whole layer, and it is static. Nothing animates it,
-and the columns move underneath it on transforms that never re-run it.
+Each band is pinned to the top and scaled from it, so widening never lifts it
+off the edge the light comes in at. The fall-off down the page is the
+gradient's and the layer mask's, not the animation's, so there is no edge to
+time.
+
+### Soft by construction, and blurred once
+
+Each band is a radial gradient that is already soft on every side, and there is
+one blur over the whole sheet rather than one per band. That single pass is
+what turns five gradients into a wash, and it is static: the bands lean
+underneath it on transforms that never re-run it.
+
+Blurring each band separately instead would cost a filter pass per band and pin
+every one of them to its own layer.
 
 ### Seeded, so nothing teleports
 
@@ -91,57 +113,28 @@ Sizes, colours, offsets and timings all come out of one seeded generator.
 const random = createRandom(seed)
 ```
 
-Real randomness would give the server one layout and the browser another, and
+Real randomness would give the server one wash and the browser another, and
 then a third the next time anything above it re-rendered. Same seed, same
-curtain, every time. Change `seed` to draw a different one.
-
-Columns are spread across the width first and nudged afterwards, so no two land
-on top of each other however the generator falls.
-
-### The loop has no seam
-
-A column starts above the top edge, falls past the container drifting sideways
-as it goes, and is fully transparent at both ends of the run.
-
-```css
-0% {
-  translate: calc(var(--curtain-drift) * -1) calc(var(--curtain-fall) * -1);
-  opacity: 0;
-}
-18% {
-  opacity: var(--curtain-high);
-}
-72% {
-  opacity: var(--curtain-low);
-}
-100% {
-  translate: var(--curtain-drift) var(--curtain-fall);
-  opacity: 0;
-}
-```
-
-Because it arrives at nothing and leaves at nothing, there is no frame where it
-snaps back to the start. It is linear, too: a fall that eases at both ends reads
-as hesitating.
+aurora, every time. Change `seed` to draw a different one.
 
 ### No two are in step
 
-Each column gets its own duration, off a multiplier that is never a round
-number, and a negative delay so it is already part way down on the first frame.
+Each band gets its own duration, off a multiplier that is never a round number,
+and a negative delay so it is already part way through on the first frame.
 
 ```tsx
-duration: duration * (0.72 + random() * 0.66),
+duration: duration * (0.7 + random() * 0.7),
 delay: -random() * duration * 2,
 ```
 
-Given one duration they would fall as a single object within a few cycles, and
-a curtain that arrives as one is a flashing rectangle.
+Given one duration they would lean as a single object within a few cycles, and
+a sheet that breathes as one is a flashing rectangle.
 
 ### It stops when nobody is looking
 
 CSS animations keep running while they are scrolled away, and the compositor
-keeps the layers alive to do it. The layer watches for itself and pauses when it
-is off screen.
+keeps the layers alive to do it. The layer watches for itself and pauses when
+it is off screen.
 
 ## Props
 
@@ -149,19 +142,18 @@ is off screen.
 
 | Prop        | Type                | Default                 | Description                               |
 | ----------- | ------------------- | ----------------------- | ----------------------------------------- |
-| `beams`     | `number`            | `7`                     | How many columns hang from the top.       |
+| `bands`     | `number`            | `5`                     | How many bands are layered into the wash. |
 | `colors`    | `string[]`          | cyan, sky, purple, pink | Drawn from, one picked per column.        |
-| `duration`  | `number`            | `9`                     | Seconds for one fall.                     |
-| `drift`     | `string`            | `"2rem"`                | How far it drifts sideways on the way.    |
-| `fall`      | `string`            | `"9rem"`                | How far it falls.                         |
-| `reach`     | `string`            | `"72%"`                 | How far down the columns reach.           |
-| `intensity` | `number`            | `0.85`                  | Brightest a column gets.                  |
-| `blur`      | `number`            | `18`                    | Softening pass over the layer, in pixels. |
+| `duration`  | `number`            | `16`                    | Seconds for one lean out and back.        |
+| `drift`     | `string`            | `"5rem"`                | How far a band drifts sideways.           |
+| `reach`     | `string`            | `"85%"`                 | How far down the wash reaches.            |
+| `intensity` | `number`            | `0.55`                  | Brightest the wash gets.                  |
+| `blur`      | `number`            | `64`                    | Softening pass over the layer, in pixels. |
 | `fade`      | `boolean \| string` | `true`                  | Fade downwards, or pass a CSS mask.       |
-| `seed`      | `number`            | `1`                     | Same seed, same curtain.                  |
-| `disabled`  | `boolean`           | `false`                 | Render the columns still.                 |
+| `seed`      | `number`            | `1`                     | Same seed, same aurora.                   |
+| `disabled`  | `boolean`           | `false`                 | Render the wash still.                    |
 
 <Callout type="tip" title="Reduced motion">
-  With reduced motion the columns are drawn where they stand and nothing falls.
-  The layer is decorative, so there is nothing to miss.
+  With reduced motion the wash is drawn where it stands and nothing leans. The
+  layer is decorative, so there is nothing to miss.
 </Callout>

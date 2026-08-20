@@ -236,7 +236,7 @@
       "name": "light-curtain",
       "type": "registry:ui",
       "title": "Light Curtain",
-      "description": "Columns of light hanging from the top edge, each drifting sideways and breathing on its own clock.",
+      "description": "An aurora hanging from the top edge, broad bands of colour leaning across each other and falling away down the page.",
       "registryDependencies": [
         "utils",
         "use-in-viewport"
@@ -249,24 +249,20 @@
       ],
       "cssVars": {
         "theme": {
-          "animate-light-curtain": "light-curtain 9s linear infinite"
+          "animate-light-curtain": "light-curtain 16s ease-in-out infinite"
         }
       },
       "css": {
         "@keyframes light-curtain": {
-          "0%": {
-            "translate": "calc(var(--curtain-drift) * -1) calc(var(--curtain-fall) * -1)",
-            "opacity": "0"
-          },
-          "18%": {
-            "opacity": "var(--curtain-high)"
-          },
-          "72%": {
+          "0%, 100%": {
+            "translate": "calc(var(--curtain-drift) * -1) 0",
+            "scale": "var(--curtain-narrow) 1",
             "opacity": "var(--curtain-low)"
           },
-          "100%": {
-            "translate": "var(--curtain-drift) var(--curtain-fall)",
-            "opacity": "0"
+          "50%": {
+            "translate": "var(--curtain-drift) 0",
+            "scale": "var(--curtain-wide) 1",
+            "opacity": "var(--curtain-high)"
           }
         }
       }
@@ -1433,7 +1429,7 @@
       "name": "light-curtain-demo",
       "type": "registry:example",
       "title": "Light Curtain Demo",
-      "description": "Columns hanging from the top of a panel, drifting past each other.",
+      "description": "An aurora hanging from the top of a panel, leaning across itself.",
       "registryDependencies": [
         "@loomui/light-curtain"
       ],

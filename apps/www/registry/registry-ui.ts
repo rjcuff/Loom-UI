@@ -242,7 +242,7 @@ export const ui: Registry["items"] = [
     type: "registry:ui",
     title: "Light Curtain",
     description:
-      "Columns of light hanging from the top edge, each drifting sideways and breathing on its own clock.",
+      "An aurora hanging from the top edge, broad bands of colour leaning across each other and falling away down the page.",
     registryDependencies: ["utils", "use-in-viewport"],
     files: [
       {
@@ -252,27 +252,22 @@ export const ui: Registry["items"] = [
     ],
     cssVars: {
       theme: {
-        "animate-light-curtain": "light-curtain 9s linear infinite",
+        "animate-light-curtain": "light-curtain 16s ease-in-out infinite",
       },
     },
     css: {
-      // Both ends are fully transparent, so the column restarts at the top
-      // with nothing to see.
+      // Both ends of the run are identical, so the loop has no seam. What
+      // moves is the shape of the sheet, not any object in it.
       "@keyframes light-curtain": {
-        "0%": {
-          translate:
-            "calc(var(--curtain-drift) * -1) calc(var(--curtain-fall) * -1)",
-          opacity: "0",
-        },
-        "18%": {
-          opacity: "var(--curtain-high)",
-        },
-        "72%": {
+        "0%, 100%": {
+          translate: "calc(var(--curtain-drift) * -1) 0",
+          scale: "var(--curtain-narrow) 1",
           opacity: "var(--curtain-low)",
         },
-        "100%": {
-          translate: "var(--curtain-drift) var(--curtain-fall)",
-          opacity: "0",
+        "50%": {
+          translate: "var(--curtain-drift) 0",
+          scale: "var(--curtain-wide) 1",
+          opacity: "var(--curtain-high)",
         },
       },
     },

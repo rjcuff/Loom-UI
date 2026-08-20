@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Showcase } from "@/components/showcase"
 import { SiteCta } from "@/components/site-cta"
 import { JsonLd, siteSchema } from "@/components/structured-data"
-import { GridBeams } from "@/registry/loomui/grid-beams"
+import { LightCurtain } from "@/registry/loomui/light-curtain"
 import { WeaveText } from "@/registry/loomui/weave-text"
 
 /** Lifts a name out of the subheading without shouting. */
@@ -43,9 +43,9 @@ export default function HomePage() {
       <section className="relative overflow-hidden">
         <JsonLd schema={siteSchema()} />
 
-        {/* The same woven grid as before, now with beams running down it. The
-          site's own hero is the best argument for a component. */}
-        <GridBeams className="-z-10" lineOpacity={0.035} />
+        {/* An aurora hanging off the top of the page. The site's own hero is
+          the best argument for a component. */}
+        <LightCurtain className="-z-10" />
 
         {/* Left aligned on a phone. Centred text over three or four lines on a
             narrow column gives every line a different start, and the eye has
@@ -57,7 +57,7 @@ export default function HomePage() {
           </span>
 
           <h1 className="animate-rise mt-6 text-[2rem] leading-[1.1] font-semibold tracking-tight text-balance [animation-delay:60ms] sm:text-6xl">
-            Where Design Meets <WeaveText>Production</WeaveText>
+            Where Design Meets Production
           </h1>
 
           <p className="animate-rise text-muted-foreground mt-5 max-w-xl text-base text-pretty [animation-delay:120ms] sm:mt-6 sm:text-lg">

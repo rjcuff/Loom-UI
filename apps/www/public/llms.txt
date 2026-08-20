@@ -25,7 +25,7 @@ Install any component with `npx shadcn@latest add @loomui/<name>`.
 - [iPad](https://loomui.design/docs/components/ipad): A tablet frame drawn from the real measurements, upright or on its side, with a screen you put anything in.
 - [iPhone](https://loomui.design/docs/components/iphone): A device frame drawn from the real measurements, with a screen you put anything in.
 - [Lens Text](https://loomui.design/docs/components/lens-text): Text held out of focus until the pointer passes over it like a magnifying glass.
-- [Light Curtain](https://loomui.design/docs/components/light-curtain): Columns of light hanging from the top edge, each drifting sideways and breathing on its own clock.
+- [Light Curtain](https://loomui.design/docs/components/light-curtain): An aurora hanging from the top edge, broad bands of colour leaning across each other and falling away down the page.
 - [Logo Loom](https://loomui.design/docs/components/logo-loom): A logo row woven into place, every other mark arriving from the other side of the thread.
 - [Loom Loader](https://loomui.design/docs/components/loom-loader): Threads drawn through a frame and pulled off the far side, with a shuttle crossing them.
 - [Loom Slider](https://loomui.design/docs/components/loom-slider): A row of dashes where the one you are holding stands tallest, with the rise travelling the track as you drag.
