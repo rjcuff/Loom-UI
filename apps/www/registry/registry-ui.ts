@@ -912,6 +912,63 @@ export const ui: Registry["items"] = [
     },
   },
   {
+    name: "trend-stack",
+    type: "registry:ui",
+    title: "Trend Stack",
+    description:
+      "Stacked series under a line each, revealed left to right, with the headline and the legend following the pointer.",
+    registryDependencies: ["utils", "chart-frame"],
+    files: [
+      {
+        path: "loomui/trend-stack.tsx",
+        type: "registry:ui",
+      },
+    ],
+    cssVars: {
+      theme: {
+        "ease-out-quart": EASE_OUT_QUART,
+      },
+    },
+  },
+  {
+    name: "gauge-arc",
+    type: "registry:ui",
+    title: "Gauge Arc",
+    description:
+      "Half a ring divided into segments, drawn one after another, with the share of whichever one is in focus in the middle.",
+    registryDependencies: ["utils", "chart-frame"],
+    files: [
+      {
+        path: "loomui/gauge-arc.tsx",
+        type: "registry:ui",
+      },
+    ],
+    cssVars: {
+      theme: {
+        "ease-out-quart": EASE_OUT_QUART,
+      },
+    },
+  },
+  {
+    name: "funnel-rows",
+    type: "registry:ui",
+    title: "Funnel Rows",
+    description:
+      "A funnel as a row per stage, each bar scaled to its share of the first, growing one after another.",
+    registryDependencies: ["utils", "chart-frame"],
+    files: [
+      {
+        path: "loomui/funnel-rows.tsx",
+        type: "registry:ui",
+      },
+    ],
+    cssVars: {
+      theme: {
+        "ease-out-quart": EASE_OUT_QUART,
+      },
+    },
+  },
+  {
     name: "drawer",
     type: "registry:ui",
     title: "Drawer",

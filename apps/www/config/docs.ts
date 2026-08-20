@@ -122,6 +122,24 @@ export const docsConfig: DocsConfig = {
       ],
     },
     {
+      title: "Charts",
+      badge: { text: "New", variant: "new" },
+      items: [
+        {
+          title: "Trend Stack",
+          href: "/docs/components/trend-stack",
+        },
+        {
+          title: "Funnel Rows",
+          href: "/docs/components/funnel-rows",
+        },
+        {
+          title: "Gauge Arc",
+          href: "/docs/components/gauge-arc",
+        },
+      ],
+    },
+    {
       title: "Text",
       items: [
         {

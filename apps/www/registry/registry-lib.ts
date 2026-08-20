@@ -28,6 +28,55 @@ export const lib: Registry["items"] = [
     ],
   },
   {
+    name: "chart-frame",
+    type: "registry:lib",
+    title: "Chart Frame",
+    description:
+      "The card every loom chart sits in: label, headline, delta, the plot, and a named tile per series.",
+    registryDependencies: ["utils"],
+    files: [
+      {
+        path: "lib/chart-frame.tsx",
+        type: "registry:lib",
+      },
+    ],
+    // The categorical series palette, validated as a set against the card
+    // surface in both themes rather than flipped from one to the other.
+    cssVars: {
+      light: {
+        "chart-1": "#ff375f",
+        "chart-2": "#00c7be",
+        "chart-3": "#ff9500",
+        "chart-4": "#af52de",
+        "chart-5": "#34c759",
+        "chart-6": "#0a84ff",
+        "chart-up": "oklch(0.62 0.15 145)",
+        "chart-down": "oklch(0.6 0.19 25)",
+      },
+      dark: {
+        "chart-1": "#f0526e",
+        "chart-2": "#00a199",
+        "chart-3": "#c06400",
+        "chart-4": "#b166e0",
+        "chart-5": "#00a63b",
+        "chart-6": "#3b8ef0",
+        "chart-up": "oklch(0.72 0.16 145)",
+        "chart-down": "oklch(0.68 0.18 25)",
+      },
+      theme: {
+        "ease-out-quart": "cubic-bezier(0.165, 0.84, 0.44, 1)",
+        "color-chart-1": "var(--chart-1)",
+        "color-chart-2": "var(--chart-2)",
+        "color-chart-3": "var(--chart-3)",
+        "color-chart-4": "var(--chart-4)",
+        "color-chart-5": "var(--chart-5)",
+        "color-chart-6": "var(--chart-6)",
+        "color-chart-up": "var(--chart-up)",
+        "color-chart-down": "var(--chart-down)",
+      },
+    },
+  },
+  {
     name: "use-in-viewport",
     type: "registry:lib",
     title: "useInViewport",

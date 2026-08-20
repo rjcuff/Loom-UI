@@ -1,0 +1,17 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "trend-stack-demo",
+  "type": "registry:example",
+  "title": "Trend Stack Demo",
+  "description": "A year of visitors split three ways. Point at a month and the card follows.",
+  "registryDependencies": [
+    "@loomui/trend-stack"
+  ],
+  "files": [
+    {
+      "path": "registry/example/trend-stack-demo.tsx",
+      "content": "import { ChartRange } from \"@/registry/lib/chart-frame\"\nimport { TrendStack } from \"@/registry/loomui/trend-stack\"\n\nconst WEEKS = [\n  \"W1\",\n  \"W2\",\n  \"W3\",\n  \"W4\",\n  \"W5\",\n  \"W6\",\n  \"W7\",\n  \"W8\",\n  \"W9\",\n  \"W10\",\n  \"W11\",\n  \"W12\",\n  \"W13\",\n]\n\nconst SERIES = [\n  {\n    name: \"Edge\",\n    values: [\n      3420, 3610, 3380, 3990, 4270, 4180, 4640, 4910, 4780, 5330, 5610, 5840,\n      6120,\n    ],\n  },\n  {\n    name: \"Origin\",\n    values: [\n      2180, 2040, 2360, 2290, 2510, 2740, 2660, 2880, 3070, 2990, 3240, 3410,\n      3520,\n    ],\n  },\n  {\n    name: \"Cache miss\",\n    values: [\n      860, 940, 780, 1020, 1110, 970, 1230, 1180, 1340, 1290, 1450, 1380, 1510,\n    ],\n  },\n]\n\nexport default function TrendStackDemo() {\n  return (\n    <TrendStack\n      className=\"max-w-xl\"\n      series={SERIES}\n      labels={WEEKS}\n      label=\"Requests served\"\n      delta={11.4}\n      range={<ChartRange>Last quarter</ChartRange>}\n    />\n  )\n}\n",
+      "type": "registry:example"
+    }
+  ]
+}

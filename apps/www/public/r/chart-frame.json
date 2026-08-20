@@ -1,0 +1,50 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "chart-frame",
+  "type": "registry:lib",
+  "title": "Chart Frame",
+  "description": "The card every loom chart sits in: label, headline, delta, the plot, and a named tile per series.",
+  "registryDependencies": [
+    "utils"
+  ],
+  "files": [
+    {
+      "path": "registry/lib/chart-frame.tsx",
+      "content": "\"use client\"\n\nimport * as React from \"react\"\n\nimport { cn } from \"@/lib/utils\"\n\n/** One entry in the grid under the plot. */\nexport interface ChartTile {\n  /** The series or stage this stands for. */\n  name: string\n  /** Already formatted. The frame does not know what the number means. */\n  value: string\n  /** The mark's colour. Any CSS colour; loom's charts pass `--chart-n`. */\n  color?: string\n  /** Held back while something else is in focus. */\n  dim?: boolean\n}\n\nexport interface ChartFrameProps extends Omit<\n  React.ComponentProps<\"figure\">,\n  \"title\"\n> {\n  /** What the headline number counts. */\n  label: React.ReactNode\n  /** The headline itself, already formatted. */\n  value: React.ReactNode\n  /** Percentage change. Positive reads up, negative down, omitted reads not at all. */\n  delta?: number\n  /** The range control. A node, so a real `<select>` can go here. */\n  range?: React.ReactNode\n  /** The legend. Names carry identity so the colours never have to alone. */\n  tiles?: ChartTile[]\n  /** Pointing at a tile is pointing at its mark. `null` on leave. */\n  onTileFocus?: (index: number | null) => void\n  children: React.ReactNode\n}\n\n/** The six chart slots, in the order they are assigned. */\nexport const CHART_COLORS = [\n  \"var(--chart-1)\",\n  \"var(--chart-2)\",\n  \"var(--chart-3)\",\n  \"var(--chart-4)\",\n  \"var(--chart-5)\",\n  \"var(--chart-6)\",\n] as const\n\n/**\n * The colour for series `index`.\n *\n * Past the sixth it returns the muted ink rather than cycling. A seventh\n * series wearing the first one's colour is worse than a seventh series with no\n * colour at all: one of them is unreadable, the other is wrong.\n */\nexport function chartColor(index: number) {\n  return CHART_COLORS[index] ?? \"var(--muted-foreground)\"\n}\n\n/** Compact by default: 94,700 stays itself, 13,500 becomes 13.5K. */\nexport function compact(value: number) {\n  if (Math.abs(value) < 1000) return `${Math.round(value)}`\n  return new Intl.NumberFormat(\"en\", {\n    notation: \"compact\",\n    maximumFractionDigits: 1,\n  }).format(value)\n}\n\n/** Grouped, for a headline that has room to be exact. */\nexport function grouped(value: number) {\n  return new Intl.NumberFormat(\"en\").format(Math.round(value))\n}\n\nfunction Delta({ value }: { value: number }) {\n  const up = value >= 0\n\n  return (\n    <span\n      data-direction={up ? \"up\" : \"down\"}\n      className=\"rounded-full px-1.5 py-0.5 text-xs font-medium tabular-nums data-[direction=down]:bg-[color-mix(in_oklch,var(--chart-down)_16%,transparent)] data-[direction=down]:text-[var(--chart-down)] data-[direction=up]:bg-[color-mix(in_oklch,var(--chart-up)_16%,transparent)] data-[direction=up]:text-[var(--chart-up)]\"\n    >\n      {up ? \"+\" : \"-\"}\n      {Math.abs(value).toFixed(1)}%\n    </span>\n  )\n}\n\n/**\n * The card every loom chart sits in: what the number counts, the number, how\n * it moved, the plot, and a named tile per series.\n *\n * The tiles are not decoration. Three of the six light-mode series colours sit\n * under 3:1 against a white card, and a legend that names each series is what\n * makes that legible rather than a guess. They also carry the values while the\n * pointer is inside the plot, so reading one series does not mean hunting for\n * a tooltip.\n *\n * Everything numeric here is `tabular-nums`. A headline that changes under the\n * pointer must not change width while it does, or the whole card twitches on\n * every mouse move.\n */\nexport function ChartFrame({\n  label,\n  value,\n  delta,\n  range,\n  tiles,\n  onTileFocus,\n  children,\n  className,\n  ...props\n}: ChartFrameProps) {\n  /**\n   * Threes divide evenly, otherwise twos. Four tiles as three and one reads as\n   * a tile that fell off the end; as two and two it reads as a set.\n   */\n  const columns = !tiles?.length\n    ? 3\n    : tiles.length % 3 === 0\n      ? 3\n      : tiles.length % 2 === 0\n        ? 2\n        : 3\n\n  return (\n    <figure\n      data-slot=\"chart-frame\"\n      className={cn(\n        \"bg-card text-card-foreground flex w-full flex-col rounded-xl border p-4\",\n        className\n      )}\n      {...props}\n    >\n      <div className=\"flex items-start justify-between gap-4\">\n        <div className=\"min-w-0\">\n          <figcaption className=\"text-muted-foreground text-xs\">\n            {label}\n          </figcaption>\n          <div className=\"mt-1 flex items-baseline gap-2\">\n            <span className=\"text-2xl leading-none font-semibold tabular-nums\">\n              {value}\n            </span>\n            {delta === undefined ? null : <Delta value={delta} />}\n          </div>\n        </div>\n        {range ? <div className=\"shrink-0\">{range}</div> : null}\n      </div>\n\n      <div className=\"mt-5\">{children}</div>\n\n      {tiles?.length ? (\n        // The column count follows the tile count rather than the width the\n        // grid happens to have: four tiles want two rows of two, six want two\n        // rows of three, and `auto-fit` gave four and two for six.\n        //\n        // Separators are drawn by the cells rather than by a coloured gap\n        // behind the grid, so a short last row leaves no stray colour. The\n        // fillers exist to close the borders on that row: without them the\n        // dividers stop where the tiles stop, halfway across the card.\n        <div\n          style={{ \"--tile-columns\": columns } as React.CSSProperties}\n          className=\"mt-5 grid grid-cols-2 overflow-hidden rounded-lg border sm:[grid-template-columns:repeat(var(--tile-columns),minmax(0,1fr))]\"\n        >\n          {tiles.map((tile, index) => (\n            <div\n              key={tile.name}\n              data-dim={tile.dim ? \"\" : undefined}\n              onPointerEnter={\n                onTileFocus ? () => onTileFocus(index) : undefined\n              }\n              onPointerLeave={onTileFocus ? () => onTileFocus(null) : undefined}\n              className=\"bg-card ease-out-quart border-border -mt-px -ml-px flex flex-col gap-1 border-t border-l p-2.5 transition-opacity duration-180 data-dim:opacity-40 motion-reduce:transition-none\"\n            >\n              <span className=\"text-muted-foreground flex items-center gap-1.5 text-xs\">\n                <span\n                  aria-hidden\n                  className=\"size-2 shrink-0 rounded-full\"\n                  style={{\n                    background: tile.color ?? \"var(--muted-foreground)\",\n                  }}\n                />\n                <span className=\"truncate\">{tile.name}</span>\n              </span>\n              <span className=\"text-sm font-medium tabular-nums\">\n                {tile.value}\n              </span>\n            </div>\n          ))}\n\n          {Array.from(\n            { length: (columns - (tiles.length % columns)) % columns },\n            (_, i) => (\n              <span\n                key={`wide-${i}`}\n                aria-hidden\n                className=\"bg-card border-border -mt-px -ml-px hidden border-t border-l sm:block\"\n              />\n            )\n          )}\n          {Array.from({ length: (2 - (tiles.length % 2)) % 2 }, (_, i) => (\n            <span\n              key={`narrow-${i}`}\n              aria-hidden\n              className=\"bg-card border-border -mt-px -ml-px border-t border-l sm:hidden\"\n            />\n          ))}\n        </div>\n      ) : null}\n    </figure>\n  )\n}\n\n/**\n * The range chip. Inert on purpose: it is a slot, and a real app puts its own\n * control in it. Rendering a `<button>` that does nothing would be a lie about\n * what it does.\n */\nexport function ChartRange({\n  children,\n  className,\n  ...props\n}: React.ComponentProps<\"span\">) {\n  return (\n    <span\n      className={cn(\n        \"text-muted-foreground flex items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-xs\",\n        className\n      )}\n      {...props}\n    >\n      <svg\n        viewBox=\"0 0 24 24\"\n        fill=\"none\"\n        stroke=\"currentColor\"\n        strokeWidth=\"2\"\n        strokeLinecap=\"round\"\n        strokeLinejoin=\"round\"\n        className=\"size-3.5\"\n        aria-hidden\n      >\n        <rect x=\"3\" y=\"5\" width=\"18\" height=\"16\" rx=\"2\" />\n        <path d=\"M3 10h18M8 3v4M16 3v4\" />\n      </svg>\n      {children}\n    </span>\n  )\n}\n",
+      "type": "registry:lib"
+    }
+  ],
+  "cssVars": {
+    "theme": {
+      "ease-out-quart": "cubic-bezier(0.165, 0.84, 0.44, 1)",
+      "color-chart-1": "var(--chart-1)",
+      "color-chart-2": "var(--chart-2)",
+      "color-chart-3": "var(--chart-3)",
+      "color-chart-4": "var(--chart-4)",
+      "color-chart-5": "var(--chart-5)",
+      "color-chart-6": "var(--chart-6)",
+      "color-chart-up": "var(--chart-up)",
+      "color-chart-down": "var(--chart-down)"
+    },
+    "light": {
+      "chart-1": "#ff375f",
+      "chart-2": "#00c7be",
+      "chart-3": "#ff9500",
+      "chart-4": "#af52de",
+      "chart-5": "#34c759",
+      "chart-6": "#0a84ff",
+      "chart-up": "oklch(0.62 0.15 145)",
+      "chart-down": "oklch(0.6 0.19 25)"
+    },
+    "dark": {
+      "chart-1": "#f0526e",
+      "chart-2": "#00a199",
+      "chart-3": "#c06400",
+      "chart-4": "#b166e0",
+      "chart-5": "#00a63b",
+      "chart-6": "#3b8ef0",
+      "chart-up": "oklch(0.72 0.16 145)",
+      "chart-down": "oklch(0.68 0.18 25)"
+    }
+  }
+}

@@ -544,6 +544,51 @@ export const Index: Record<string, any> = {
       return { default: mod.default ?? mod[exportName] }
     }),
   },
+  "trend-stack": {
+    name: "trend-stack",
+    type: "registry:ui",
+    title: "Trend Stack",
+    description: "Stacked series under a line each, revealed left to right, with the headline and the legend following the pointer.",
+    dependencies: [],
+    registryDependencies: ["utils","chart-frame"],
+    files: [{"path":"registry/loomui/trend-stack.tsx","type":"registry:ui","target":""}],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/loomui/trend-stack")
+      const exportName =
+        Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
+      return { default: mod.default ?? mod[exportName] }
+    }),
+  },
+  "gauge-arc": {
+    name: "gauge-arc",
+    type: "registry:ui",
+    title: "Gauge Arc",
+    description: "Half a ring divided into segments, drawn one after another, with the share of whichever one is in focus in the middle.",
+    dependencies: [],
+    registryDependencies: ["utils","chart-frame"],
+    files: [{"path":"registry/loomui/gauge-arc.tsx","type":"registry:ui","target":""}],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/loomui/gauge-arc")
+      const exportName =
+        Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
+      return { default: mod.default ?? mod[exportName] }
+    }),
+  },
+  "funnel-rows": {
+    name: "funnel-rows",
+    type: "registry:ui",
+    title: "Funnel Rows",
+    description: "A funnel as a row per stage, each bar scaled to its share of the first, growing one after another.",
+    dependencies: [],
+    registryDependencies: ["utils","chart-frame"],
+    files: [{"path":"registry/loomui/funnel-rows.tsx","type":"registry:ui","target":""}],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/loomui/funnel-rows")
+      const exportName =
+        Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
+      return { default: mod.default ?? mod[exportName] }
+    }),
+  },
   "drawer": {
     name: "drawer",
     type: "registry:ui",
@@ -1204,6 +1249,51 @@ export const Index: Record<string, any> = {
       return { default: mod.default ?? mod[exportName] }
     }),
   },
+  "trend-stack-demo": {
+    name: "trend-stack-demo",
+    type: "registry:example",
+    title: "Trend Stack Demo",
+    description: "A year of visitors split three ways. Point at a month and the card follows.",
+    dependencies: [],
+    registryDependencies: ["@loomui/trend-stack"],
+    files: [{"path":"registry/example/trend-stack-demo.tsx","type":"registry:example","target":""}],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/example/trend-stack-demo")
+      const exportName =
+        Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
+      return { default: mod.default ?? mod[exportName] }
+    }),
+  },
+  "gauge-arc-demo": {
+    name: "gauge-arc-demo",
+    type: "registry:example",
+    title: "Gauge Arc Demo",
+    description: "Sessions split four ways across half a ring, with the leading share in the middle.",
+    dependencies: [],
+    registryDependencies: ["@loomui/gauge-arc"],
+    files: [{"path":"registry/example/gauge-arc-demo.tsx","type":"registry:example","target":""}],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/example/gauge-arc-demo")
+      const exportName =
+        Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
+      return { default: mod.default ?? mod[exportName] }
+    }),
+  },
+  "funnel-rows-demo": {
+    name: "funnel-rows-demo",
+    type: "registry:example",
+    title: "Funnel Rows Demo",
+    description: "A six stage pipeline, each bar as long as its share of the first.",
+    dependencies: [],
+    registryDependencies: ["@loomui/funnel-rows"],
+    files: [{"path":"registry/example/funnel-rows-demo.tsx","type":"registry:example","target":""}],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/example/funnel-rows-demo")
+      const exportName =
+        Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
+      return { default: mod.default ?? mod[exportName] }
+    }),
+  },
   "drawer-demo": {
     name: "drawer-demo",
     type: "registry:example",
@@ -1342,6 +1432,16 @@ export const Index: Record<string, any> = {
     dependencies: [],
     registryDependencies: [],
     files: [{"path":"registry/lib/use-spring.ts","type":"registry:lib","target":""}],
+    component: null,
+  },
+  "chart-frame": {
+    name: "chart-frame",
+    type: "registry:lib",
+    title: "Chart Frame",
+    description: "The card every loom chart sits in: label, headline, delta, the plot, and a named tile per series.",
+    dependencies: [],
+    registryDependencies: ["utils"],
+    files: [{"path":"registry/lib/chart-frame.tsx","type":"registry:lib","target":""}],
     component: null,
   },
   "use-in-viewport": {

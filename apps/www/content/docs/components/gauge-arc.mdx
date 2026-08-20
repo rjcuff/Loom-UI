@@ -1,0 +1,159 @@
+---
+title: Gauge Arc
+date: 2026-08-20
+description: Half a ring divided into segments, drawn one after another, with the share of whichever one is in focus in the middle.
+---
+
+<ComponentPreview name="gauge-arc-demo" />
+
+## Installation
+
+<Tabs defaultValue="cli">
+
+<TabsList>
+  <TabsTrigger value="cli">CLI</TabsTrigger>
+  <TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @loomui/gauge-arc
+```
+
+</TabsContent>
+
+<TabsContent value="manual">
+
+<Steps>
+
+<Step>Copy the component into your project.</Step>
+
+<ComponentSource name="gauge-arc" />
+
+<Step>Update the import paths to match your setup.</Step>
+
+</Steps>
+
+</TabsContent>
+
+</Tabs>
+
+Every chart in this section shares one card, `chart-frame`, which the CLI pulls
+in for you.
+
+## Usage
+
+```tsx
+import { ChartRange } from "@/components/ui/chart-frame"
+import { GaugeArc } from "@/components/ui/gauge-arc"
+```
+
+```tsx
+<GaugeArc
+  label="Sessions by device"
+  delta={5.2}
+  segments={[
+    { name: "Desktop", value: 1180 },
+    { name: "Mobile", value: 620 },
+    { name: "Tablet", value: 380 },
+    { name: "TV", value: 320 },
+  ]}
+  range={<ChartRange>Last 7 days</ChartRange>}
+/>
+```
+
+Segments run clockwise from the left. The middle reads the first one until you
+point at another.
+
+## When not to use it
+
+A gauge earns its place when one share is the headline and the rest are
+context. If all four segments matter equally, this is a worse bar chart: arcs
+at different positions on a curve are genuinely hard to compare against each
+other, which is exactly what a row of bars is good at.
+
+That is also why the numbers sit on tiles underneath rather than being left to
+be read off the ring. The ring shows which one is biggest; the tiles say by how
+much.
+
+## How it works
+
+### The gap comes out of the segment
+
+Each segment is given its share of 180 degrees, and then loses half the gap at
+each end.
+
+```tsx
+return { from: from - gap / 2, to: angle + gap / 2 }
+```
+
+Adding gaps between segments instead would push the total past a half turn, and
+the more segments you passed the further round it would go.
+
+### The draw is a normalised dash
+
+Each arc carries `pathLength={1}`, so its real length in user units stops
+mattering.
+
+```tsx
+<path pathLength={1} strokeDasharray={1} strokeDashoffset={arrived ? 0 : 1} />
+```
+
+One dash covers the whole segment whatever size it is, and the offset runs 1 to
+0 to draw it. Without the normalisation every segment would need its own dash
+length measured first, and a 3% slice and a 47% slice would draw at different
+speeds.
+
+They arrive `stagger` milliseconds apart, clockwise, so the order round the
+ring is legible as it lands.
+
+### The hit target is not the ring
+
+A 17 unit stroke is a 17 unit hit target, which is a thin thing to ask someone
+to point at. Each segment carries a second copy of its own path, wider and
+fully transparent, with `pointer-events: stroke`.
+
+```tsx
+<path
+  stroke="transparent"
+  strokeWidth={thickness + 14}
+  style={{ pointerEvents: "stroke" }}
+/>
+```
+
+Nothing is drawn by it. It is only pointed at.
+
+### The middle is HTML
+
+Like the axis labels on the other charts. Text inside a viewBox scales with the
+container, so the percentage would be one size in a dashboard column and
+another across a full-width panel.
+
+Pointing at a legend tile moves the middle too: the tiles carry
+`onTileFocus`, so hovering a name is the same gesture as hovering its arc.
+
+## Props
+
+`GaugeArc` takes everything a `figure` takes, plus:
+
+| Prop          | Type                        | Default   | Description                                    |
+| ------------- | --------------------------- | --------- | ---------------------------------------------- |
+| `segments`    | `GaugeSegment[]`            | required  | Clockwise from the left.                       |
+| `label`       | `string`                    | `"Total"` | What the headline counts.                      |
+| `delta`       | `number`                    | none      | Percentage change on the headline.             |
+| `range`       | `ReactNode`                 | none      | The range control.                             |
+| `duration`    | `number`                    | `720`     | Milliseconds for one segment to draw.          |
+| `stagger`     | `number`                    | `90`      | Milliseconds between one segment and the next. |
+| `gap`         | `number`                    | `3`       | Degrees of surface left between segments.      |
+| `thickness`   | `number`                    | `17`      | Ring thickness, in the plot's own units.       |
+| `startOnView` | `boolean`                   | `true`    | Hold until the gauge is on screen.             |
+| `disabled`    | `boolean`                   | `false`   | Render the finished ring with no draw.         |
+| `format`      | `(value: number) => string` | grouped   | Formats the headline and the tiles.            |
+
+`GaugeSegment` is `{ name, value, color? }`.
+
+<Callout type="tip" title="Reduced motion">
+  With reduced motion the ring is already whole on the first frame. Pointing at
+  a segment still works.
+</Callout>

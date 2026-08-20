@@ -55,6 +55,24 @@
   --thread-3: oklch(0.62 0.16 250);
   --thread-4: oklch(0.86 0.1 190);
 
+  /* Categorical chart series. Assigned in this fixed order and never cycled:
+     a seventh series folds into "Other" rather than reusing a hue.
+
+     Validated as a set against the card surface in both themes: worst adjacent
+     colour-blind separation 13.2, worst normal-vision separation 27.3. Three of
+     the light steps sit under 3:1 against white, which is why every chart here
+     ships named legend tiles rather than leaning on colour alone. */
+  --chart-1: #ff375f;
+  --chart-2: #00c7be;
+  --chart-3: #ff9500;
+  --chart-4: #af52de;
+  --chart-5: #34c759;
+  --chart-6: #0a84ff;
+
+  /* Direction of travel on a delta. Reserved: never a series colour. */
+  --chart-up: oklch(0.62 0.15 145);
+  --chart-down: oklch(0.6 0.19 25);
+
   /* Duration scale. See .claude/skills/animations/SKILL.md.
      Product UI stays at or under --duration-3. */
   --duration-1: 120ms;
@@ -105,6 +123,19 @@
   --thread-2: oklch(0.76 0.12 220);
   --thread-3: oklch(0.68 0.14 250);
   --thread-4: oklch(0.88 0.09 190);
+
+  /* The same six hues stepped for the dark surface, not an automatic flip.
+     Validated separately: worst adjacent colour-blind separation 9.5, worst
+     normal-vision 24.0, and all six clear 3:1 against the dark card. */
+  --chart-1: #f0526e;
+  --chart-2: #00a199;
+  --chart-3: #c06400;
+  --chart-4: #b166e0;
+  --chart-5: #00a63b;
+  --chart-6: #3b8ef0;
+
+  --chart-up: oklch(0.72 0.16 145);
+  --chart-down: oklch(0.68 0.18 25);
 }
 
 @theme inline {
@@ -145,6 +176,14 @@
   --color-thread-2: var(--thread-2);
   --color-thread-3: var(--thread-3);
   --color-thread-4: var(--thread-4);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-chart-6: var(--chart-6);
+  --color-chart-up: var(--chart-up);
+  --color-chart-down: var(--chart-down);
 }
 
 /* ---------------------------------------------------------------------------

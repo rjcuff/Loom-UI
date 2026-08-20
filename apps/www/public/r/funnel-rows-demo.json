@@ -1,0 +1,17 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "funnel-rows-demo",
+  "type": "registry:example",
+  "title": "Funnel Rows Demo",
+  "description": "A six stage pipeline, each bar as long as its share of the first.",
+  "registryDependencies": [
+    "@loomui/funnel-rows"
+  ],
+  "files": [
+    {
+      "path": "registry/example/funnel-rows-demo.tsx",
+      "content": "import { ChartRange } from \"@/registry/lib/chart-frame\"\nimport { FunnelRows } from \"@/registry/loomui/funnel-rows\"\n\nconst STAGES = [\n  { name: \"Invited\", value: 2840 },\n  { name: \"Opened\", value: 1960 },\n  { name: \"Started\", value: 1180 },\n  { name: \"Finished\", value: 640 },\n  { name: \"Verified\", value: 415 },\n  { name: \"Renewed\", value: 168 },\n]\n\nexport default function FunnelRowsDemo() {\n  return (\n    <FunnelRows\n      className=\"max-w-xl\"\n      stages={STAGES}\n      label=\"Onboarding\"\n      delta={-1.8}\n      range={<ChartRange>This month</ChartRange>}\n    />\n  )\n}\n",
+      "type": "registry:example"
+    }
+  ]
+}

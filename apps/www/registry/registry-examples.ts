@@ -479,6 +479,48 @@ export const examples: Registry["items"] = [
     ],
   },
   {
+    name: "trend-stack-demo",
+    type: "registry:example",
+    title: "Trend Stack Demo",
+    description:
+      "A year of visitors split three ways. Point at a month and the card follows.",
+    registryDependencies: ["@loomui/trend-stack"],
+    files: [
+      {
+        path: "example/trend-stack-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "gauge-arc-demo",
+    type: "registry:example",
+    title: "Gauge Arc Demo",
+    description:
+      "Sessions split four ways across half a ring, with the leading share in the middle.",
+    registryDependencies: ["@loomui/gauge-arc"],
+    files: [
+      {
+        path: "example/gauge-arc-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "funnel-rows-demo",
+    type: "registry:example",
+    title: "Funnel Rows Demo",
+    description:
+      "A six stage pipeline, each bar as long as its share of the first.",
+    registryDependencies: ["@loomui/funnel-rows"],
+    files: [
+      {
+        path: "example/funnel-rows-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "drawer-demo",
     type: "registry:example",
     title: "Drawer Demo",

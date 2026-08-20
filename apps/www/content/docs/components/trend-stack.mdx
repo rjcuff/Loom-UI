@@ -1,0 +1,165 @@
+---
+title: Trend Stack
+date: 2026-08-20
+description: Stacked series under a line each, revealed left to right, with the headline and the legend following the pointer.
+---
+
+<ComponentPreview name="trend-stack-demo" />
+
+## Installation
+
+<Tabs defaultValue="cli">
+
+<TabsList>
+  <TabsTrigger value="cli">CLI</TabsTrigger>
+  <TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @loomui/trend-stack
+```
+
+</TabsContent>
+
+<TabsContent value="manual">
+
+<Steps>
+
+<Step>Copy the component into your project.</Step>
+
+<ComponentSource name="trend-stack" />
+
+<Step>Update the import paths to match your setup.</Step>
+
+</Steps>
+
+</TabsContent>
+
+</Tabs>
+
+Both charts share one card, `chart-frame`, which the CLI pulls in for you. It
+carries the series palette as well, so the colours arrive with the first chart
+you install and every chart after it agrees.
+
+## Usage
+
+```tsx
+import { ChartRange } from "@/components/ui/chart-frame"
+import { TrendStack } from "@/components/ui/trend-stack"
+```
+
+```tsx
+<TrendStack
+  label="Visitors"
+  delta={8.2}
+  labels={["Jan", "Feb", "Mar"]}
+  series={[
+    { name: "Organic", values: [2900, 3100, 3050] },
+    { name: "Referral", values: [1500, 1600, 1750] },
+    { name: "Paid", values: [1000, 1150, 1100] },
+  ]}
+  range={<ChartRange>This year</ChartRange>}
+/>
+```
+
+Series are given in stacking order: the first is the bottom band. Each one is
+assigned the next colour slot, and named in the legend.
+
+## How it works
+
+### Stacked, not overlaid
+
+The question a stacked area answers is what the total is and who contributed to
+it. Overlaid translucent areas answer neither. Every overlap paints a colour
+that appears in no legend, and no band except the frontmost can be read against
+the axis at all.
+
+### The reveal is a clip, and the clip is scaled
+
+The plot is drawn in full and a clip rect is pulled across it.
+
+```tsx
+<rect
+  width={W}
+  height={H}
+  className="origin-left transition-transform"
+  style={{ transform: arrived ? "scaleX(1)" : "scaleX(0)" }}
+/>
+```
+
+The rect is the full width and scaled down, not given an animated `width`. A
+width laid the clip out again on every frame; a transform does not touch layout
+at all.
+
+It latches on the first sighting and lets the observer go. A chart that redraws
+itself every time it scrolls past is one nobody can read on the way back up the
+page.
+
+### The ticks are HTML, the plot is SVG
+
+Text inside a viewBox scales with the container, so the same chart would carry
+different type sizes on a phone and a monitor. The axis labels sit outside the
+SVG and are positioned against the same fractions the gridlines use, so they
+stay one size everywhere.
+
+For the same reason the marks carry `vector-effect="non-scaling-stroke"`. The
+line is 2px at every container width rather than 2px at one of them.
+
+### Pointing at a column
+
+There is no tooltip. The headline and the legend tiles are already on the card,
+so the pointer changes what they say instead of stacking a second card on top
+of the first.
+
+```tsx
+const share = (event.clientX - box.left) / box.width
+setAt(Math.round(share * (labels.length - 1)))
+```
+
+Every number on the card is `tabular-nums`. A headline that changes under the
+pointer must not change width while it does, or the whole card twitches on
+every mouse move.
+
+The dots that land on each line carry a 2px ring in the card colour, so a dot
+sitting on a line of its own colour still reads as a dot.
+
+### The palette is validated, not chosen
+
+Six slots, assigned in a fixed order and never cycled. A seventh series gets
+the muted ink rather than the first series' colour, because a seventh series
+wearing slot one is worse than a seventh series with no colour at all.
+
+Both themes were checked as a set against the card they sit on, rather than one
+being flipped from the other: worst adjacent colour-blind separation 9.1 light
+and 8.4 dark, worst normal-vision separation 19.6 and 19.3.
+
+Three of the light steps sit under 3:1 against a white card. That is what the
+named legend tiles are for. Identity is never colour alone here, which is also
+why the tiles are not optional decoration.
+
+## Props
+
+`TrendStack` takes everything a `figure` takes, plus:
+
+| Prop          | Type                        | Default   | Description                              |
+| ------------- | --------------------------- | --------- | ---------------------------------------- |
+| `series`      | `TrendSeries[]`             | required  | Bottom band first.                       |
+| `labels`      | `string[]`                  | required  | One per point, along the bottom.         |
+| `label`       | `string`                    | `"Total"` | What the headline counts.                |
+| `delta`       | `number`                    | none      | Percentage change on the headline.       |
+| `range`       | `ReactNode`                 | none      | The range control.                       |
+| `duration`    | `number`                    | `900`     | Milliseconds for the reveal.             |
+| `startOnView` | `boolean`                   | `true`    | Hold until the chart is on screen.       |
+| `disabled`    | `boolean`                   | `false`   | Render the finished plot with no reveal. |
+| `format`      | `(value: number) => string` | grouped   | Formats the headline and the tiles.      |
+| `formatAxis`  | `(value: number) => string` | compact   | Formats the axis.                        |
+
+`TrendSeries` is `{ name, values, color? }`. `color` overrides the slot that
+series would otherwise be given.
+
+<Callout type="tip" title="Reduced motion">
+  With reduced motion the plot is drawn in place with no wipe. Pointing at a
+  column still works: reading a chart is not an animation.
+</Callout>

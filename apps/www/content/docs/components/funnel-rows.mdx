@@ -1,0 +1,133 @@
+---
+title: Funnel Rows
+date: 2026-08-20
+description: A funnel as a row per stage, each bar scaled to its share of the first, growing one after another.
+---
+
+<ComponentPreview name="funnel-rows-demo" />
+
+## Installation
+
+<Tabs defaultValue="cli">
+
+<TabsList>
+  <TabsTrigger value="cli">CLI</TabsTrigger>
+  <TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @loomui/funnel-rows
+```
+
+</TabsContent>
+
+<TabsContent value="manual">
+
+<Steps>
+
+<Step>Copy the component into your project.</Step>
+
+<ComponentSource name="funnel-rows" />
+
+<Step>Update the import paths to match your setup.</Step>
+
+</Steps>
+
+</TabsContent>
+
+</Tabs>
+
+Both charts share one card, `chart-frame`, which the CLI pulls in for you.
+
+## Usage
+
+```tsx
+import { ChartRange } from "@/components/ui/chart-frame"
+import { FunnelRows } from "@/components/ui/funnel-rows"
+```
+
+```tsx
+<FunnelRows
+  label="Pipeline"
+  delta={2.4}
+  stages={[
+    { name: "Visits", value: 1180 },
+    { name: "Sign-up", value: 790 },
+    { name: "Active", value: 460 },
+  ]}
+  range={<ChartRange>Last 7 days</ChartRange>}
+/>
+```
+
+Stages are given widest first. The first sets the scale, and every share is
+read against it.
+
+## How it works
+
+### Share is against the first stage, always
+
+Never against the row above. A funnel where each row is a percentage of the
+last one is the most flattering possible reading of the same numbers: six
+stages at "65% of the previous" looks like a healthy pipeline right up until
+you notice the last row is 8% of the first.
+
+```tsx
+const share = (value: number) => value / stages[0].value
+```
+
+### The bar is scaled, not widened
+
+Each bar is the full width of its track and scaled down to its share.
+
+```tsx
+transform: `scaleX(${arrived ? share(stage.value) : 0})`
+```
+
+A `width` animation lays the row out on every frame, and everything sharing
+that row moves with it. A transform touches no layout at all, so the count and
+the percentage beside the bar stay exactly where they are while it grows.
+
+The bars arrive one after another, `stagger` milliseconds apart, so the shape
+of the drop-off is legible as it lands rather than all at once.
+
+### The icon sits outside the bar
+
+A mark inside a scaled element is scaled too. At the start of the growth it
+would be a flat vertical line, stretching back to a circle as the bar arrived.
+So the head sits in the track and the bar moves underneath it.
+
+### Pointing at a row
+
+Hovering a row dims the others and hands the headline to that stage. The legend
+tile for it stays lit while the rest fall back, so the row and its tile are
+obviously the same thing without a line drawn between them.
+
+Everything numeric is `tabular-nums`, so a headline swapping between stages
+never changes width.
+
+## Props
+
+`FunnelRows` takes everything a `figure` takes, plus:
+
+| Prop          | Type                        | Default   | Description                                |
+| ------------- | --------------------------- | --------- | ------------------------------------------ |
+| `stages`      | `FunnelStage[]`             | required  | Widest first. The first sets the scale.    |
+| `label`       | `string`                    | `"Total"` | What the headline counts.                  |
+| `delta`       | `number`                    | none      | Percentage change on the headline.         |
+| `range`       | `ReactNode`                 | none      | The range control.                         |
+| `duration`    | `number`                    | `620`     | Milliseconds for one bar to grow.          |
+| `stagger`     | `number`                    | `70`      | Milliseconds between one bar and the next. |
+| `startOnView` | `boolean`                   | `true`    | Hold until the chart is on screen.         |
+| `disabled`    | `boolean`                   | `false`   | Render the finished bars with no growth.   |
+| `format`      | `(value: number) => string` | grouped   | Formats the headline and the tiles.        |
+
+`FunnelStage` is `{ name, value, color?, icon? }`. `color` overrides the slot that
+stage would otherwise be given; `icon` sits at the head of the bar and is
+decorative.
+
+<Callout type="tip" title="Reduced motion">
+  With reduced motion every bar is already its full length on the first frame.
+  Pointing at a row still works.
+</Callout>

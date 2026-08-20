@@ -1,0 +1,17 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "gauge-arc-demo",
+  "type": "registry:example",
+  "title": "Gauge Arc Demo",
+  "description": "Sessions split four ways across half a ring, with the leading share in the middle.",
+  "registryDependencies": [
+    "@loomui/gauge-arc"
+  ],
+  "files": [
+    {
+      "path": "registry/example/gauge-arc-demo.tsx",
+      "content": "import { ChartRange } from \"@/registry/lib/chart-frame\"\nimport { GaugeArc } from \"@/registry/loomui/gauge-arc\"\n\nconst SEGMENTS = [\n  { name: \"Search\", value: 4820 },\n  { name: \"Direct\", value: 2140 },\n  { name: \"Social\", value: 1360 },\n  { name: \"Newsletter\", value: 890 },\n]\n\nexport default function GaugeArcDemo() {\n  return (\n    <GaugeArc\n      className=\"max-w-md\"\n      segments={SEGMENTS}\n      label=\"Sessions by source\"\n      delta={6.7}\n      range={<ChartRange>Last 30 days</ChartRange>}\n    />\n  )\n}\n",
+      "type": "registry:example"
+    }
+  ]
+}

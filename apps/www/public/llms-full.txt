@@ -2527,6 +2527,582 @@ export default function FlipCardDemo() {
 }
 
 
+===== COMPONENT: funnel-rows =====
+Title: Funnel Rows
+Description: A funnel as a row per stage, each bar scaled to its share of the first, growing one after another.
+Install: npx shadcn@latest add @loomui/funnel-rows
+
+--- file: loomui/funnel-rows.tsx ---
+"use client"
+
+import * as React from "react"
+
+import {
+  chartColor,
+  ChartFrame,
+  grouped,
+  type ChartTile,
+} from "@/registry/lib/chart-frame"
+
+export interface FunnelStage {
+  /** Named on the row and in the tile, so identity is never colour alone. */
+  name: string
+  /** How many got this far. */
+  value: number
+  /** Overrides the slot this stage would otherwise be given. */
+  color?: string
+  /** Sits at the head of the bar. Decorative. */
+  icon?: React.ReactNode
+}
+
+export interface FunnelRowsProps extends Omit<
+  React.ComponentProps<"figure">,
+  "children" | "title"
+> {
+  /** In order, widest first. The first stage sets the scale. */
+  stages: FunnelStage[]
+  /** What the headline counts. */
+  label?: string
+  /** Percentage change on the headline. */
+  delta?: number
+  /** The range control. */
+  range?: React.ReactNode
+  /** Milliseconds for one bar to grow. */
+  duration?: number
+  /** Milliseconds between one bar starting and the next. */
+  stagger?: number
+  /** Run on mount instead of holding until the chart scrolls into view. */
+  startOnView?: boolean
+  /** Render the finished bars with no growth. */
+  disabled?: boolean
+  /** Formats the headline and the tiles. */
+  format?: (value: number) => string
+}
+
+/**
+ * Latches on the first sighting and lets the observer go. A funnel that
+ * regrows every time it scrolls past is a funnel nobody can read on the way
+ * back up the page.
+ */
+function useArrived(startOnView: boolean, disabled: boolean) {
+  const ref = React.useRef<HTMLDivElement>(null)
+  const [arrived, setArrived] = React.useState(!startOnView || disabled)
+
+  React.useEffect(() => {
+    if (!startOnView || disabled) return
+
+    const node = ref.current
+    if (!node || typeof IntersectionObserver === "undefined") {
+      setArrived(true)
+      return
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setArrived(true)
+          observer.disconnect()
+        }
+      },
+      { threshold: 0.15 }
+    )
+
+    observer.observe(node)
+    return () => observer.disconnect()
+  }, [disabled, startOnView])
+
+  return [ref, arrived] as const
+}
+
+/**
+ * A funnel as a row per stage: the name, a bar as long as its share of the
+ * first stage, then the count and that share as a percentage.
+ *
+ * The bar is the whole track wide and scaled down to its share, rather than
+ * being given a width. A width animation lays the row out on every frame; a
+ * transform does not touch layout at all, and the number beside it can stay
+ * exactly where it is while the bar moves.
+ *
+ * Share is always against the first stage, never against the row above. A
+ * funnel where each row is a percentage of the last one reads as though the
+ * drop-off is smaller than it is.
+ */
+export function FunnelRows({
+  stages,
+  label = "Total",
+  delta,
+  range,
+  duration = 520,
+  stagger = 65,
+  startOnView = true,
+  disabled = false,
+  format = grouped,
+  className,
+  ...props
+}: FunnelRowsProps) {
+  const [root, arrived] = useArrived(startOnView, disabled)
+  const [at, setAt] = React.useState<number | null>(null)
+
+  const first = stages[0]?.value ?? 0
+  const share = (value: number) => (first > 0 ? value / first : 0)
+
+  const headline = at === null ? first : stages[at].value
+
+  const tiles: ChartTile[] = stages.map((stage, index) => ({
+    name: stage.name,
+    color: stage.color ?? chartColor(index),
+    value: format(stage.value),
+    dim: at !== null && at !== index,
+  }))
+
+  return (
+    <ChartFrame
+      label={at === null ? label : `${label} · ${stages[at].name}`}
+      value={format(headline)}
+      delta={delta}
+      range={range}
+      tiles={tiles}
+      onTileFocus={setAt}
+      className={className}
+      {...props}
+    >
+      {/* The gaps between rows belong to this element, not to a row, so a
+          pointer resting in one used to keep the row above it lit. */}
+      <div
+        ref={root}
+        onPointerMove={(event) => {
+          if (!(event.target as Element).closest("[data-stage]")) setAt(null)
+        }}
+        onPointerLeave={() => setAt(null)}
+        className="flex flex-col gap-2"
+      >
+        {stages.map((stage, index) => {
+          const color = stage.color ?? chartColor(index)
+          const dim = at !== null && at !== index
+
+          return (
+            <div
+              key={stage.name}
+              data-stage=""
+              onPointerEnter={() => setAt(index)}
+              data-dim={dim ? "" : undefined}
+              className="ease-out-quart grid grid-cols-[3.5rem_1fr_auto] items-center gap-2 transition-opacity duration-180 data-dim:opacity-45 motion-reduce:transition-none sm:grid-cols-[5.5rem_1fr_auto] sm:gap-3"
+            >
+              <span className="text-muted-foreground truncate text-right text-xs">
+                {stage.name}
+              </span>
+
+              <span className="bg-muted relative block h-7 overflow-hidden rounded-full">
+                {/* The bar is laid out at its final length and grown from
+                    nothing with a transform. Scaling a full-width bar down to
+                    its share instead squashes the pill's end caps into
+                    ellipses, and the smaller the stage the worse it looks. */}
+                <span
+                  className="ease-out-quart absolute inset-y-0 left-0 origin-left rounded-full transition-transform motion-reduce:transition-none"
+                  style={{
+                    background: color,
+                    width: `${share(stage.value) * 100}%`,
+                    transitionDuration: disabled ? "0ms" : `${duration}ms`,
+                    transitionDelay: disabled ? "0ms" : `${index * stagger}ms`,
+                    transform: `scaleX(${arrived ? 1 : 0})`,
+                  }}
+                />
+                {stage.icon ? (
+                  // Outside the scaled bar. Inside it the icon would be
+                  // squashed flat at the start and stretch as the bar grew.
+                  <span
+                    aria-hidden
+                    className="text-card absolute top-1/2 left-1.5 flex size-5 -translate-y-1/2 items-center justify-center"
+                  >
+                    {stage.icon}
+                  </span>
+                ) : null}
+              </span>
+
+              <span className="flex items-baseline justify-end gap-2 text-xs tabular-nums">
+                <span className="font-medium">{format(stage.value)}</span>
+                {/* The share is the first thing to go when the row runs out of
+                    room: the bar already shows it. */}
+                <span className="text-muted-foreground hidden w-9 text-right sm:inline">
+                  {Math.round(share(stage.value) * 100)}%
+                </span>
+              </span>
+            </div>
+          )
+        })}
+      </div>
+    </ChartFrame>
+  )
+}
+
+
+===== EXAMPLE: funnel-rows-demo =====
+Title: Funnel Rows Demo
+
+--- file: example/funnel-rows-demo.tsx ---
+import { ChartRange } from "@/registry/lib/chart-frame"
+import { FunnelRows } from "@/registry/loomui/funnel-rows"
+
+const STAGES = [
+  { name: "Invited", value: 2840 },
+  { name: "Opened", value: 1960 },
+  { name: "Started", value: 1180 },
+  { name: "Finished", value: 640 },
+  { name: "Verified", value: 415 },
+  { name: "Renewed", value: 168 },
+]
+
+export default function FunnelRowsDemo() {
+  return (
+    <FunnelRows
+      className="max-w-xl"
+      stages={STAGES}
+      label="Onboarding"
+      delta={-1.8}
+      range={<ChartRange>This month</ChartRange>}
+    />
+  )
+}
+
+
+===== COMPONENT: gauge-arc =====
+Title: Gauge Arc
+Description: Half a ring divided into segments, drawn one after another, with the share of whichever one is in focus in the middle.
+Install: npx shadcn@latest add @loomui/gauge-arc
+
+--- file: loomui/gauge-arc.tsx ---
+"use client"
+
+import * as React from "react"
+
+import {
+  chartColor,
+  ChartFrame,
+  grouped,
+  type ChartTile,
+} from "@/registry/lib/chart-frame"
+
+export interface GaugeSegment {
+  /** Named in the legend and in the middle of the ring. */
+  name: string
+  /** How much of the whole this segment is. */
+  value: number
+  /** Overrides the slot this segment would otherwise be given. */
+  color?: string
+}
+
+export interface GaugeArcProps extends Omit<
+  React.ComponentProps<"figure">,
+  "children" | "title"
+> {
+  /** Clockwise from the left. The first segment is the one the middle reads. */
+  segments: GaugeSegment[]
+  /** What the headline counts. */
+  label?: string
+  /** Percentage change on the headline. */
+  delta?: number
+  /** The range control. */
+  range?: React.ReactNode
+  /** Milliseconds for the whole ring to sweep round. */
+  duration?: number
+  /** Milliseconds of pause between one segment finishing and the next starting. */
+  stagger?: number
+  /** Surface left between segments, in the plot's own units. */
+  gap?: number
+  /** Ring thickness, in the plot's own units. */
+  thickness?: number
+  /** Run on mount instead of holding until the gauge scrolls into view. */
+  startOnView?: boolean
+  /** Render the finished ring with no draw. */
+  disabled?: boolean
+  /** Formats the headline and the tiles. */
+  format?: (value: number) => string
+}
+
+/** The plot's own coordinate space. */
+const W = 200
+const H = 118
+const CX = 100
+const CY = 102
+const R = 78
+
+/**
+ * Latches on the first sighting and lets the observer go. A gauge that redraws
+ * every time it scrolls past is one nobody can read on the way back up.
+ */
+function useArrived(startOnView: boolean, disabled: boolean) {
+  const ref = React.useRef<HTMLDivElement>(null)
+  const [arrived, setArrived] = React.useState(!startOnView || disabled)
+
+  React.useEffect(() => {
+    if (!startOnView || disabled) return
+
+    const node = ref.current
+    if (!node || typeof IntersectionObserver === "undefined") {
+      setArrived(true)
+      return
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setArrived(true)
+          observer.disconnect()
+        }
+      },
+      { threshold: 0.15 }
+    )
+
+    observer.observe(node)
+    return () => observer.disconnect()
+  }, [disabled, startOnView])
+
+  return [ref, arrived] as const
+}
+
+function point(angle: number) {
+  const radians = (angle * Math.PI) / 180
+  return [CX + R * Math.cos(radians), CY - R * Math.sin(radians)]
+}
+
+/**
+ * An arc from `from` degrees to `to`, measured the way a protractor is: 180 on
+ * the left, 0 on the right, over the top.
+ */
+function arc(from: number, to: number) {
+  const [x0, y0] = point(from)
+  const [x1, y1] = point(to)
+  // Sweeping from a larger angle to a smaller one is clockwise on screen,
+  // because SVG's y axis points down.
+  return `M${x0} ${y0}A${R} ${R} 0 ${from - to > 180 ? 1 : 0} 1 ${x1} ${y1}`
+}
+
+/**
+ * Half a ring, divided into segments, with the share of whichever one is in
+ * focus written in the middle.
+ *
+ * A gauge earns its place when one share is the headline and the rest are
+ * context. If every segment matters equally, this is a worse bar chart: arcs
+ * of different radius are genuinely hard to compare, which is why the numbers
+ * are on tiles underneath rather than left to be read off the ring.
+ */
+export function GaugeArc({
+  segments,
+  label = "Total",
+  delta,
+  range,
+  duration = 900,
+  stagger = 40,
+  gap = 5,
+  thickness = 18,
+  startOnView = true,
+  disabled = false,
+  format = grouped,
+  className,
+  ...props
+}: GaugeArcProps) {
+  const [root, arrived] = useArrived(startOnView, disabled)
+  const [at, setAt] = React.useState<number | null>(null)
+
+  const total = segments.reduce((sum, segment) => sum + segment.value, 0)
+
+  /**
+   * How far back each end has to be pulled for a gap to be visible.
+   *
+   * A round cap sticks out past the end of its path by half the stroke, so a
+   * gap narrower than the ring is not a gap at all: the two caps meet in the
+   * middle of it and the segments read as touching. The pull-back is therefore
+   * half the stroke plus the surface actually wanted, converted from the
+   * plot's units into degrees at this radius.
+   */
+  const pad = (((thickness + gap) / 2) * 180) / (R * Math.PI)
+
+  // Walk the half circle once, handing each segment the span it has earned.
+  const spans = React.useMemo(() => {
+    let angle = 180
+    const last = segments.length - 1
+
+    let elapsed = 0
+
+    return segments.map((segment, index) => {
+      const share = total > 0 ? segment.value / total : 0
+      const sweep = share * 180
+      const from = angle
+      angle -= sweep
+
+      // Only the joins are padded. Padding the two outer ends as well would
+      // leave a stub of bare track sticking out past each end of the ring,
+      // which reads as an unfinished chart rather than as breathing room.
+      const start = index === 0 ? from : from - pad
+      const end = index === last ? angle : angle + pad
+
+      // Each segment takes as long as it is long, and starts where the one
+      // before it stopped. Given every segment the same duration instead, a 10%
+      // slice crawled while a 52% slice raced, and four of them overlapping
+      // read as four animations rather than as one hand going round a dial.
+      const span = Math.max(120, duration * share)
+      const delay = elapsed
+      elapsed += span + stagger
+
+      return { from: start, to: Math.min(start, end), span, delay }
+    })
+  }, [duration, pad, segments, stagger, total])
+
+  const focus = at ?? 0
+  const showing = segments[focus]
+  const share = total > 0 ? (showing?.value ?? 0) / total : 0
+
+  const tiles: ChartTile[] = segments.map((segment, index) => ({
+    name: segment.name,
+    color: segment.color ?? chartColor(index),
+    value: format(segment.value),
+    dim: at !== null && at !== index,
+  }))
+
+  return (
+    <ChartFrame
+      label={label}
+      value={format(total)}
+      delta={delta}
+      range={range}
+      tiles={tiles}
+      onTileFocus={setAt}
+      className={className}
+      {...props}
+    >
+      {/*
+       * Clearing on the wrapper's `pointerleave` alone left a segment lit
+       * while the pointer sat in the middle of the ring, or in the empty
+       * corner of the card: those are still inside the wrapper. Every move
+       * that is not over a segment clears it, so the highlight ends where the
+       * colour ends.
+       */}
+      <div
+        ref={root}
+        onPointerMove={(event) => {
+          if (!(event.target as Element).closest("[data-segment]")) setAt(null)
+        }}
+        onPointerLeave={() => setAt(null)}
+      >
+        <div className="relative mx-auto w-full max-w-sm">
+          <svg
+            viewBox={`0 0 ${W} ${H}`}
+            className="block h-auto w-full"
+            role="img"
+            aria-label={`${label} by ${segments.map((s) => s.name).join(", ")}`}
+          >
+            <path
+              d={arc(180, 0)}
+              fill="none"
+              className="stroke-muted"
+              strokeWidth={thickness}
+              strokeLinecap="round"
+            />
+
+            {spans.map((span, index) => {
+              const segment = segments[index]
+              const dim = at !== null && at !== index
+
+              return (
+                <g key={segment.name}>
+                  <path
+                    d={arc(span.from, span.to)}
+                    fill="none"
+                    stroke={segment.color ?? chartColor(index)}
+                    strokeWidth={thickness}
+                    strokeLinecap="round"
+                    // Normalised to 1, so one dash covers the segment whatever
+                    // its real length is and a 3% slice and a 47% slice draw in
+                    // the same time rather than at the same speed.
+                    //
+                    // `stroke-dashoffset` is a paint, not a compositor
+                    // property. On one ring, once, that is the right trade for
+                    // a draw that actually follows the arc.
+                    pathLength={1}
+                    strokeDasharray={1}
+                    className="motion-reduce:transition-none"
+                    style={{
+                      strokeDashoffset: arrived ? 0 : 1,
+                      opacity: dim ? 0.28 : 1,
+                      // Two transitions, not one. Sharing a delay with the draw
+                      // made the dimming stagger too, so pointing at a segment
+                      // set the others fading one after another, like something
+                      // loading rather than something answering.
+                      //
+                      // The draw is linear. Easing each segment out on its own
+                      // makes the sweep speed pulse once per segment, which is
+                      // the opposite of a hand travelling round a dial. Loom
+                      // gives linear to marquees and to progress, and a gauge
+                      // filling is progress.
+                      transition: [
+                        `stroke-dashoffset ${disabled ? 0 : span.span}ms linear ${
+                          disabled ? 0 : span.delay
+                        }ms`,
+                        "opacity 180ms var(--ease-out-quart)",
+                      ].join(","),
+                    }}
+                  />
+                  {/* A wider invisible copy, so a 19 unit ring is not a 19 unit
+                      hit target. Nothing is drawn, only pointed at. */}
+                  <path
+                    data-segment=""
+                    d={arc(span.from, span.to)}
+                    fill="none"
+                    stroke="transparent"
+                    strokeWidth={thickness + 14}
+                    strokeLinecap="round"
+                    onPointerEnter={() => setAt(index)}
+                    style={{ pointerEvents: "stroke" }}
+                  />
+                </g>
+              )
+            })}
+          </svg>
+
+          {/* The middle is HTML. Inside the viewBox it would be a different
+              type size at every container width. */}
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 flex flex-col items-center">
+            <span className="text-2xl leading-none font-semibold tabular-nums">
+              {Math.round(share * 100)}%
+            </span>
+            <span className="text-muted-foreground mt-1 text-xs">
+              {showing?.name}
+            </span>
+          </div>
+        </div>
+      </div>
+    </ChartFrame>
+  )
+}
+
+
+===== EXAMPLE: gauge-arc-demo =====
+Title: Gauge Arc Demo
+
+--- file: example/gauge-arc-demo.tsx ---
+import { ChartRange } from "@/registry/lib/chart-frame"
+import { GaugeArc } from "@/registry/loomui/gauge-arc"
+
+const SEGMENTS = [
+  { name: "Search", value: 4820 },
+  { name: "Direct", value: 2140 },
+  { name: "Social", value: 1360 },
+  { name: "Newsletter", value: 890 },
+]
+
+export default function GaugeArcDemo() {
+  return (
+    <GaugeArc
+      className="max-w-md"
+      segments={SEGMENTS}
+      label="Sessions by source"
+      delta={6.7}
+      range={<ChartRange>Last 30 days</ChartRange>}
+    />
+  )
+}
+
+
 ===== COMPONENT: grid-backdrop =====
 Title: Grid Backdrop
 Description: An SVG grid with cells that fade in and out at a deterministic, seeded scatter.
@@ -9173,6 +9749,521 @@ export default function TiltCardDemo() {
         </p>
       </div>
     </TiltCard>
+  )
+}
+
+
+===== COMPONENT: trend-stack =====
+Title: Trend Stack
+Description: Stacked series under a line each, revealed left to right, with the headline and the legend following the pointer.
+Install: npx shadcn@latest add @loomui/trend-stack
+
+--- file: loomui/trend-stack.tsx ---
+"use client"
+
+import * as React from "react"
+
+import {
+  chartColor,
+  ChartFrame,
+  compact,
+  grouped,
+  type ChartTile,
+} from "@/registry/lib/chart-frame"
+
+export interface TrendSeries {
+  /** Named in the legend, so identity is never colour alone. */
+  name: string
+  /** One value per label, in the same order. */
+  values: number[]
+  /** Overrides the slot this series would otherwise be given. */
+  color?: string
+}
+
+export interface TrendStackProps extends Omit<
+  React.ComponentProps<"figure">,
+  "children" | "title"
+> {
+  /** Bottom to top. The first series is the bottom band. */
+  series: TrendSeries[]
+  /** One per point, along the bottom. */
+  labels: string[]
+  /** What the headline counts. */
+  label?: string
+  /** Percentage change on the headline. */
+  delta?: number
+  /** The range control. */
+  range?: React.ReactNode
+  /** Milliseconds for the reveal. A one-off entrance, so above the 300ms
+   * product-UI ceiling on purpose: it is closer to a page transition than to a
+   * control someone will trip forty times an hour. */
+  duration?: number
+  /** Run on mount instead of holding until the chart scrolls into view. */
+  startOnView?: boolean
+  /** Render the finished plot with no reveal. */
+  disabled?: boolean
+  /** Formats the headline and the tiles. */
+  format?: (value: number) => string
+  /** Formats the axis. */
+  formatAxis?: (value: number) => string
+}
+
+/** The plot's width in its own coordinate space. Nothing about it reaches the page. */
+const W = 640
+/** Horizontal rules, including the floor. */
+const ROWS = 4
+/** Room one label needs before it starts touching the next one. */
+const LABEL_PX = 34
+
+/**
+ * The plot's rendered width, so the chart can decide how tall to be and how
+ * many labels there is room for.
+ *
+ * A chart cannot be laid out by breakpoints alone. The same component goes in a
+ * full-width panel and in a third of a dashboard row, and it is the element's
+ * own width that decides whether twelve months fit, not the window's.
+ */
+function useWidth<T extends HTMLElement>() {
+  const ref = React.useRef<T>(null)
+  const [width, setWidth] = React.useState(0)
+
+  React.useEffect(() => {
+    const node = ref.current
+    if (!node) return
+
+    if (typeof ResizeObserver === "undefined") {
+      setWidth(node.getBoundingClientRect().width)
+      return
+    }
+
+    const observer = new ResizeObserver(([entry]) =>
+      setWidth(entry.contentRect.width)
+    )
+    observer.observe(node)
+    return () => observer.disconnect()
+  }, [])
+
+  return [ref, width] as const
+}
+
+/**
+ * Latches on the first sighting and lets the observer go. A chart that redraws
+ * itself every time it scrolls past is a chart nobody can read on the way back
+ * up the page.
+ */
+function useArrived(startOnView: boolean, disabled: boolean) {
+  const ref = React.useRef<HTMLDivElement>(null)
+  const [arrived, setArrived] = React.useState(!startOnView || disabled)
+
+  React.useEffect(() => {
+    if (!startOnView || disabled) return
+
+    const node = ref.current
+    if (!node || typeof IntersectionObserver === "undefined") {
+      setArrived(true)
+      return
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setArrived(true)
+          observer.disconnect()
+        }
+      },
+      { threshold: 0.15 }
+    )
+
+    observer.observe(node)
+    return () => observer.disconnect()
+  }, [disabled, startOnView])
+
+  return [ref, arrived] as const
+}
+
+/** Steps a person would have chosen, rather than whatever the data topped out at. */
+const NICE = [1, 1.2, 1.5, 2, 2.5, 3, 4, 5, 6, 8, 10]
+
+/**
+ * The first of those steps at or above the tallest stack.
+ *
+ * Rounding to the next half decade instead put an axis of 15K over data that
+ * peaked at 11.1K, and a third of the plot was empty sky.
+ */
+function ceiling(value: number) {
+  if (value <= 0) return 1
+  const size = 10 ** Math.floor(Math.log10(value))
+  const step = NICE.find((n) => n * size >= value) ?? 10
+  return step * size
+}
+
+function line(points: number[][]) {
+  return points.map(([x, y], i) => `${i ? "L" : "M"}${x} ${y}`).join("")
+}
+
+/**
+ * Stacked series under a line each, revealed left to right when the chart
+ * arrives, and read by pointing at a column.
+ *
+ * The bands are stacked rather than overlaid because the question a stacked
+ * area answers is "what does this add up to, and who contributed". Overlaid
+ * translucent areas answer neither: the overlaps make a colour that is in no
+ * legend, and no band can be read against the axis.
+ */
+export function TrendStack({
+  series,
+  labels,
+  label = "Total",
+  delta,
+  range,
+  duration = 700,
+  startOnView = true,
+  disabled = false,
+  format = grouped,
+  formatAxis = compact,
+  className,
+  ...props
+}: TrendStackProps) {
+  const [plot, arrived] = useArrived(startOnView, disabled)
+  const [box, width] = useWidth<HTMLDivElement>()
+  const [at, setAt] = React.useState<number | null>(null)
+
+  /**
+   * Height is chosen in rendered pixels and converted back into the viewBox,
+   * rather than the viewBox being fixed and the plot squashing with it. A
+   * 640x200 box on a phone is 90px tall, which is not a chart.
+   */
+  const px = width || 640
+  const tall = Math.min(260, Math.max(150, px * 0.42))
+  const H = Math.round((tall / px) * W)
+
+  /**
+   * The narrowest the plot is allowed to be before it scrolls instead. Below
+   * this every label is on top of the next one.
+   */
+  const floor = labels.length * LABEL_PX
+  const overflowing = width > 0 && floor > width
+
+  /**
+   * Show every nth label. With the scroller there is normally room for all of
+   * them, so this only bites where a consumer has pinned the width.
+   */
+  const step = Math.max(
+    1,
+    Math.ceil(labels.length / Math.max(1, Math.floor(px / LABEL_PX)))
+  )
+
+  const gradient = React.useId().replace(/:/g, "")
+
+  // Stack once. Every band, every line and every dot reads off this.
+  const { bands, totals, top } = React.useMemo(() => {
+    const running = labels.map(() => 0)
+    const bands = series.map((entry) => {
+      const lower = running.slice()
+      entry.values.forEach((value, i) => {
+        running[i] += value
+      })
+      return { lower, upper: running.slice() }
+    })
+
+    return {
+      bands,
+      totals: running.slice(),
+      top: ceiling(Math.max(...running)),
+    }
+  }, [labels, series])
+
+  const x = (i: number) =>
+    labels.length > 1 ? (i / (labels.length - 1)) * W : W / 2
+  const y = (value: number) => H - (value / top) * H
+
+  const focus = at === null ? null : at
+  const headline =
+    focus === null ? totals.reduce((a, b) => a + b, 0) : totals[focus]
+
+  const tiles: ChartTile[] = series.map((entry, index) => ({
+    name: entry.name,
+    color: entry.color ?? chartColor(index),
+    value: format(
+      focus === null
+        ? entry.values.reduce((a, b) => a + b, 0)
+        : entry.values[focus]
+    ),
+  }))
+
+  const read = (event: React.PointerEvent<HTMLDivElement>) => {
+    // A finger dragging across the plot is scrolling it, not reading it. Touch
+    // reads on a tap instead, which is the gesture that means "this one".
+    if (event.pointerType === "touch" && event.type === "pointermove") return
+
+    const box = event.currentTarget.getBoundingClientRect()
+    const share = (event.clientX - box.left) / box.width
+    setAt(
+      Math.min(
+        labels.length - 1,
+        Math.max(0, Math.round(share * (labels.length - 1)))
+      )
+    )
+  }
+
+  return (
+    <ChartFrame
+      label={focus === null ? label : `${label} · ${labels[focus]}`}
+      value={format(headline)}
+      delta={delta}
+      range={range}
+      tiles={tiles}
+      className={className}
+      {...props}
+    >
+      <div>
+        {/* The ticks share a row with the plot and nothing else. Sitting in the
+            same flex child as the month labels, the column would be as tall as
+            both and every tick would be spread over a height the gridlines do
+            not use. */}
+        <div ref={plot} className="flex gap-3">
+          {/* Ticks are HTML rather than SVG text: inside the viewBox they would
+              scale with the container and end up a different size on every
+              screen. */}
+          {/* Given the plot's height explicitly. As a stretched flex item it
+              would be as tall as the scroller, labels included, and every tick
+              would sit a little below the rule it names. */}
+          <div
+            style={{ height: `${tall}px` }}
+            className="text-muted-foreground relative w-9 shrink-0 self-start text-[10px] tabular-nums"
+          >
+            {Array.from({ length: ROWS + 1 }, (_, row) => (
+              <span
+                key={row}
+                className="absolute right-0 -translate-y-1/2"
+                style={{ top: `${(row / ROWS) * 100}%` }}
+              >
+                {formatAxis((top * (ROWS - row)) / ROWS)}
+              </span>
+            ))}
+          </div>
+
+          {/* The plot scrolls rather than compresses. Twelve months in 240px
+              is not twelve months, and the alternative to scrolling is dropping
+              data the card claims to be showing. The ticks stay outside the
+              scroller, so the scale is still readable at any scroll position. */}
+          <div
+            data-overflowing={overflowing ? "" : undefined}
+            className="no-scrollbar min-w-0 flex-1 overflow-x-auto data-overflowing:[mask-image:linear-gradient(to_right,#000_calc(100%-2rem),transparent)]"
+          >
+            <div style={{ minWidth: `${floor}px` }}>
+              <div
+                ref={box}
+                onPointerMove={read}
+                onPointerDown={read}
+                onPointerLeave={() => setAt(null)}
+                className="relative"
+              >
+                <svg
+                  viewBox={`0 0 ${W} ${H}`}
+                  className="block h-auto w-full overflow-visible"
+                  role="img"
+                  aria-label={`${label} by ${series.map((s) => s.name).join(", ")}`}
+                >
+                  <defs>
+                    {series.map((entry, index) => (
+                      <linearGradient
+                        key={entry.name}
+                        id={`${gradient}-${index}`}
+                        x1="0"
+                        y1="0"
+                        x2="0"
+                        y2="1"
+                      >
+                        <stop
+                          offset="0%"
+                          stopColor={entry.color ?? chartColor(index)}
+                          stopOpacity="0.35"
+                        />
+                        <stop
+                          offset="100%"
+                          stopColor={entry.color ?? chartColor(index)}
+                          stopOpacity="0.04"
+                        />
+                      </linearGradient>
+                    ))}
+                    <clipPath id={`${gradient}-wipe`}>
+                      {/* Scaled rather than resized: a width animation lays the
+                      clip out again every frame, a transform does not. */}
+                      <rect
+                        width={W}
+                        height={H}
+                        className="ease-out-quart origin-left transition-transform motion-reduce:transition-none"
+                        style={{
+                          transformBox: "view-box",
+                          transitionDuration: disabled
+                            ? "0ms"
+                            : `${duration}ms`,
+                          transform: arrived ? "scaleX(1)" : "scaleX(0)",
+                        }}
+                      />
+                    </clipPath>
+                  </defs>
+
+                  {Array.from({ length: ROWS + 1 }, (_, row) => (
+                    <line
+                      key={row}
+                      x1="0"
+                      x2={W}
+                      y1={(row / ROWS) * H}
+                      y2={(row / ROWS) * H}
+                      className="stroke-border"
+                      strokeWidth="1"
+                      vectorEffect="non-scaling-stroke"
+                    />
+                  ))}
+
+                  <g clipPath={`url(#${gradient}-wipe)`}>
+                    {bands.map((band, index) => {
+                      const color = series[index].color ?? chartColor(index)
+                      const upper = band.upper.map((value, i) => [
+                        x(i),
+                        y(value),
+                      ])
+                      const lower = band.lower
+                        .map((value, i) => [x(i), y(value)])
+                        .reverse()
+
+                      return (
+                        <g key={series[index].name}>
+                          <path
+                            d={`${line(upper)}L${lower.map(([px, py]) => `${px} ${py}`).join("L")}Z`}
+                            fill={`url(#${gradient}-${index})`}
+                          />
+                          <path
+                            d={line(upper)}
+                            fill="none"
+                            stroke={color}
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            vectorEffect="non-scaling-stroke"
+                          />
+                        </g>
+                      )
+                    })}
+                  </g>
+
+                  {focus === null ? null : (
+                    <g>
+                      <line
+                        x1={x(focus)}
+                        x2={x(focus)}
+                        y1="0"
+                        y2={H}
+                        className="stroke-muted-foreground/40"
+                        strokeWidth="1"
+                        vectorEffect="non-scaling-stroke"
+                      />
+                      {bands.map((band, index) => (
+                        <circle
+                          key={series[index].name}
+                          cx={x(focus)}
+                          cy={y(band.upper[focus])}
+                          r="4"
+                          fill={series[index].color ?? chartColor(index)}
+                          // A ring in the surface colour, so a dot sitting on a
+                          // line of its own colour still reads as a dot.
+                          className="stroke-card"
+                          strokeWidth="2"
+                          vectorEffect="non-scaling-stroke"
+                        />
+                      ))}
+                    </g>
+                  )}
+                </svg>
+              </div>
+
+              {/* Inside the scroller, so a label never parts company with the
+                  point it belongs to. */}
+              <div className="text-muted-foreground relative mt-2 h-4 text-[10px] [&>span:first-child]:translate-x-0 [&>span:last-child]:-translate-x-full">
+                {labels.map((name, i) =>
+                  // Thinned, not shrunk. Twelve months at 6px each is not twelve
+                  // labels, it is a smudge.
+                  i % step === 0 || i === focus ? (
+                    <span
+                      key={name}
+                      data-focus={i === focus ? "" : undefined}
+                      className="data-focus:text-foreground absolute -translate-x-1/2 data-focus:font-medium"
+                      style={{
+                        left: `${labels.length > 1 ? (i / (labels.length - 1)) * 100 : 50}%`,
+                      }}
+                    >
+                      {name}
+                    </span>
+                  ) : null
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ChartFrame>
+  )
+}
+
+
+===== EXAMPLE: trend-stack-demo =====
+Title: Trend Stack Demo
+
+--- file: example/trend-stack-demo.tsx ---
+import { ChartRange } from "@/registry/lib/chart-frame"
+import { TrendStack } from "@/registry/loomui/trend-stack"
+
+const WEEKS = [
+  "W1",
+  "W2",
+  "W3",
+  "W4",
+  "W5",
+  "W6",
+  "W7",
+  "W8",
+  "W9",
+  "W10",
+  "W11",
+  "W12",
+  "W13",
+]
+
+const SERIES = [
+  {
+    name: "Edge",
+    values: [
+      3420, 3610, 3380, 3990, 4270, 4180, 4640, 4910, 4780, 5330, 5610, 5840,
+      6120,
+    ],
+  },
+  {
+    name: "Origin",
+    values: [
+      2180, 2040, 2360, 2290, 2510, 2740, 2660, 2880, 3070, 2990, 3240, 3410,
+      3520,
+    ],
+  },
+  {
+    name: "Cache miss",
+    values: [
+      860, 940, 780, 1020, 1110, 970, 1230, 1180, 1340, 1290, 1450, 1380, 1510,
+    ],
+  },
+]
+
+export default function TrendStackDemo() {
+  return (
+    <TrendStack
+      className="max-w-xl"
+      series={SERIES}
+      labels={WEEKS}
+      label="Requests served"
+      delta={11.4}
+      range={<ChartRange>Last quarter</ChartRange>}
+    />
   )
 }
 

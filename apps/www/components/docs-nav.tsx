@@ -38,8 +38,9 @@ export function DocsNav({
     <nav className={cn("flex flex-col gap-6", className)}>
       {docsConfig.sidebarNav.map((section) => (
         <div key={section.title} className="flex flex-col gap-0.5">
-          <h4 className="text-muted-foreground/80 mb-1.5 font-mono text-[11px] font-medium tracking-[0.12em] uppercase">
+          <h4 className="text-muted-foreground/80 mb-1.5 flex items-center gap-2 font-mono text-[11px] font-medium tracking-[0.12em] uppercase">
             {section.title}
+            {section.badge ? <Badge badge={section.badge} /> : null}
           </h4>
 
           {section.items?.map((item) => {
