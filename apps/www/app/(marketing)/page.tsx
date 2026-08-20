@@ -51,7 +51,7 @@ export default function HomePage() {
             narrow column gives every line a different start, and the eye has
             to find each one. Centred from `sm`, where the lines are long
             enough for the shape to read as deliberate. */}
-        <div className="mx-auto flex w-full max-w-3xl flex-col items-start px-5 pt-14 pb-16 text-left sm:items-center sm:pt-28 sm:pb-20 sm:text-center">
+        <div className="mx-auto flex w-full max-w-3xl flex-col items-start px-5 pt-8 pb-14 text-left sm:items-center sm:pt-20 sm:pb-16 sm:text-center">
           <span className="animate-rise border-border bg-surface/60 text-muted-foreground rounded-full border px-3 py-1 text-xs backdrop-blur">
             <span aria-hidden>🎉</span> Free and open source
           </span>

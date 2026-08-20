@@ -122,6 +122,20 @@ export const examples: Registry["items"] = [
     ],
   },
   {
+    name: "light-curtain-demo",
+    type: "registry:example",
+    title: "Light Curtain Demo",
+    description:
+      "Columns hanging from the top of a panel, drifting past each other.",
+    registryDependencies: ["@loomui/light-curtain"],
+    files: [
+      {
+        path: "example/light-curtain-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "grid-beams-demo",
     type: "registry:example",
     title: "Grid Beams Demo",

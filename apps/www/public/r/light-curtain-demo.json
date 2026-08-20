@@ -1,0 +1,17 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "light-curtain-demo",
+  "type": "registry:example",
+  "title": "Light Curtain Demo",
+  "description": "Columns hanging from the top of a panel, drifting past each other.",
+  "registryDependencies": [
+    "@loomui/light-curtain"
+  ],
+  "files": [
+    {
+      "path": "registry/example/light-curtain-demo.tsx",
+      "content": "import { LightCurtain } from \"@/registry/loomui/light-curtain\"\n\nexport default function LightCurtainDemo() {\n  return (\n    <div className=\"bg-background relative flex h-72 w-full max-w-2xl items-center justify-center overflow-hidden rounded-xl border\">\n      <LightCurtain />\n\n      <p className=\"relative text-center text-2xl font-semibold tracking-tight text-balance\">\n        Light falling from the top edge\n      </p>\n    </div>\n  )\n}\n",
+      "type": "registry:example"
+    }
+  ]
+}

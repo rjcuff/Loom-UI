@@ -238,6 +238,46 @@ export const ui: Registry["items"] = [
     },
   },
   {
+    name: "light-curtain",
+    type: "registry:ui",
+    title: "Light Curtain",
+    description:
+      "Columns of light hanging from the top edge, each drifting sideways and breathing on its own clock.",
+    registryDependencies: ["utils", "use-in-viewport"],
+    files: [
+      {
+        path: "loomui/light-curtain.tsx",
+        type: "registry:ui",
+      },
+    ],
+    cssVars: {
+      theme: {
+        "animate-light-curtain": "light-curtain 9s linear infinite",
+      },
+    },
+    css: {
+      // Both ends are fully transparent, so the column restarts at the top
+      // with nothing to see.
+      "@keyframes light-curtain": {
+        "0%": {
+          translate:
+            "calc(var(--curtain-drift) * -1) calc(var(--curtain-fall) * -1)",
+          opacity: "0",
+        },
+        "18%": {
+          opacity: "var(--curtain-high)",
+        },
+        "72%": {
+          opacity: "var(--curtain-low)",
+        },
+        "100%": {
+          translate: "var(--curtain-drift) var(--curtain-fall)",
+          opacity: "0",
+        },
+      },
+    },
+  },
+  {
     name: "grid-beams",
     type: "registry:ui",
     title: "Grid Beams",

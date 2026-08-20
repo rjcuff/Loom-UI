@@ -1,0 +1,167 @@
+---
+title: Light Curtain
+date: 2026-08-20
+description: Columns of light falling from the top edge, each drifting sideways on the way down and on its own clock.
+---
+
+<ComponentPreview name="light-curtain-demo" />
+
+## Installation
+
+<Tabs defaultValue="cli">
+
+<TabsList>
+  <TabsTrigger value="cli">CLI</TabsTrigger>
+  <TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @loomui/light-curtain
+```
+
+</TabsContent>
+
+<TabsContent value="manual">
+
+<Steps>
+
+<Step>Copy the component into your project.</Step>
+
+<ComponentSource name="light-curtain" />
+
+<Step>Update the import paths to match your setup.</Step>
+
+</Steps>
+
+</TabsContent>
+
+</Tabs>
+
+## Usage
+
+```tsx
+import { LightCurtain } from "@/components/ui/light-curtain"
+```
+
+```tsx
+<section className="relative overflow-hidden">
+  <LightCurtain className="-z-10" />
+
+  <h1>Where design meets production</h1>
+</section>
+```
+
+It fills whatever it is inside, so the parent needs `position: relative` and
+`overflow: hidden`. It is `aria-hidden` and takes no pointer events, so it never
+gets in the way of what is on top of it.
+
+It shares its palette with [Grid Beams](/docs/components/grid-beams), so the two
+can sit on one page without arguing.
+
+## How it works
+
+### Two gradients, two jobs
+
+Down the column, a linear ramp carries the colour the whole way and lets go at
+the bottom. Across it, a mask feathers both sides.
+
+```tsx
+backgroundImage: `linear-gradient(to bottom, ${color}, transparent 88%)`
+maskImage: "linear-gradient(to right, transparent, black 50%, transparent)"
+```
+
+One radial gradient does both at once and neither well. The colour pools near
+the top, and the column reads as a blob sitting under the header rather than as
+light falling past it.
+
+Drawing hard-edged columns and blurring each one instead would cost a filter
+pass per column and pin every one of them to its own layer. Gradients cost a
+paint, and the drift on top of them stays a plain transform.
+
+There is one blur over the whole layer, and it is static. Nothing animates it,
+and the columns move underneath it on transforms that never re-run it.
+
+### Seeded, so nothing teleports
+
+Sizes, colours, offsets and timings all come out of one seeded generator.
+
+```tsx
+const random = createRandom(seed)
+```
+
+Real randomness would give the server one layout and the browser another, and
+then a third the next time anything above it re-rendered. Same seed, same
+curtain, every time. Change `seed` to draw a different one.
+
+Columns are spread across the width first and nudged afterwards, so no two land
+on top of each other however the generator falls.
+
+### The loop has no seam
+
+A column starts above the top edge, falls past the container drifting sideways
+as it goes, and is fully transparent at both ends of the run.
+
+```css
+0% {
+  translate: calc(var(--curtain-drift) * -1) calc(var(--curtain-fall) * -1);
+  opacity: 0;
+}
+18% {
+  opacity: var(--curtain-high);
+}
+72% {
+  opacity: var(--curtain-low);
+}
+100% {
+  translate: var(--curtain-drift) var(--curtain-fall);
+  opacity: 0;
+}
+```
+
+Because it arrives at nothing and leaves at nothing, there is no frame where it
+snaps back to the start. It is linear, too: a fall that eases at both ends reads
+as hesitating.
+
+### No two are in step
+
+Each column gets its own duration, off a multiplier that is never a round
+number, and a negative delay so it is already part way down on the first frame.
+
+```tsx
+duration: duration * (0.72 + random() * 0.66),
+delay: -random() * duration * 2,
+```
+
+Given one duration they would fall as a single object within a few cycles, and
+a curtain that arrives as one is a flashing rectangle.
+
+### It stops when nobody is looking
+
+CSS animations keep running while they are scrolled away, and the compositor
+keeps the layers alive to do it. The layer watches for itself and pauses when it
+is off screen.
+
+## Props
+
+`LightCurtain` takes everything a `div` takes, plus:
+
+| Prop        | Type                | Default                 | Description                               |
+| ----------- | ------------------- | ----------------------- | ----------------------------------------- |
+| `beams`     | `number`            | `7`                     | How many columns hang from the top.       |
+| `colors`    | `string[]`          | cyan, sky, purple, pink | Drawn from, one picked per column.        |
+| `duration`  | `number`            | `9`                     | Seconds for one fall.                     |
+| `drift`     | `string`            | `"2rem"`                | How far it drifts sideways on the way.    |
+| `fall`      | `string`            | `"9rem"`                | How far it falls.                         |
+| `reach`     | `string`            | `"72%"`                 | How far down the columns reach.           |
+| `intensity` | `number`            | `0.85`                  | Brightest a column gets.                  |
+| `blur`      | `number`            | `18`                    | Softening pass over the layer, in pixels. |
+| `fade`      | `boolean \| string` | `true`                  | Fade downwards, or pass a CSS mask.       |
+| `seed`      | `number`            | `1`                     | Same seed, same curtain.                  |
+| `disabled`  | `boolean`           | `false`                 | Render the columns still.                 |
+
+<Callout type="tip" title="Reduced motion">
+  With reduced motion the columns are drawn where they stand and nothing falls.
+  The layer is decorative, so there is nothing to miss.
+</Callout>

@@ -139,6 +139,21 @@ export const Index: Record<string, any> = {
       return { default: mod.default ?? mod[exportName] }
     }),
   },
+  "light-curtain": {
+    name: "light-curtain",
+    type: "registry:ui",
+    title: "Light Curtain",
+    description: "Columns of light hanging from the top edge, each drifting sideways and breathing on its own clock.",
+    dependencies: [],
+    registryDependencies: ["utils","use-in-viewport"],
+    files: [{"path":"registry/loomui/light-curtain.tsx","type":"registry:ui","target":""}],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/loomui/light-curtain")
+      const exportName =
+        Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
+      return { default: mod.default ?? mod[exportName] }
+    }),
+  },
   "grid-beams": {
     name: "grid-beams",
     type: "registry:ui",
@@ -824,6 +839,21 @@ export const Index: Record<string, any> = {
     files: [{"path":"registry/example/spotlight-card-demo.tsx","type":"registry:example","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/example/spotlight-card-demo")
+      const exportName =
+        Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
+      return { default: mod.default ?? mod[exportName] }
+    }),
+  },
+  "light-curtain-demo": {
+    name: "light-curtain-demo",
+    type: "registry:example",
+    title: "Light Curtain Demo",
+    description: "Columns hanging from the top of a panel, drifting past each other.",
+    dependencies: [],
+    registryDependencies: ["@loomui/light-curtain"],
+    files: [{"path":"registry/example/light-curtain-demo.tsx","type":"registry:example","target":""}],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/example/light-curtain-demo")
       const exportName =
         Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
       return { default: mod.default ?? mod[exportName] }

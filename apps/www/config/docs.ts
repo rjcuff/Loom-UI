@@ -226,6 +226,11 @@ export const docsConfig: DocsConfig = {
           href: "/docs/components/aurora-backdrop",
         },
         {
+          title: "Light Curtain",
+          href: "/docs/components/light-curtain",
+          badge: { text: "New", variant: "new" },
+        },
+        {
           title: "Grid Beams",
           href: "/docs/components/grid-beams",
         },

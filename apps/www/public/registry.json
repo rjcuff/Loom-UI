@@ -233,6 +233,45 @@
       }
     },
     {
+      "name": "light-curtain",
+      "type": "registry:ui",
+      "title": "Light Curtain",
+      "description": "Columns of light hanging from the top edge, each drifting sideways and breathing on its own clock.",
+      "registryDependencies": [
+        "utils",
+        "use-in-viewport"
+      ],
+      "files": [
+        {
+          "path": "registry/loomui/light-curtain.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "cssVars": {
+        "theme": {
+          "animate-light-curtain": "light-curtain 9s linear infinite"
+        }
+      },
+      "css": {
+        "@keyframes light-curtain": {
+          "0%": {
+            "translate": "calc(var(--curtain-drift) * -1) calc(var(--curtain-fall) * -1)",
+            "opacity": "0"
+          },
+          "18%": {
+            "opacity": "var(--curtain-high)"
+          },
+          "72%": {
+            "opacity": "var(--curtain-low)"
+          },
+          "100%": {
+            "translate": "var(--curtain-drift) var(--curtain-fall)",
+            "opacity": "0"
+          }
+        }
+      }
+    },
+    {
       "name": "grid-beams",
       "type": "registry:ui",
       "title": "Grid Beams",
@@ -1386,6 +1425,21 @@
       "files": [
         {
           "path": "registry/example/spotlight-card-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "light-curtain-demo",
+      "type": "registry:example",
+      "title": "Light Curtain Demo",
+      "description": "Columns hanging from the top of a panel, drifting past each other.",
+      "registryDependencies": [
+        "@loomui/light-curtain"
+      ],
+      "files": [
+        {
+          "path": "registry/example/light-curtain-demo.tsx",
           "type": "registry:example"
         }
       ]

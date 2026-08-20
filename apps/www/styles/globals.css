@@ -218,6 +218,10 @@
   --animate-marquee-vertical: marquee-vertical var(--marquee-duration, 40s)
     linear infinite;
   --animate-aurora-drift: aurora-drift 18s var(--ease-in-out-cubic) infinite;
+  /* One fall, top to bottom. The duration and delay are set per column, so no
+     two are ever in step. Linear because a fall that eases at both ends reads
+     as hesitating. */
+  --animate-light-curtain: light-curtain 9s linear infinite;
   --animate-grid-beam: grid-beam 4s linear infinite;
   --animate-grid-beam-x: grid-beam-x 4s linear infinite;
   --animate-split-flap-out: split-flap-out
@@ -338,6 +342,25 @@
 /* A beam spans the whole axis it travels, with the streak painted into the
    leading slice of it, so translating by a percentage travels a percentage of
    the container and nothing has to measure the box. */
+/* Falls rather than sways. Both ends are fully transparent, so the column
+   restarts at the top with nothing to see. */
+@keyframes light-curtain {
+  0% {
+    translate: calc(var(--curtain-drift) * -1) calc(var(--curtain-fall) * -1);
+    opacity: 0;
+  }
+  18% {
+    opacity: var(--curtain-high);
+  }
+  72% {
+    opacity: var(--curtain-low);
+  }
+  100% {
+    translate: var(--curtain-drift) var(--curtain-fall);
+    opacity: 0;
+  }
+}
+
 @keyframes grid-beam {
   from {
     transform: translateY(calc(-1 * var(--beam-length, 24%)));

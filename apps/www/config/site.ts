@@ -67,10 +67,7 @@ export interface Announcement {
 }
 
 /** The strip above the header. Set to `null` to take it down. */
-export const announcement: Announcement | null = {
-  text: "Loom UI is here. Explore our catalog of 30+ animated components",
-  href: "/docs/components",
-}
+export const announcement: Announcement | null = null
 
 /** Builds a consistent tab title: "Weave Text | React Components & Effects" */
 export function pageTitle(name: string) {
