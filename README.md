@@ -12,7 +12,7 @@
   <a href="https://github.com/rjcuff/Loom-UI/stargazers"><img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/rjcuff/Loom-UI"></a>
   <a href="https://github.com/rjcuff/Loom-UI/blob/main/LICENSE.md"><img alt="License" src="https://img.shields.io/badge/License-MIT-yellow.svg"></a>
   <a href="https://ui.shadcn.com/docs/registry"><img alt="shadcn registry" src="https://img.shields.io/badge/shadcn-registry-black.svg"></a>
-  <a href="https://loomui.design/docs/components"><img alt="Components" src="https://img.shields.io/badge/components-44-blue"></a>
+  <a href="https://loomui.design/docs/components"><img alt="Components" src="https://img.shields.io/badge/components-43-blue"></a>
 </div>
 
 </div>
@@ -48,7 +48,7 @@ in place of `weave-text`.
 
 ## Components
 
-44 components, none of which depend on this project at runtime.
+43 components, none of which depend on this project at runtime.
 
 ### Interface
 
@@ -117,12 +117,11 @@ in place of `weave-text`.
 
 ### Mockups
 
-| Component                                                          | What it does                                                                                                |
-| ------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------- |
-| [`iphone`](https://loomui.design/docs/components/iphone)           | A device frame drawn from the real measurements, with a screen you put anything in.                         |
-| [`ipad`](https://loomui.design/docs/components/ipad)               | A tablet frame drawn from the real measurements, upright or on its side, with a screen you put anything in. |
-| [`macbook`](https://loomui.design/docs/components/macbook)         | A laptop frame with the camera housing cut into the display and the scoop cut into its base.                |
-| [`credit-card`](https://loomui.design/docs/components/credit-card) | A placeholder payment card with a contact plate, a number and an aurora drifting under the face.            |
+| Component                                                  | What it does                                                                                                |
+| ---------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| [`iphone`](https://loomui.design/docs/components/iphone)   | A device frame drawn from the real measurements, with a screen you put anything in.                         |
+| [`ipad`](https://loomui.design/docs/components/ipad)       | A tablet frame drawn from the real measurements, upright or on its side, with a screen you put anything in. |
+| [`macbook`](https://loomui.design/docs/components/macbook) | A laptop frame with the camera housing cut into the display and the scoop cut into its base.                |
 
 ## Works with your coding agent
 

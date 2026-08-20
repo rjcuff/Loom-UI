@@ -535,19 +535,6 @@ export const examples: Registry["items"] = [
     ],
   },
   {
-    name: "credit-card-demo",
-    type: "registry:example",
-    title: "Credit Card Demo",
-    description: "The placeholder card with its aurora drifting.",
-    registryDependencies: ["@loomui/credit-card"],
-    files: [
-      {
-        path: "example/credit-card-demo.tsx",
-        type: "registry:example",
-      },
-    ],
-  },
-  {
     name: "shimmer-skeleton-demo",
     type: "registry:example",
     title: "Shimmer Skeleton Demo",

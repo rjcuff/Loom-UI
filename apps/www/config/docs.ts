@@ -254,10 +254,6 @@ export const docsConfig: DocsConfig = {
           title: "MacBook",
           href: "/docs/components/macbook",
         },
-        {
-          title: "Credit Card",
-          href: "/docs/components/credit-card",
-        },
       ],
     },
   ],

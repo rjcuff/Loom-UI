@@ -1075,40 +1075,6 @@ export const ui: Registry["items"] = [
     },
   },
   {
-    name: "credit-card",
-    type: "registry:ui",
-    title: "Credit Card",
-    description:
-      "A placeholder payment card with a contact plate, a number and an aurora drifting under the face.",
-    registryDependencies: ["utils", "use-in-viewport"],
-    files: [
-      {
-        path: "loomui/credit-card.tsx",
-        type: "registry:ui",
-      },
-    ],
-    cssVars: {
-      theme: {
-        "ease-in-out-cubic": EASE_IN_OUT_CUBIC,
-        "animate-aurora-drift":
-          "aurora-drift 18s var(--ease-in-out-cubic) infinite",
-      },
-    },
-    css: {
-      "@keyframes aurora-drift": {
-        "0%, 100%": {
-          transform: "translate(0%, 0%) scale(1)",
-        },
-        "33%": {
-          transform: "translate(26%, -22%) scale(1.35)",
-        },
-        "66%": {
-          transform: "translate(-24%, 18%) scale(0.75)",
-        },
-      },
-    },
-  },
-  {
     name: "shimmer-skeleton",
     type: "registry:ui",
     title: "Shimmer Skeleton",
