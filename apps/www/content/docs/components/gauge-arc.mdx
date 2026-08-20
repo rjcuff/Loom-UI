@@ -91,22 +91,42 @@ return { from: from - gap / 2, to: angle + gap / 2 }
 Adding gaps between segments instead would push the total past a half turn, and
 the more segments you passed the further round it would go.
 
-### The draw is a normalised dash
+### One hand goes round
 
-Each arc carries `pathLength={1}`, so its real length in user units stops
-mattering.
+The segments are not drawn. They are already there, and a single arc sweeps
+across them inside a `<mask>`, uncovering each as it passes.
 
 ```tsx
-<path pathLength={1} strokeDasharray={1} strokeDashoffset={arrived ? 0 : 1} />
+<mask id={id} maskUnits="userSpaceOnUse" x="0" y="0" width={W} height={H}>
+  <rect width={W} height={H} fill="black" />
+  <path
+    d={arc(180, 0)}
+    stroke="white"
+    pathLength={1}
+    strokeDasharray={1}
+    style={{ strokeDashoffset: arrived ? 0 : 1 }}
+  />
+</mask>
 ```
 
-One dash covers the whole segment whatever size it is, and the offset runs 1 to
-0 to draw it. Without the normalisation every segment would need its own dash
-length measured first, and a 3% slice and a 47% slice would draw at different
-speeds.
+Drawing each segment on its own dash was the first attempt, and it was four
+animations that had to be talked into looking like one. Every seam between them
+was a hitch. It also grew each segment out of a dot, because a round cap at
+zero length is a dot, so four of those appeared and swelled in turn. Giving
+every segment the same duration made it worse in a different way: a 10% slice
+crawled while a 52% slice raced.
 
-They arrive `stagger` milliseconds apart, clockwise, so the order round the
-ring is legible as it lands.
+One animation cannot fall out of step with itself, and the caps arrive already
+round because they are uncovered rather than drawn.
+
+`maskUnits` and the bounds are stated rather than left to default. A mask
+defaults to a region measured off the masked object's bounding box, inset to
+-10%/120% of it. The ring's caps and the wider sweep path both fall outside
+that box, so the ring came back with its ends shaved and, on the first frame,
+one segment showing through on its own before the sweep had started.
+
+The track is not masked. It is the dial the colour fills, so it has to be there
+before the filling starts.
 
 ### The hit target is not the ring
 
@@ -137,19 +157,18 @@ Pointing at a legend tile moves the middle too: the tiles carry
 
 `GaugeArc` takes everything a `figure` takes, plus:
 
-| Prop          | Type                        | Default   | Description                                    |
-| ------------- | --------------------------- | --------- | ---------------------------------------------- |
-| `segments`    | `GaugeSegment[]`            | required  | Clockwise from the left.                       |
-| `label`       | `string`                    | `"Total"` | What the headline counts.                      |
-| `delta`       | `number`                    | none      | Percentage change on the headline.             |
-| `range`       | `ReactNode`                 | none      | The range control.                             |
-| `duration`    | `number`                    | `720`     | Milliseconds for one segment to draw.          |
-| `stagger`     | `number`                    | `90`      | Milliseconds between one segment and the next. |
-| `gap`         | `number`                    | `3`       | Degrees of surface left between segments.      |
-| `thickness`   | `number`                    | `17`      | Ring thickness, in the plot's own units.       |
-| `startOnView` | `boolean`                   | `true`    | Hold until the gauge is on screen.             |
-| `disabled`    | `boolean`                   | `false`   | Render the finished ring with no draw.         |
-| `format`      | `(value: number) => string` | grouped   | Formats the headline and the tiles.            |
+| Prop          | Type                        | Default   | Description                                   |
+| ------------- | --------------------------- | --------- | --------------------------------------------- |
+| `segments`    | `GaugeSegment[]`            | required  | Clockwise from the left.                      |
+| `label`       | `string`                    | `"Total"` | What the headline counts.                     |
+| `delta`       | `number`                    | none      | Percentage change on the headline.            |
+| `range`       | `ReactNode`                 | none      | The range control.                            |
+| `duration`    | `number`                    | `820`     | Milliseconds for the ring to fill.            |
+| `gap`         | `number`                    | `5`       | Surface left between segments, in plot units. |
+| `thickness`   | `number`                    | `18`      | Ring thickness, in the plot's own units.      |
+| `startOnView` | `boolean`                   | `true`    | Hold until the gauge is on screen.            |
+| `disabled`    | `boolean`                   | `false`   | Render the finished ring with no draw.        |
+| `format`      | `(value: number) => string` | grouped   | Formats the headline and the tiles.           |
 
 `GaugeSegment` is `{ name, value, color? }`.
 

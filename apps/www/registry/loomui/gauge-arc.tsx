@@ -30,10 +30,8 @@ export interface GaugeArcProps extends Omit<
   delta?: number
   /** The range control. */
   range?: React.ReactNode
-  /** Milliseconds for the whole ring to sweep round. */
+  /** Milliseconds for the ring to fill. */
   duration?: number
-  /** Milliseconds of pause between one segment finishing and the next starting. */
-  stagger?: number
   /** Surface left between segments, in the plot's own units. */
   gap?: number
   /** Ring thickness, in the plot's own units. */
@@ -118,8 +116,7 @@ export function GaugeArc({
   label = "Total",
   delta,
   range,
-  duration = 900,
-  stagger = 40,
+  duration = 820,
   gap = 5,
   thickness = 18,
   startOnView = true,
@@ -129,6 +126,8 @@ export function GaugeArc({
   ...props
 }: GaugeArcProps) {
   const [root, arrived] = useArrived(startOnView, disabled)
+  // `useId` hands back colons, which a fragment reference is better off without.
+  const maskId = `gauge-arc-${React.useId().replace(/:/g, "")}`
   const [at, setAt] = React.useState<number | null>(null)
 
   const total = segments.reduce((sum, segment) => sum + segment.value, 0)
@@ -149,11 +148,8 @@ export function GaugeArc({
     let angle = 180
     const last = segments.length - 1
 
-    let elapsed = 0
-
     return segments.map((segment, index) => {
-      const share = total > 0 ? segment.value / total : 0
-      const sweep = share * 180
+      const sweep = total > 0 ? (segment.value / total) * 180 : 0
       const from = angle
       angle -= sweep
 
@@ -163,17 +159,9 @@ export function GaugeArc({
       const start = index === 0 ? from : from - pad
       const end = index === last ? angle : angle + pad
 
-      // Each segment takes as long as it is long, and starts where the one
-      // before it stopped. Given every segment the same duration instead, a 10%
-      // slice crawled while a 52% slice raced, and four of them overlapping
-      // read as four animations rather than as one hand going round a dial.
-      const span = Math.max(120, duration * share)
-      const delay = elapsed
-      elapsed += span + stagger
-
-      return { from: start, to: Math.min(start, end), span, delay }
+      return { from: start, to: Math.min(start, end) }
     })
-  }, [duration, pad, segments, stagger, total])
+  }, [pad, segments, total])
 
   const focus = at ?? 0
   const showing = segments[focus]
@@ -218,6 +206,60 @@ export function GaugeArc({
             role="img"
             aria-label={`${label} by ${segments.map((s) => s.name).join(", ")}`}
           >
+            {/*
+             * One hand goes round, and the segments are revealed as it passes.
+             *
+             * Drawing each segment on its own dash meant four animations that
+             * had to be talked into looking like one, and every seam between
+             * them was a hitch. It also grew each segment out of a dot, because
+             * a round cap at zero length is a dot, so four of those appeared
+             * and swelled in turn.
+             *
+             * This is one animation. Nothing can fall out of step with it, and
+             * the caps arrive already round because they are uncovered rather
+             * than drawn.
+             */}
+            {/*
+             * `maskUnits` and the bounds are stated, not left to default.
+             *
+             * A mask defaults to a region measured off the masked object's own
+             * bounding box, inset to -10%/120% of it. The ring's caps and the
+             * wider sweep path both live outside that box, so the ring came
+             * back with its ends shaved and, on the first frame, one segment
+             * showing through on its own before the sweep had started.
+             */}
+            <mask
+              id={maskId}
+              maskUnits="userSpaceOnUse"
+              x="0"
+              y="0"
+              width={W}
+              height={H}
+            >
+              {/* The region is black by default, so state the part that is
+                  hidden rather than relying on the default region's edges. */}
+              <rect x="0" y="0" width={W} height={H} fill="black" />
+              <path
+                d={arc(180, 0)}
+                fill="none"
+                stroke="white"
+                // Wider than the ring, so the mask clears the segments' own
+                // caps instead of shaving them as it goes past.
+                strokeWidth={thickness + 8}
+                strokeLinecap="round"
+                pathLength={1}
+                strokeDasharray={1}
+                className="ease-out-quart motion-reduce:transition-none"
+                style={{
+                  strokeDashoffset: arrived ? 0 : 1,
+                  transitionProperty: "stroke-dashoffset",
+                  transitionDuration: disabled ? "0ms" : `${duration}ms`,
+                }}
+              />
+            </mask>
+
+            {/* The track is not masked. It is the dial the colour fills, so it
+                has to be there before the filling starts. */}
             <path
               d={arc(180, 0)}
               fill="none"
@@ -226,73 +268,59 @@ export function GaugeArc({
               strokeLinecap="round"
             />
 
-            {spans.map((span, index) => {
-              const segment = segments[index]
-              const dim = at !== null && at !== index
+            <g mask={`url(#${maskId})`}>
+              {spans.map((span, index) => {
+                const segment = segments[index]
+                const dim = at !== null && at !== index
 
-              return (
-                <g key={segment.name}>
+                return (
                   <path
+                    key={segment.name}
                     d={arc(span.from, span.to)}
                     fill="none"
                     stroke={segment.color ?? chartColor(index)}
                     strokeWidth={thickness}
                     strokeLinecap="round"
-                    // Normalised to 1, so one dash covers the segment whatever
-                    // its real length is and a 3% slice and a 47% slice draw in
-                    // the same time rather than at the same speed.
-                    //
-                    // `stroke-dashoffset` is a paint, not a compositor
-                    // property. On one ring, once, that is the right trade for
-                    // a draw that actually follows the arc.
-                    pathLength={1}
-                    strokeDasharray={1}
-                    className="motion-reduce:transition-none"
-                    style={{
-                      strokeDashoffset: arrived ? 0 : 1,
-                      opacity: dim ? 0.28 : 1,
-                      // Two transitions, not one. Sharing a delay with the draw
-                      // made the dimming stagger too, so pointing at a segment
-                      // set the others fading one after another, like something
-                      // loading rather than something answering.
-                      //
-                      // The draw is linear. Easing each segment out on its own
-                      // makes the sweep speed pulse once per segment, which is
-                      // the opposite of a hand travelling round a dial. Loom
-                      // gives linear to marquees and to progress, and a gauge
-                      // filling is progress.
-                      transition: [
-                        `stroke-dashoffset ${disabled ? 0 : span.span}ms linear ${
-                          disabled ? 0 : span.delay
-                        }ms`,
-                        "opacity 180ms var(--ease-out-quart)",
-                      ].join(","),
-                    }}
+                    className="ease-out-quart transition-opacity duration-180 motion-reduce:transition-none"
+                    style={{ opacity: dim ? 0.28 : 1 }}
                   />
-                  {/* A wider invisible copy, so a 19 unit ring is not a 19 unit
-                      hit target. Nothing is drawn, only pointed at. */}
-                  <path
-                    data-segment=""
-                    d={arc(span.from, span.to)}
-                    fill="none"
-                    stroke="transparent"
-                    strokeWidth={thickness + 14}
-                    strokeLinecap="round"
-                    onPointerEnter={() => setAt(index)}
-                    style={{ pointerEvents: "stroke" }}
-                  />
-                </g>
-              )
-            })}
+                )
+              })}
+            </g>
+
+            {/* The hit targets sit outside the mask, so a segment can be
+                pointed at from the first frame rather than once the sweep has
+                got to it. */}
+            {spans.map((span, index) => (
+              <path
+                key={`hit-${segments[index].name}`}
+                data-segment=""
+                d={arc(span.from, span.to)}
+                fill="none"
+                stroke="transparent"
+                // A 18 unit ring is a thin thing to ask anyone to point at.
+                strokeWidth={thickness + 14}
+                strokeLinecap="round"
+                onPointerEnter={() => setAt(index)}
+                style={{ pointerEvents: "stroke" }}
+              />
+            ))}
           </svg>
 
           {/* The middle is HTML. Inside the viewBox it would be a different
-              type size at every container width. */}
-          <div className="pointer-events-none absolute inset-x-0 bottom-0 flex flex-col items-center">
-            <span className="text-2xl leading-none font-semibold tabular-nums">
+              type size at every container width.
+
+              Placed against the arc's own geometry rather than against the
+              bottom of the box, so it sits inside the half circle wherever the
+              ring is sized to. */}
+          <div
+            style={{ top: `${((CY - R * 0.46) / H) * 100}%` }}
+            className="pointer-events-none absolute inset-x-0 flex flex-col items-center"
+          >
+            <span className="text-3xl leading-none font-semibold tabular-nums">
               {Math.round(share * 100)}%
             </span>
-            <span className="text-muted-foreground mt-1 text-xs">
+            <span className="text-muted-foreground mt-1.5 text-xs">
               {showing?.name}
             </span>
           </div>
