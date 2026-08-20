@@ -1,21 +1,40 @@
 <div align="center">
 
-# Loom UI
+<img alt="Loom UI - animated React components for design engineers" src="apps/www/public/demo.gif" width="100%">
 
-**Where design meets production.**
-Animated React components you copy in, own outright, and ship.
+<h3 align="center">Loom UI</h3>
 
-[Introduction](https://loomui.design/docs/introduction) · [Documentation](https://loomui.design) · [Components](https://loomui.design/docs/components) · [Contributing](CONTRIBUTING.md)
+<p align="center">
+    Animated React components for design engineers
+</p>
 
-[![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE.md)
-[![Stars](https://img.shields.io/github/stars/rjcuff/Loom-UI?style=flat)](https://github.com/rjcuff/Loom-UI/stargazers)
-[![shadcn registry](https://img.shields.io/badge/shadcn-registry-black.svg)](https://ui.shadcn.com/docs/registry)
-
-<img src="apps/www/public/demo.gif" alt="loom components in motion" width="100%" />
+<div align="center">
+  <a href="https://github.com/rjcuff/Loom-UI/stargazers"><img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/rjcuff/Loom-UI"></a>
+  <a href="https://github.com/rjcuff/Loom-UI/blob/main/LICENSE.md"><img alt="License" src="https://img.shields.io/badge/License-MIT-yellow.svg"></a>
+  <a href="https://ui.shadcn.com/docs/registry"><img alt="shadcn registry" src="https://img.shields.io/badge/shadcn-registry-black.svg"></a>
+  <a href="https://loomui.design/docs/components"><img alt="Components" src="https://img.shields.io/badge/components-44-blue"></a>
+</div>
 
 </div>
 
-## Why loom
+## Documentation
+
+Visit https://loomui.design/docs to view the documentation.
+
+## Installation
+
+Components are copied into your project rather than installed as a dependency,
+through a [shadcn](https://ui.shadcn.com/docs/registry)-compatible registry:
+
+```bash
+npx shadcn@latest add @loomui/weave-text
+```
+
+You own the file from that moment on. Edit it, delete it, rename it. Nothing
+upstream breaks. Every component below installs the same way, with its own name
+in place of `weave-text`.
+
+## Why Loom UI
 
 - **No animation library.** Nothing added to your bundle, no provider to wrap
   your app in, no config object. CSS does the work wherever CSS can, which is
@@ -25,110 +44,101 @@ Animated React components you copy in, own outright, and ship.
   `prefers-reduced-motion` itself and settles into its finished state rather
   than disappearing.
 - **Made for shadcn/ui.** The same tokens, the same `cn()` helper, the same
-  conventions, so loom components sit beside yours without translation.
-
-## Install
-
-Components are copied into your project rather than installed as a dependency,
-distributed through a [shadcn](https://ui.shadcn.com/docs/registry)-compatible
-registry:
-
-```bash
-npx shadcn@latest add @loomui/weave-text
-```
-
-You own the file from that moment on. Edit it, delete it, rename it. Nothing
-upstream breaks.
-
-Every component below installs the same way. Swap `weave-text` for its name.
+  conventions, so Loom components sit beside yours without translation.
 
 ## Components
 
-37 components, no runtime dependency on this project.
+44 components, none of which depend on this project at runtime.
+
+### Interface
+
+| Component                                                                    | What it does                                                                                                                    |
+| ---------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| [`drawer`](https://loomui.design/docs/components/drawer)                     | A panel that comes in from any edge and covers most of the screen, dragged anywhere on its face to send it back out.            |
+| [`spool`](https://loomui.design/docs/components/spool)                       | A container that changes shape to fit whatever it is showing, on a spring that carries its velocity through an interruption.    |
+| [`photo-stamp`](https://loomui.design/docs/components/photo-stamp)           | A photo that lifts off the page at full size over a blurred backdrop, the same element the whole way.                           |
+| [`icon-morph`](https://loomui.design/docs/components/icon-morph)             | One icon that turns into another by moving its own pieces, so there is never a frame with both glyphs on screen.                |
+| [`progress-ring`](https://loomui.design/docs/components/progress-ring)       | A circular progress ring whose value springs to its target, so a number that changes mid travel keeps the speed it already had. |
+| [`elastic-tabs`](https://loomui.design/docs/components/elastic-tabs)         | A tab group whose pill stretches to cover both tabs before it contracts onto the one you picked.                                |
+| [`unfold-list`](https://loomui.design/docs/components/unfold-list)           | A disclosure list whose panels turn down onto the page from their top edge.                                                     |
+| [`loom-slider`](https://loomui.design/docs/components/loom-slider)           | A row of dashes where the one you are holding stands tallest, with the rise travelling the track as you drag.                   |
+| [`compare-slider`](https://loomui.design/docs/components/compare-slider)     | Two versions of the same frame, split by a divider you drag, or move with the arrow keys.                                       |
+| [`loom-loader`](https://loomui.design/docs/components/loom-loader)           | Threads drawn through a frame and pulled off the far side, with a shuttle crossing them.                                        |
+| [`shimmer-skeleton`](https://loomui.design/docs/components/shimmer-skeleton) | A placeholder block with a shimmer that passes across it while the real thing loads.                                            |
+| [`reading-progress`](https://loomui.design/docs/components/reading-progress) | A pinned bar that tracks how far through the page, or a chosen element, the reader is.                                          |
+| [`bento-grid`](https://loomui.design/docs/components/bento-grid)             | A grid of tiles of different sizes that arrive one after another when the grid is reached.                                      |
+| [`card-stack`](https://loomui.design/docs/components/card-stack)             | Cards that pin one behind another as the page scrolls, each settling behind the next.                                           |
+| [`marquee`](https://loomui.design/docs/components/marquee)                   | A seamless scrolling row or column, in either direction, that pauses on hover.                                                  |
+| [`testimonial-wall`](https://loomui.design/docs/components/testimonial-wall) | Columns of quotes drifting past each other at different speeds, faded at both ends.                                             |
+| [`terminal`](https://loomui.design/docs/components/terminal)                 | A window that types its commands out and prints their output a beat later.                                                      |
+| [`thread-timeline`](https://loomui.design/docs/components/thread-timeline)   | A timeline whose thread is sewn down the page as you read, lighting each node as it reaches it.                                 |
+| [`ticket-stub`](https://loomui.design/docs/components/ticket-stub)           | A card torn along a perforation, with a notch bitten out of the paper at each end of it.                                        |
+| [`logo-loom`](https://loomui.design/docs/components/logo-loom)               | A logo row woven into place, every other mark arriving from the other side of the thread.                                       |
 
 ### Text
 
-| Component                                                              | What it does                                                                                     |
-| ---------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
-| [`weave-text`](https://loomui.design/docs/components/weave-text)       | Text filled with a slow-drifting gradient, woven from a palette you control.                     |
-| [`stagger-text`](https://loomui.design/docs/components/stagger-text)   | Words or characters that rise into place one after another, on mount or on scroll.               |
-| [`typewriter`](https://loomui.design/docs/components/typewriter)       | Phrases typed out and deleted in a loop, with a caret and no layout shift.                       |
-| [`scramble-text`](https://loomui.design/docs/components/scramble-text) | A string that resolves out of random glyphs, left to right, on mount, on scroll, or on hover.    |
-| [`count-up`](https://loomui.design/docs/components/count-up)           | A number that counts to its value when it scrolls into view, without a render per frame.         |
-| [`lens-text`](https://loomui.design/docs/components/lens-text)         | Text held out of focus until the pointer passes over it like a magnifying glass.                 |
-| [`split-flap`](https://loomui.design/docs/components/split-flap)       | A departure board that flaps through its glyphs, one cell behind the last, until it lands.       |
+| Component                                                              | What it does                                                                                            |
+| ---------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| [`weave-text`](https://loomui.design/docs/components/weave-text)       | Text filled with a slow-drifting gradient, woven from a palette you control.                            |
+| [`stagger-text`](https://loomui.design/docs/components/stagger-text)   | Words or characters that rise into place one after another, on mount or on scroll.                      |
+| [`typewriter`](https://loomui.design/docs/components/typewriter)       | Phrases typed out and deleted in a loop, with a caret and no layout shift.                              |
+| [`scramble-text`](https://loomui.design/docs/components/scramble-text) | A string that resolves out of random glyphs, left to right, on mount, on scroll, or on hover.           |
+| [`lens-text`](https://loomui.design/docs/components/lens-text)         | Text held out of focus until the pointer passes over it like a magnifying glass.                        |
+| [`split-flap`](https://loomui.design/docs/components/split-flap)       | A departure board that flaps through its glyphs, one cell behind the last, until it lands on the value. |
+| [`count-up`](https://loomui.design/docs/components/count-up)           | A number that counts to its value when it scrolls into view, without a render per frame.                |
 
-### Backgrounds
+### Effects
 
-| Component                                                                  | What it does                                                                        |
-| --------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
-| [`grid-backdrop`](https://loomui.design/docs/components/grid-backdrop)     | An SVG grid with cells that fade in and out at a deterministic, seeded scatter.      |
-| [`spotlight-card`](https://loomui.design/docs/components/spotlight-card)   | A surface with a soft highlight that follows the pointer and fades out on leave.     |
-| [`grid-beams`](https://loomui.design/docs/components/grid-beams)           | A ruled grid with neon beams running down random lines, fading out toward the edges. |
-| [`aurora-backdrop`](https://loomui.design/docs/components/aurora-backdrop) | A wash of blurred colour that drifts behind content on cycles that never line up.    |
-| [`stitch-path`](https://loomui.design/docs/components/stitch-path)         | A running stitch sewn along an SVG path as the page scrolls, following its holes.    |
+| Component                                                                | What it does                                                                                      |
+| ------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------- |
+| [`magnetic`](https://loomui.design/docs/components/magnetic)             | A wrapper that pulls its child toward the pointer as the pointer gets close.                      |
+| [`image-trail`](https://loomui.design/docs/components/image-trail)       | Images dropped along the pointer's path, spaced by distance travelled rather than by time.        |
+| [`sticker-peel`](https://loomui.design/docs/components/sticker-peel)     | A card whose corner lifts off the page on hover, folded back over the crease to show its backing. |
+| [`tilt-card`](https://loomui.design/docs/components/tilt-card)           | A surface that leans away from the pointer in 3D and settles back on leave.                       |
+| [`spotlight-card`](https://loomui.design/docs/components/spotlight-card) | A surface with a soft highlight that follows the pointer and fades out on leave.                  |
+| [`flip-card`](https://loomui.design/docs/components/flip-card)           | A card with two faces that turns in 3D when it is clicked, controlled or on its own.              |
 
 ### Buttons
 
-| Component                                                                  | What it does                                                                             |
-| --------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
-| [`hold-button`](https://loomui.design/docs/components/hold-button)         | A button that fires only after a deliberate press and hold, with a fill counting it out.  |
-| [`ripple-button`](https://loomui.design/docs/components/ripple-button)     | A circle sent out from wherever the button was pressed, sized to reach the furthest corner. |
-| [`confetti-button`](https://loomui.design/docs/components/confetti-button) | A handful of paper thrown into the air on press, each piece lobbed on its own arc.        |
+| Component                                                                  | What it does                                                                                                   |
+| -------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| [`hold-button`](https://loomui.design/docs/components/hold-button)         | A button that fires only after a deliberate press and hold, with a fill sweeping across to count out the wait. |
+| [`ripple-button`](https://loomui.design/docs/components/ripple-button)     | A button that sends a circle out from wherever it was pressed, sized to reach the furthest corner.             |
+| [`confetti-button`](https://loomui.design/docs/components/confetti-button) | A button that throws a handful of paper into the air on press, each piece lobbed on its own arc.               |
 
-### Interaction
+### Backgrounds
 
-| Component                                                                      | What it does                                                                             |
-| ------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
-| [`tilt-card`](https://loomui.design/docs/components/tilt-card)                 | A surface that leans away from the pointer in 3D and settles back on leave.               |
-| [`flip-card`](https://loomui.design/docs/components/flip-card)                 | A card with two faces that turns in 3D when it is clicked, controlled or on its own.      |
-| [`compare-slider`](https://loomui.design/docs/components/compare-slider)       | Two versions of the same frame, split by a divider you drag, or move with the arrow keys. |
-| [`sticker-peel`](https://loomui.design/docs/components/sticker-peel)           | A card whose corner lifts off the page on hover, folded back to show its backing.         |
-| [`elastic-tabs`](https://loomui.design/docs/components/elastic-tabs)           | A tab group whose pill stretches to cover both tabs before it contracts onto your pick.   |
-| [`ticket-stub`](https://loomui.design/docs/components/ticket-stub)             | A card torn along a perforation, with a notch bitten out of the paper at each end of it.  |
-| [`magnetic`](https://loomui.design/docs/components/magnetic)                   | A wrapper that pulls its child toward the pointer as the pointer gets close.              |
-| [`marquee`](https://loomui.design/docs/components/marquee)                     | A seamless scrolling row or column, in either direction, that pauses on hover.            |
-| [`reading-progress`](https://loomui.design/docs/components/reading-progress)   | A pinned bar that tracks how far through the page, or a chosen element, the reader is.    |
-| [`unfold-list`](https://loomui.design/docs/components/unfold-list)             | A disclosure list whose panels turn down onto the page from their top edge.               |
-| [`image-trail`](https://loomui.design/docs/components/image-trail)             | Images dropped along the pointer's path, spaced by distance travelled rather than time.   |
-
-### Feedback
-
-| Component                                                                      | What it does                                                                            |
-| ------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
-| [`loom-loader`](https://loomui.design/docs/components/loom-loader)             | Threads drawn through a frame and pulled off the far side, with a shuttle crossing them. |
-| [`shimmer-skeleton`](https://loomui.design/docs/components/shimmer-skeleton)   | A placeholder block with a shimmer that passes across it while the real thing loads.     |
-
-### Sections
-
-| Component                                                                        | What it does                                                                            |
-| ---------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
-| [`testimonial-wall`](https://loomui.design/docs/components/testimonial-wall)     | Columns of quotes drifting past each other at different speeds, faded at both ends.      |
-| [`thread-timeline`](https://loomui.design/docs/components/thread-timeline)       | A timeline whose thread is sewn down the page as you read, lighting each node it reaches. |
-| [`logo-loom`](https://loomui.design/docs/components/logo-loom)                   | A logo row woven into place, every other mark arriving from the other side of the thread. |
-| [`bento-grid`](https://loomui.design/docs/components/bento-grid)                 | A grid of tiles of different sizes that arrive one after another when the grid is reached. |
-| [`card-stack`](https://loomui.design/docs/components/card-stack)                 | Cards that pin one behind another as the page scrolls, each settling behind the next.     |
-| [`terminal`](https://loomui.design/docs/components/terminal)                     | A window that types its commands out and prints their output a beat later.               |
+| Component                                                                  | What it does                                                                                      |
+| -------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| [`aurora-backdrop`](https://loomui.design/docs/components/aurora-backdrop) | A wash of blurred colour that drifts behind content on cycles that never line up.                 |
+| [`grid-beams`](https://loomui.design/docs/components/grid-beams)           | A ruled grid with neon beams running down random lines, fading out toward the edges.              |
+| [`grid-backdrop`](https://loomui.design/docs/components/grid-backdrop)     | An SVG grid with cells that fade in and out at a deterministic, seeded scatter.                   |
+| [`stitch-path`](https://loomui.design/docs/components/stitch-path)         | A running stitch sewn along an SVG path as the page scrolls, following the holes it is laid over. |
 
 ### Mockups
 
-| Component                                                    | What it does                                                                                 |
-| -------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
-| [`iphone`](https://loomui.design/docs/components/iphone)     | A device frame drawn from the real measurements, with a screen you put anything in.           |
-| [`ipad`](https://loomui.design/docs/components/ipad)         | A tablet frame drawn from the real measurements, upright or on its side.                      |
-| [`macbook`](https://loomui.design/docs/components/macbook)   | A laptop frame with the camera housing cut into the display and the scoop cut into its base.   |
+| Component                                                          | What it does                                                                                                |
+| ------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------- |
+| [`iphone`](https://loomui.design/docs/components/iphone)           | A device frame drawn from the real measurements, with a screen you put anything in.                         |
+| [`ipad`](https://loomui.design/docs/components/ipad)               | A tablet frame drawn from the real measurements, upright or on its side, with a screen you put anything in. |
+| [`macbook`](https://loomui.design/docs/components/macbook)         | A laptop frame with the camera housing cut into the display and the scoop cut into its base.                |
+| [`credit-card`](https://loomui.design/docs/components/credit-card) | A placeholder payment card with a contact plate, a number and an aurora drifting under the face.            |
 
 ## Works with your coding agent
 
 The registry publishes [`llms.txt`](https://loomui.design/llms.txt) and
-[`llms-full.txt`](https://loomui.design/llms-full.txt), so Claude Code, Cursor,
+[`llms-full.txt`](https://loomui.design/llms-full.txt), so Claude Code, Cursor
 and v0 can read the whole catalogue and install from it directly:
 
 ```
 Add the split-flap component from https://loomui.design/llms.txt
 ```
 
-## Local development
+## Contributing
+
+Visit our [contributing guide](https://github.com/rjcuff/Loom-UI/blob/main/CONTRIBUTING.md)
+to learn how to contribute. A component is five files sharing one name, and the
+guide walks through each of them.
 
 Requires Node 22.14+ and pnpm 9+.
 
@@ -138,69 +148,20 @@ pnpm build:registry   # generate __index__.tsx, registry.json, public/r/*.json
 pnpm dev              # http://localhost:3000
 ```
 
-### Repository layout
+> Generated files are committed and drift-checked in CI. Run
+> `pnpm build:registry` after touching a manifest, and never edit
+> `registry/__index__.tsx`, `registry.json` or `public/r/*.json` by hand.
 
-```
-.
-├── apps/www                  # docs site (Next.js 15, App Router, fumadocs MDX)
-│   ├── app/                  # routes: (marketing) and (docs)
-│   ├── content/docs/         # MDX docs, one file per component
-│   ├── components/           # docs site chrome (not shipped to users)
-│   ├── registry/
-│   │   ├── loomui/           # the components users install
-│   │   ├── example/          # demos rendered in the docs
-│   │   ├── lib/              # shared helpers shipped with components
-│   │   ├── registry-*.ts     # hand-written manifests
-│   │   ├── index.ts          # merged + schema-validated registry
-│   │   └── __index__.tsx     # GENERATED lazy component map
-│   ├── scripts/              # registry build + dependency sync
-│   └── public/r/             # GENERATED per-component JSON
-└── turbo.json                # task graph
-```
+## Authors
 
-### Scripts
+<a href="https://github.com/rjcuff/Loom-UI/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=rjcuff/Loom-UI" />
+</a>
 
-| Command                    | Does                                               |
-| -------------------------- | -------------------------------------------------- |
-| `pnpm dev`                 | Run the docs site                                  |
-| `pnpm build`               | Build the registry, then the site                  |
-| `pnpm build:registry`      | Regenerate every registry artifact                 |
-| `pnpm registry-deps:check` | Fail if example imports and manifest deps disagree |
-| `pnpm registry-deps:fix`   | Rewrite manifest deps from example imports         |
-| `pnpm typecheck`           | `tsc --noEmit`                                     |
-| `pnpm format:check`        | Prettier                                           |
-| `pnpm check`               | Typecheck, format check, and registry deps check   |
+## Star History
 
-## Adding a component
-
-1. Write `apps/www/registry/loomui/<name>.tsx`. Named export, no default.
-2. Write a demo at `apps/www/registry/example/<name>-demo.tsx` with a default
-   export.
-3. Add entries to `registry-ui.ts` and `registry-examples.ts`. Declare npm
-   packages under `dependencies`, other registry items under
-   `registryDependencies`, and any keyframes under `cssVars` / `css`.
-4. Write `apps/www/content/docs/components/<name>.mdx`.
-5. Add the page to `apps/www/config/docs.ts` so it appears in the sidebar.
-6. Run `pnpm build:registry` and commit the generated files.
-
-> Names are load-bearing: the component file, the docs slug, the demo, and the
-> manifest entry all share one kebab-case name.
-
-### Generated files
-
-These are committed and checked for drift in CI. **Never edit them by hand.**
-
-- `apps/www/registry/__index__.tsx`
-- `apps/www/registry.json`
-- `apps/www/public/registry.json`
-- `apps/www/public/r/*.json`
-- `apps/www/public/llms.txt`, `apps/www/public/llms-full.txt`
-
-## Contributing
-
-Issues and pull requests are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md).
-If Loom UI is useful to you, a star helps other people find it.
+[![Star History Chart](https://api.star-history.com/svg?repos=rjcuff/Loom-UI&type=Date)](https://www.star-history.com/#rjcuff/Loom-UI&Date)
 
 ## License
 
-[MIT](LICENSE.md)
+Licensed under the [MIT license](https://github.com/rjcuff/Loom-UI/blob/main/LICENSE.md).
