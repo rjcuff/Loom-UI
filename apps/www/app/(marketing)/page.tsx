@@ -44,15 +44,21 @@ export default function HomePage() {
         <JsonLd schema={siteSchema()} />
 
         {/* An aurora hanging off the top of the page. The site's own hero is
-          the best argument for a component. */}
-        <LightCurtain className="-z-10" />
+          the best argument for a component.
+
+          Held well back from what it ships with. A wash that reads as ambience
+          across a demo panel is a wall of colour across a whole viewport, and
+          everything sitting on it has to fight it to stay legible. */}
+        <LightCurtain className="-z-10" intensity={0.3} reach="58%" blur={80} />
 
         {/* Left aligned on a phone. Centred text over three or four lines on a
             narrow column gives every line a different start, and the eye has
             to find each one. Centred from `sm`, where the lines are long
             enough for the shape to read as deliberate. */}
         <div className="mx-auto flex w-full max-w-3xl flex-col items-start px-5 pt-8 pb-14 text-left sm:items-center sm:pt-20 sm:pb-16 sm:text-center">
-          <span className="animate-rise border-border bg-surface/60 text-muted-foreground rounded-full border px-3 py-1 text-xs backdrop-blur">
+          {/* Opaque enough to be its own surface. At 60% it took the colour of
+              the aurora behind it and read as a grey smudge. */}
+          <span className="animate-rise border-border bg-background/90 text-muted-foreground rounded-full border px-3 py-1 text-xs backdrop-blur-sm">
             <span aria-hidden>🎉</span> Free and open source
           </span>
 
