@@ -33,20 +33,16 @@ export interface IconMorphProps extends Omit<
  */
 
 /**
- * Shared by every moving piece. The duration is a custom property set on the
- * root, so one prop reaches every part without being threaded through them.
+ * Shared by every piece that moves rather than reshapes. The duration is a
+ * custom property set on the root, so one prop reaches every part without
+ * being threaded through them.
  *
  * `motion-reduce:transition-none` is a class rather than an inline style on
  * purpose: an inline `transition` would outrank it and the escape would not
  * work.
  */
-const MOTION =
-  "ease-out-quart [transition-duration:var(--icon-morph-duration)] motion-reduce:transition-none"
-
-/** Pieces whose story is rotation and travel. */
-const SHIFT = cn("transition-[transform,opacity]", MOTION)
-/** Pieces whose story is the outline itself changing. */
-const RESHAPE = cn("transition-[d]", MOTION)
+const SHIFT =
+  "transition-[transform,opacity] ease-out-quart [transition-duration:var(--icon-morph-duration)] motion-reduce:transition-none"
 
 /**
  * SVG transforms resolve against the viewBox once `transform-box` says so.
@@ -67,21 +63,127 @@ function pose(
 }
 
 /**
- * The CSS `d` property interpolates between two `path()` values as long as
- * they hold the same commands in the same order, which is what makes a real
- * morph possible without a path-interpolation library. It is a paint-level
- * property rather than a compositor one, which would matter on a large shape
- * and does not on a 24px icon.
- *
- * The `d` attribute carries the same value so a browser without the CSS
- * property still draws the right shape. It cuts rather than morphs there.
+ * Quartic ease out. `--ease-out-quart` is the cubic-bezier approximation of
+ * this curve, so driving the tween with the curve itself keeps the reshaping
+ * sets in step with the transforming ones.
  */
-function reshape(d: string) {
-  return { d: `path("${d}")` } as React.CSSProperties
+function easeOutQuart(t: number) {
+  return 1 - (1 - t) ** 4
+}
+
+function usePrefersReducedMotion() {
+  const [reduced, setReduced] = React.useState(false)
+
+  React.useEffect(() => {
+    const query = window.matchMedia("(prefers-reduced-motion: reduce)")
+    const read = () => setReduced(query.matches)
+    read()
+    query.addEventListener("change", read)
+    return () => query.removeEventListener("change", read)
+  }, [])
+
+  return reduced
+}
+
+function round(value: number) {
+  return Math.round(value * 1000) / 1000
+}
+
+/** Build an outline from its commands and a flat list of coordinates. */
+function draw(commands: readonly string[], points: readonly number[]) {
+  let at = 0
+  let d = ""
+
+  for (const command of commands) {
+    if (command === "Z") {
+      d += "Z"
+      continue
+    }
+    // Rounded, or a tween writes fifteen decimal places into the DOM on every
+    // frame. A 24px icon cannot see the third one.
+    d += `${command}${round(points[at])} ${round(points[at + 1])}`
+    at += 2
+  }
+
+  return d
+}
+
+// `from` and `to` are also SMIL attribute names on `path`, hence the omission.
+interface MorphPathProps extends Omit<
+  React.ComponentProps<"path">,
+  "d" | "from" | "to"
+> {
+  /** The command letters, shared by both poses. */
+  commands: readonly string[]
+  /** Coordinates while inactive. */
+  from: readonly number[]
+  /** Coordinates while active. Same length, same order. */
+  to: readonly number[]
+  active: boolean
+  duration: number
+}
+
+/**
+ * Interpolates the outline itself, one coordinate at a time.
+ *
+ * The CSS `d` property does this declaratively and Safari does not implement
+ * it, which on iOS means every browser, since they are all WebKit underneath.
+ * Left to CSS, two of the four sets would cut instead of morph on every phone
+ * ever made, and only on phones, which is the kind of bug that survives a long
+ * time because it never reproduces on the machine it was written on.
+ *
+ * So the points are walked here and written to the `d` attribute, which every
+ * engine has understood since SVG shipped. It costs a paint per frame on a
+ * 24px icon, which is nothing, and it is the same cost in every browser rather
+ * than a morph in some and a cut in others.
+ */
+function MorphPath({
+  commands,
+  from,
+  to,
+  active,
+  duration,
+  ...props
+}: MorphPathProps) {
+  const node = React.useRef<SVGPathElement>(null)
+  const current = React.useRef<number[]>([...(active ? to : from)])
+  const frame = React.useRef(0)
+  const reduced = usePrefersReducedMotion()
+
+  React.useEffect(() => {
+    const target = active ? to : from
+    const start = current.current.slice()
+
+    const paint = (points: number[]) => {
+      current.current = points
+      node.current?.setAttribute("d", draw(commands, points))
+    }
+
+    if (reduced || duration <= 0) {
+      paint([...target])
+      return
+    }
+
+    const began = performance.now()
+    const step = (now: number) => {
+      const elapsed = Math.min((now - began) / duration, 1)
+      const eased = easeOutQuart(elapsed)
+
+      paint(start.map((value, i) => value + (target[i] - value) * eased))
+
+      if (elapsed < 1) frame.current = requestAnimationFrame(step)
+    }
+
+    frame.current = requestAnimationFrame(step)
+    return () => cancelAnimationFrame(frame.current)
+  }, [active, commands, duration, from, reduced, to])
+
+  return <path ref={node} d={draw(commands, current.current)} {...props} />
 }
 
 interface PartProps {
   active: boolean
+  duration: number
 }
 
 /** Three bars. The middle one is not needed by an X, so it leaves. */
@@ -131,47 +233,61 @@ function Plus({ active }: PartProps) {
 
 /**
  * The triangle is cut down the middle so both states are two four-point
- * quadrilaterals, which is what lets the outlines interpolate. The right half
- * of the triangle is a quad with its two right-hand points on top of each
+ * quadrilaterals, which is what lets the coordinates correspond. The right
+ * half of the triangle is a quad with its two right-hand points on top of each
  * other, so it reads as the tip.
  *
- * Both halves live in **one** path as two subpaths, and that is not a tidiness
- * choice. As two elements the shared edge down the middle of the triangle is a
- * boundary each of them antialiases against, and `currentColor` is usually not
- * fully opaque, so the seam shows and the triangle reads as the pause bars in
- * disguise. One path is one fill: the halves union, and the join disappears.
+ * Both halves live in one path, and that is not a tidiness choice. As two
+ * elements the shared edge down the middle is a boundary each of them
+ * antialiases against, and `currentColor` is rarely fully opaque, so the seam
+ * shows until the triangle reads as the pause bars in disguise. One path is
+ * one fill: the halves union and the join disappears.
  *
- * For the same reason there is no stroke here. A stroke follows every edge of
- * every subpath, including the two interior ones, and paints them over a fill
- * that is already there.
+ * For the same reason there is no stroke. A stroke follows every edge of every
+ * subpath, the two interior ones included, and paints them over a fill that is
+ * already there.
  */
-const PLAY =
-  "M7.5 4.5L13.25 8.25L13.25 15.75L7.5 19.5ZM13.25 8.25L19 12L19 12L13.25 15.75Z"
-const PAUSE =
-  "M7 4.5L10.5 4.5L10.5 19.5L7 19.5ZM13.5 4.5L17 4.5L17 19.5L13.5 19.5Z"
+const BARS = ["M", "L", "L", "L", "Z", "M", "L", "L", "L", "Z"] as const
+// prettier-ignore
+const PLAY = [
+  7.5, 4.5, 13.25, 8.25, 13.25, 15.75, 7.5, 19.5,
+  13.25, 8.25, 19, 12, 19, 12, 13.25, 15.75,
+] as const
+// prettier-ignore
+const PAUSE = [
+  7, 4.5, 10.5, 4.5, 10.5, 19.5, 7, 19.5,
+  13.5, 4.5, 17, 4.5, 17, 19.5, 13.5, 19.5,
+] as const
 
-function Play({ active }: PartProps) {
-  const d = active ? PAUSE : PLAY
-
+function Play({ active, duration }: PartProps) {
   return (
-    <path
-      d={d}
+    <MorphPath
+      commands={BARS}
+      from={PLAY}
+      to={PAUSE}
+      active={active}
+      duration={duration}
       fill="currentColor"
       stroke="none"
-      className={RESHAPE}
-      style={reshape(d)}
     />
   )
 }
 
 /** Three points in both states, so one path covers the whole journey. */
-const CHEVRON = "M9 5L16 12L9 19"
-const TICK = "M4 12L10 18L20 6"
+const ARROW = ["M", "L", "L"] as const
+const CHEVRON = [9, 5, 16, 12, 9, 19] as const
+const TICK = [4, 12, 10, 18, 20, 6] as const
 
-function Chevron({ active }: PartProps) {
-  const d = active ? TICK : CHEVRON
-
-  return <path d={d} className={RESHAPE} style={reshape(d)} />
+function Chevron({ active, duration }: PartProps) {
+  return (
+    <MorphPath
+      commands={ARROW}
+      from={CHEVRON}
+      to={TICK}
+      active={active}
+      duration={duration}
+    />
+  )
 }
 
 const SETS: Record<IconMorphSet, (props: PartProps) => React.ReactNode> = {
@@ -220,7 +336,7 @@ export function IconMorph({
       }
       {...props}
     >
-      <Parts active={active} />
+      <Parts active={active} duration={duration} />
     </svg>
   )
 }

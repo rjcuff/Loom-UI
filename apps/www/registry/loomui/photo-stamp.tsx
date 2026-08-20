@@ -211,32 +211,46 @@ export function PhotoStamp({
     setMounted(false)
   }, [])
 
-  const close = React.useCallback(() => {
-    if (!mounted || closing.current) return
+  /**
+   * `fromKeyboard` decides whether focus goes back to the photo.
+   *
+   * Sending it back is right for someone who pressed Escape: they need
+   * somewhere to carry on tabbing from, and the focus ring that comes with it
+   * is the point. It is wrong for someone who tapped, who gets a ring drawn
+   * around a photo they touched and no way to explain it. WebKit resolves
+   * `:focus-visible` on a programmatic focus from the modality it saw last,
+   * and on a phone it guesses wrong often enough to be a bug.
+   */
+  const close = React.useCallback(
+    (fromKeyboard = false) => {
+      if (!mounted || closing.current) return
 
-    // Remeasure the resting photo before aiming at it. That photo is what the
-    // page will be showing a moment later, so the landing has to be where it
-    // is now rather than where it was when this opened.
-    const geo = geometry.current
-    const node = thumb.current
-    if (geo && node) {
-      const from = measure(node)
-      geometry.current = { ...geo, from, scale: from.width / geo.to.width }
-    }
+      // Remeasure the resting photo before aiming at it. That photo is what the
+      // page will be showing a moment later, so the landing has to be where it
+      // is now rather than where it was when this opened.
+      const geo = geometry.current
+      const node = thumb.current
+      if (geo && node) {
+        const from = measure(node)
+        geometry.current = { ...geo, from, scale: from.width / geo.to.width }
+      }
 
-    closing.current = true
-    setPhase("closed")
-    // Restoring focus is allowed to move the page by default. On the last
-    // frame of a close, the one frame that has to be still, it must not.
-    restore.current?.focus?.({ preventScroll: true })
+      closing.current = true
+      setPhase("closed")
 
-    if (reduced) {
-      finish()
-      return
-    }
+      // Restoring focus is allowed to move the page by default. On the last
+      // frame of a close, the one frame that has to be still, it must not.
+      if (fromKeyboard) restore.current?.focus?.({ preventScroll: true })
 
-    to({ p: 0 })
-  }, [finish, mounted, reduced, to])
+      if (reduced) {
+        finish()
+        return
+      }
+
+      to({ p: 0 })
+    },
+    [finish, mounted, reduced, to]
+  )
 
   // Start on the page, then travel. Written before paint, so there is never a
   // frame with the photo on screen at full size in the wrong place.
@@ -322,7 +336,11 @@ export function PhotoStamp({
           onClick={open}
           aria-haspopup="dialog"
           data-open={mounted}
-          className="focus-visible:outline-ring group block rounded-xl focus-visible:outline-2 focus-visible:outline-offset-4"
+          style={{
+            WebkitTapHighlightColor: "transparent",
+            borderRadius: `${radius}px`,
+          }}
+          className="focus-visible:outline-ring group block focus-visible:outline-2 focus-visible:outline-offset-4"
         >
           {/* The shadow is the only thing hover changes. Anything that moved
               the photo would change what `getBoundingClientRect` reports, and
@@ -358,7 +376,7 @@ export function PhotoStamp({
               aria-label={alt}
               tabIndex={-1}
               onKeyDown={(event) => {
-                if (event.key === "Escape") close()
+                if (event.key === "Escape") close(true)
                 // One thing to land on, so tabbing anywhere lands on it.
                 if (event.key === "Tab") {
                   event.preventDefault()
@@ -370,7 +388,7 @@ export function PhotoStamp({
             >
               <div
                 data-state={phase}
-                onClick={close}
+                onClick={() => close()}
                 className="bg-background/70 data-[state=closed]:animate-photo-stamp-veil-out data-[state=open]:animate-photo-stamp-veil-in absolute inset-0 backdrop-blur-xl motion-reduce:animate-none"
               />
               <img
@@ -378,7 +396,7 @@ export function PhotoStamp({
                 src={src}
                 alt=""
                 draggable={false}
-                onClick={close}
+                onClick={() => close()}
                 style={{
                   left: `${geo.to.x}px`,
                   top: `${geo.to.y}px`,
@@ -400,7 +418,7 @@ export function PhotoStamp({
               <button
                 ref={closer}
                 type="button"
-                onClick={close}
+                onClick={() => close()}
                 aria-label="Close photo"
                 data-state={phase}
                 className="text-muted-foreground hover:text-foreground ease-out-quart data-[state=closed]:animate-photo-stamp-veil-out data-[state=open]:animate-photo-stamp-veil-in absolute top-5 right-5 flex size-10 items-center justify-center rounded-full transition-colors duration-180 motion-reduce:animate-none"

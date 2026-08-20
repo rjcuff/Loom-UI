@@ -3301,20 +3301,16 @@ export interface IconMorphProps extends Omit<
  */
 
 /**
- * Shared by every moving piece. The duration is a custom property set on the
- * root, so one prop reaches every part without being threaded through them.
+ * Shared by every piece that moves rather than reshapes. The duration is a
+ * custom property set on the root, so one prop reaches every part without
+ * being threaded through them.
  *
  * `motion-reduce:transition-none` is a class rather than an inline style on
  * purpose: an inline `transition` would outrank it and the escape would not
  * work.
  */
-const MOTION =
-  "ease-out-quart [transition-duration:var(--icon-morph-duration)] motion-reduce:transition-none"
-
-/** Pieces whose story is rotation and travel. */
-const SHIFT = cn("transition-[transform,opacity]", MOTION)
-/** Pieces whose story is the outline itself changing. */
-const RESHAPE = cn("transition-[d]", MOTION)
+const SHIFT =
+  "transition-[transform,opacity] ease-out-quart [transition-duration:var(--icon-morph-duration)] motion-reduce:transition-none"
 
 /**
  * SVG transforms resolve against the viewBox once `transform-box` says so.
@@ -3335,21 +3331,127 @@ function pose(
 }
 
 /**
- * The CSS `d` property interpolates between two `path()` values as long as
- * they hold the same commands in the same order, which is what makes a real
- * morph possible without a path-interpolation library. It is a paint-level
- * property rather than a compositor one, which would matter on a large shape
- * and does not on a 24px icon.
- *
- * The `d` attribute carries the same value so a browser without the CSS
- * property still draws the right shape. It cuts rather than morphs there.
+ * Quartic ease out. `--ease-out-quart` is the cubic-bezier approximation of
+ * this curve, so driving the tween with the curve itself keeps the reshaping
+ * sets in step with the transforming ones.
  */
-function reshape(d: string) {
-  return { d: `path("${d}")` } as React.CSSProperties
+function easeOutQuart(t: number) {
+  return 1 - (1 - t) ** 4
+}
+
+function usePrefersReducedMotion() {
+  const [reduced, setReduced] = React.useState(false)
+
+  React.useEffect(() => {
+    const query = window.matchMedia("(prefers-reduced-motion: reduce)")
+    const read = () => setReduced(query.matches)
+    read()
+    query.addEventListener("change", read)
+    return () => query.removeEventListener("change", read)
+  }, [])
+
+  return reduced
+}
+
+function round(value: number) {
+  return Math.round(value * 1000) / 1000
+}
+
+/** Build an outline from its commands and a flat list of coordinates. */
+function draw(commands: readonly string[], points: readonly number[]) {
+  let at = 0
+  let d = ""
+
+  for (const command of commands) {
+    if (command === "Z") {
+      d += "Z"
+      continue
+    }
+    // Rounded, or a tween writes fifteen decimal places into the DOM on every
+    // frame. A 24px icon cannot see the third one.
+    d += `${command}${round(points[at])} ${round(points[at + 1])}`
+    at += 2
+  }
+
+  return d
+}
+
+// `from` and `to` are also SMIL attribute names on `path`, hence the omission.
+interface MorphPathProps extends Omit<
+  React.ComponentProps<"path">,
+  "d" | "from" | "to"
+> {
+  /** The command letters, shared by both poses. */
+  commands: readonly string[]
+  /** Coordinates while inactive. */
+  from: readonly number[]
+  /** Coordinates while active. Same length, same order. */
+  to: readonly number[]
+  active: boolean
+  duration: number
+}
+
+/**
+ * Interpolates the outline itself, one coordinate at a time.
+ *
+ * The CSS `d` property does this declaratively and Safari does not implement
+ * it, which on iOS means every browser, since they are all WebKit underneath.
+ * Left to CSS, two of the four sets would cut instead of morph on every phone
+ * ever made, and only on phones, which is the kind of bug that survives a long
+ * time because it never reproduces on the machine it was written on.
+ *
+ * So the points are walked here and written to the `d` attribute, which every
+ * engine has understood since SVG shipped. It costs a paint per frame on a
+ * 24px icon, which is nothing, and it is the same cost in every browser rather
+ * than a morph in some and a cut in others.
+ */
+function MorphPath({
+  commands,
+  from,
+  to,
+  active,
+  duration,
+  ...props
+}: MorphPathProps) {
+  const node = React.useRef<SVGPathElement>(null)
+  const current = React.useRef<number[]>([...(active ? to : from)])
+  const frame = React.useRef(0)
+  const reduced = usePrefersReducedMotion()
+
+  React.useEffect(() => {
+    const target = active ? to : from
+    const start = current.current.slice()
+
+    const paint = (points: number[]) => {
+      current.current = points
+      node.current?.setAttribute("d", draw(commands, points))
+    }
+
+    if (reduced || duration <= 0) {
+      paint([...target])
+      return
+    }
+
+    const began = performance.now()
+    const step = (now: number) => {
+      const elapsed = Math.min((now - began) / duration, 1)
+      const eased = easeOutQuart(elapsed)
+
+      paint(start.map((value, i) => value + (target[i] - value) * eased))
+
+      if (elapsed < 1) frame.current = requestAnimationFrame(step)
+    }
+
+    frame.current = requestAnimationFrame(step)
+    return () => cancelAnimationFrame(frame.current)
+  }, [active, commands, duration, from, reduced, to])
+
+  return <path ref={node} d={draw(commands, current.current)} {...props} />
 }
 
 interface PartProps {
   active: boolean
+  duration: number
 }
 
 /** Three bars. The middle one is not needed by an X, so it leaves. */
@@ -3399,47 +3501,61 @@ function Plus({ active }: PartProps) {
 
 /**
  * The triangle is cut down the middle so both states are two four-point
- * quadrilaterals, which is what lets the outlines interpolate. The right half
- * of the triangle is a quad with its two right-hand points on top of each
+ * quadrilaterals, which is what lets the coordinates correspond. The right
+ * half of the triangle is a quad with its two right-hand points on top of each
  * other, so it reads as the tip.
  *
- * Both halves live in **one** path as two subpaths, and that is not a tidiness
- * choice. As two elements the shared edge down the middle of the triangle is a
- * boundary each of them antialiases against, and `currentColor` is usually not
- * fully opaque, so the seam shows and the triangle reads as the pause bars in
- * disguise. One path is one fill: the halves union, and the join disappears.
+ * Both halves live in one path, and that is not a tidiness choice. As two
+ * elements the shared edge down the middle is a boundary each of them
+ * antialiases against, and `currentColor` is rarely fully opaque, so the seam
+ * shows until the triangle reads as the pause bars in disguise. One path is
+ * one fill: the halves union and the join disappears.
  *
- * For the same reason there is no stroke here. A stroke follows every edge of
- * every subpath, including the two interior ones, and paints them over a fill
- * that is already there.
+ * For the same reason there is no stroke. A stroke follows every edge of every
+ * subpath, the two interior ones included, and paints them over a fill that is
+ * already there.
  */
-const PLAY =
-  "M7.5 4.5L13.25 8.25L13.25 15.75L7.5 19.5ZM13.25 8.25L19 12L19 12L13.25 15.75Z"
-const PAUSE =
-  "M7 4.5L10.5 4.5L10.5 19.5L7 19.5ZM13.5 4.5L17 4.5L17 19.5L13.5 19.5Z"
+const BARS = ["M", "L", "L", "L", "Z", "M", "L", "L", "L", "Z"] as const
+// prettier-ignore
+const PLAY = [
+  7.5, 4.5, 13.25, 8.25, 13.25, 15.75, 7.5, 19.5,
+  13.25, 8.25, 19, 12, 19, 12, 13.25, 15.75,
+] as const
+// prettier-ignore
+const PAUSE = [
+  7, 4.5, 10.5, 4.5, 10.5, 19.5, 7, 19.5,
+  13.5, 4.5, 17, 4.5, 17, 19.5, 13.5, 19.5,
+] as const
 
-function Play({ active }: PartProps) {
-  const d = active ? PAUSE : PLAY
-
+function Play({ active, duration }: PartProps) {
   return (
-    <path
-      d={d}
+    <MorphPath
+      commands={BARS}
+      from={PLAY}
+      to={PAUSE}
+      active={active}
+      duration={duration}
       fill="currentColor"
       stroke="none"
-      className={RESHAPE}
-      style={reshape(d)}
     />
   )
 }
 
 /** Three points in both states, so one path covers the whole journey. */
-const CHEVRON = "M9 5L16 12L9 19"
-const TICK = "M4 12L10 18L20 6"
+const ARROW = ["M", "L", "L"] as const
+const CHEVRON = [9, 5, 16, 12, 9, 19] as const
+const TICK = [4, 12, 10, 18, 20, 6] as const
 
-function Chevron({ active }: PartProps) {
-  const d = active ? TICK : CHEVRON
-
-  return <path d={d} className={RESHAPE} style={reshape(d)} />
+function Chevron({ active, duration }: PartProps) {
+  return (
+    <MorphPath
+      commands={ARROW}
+      from={CHEVRON}
+      to={TICK}
+      active={active}
+      duration={duration}
+    />
+  )
 }
 
 const SETS: Record<IconMorphSet, (props: PartProps) => React.ReactNode> = {
@@ -3488,7 +3604,7 @@ export function IconMorph({
       }
       {...props}
     >
-      <Parts active={active} />
+      <Parts active={active} duration={duration} />
     </svg>
   )
 }
@@ -5538,32 +5654,46 @@ export function PhotoStamp({
     setMounted(false)
   }, [])
 
-  const close = React.useCallback(() => {
-    if (!mounted || closing.current) return
+  /**
+   * `fromKeyboard` decides whether focus goes back to the photo.
+   *
+   * Sending it back is right for someone who pressed Escape: they need
+   * somewhere to carry on tabbing from, and the focus ring that comes with it
+   * is the point. It is wrong for someone who tapped, who gets a ring drawn
+   * around a photo they touched and no way to explain it. WebKit resolves
+   * `:focus-visible` on a programmatic focus from the modality it saw last,
+   * and on a phone it guesses wrong often enough to be a bug.
+   */
+  const close = React.useCallback(
+    (fromKeyboard = false) => {
+      if (!mounted || closing.current) return
 
-    // Remeasure the resting photo before aiming at it. That photo is what the
-    // page will be showing a moment later, so the landing has to be where it
-    // is now rather than where it was when this opened.
-    const geo = geometry.current
-    const node = thumb.current
-    if (geo && node) {
-      const from = measure(node)
-      geometry.current = { ...geo, from, scale: from.width / geo.to.width }
-    }
+      // Remeasure the resting photo before aiming at it. That photo is what the
+      // page will be showing a moment later, so the landing has to be where it
+      // is now rather than where it was when this opened.
+      const geo = geometry.current
+      const node = thumb.current
+      if (geo && node) {
+        const from = measure(node)
+        geometry.current = { ...geo, from, scale: from.width / geo.to.width }
+      }
 
-    closing.current = true
-    setPhase("closed")
-    // Restoring focus is allowed to move the page by default. On the last
-    // frame of a close, the one frame that has to be still, it must not.
-    restore.current?.focus?.({ preventScroll: true })
+      closing.current = true
+      setPhase("closed")
 
-    if (reduced) {
-      finish()
-      return
-    }
+      // Restoring focus is allowed to move the page by default. On the last
+      // frame of a close, the one frame that has to be still, it must not.
+      if (fromKeyboard) restore.current?.focus?.({ preventScroll: true })
 
-    to({ p: 0 })
-  }, [finish, mounted, reduced, to])
+      if (reduced) {
+        finish()
+        return
+      }
+
+      to({ p: 0 })
+    },
+    [finish, mounted, reduced, to]
+  )
 
   // Start on the page, then travel. Written before paint, so there is never a
   // frame with the photo on screen at full size in the wrong place.
@@ -5649,7 +5779,11 @@ export function PhotoStamp({
           onClick={open}
           aria-haspopup="dialog"
           data-open={mounted}
-          className="focus-visible:outline-ring group block rounded-xl focus-visible:outline-2 focus-visible:outline-offset-4"
+          style={{
+            WebkitTapHighlightColor: "transparent",
+            borderRadius: `${radius}px`,
+          }}
+          className="focus-visible:outline-ring group block focus-visible:outline-2 focus-visible:outline-offset-4"
         >
           {/* The shadow is the only thing hover changes. Anything that moved
               the photo would change what `getBoundingClientRect` reports, and
@@ -5685,7 +5819,7 @@ export function PhotoStamp({
               aria-label={alt}
               tabIndex={-1}
               onKeyDown={(event) => {
-                if (event.key === "Escape") close()
+                if (event.key === "Escape") close(true)
                 // One thing to land on, so tabbing anywhere lands on it.
                 if (event.key === "Tab") {
                   event.preventDefault()
@@ -5697,7 +5831,7 @@ export function PhotoStamp({
             >
               <div
                 data-state={phase}
-                onClick={close}
+                onClick={() => close()}
                 className="bg-background/70 data-[state=closed]:animate-photo-stamp-veil-out data-[state=open]:animate-photo-stamp-veil-in absolute inset-0 backdrop-blur-xl motion-reduce:animate-none"
               />
               <img
@@ -5705,7 +5839,7 @@ export function PhotoStamp({
                 src={src}
                 alt=""
                 draggable={false}
-                onClick={close}
+                onClick={() => close()}
                 style={{
                   left: `${geo.to.x}px`,
                   top: `${geo.to.y}px`,
@@ -5727,7 +5861,7 @@ export function PhotoStamp({
               <button
                 ref={closer}
                 type="button"
-                onClick={close}
+                onClick={() => close()}
                 aria-label="Close photo"
                 data-state={phase}
                 className="text-muted-foreground hover:text-foreground ease-out-quart data-[state=closed]:animate-photo-stamp-veil-out data-[state=open]:animate-photo-stamp-veil-in absolute top-5 right-5 flex size-10 items-center justify-center rounded-full transition-colors duration-180 motion-reduce:animate-none"

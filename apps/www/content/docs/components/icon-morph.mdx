@@ -97,8 +97,7 @@ the middle instead, and the arms would go visibly short halfway across.
 ### Where the outline itself changes, animate the outline
 
 A triangle is not a rotated pair of bars, so `play` cannot be a transform. That
-pair morphs through the CSS `d` property, which interpolates between two
-`path()` values as long as they hold the same commands in the same order.
+pair morphs by interpolating its outline point by point.
 
 The triangle is cut down its middle so both states are two four-point
 quadrilaterals. The right half of the triangle is a quad with its two
@@ -106,17 +105,45 @@ right-hand points sitting on top of each other, which is how a tip and a bar
 end up with the same point count.
 
 ```tsx
-const PLAY_RIGHT = "M13 8.75L18 12L18 12L13 15.25Z"
-const PAUSE_RIGHT = "M14 5L17 5L17 19L14 19Z"
+const PLAY = [7.5, 4.5, 13.25, 8.25, 13.25, 15.75, 7.5, 19.5, ...]
+const PAUSE = [7, 4.5, 10.5, 4.5, 10.5, 19.5, 7, 19.5, ...]
 ```
 
 `chevron` is the same idea with less work: three points in both states, so one
 path covers the journey.
 
-This is the one thing in loom that animates a property the compositor does not
-own. `d` is a paint-level change, which would matter on a large shape and does
-not on a 24px icon. The `d` attribute carries the same value, so a browser
-without the CSS property draws the right shape and cuts to it instead.
+Both halves of `play` live in one path rather than two elements. As two
+elements the shared edge down the middle is a boundary each of them
+antialiases against, and `currentColor` is rarely fully opaque, so the seam
+shows until the triangle reads as the pause bars in disguise. One path is one
+fill: the halves union and the join disappears. For the same reason there is no
+stroke on that set, since a stroke follows every edge of every subpath,
+including the two interior ones.
+
+### Why the outline is not left to CSS
+
+The CSS `d` property does exactly this interpolation declaratively, and it is
+what this component used first. It is also the one thing here that had to be
+taken back out.
+
+**Safari does not implement `d` as a CSS property.** On iOS that means every
+browser, because they are all WebKit underneath. Left to CSS, two of the four
+sets cut instead of morphing on every phone ever made, and only on phones,
+which is the kind of bug that survives a long time because it never reproduces
+on the machine it was written on.
+
+So the points are walked in a `requestAnimationFrame` loop and written to the
+`d` **attribute**, which every engine has understood since SVG shipped.
+
+```tsx
+paint(start.map((value, i) => value + (target[i] - value) * eased))
+```
+
+It costs a paint per frame on a 24px icon, which is nothing, and it is the same
+cost in every browser rather than a morph in some and a cut in others. The
+easing is a real quartic, `1 - (1 - t) ** 4`, because `--ease-out-quart` is the
+cubic-bezier approximation of that curve and the two techniques have to stay in
+step with each other.
 
 ### The escape hatch has to be a class
 
@@ -131,6 +158,10 @@ An inline `transition` would outrank `motion-reduce:transition-none` and the
 reduced-motion escape would quietly stop working. The rule is worth keeping
 anywhere a component writes styles from JavaScript: whatever the user's setting
 has to be able to override must live at the same specificity it does.
+
+The two reshaping sets cannot use that class, since nothing about them is a CSS
+transition. They read `prefers-reduced-motion` in JavaScript and jump straight
+to the finished shape.
 
 ## Props
 
