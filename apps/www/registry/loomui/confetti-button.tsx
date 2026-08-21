@@ -98,6 +98,10 @@ export function ConfettiButton({
 
   return (
     <button
+      // Native default is `submit`. A burst inside a form would be cut off by
+      // the navigation it triggered. `...props` below still lets a caller ask
+      // for a submit button explicitly.
+      type="button"
       data-slot="confetti-button"
       disabled={disabled}
       onClick={(event) => {

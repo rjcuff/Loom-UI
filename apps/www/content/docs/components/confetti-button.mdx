@@ -149,6 +149,14 @@ in the air long after the press it was celebrating.
 
 Any other `<button>` prop is forwarded.
 
+<Callout title="Clipping ancestors">
+  The paper is thrown from a span pinned to the middle of the button, and it is
+  meant to carry past the button's own edge. Any ancestor with `overflow:
+  hidden` — a card, a dialog body, a scroller — cuts it off at that ancestor's
+  edge instead. Give the burst room, or put the button somewhere that is not
+  clipped.
+</Callout>
+
 <Callout type="tip" title="Accessibility">
   The paper is `aria-hidden` decoration on top of a real `<button>`, so a screen
   reader is told about the action and not the celebration. Under

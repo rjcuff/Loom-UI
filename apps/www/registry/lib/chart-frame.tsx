@@ -112,14 +112,19 @@ export function ChartFrame({
   /**
    * Threes divide evenly, otherwise twos. Four tiles as three and one reads as
    * a tile that fell off the end; as two and two it reads as a set.
+   *
+   * Never more columns than there are tiles. A one-series chart was laid out
+   * in three, so its only tile took a third of the card and the other two
+   * thirds were closed but empty — and at that width the name it carries, the
+   * thing standing in for a colour nobody can be asked to distinguish,
+   * truncated to two letters.
    */
   const columns = !tiles?.length
     ? 3
-    : tiles.length % 3 === 0
-      ? 3
-      : tiles.length % 2 === 0
-        ? 2
-        : 3
+    : Math.min(
+        tiles.length,
+        tiles.length % 3 === 0 ? 3 : tiles.length % 2 === 0 ? 2 : 3
+      )
 
   return (
     <figure
@@ -145,7 +150,13 @@ export function ChartFrame({
         {range ? <div className="shrink-0">{range}</div> : null}
       </div>
 
-      <div className="mt-5">{children}</div>
+      {/* Takes the slack when the card is taller than the plot needs, and
+          centres the plot in it. Left to size itself the plot stays put at the
+          top and the whole remainder collects between the legend and the
+          bottom edge, which reads as the card having been cut short. */}
+      <div className="mt-5 flex min-h-0 flex-1 flex-col justify-center">
+        {children}
+      </div>
 
       {tiles?.length ? (
         // The column count follows the tile count rather than the width the
@@ -156,6 +167,11 @@ export function ChartFrame({
         // behind the grid, so a short last row leaves no stray colour. The
         // fillers exist to close the borders on that row: without them the
         // dividers stop where the tiles stop, halfway across the card.
+        //
+        // Two columns on a phone, so an odd count leaves one tile alone on the
+        // last row. It takes the full width rather than sitting in half of it
+        // beside an empty box: an outlined blank cell reads as a tile that
+        // failed to load, which is worse than a wide one.
         <div
           style={{ "--tile-columns": columns } as React.CSSProperties}
           className="mt-5 grid grid-cols-2 overflow-hidden rounded-lg border sm:[grid-template-columns:repeat(var(--tile-columns),minmax(0,1fr))]"
@@ -168,7 +184,12 @@ export function ChartFrame({
                 onTileFocus ? () => onTileFocus(index) : undefined
               }
               onPointerLeave={onTileFocus ? () => onTileFocus(null) : undefined}
-              className="bg-card ease-out-quart border-border -mt-px -ml-px flex flex-col gap-1 border-t border-l p-2.5 transition-opacity duration-180 data-dim:opacity-40 motion-reduce:transition-none"
+              className={cn(
+                "bg-card ease-out-quart border-border -mt-px -ml-px flex flex-col gap-1 border-t border-l p-2.5 transition-opacity duration-180 data-dim:opacity-40 motion-reduce:transition-none",
+                index === tiles.length - 1 &&
+                  tiles.length % 2 === 1 &&
+                  "max-sm:col-span-2"
+              )}
             >
               <span className="text-muted-foreground flex items-center gap-1.5 text-xs">
                 <span
@@ -196,13 +217,6 @@ export function ChartFrame({
               />
             )
           )}
-          {Array.from({ length: (2 - (tiles.length % 2)) % 2 }, (_, i) => (
-            <span
-              key={`narrow-${i}`}
-              aria-hidden
-              className="bg-card border-border -mt-px -ml-px border-t border-l sm:hidden"
-            />
-          ))}
         </div>
       ) : null}
     </figure>

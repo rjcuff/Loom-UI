@@ -46,7 +46,15 @@ export function MacBook({
   return (
     <div
       data-slot="macbook"
-      className={cn("relative w-full", className)}
+      className={cn(
+        // `self-start` so a flex or grid parent does not stretch the frame.
+        // The whole shape is an `aspect-ratio` on an auto height, and a
+        // stretched item has a definite one, which the ratio then loses to:
+        // the device silently comes out the height of its tallest sibling.
+        // Override with `self-center` and friends through `className`.
+        "relative w-full self-start",
+        className
+      )}
       style={{
         maxWidth: width,
         aspectRatio: `${BASE_WIDTH} / ${height}`,

@@ -159,6 +159,13 @@ why the tiles are not optional decoration.
 `TrendSeries` is `{ name, values, color? }`. `color` overrides the slot that
 series would otherwise be given.
 
+<Callout title="Labels set the axis">
+  `labels` decides how many points get plotted. A series carrying more values
+  than there are labels has the extras dropped, and one carrying fewer is padded
+  with zero, so a mismatch degrades instead of taking the scale with it. Keep
+  the two the same length unless you mean it.
+</Callout>
+
 <Callout type="tip" title="Reduced motion">
   With reduced motion the plot is drawn in place with no wipe. Pointing at a
   column still works: reading a chart is not an animation.

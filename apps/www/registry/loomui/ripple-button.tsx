@@ -65,6 +65,11 @@ export function RippleButton({
 
   return (
     <button
+      // Native default is `submit`. A decorated button dropped into a form
+      // would post it, and the press it was reacting to would navigate the
+      // page out from under its own ripple. A caller who wants a submit
+      // button still passes `type` through `...props` below.
+      type="button"
       data-slot="ripple-button"
       disabled={disabled}
       onPointerDown={(event) => {

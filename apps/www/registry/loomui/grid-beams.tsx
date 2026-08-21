@@ -50,6 +50,40 @@ function createRandom(seed: number) {
   }
 }
 
+/**
+ * Warns, in development only, when the parent is not a containing block.
+ *
+ * The layer is `absolute inset-0`, so it fills the nearest positioned
+ * ancestor. Give it a `static` parent and it does not fail — it quietly finds
+ * whatever is positioned further up and covers that instead, usually the whole
+ * page. Nothing on screen says which parent is at fault.
+ */
+function useContainingBlock(
+  ref: React.RefObject<HTMLDivElement | null>,
+  name: string
+) {
+  React.useEffect(() => {
+    if (process.env.NODE_ENV === "production") {
+      return
+    }
+
+    const parent = ref.current?.parentElement
+    if (!parent) {
+      return
+    }
+
+    const { position } = getComputedStyle(parent)
+    if (position === "static") {
+      console.warn(
+        `<${name}> is absolutely positioned and its parent is \`position: static\`, ` +
+          `so it is filling some ancestor further up instead of that parent. ` +
+          `Add \`relative\` (and usually \`overflow-hidden\`) to the parent.`,
+        parent
+      )
+    }
+  }, [ref, name])
+}
+
 export function GridBeams({
   cellSize = 64,
   beams = 7,
@@ -67,6 +101,7 @@ export function GridBeams({
   ...props
 }: GridBeamsProps) {
   const ref = React.useRef<HTMLDivElement>(null)
+  useContainingBlock(ref, "GridBeams")
   const [box, setBox] = React.useState({ width: 0, height: 0 })
 
   // Grid lines land on fixed pixel multiples, so which of them are actually

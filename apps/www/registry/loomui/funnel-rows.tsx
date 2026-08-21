@@ -166,7 +166,11 @@ export function FunnelRows({
                   className="ease-out-quart absolute inset-y-0 left-0 origin-left rounded-full transition-transform motion-reduce:transition-none"
                   style={{
                     background: color,
-                    width: `${share(stage.value) * 100}%`,
+                    // Clamped, though the percentage beside it is not. A stage
+                    // larger than the first is bad data, and the honest thing
+                    // is to say 400% and draw a full bar — not to lay out an
+                    // element four times the width of the track it is in.
+                    width: `${Math.min(1, Math.max(0, share(stage.value))) * 100}%`,
                     transitionDuration: disabled ? "0ms" : `${duration}ms`,
                     transitionDelay: disabled ? "0ms" : `${index * stagger}ms`,
                     transform: `scaleX(${arrived ? 1 : 0})`,

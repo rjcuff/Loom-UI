@@ -116,3 +116,11 @@ no `src`.
   screen, or leave it empty when the screenshot is decoration beside copy that
   already says the same thing.
 </Callout>
+
+<Callout title="Alignment">
+  The frame is an aspect ratio on an auto height, so a flex or grid parent that
+  stretches its children would take the height over and the device would come
+  out the height of its tallest sibling. It carries `self-start` for that
+  reason. Pass `self-center`, `self-end` or `self-stretch` through `className`
+  if you want something else.
+</Callout>

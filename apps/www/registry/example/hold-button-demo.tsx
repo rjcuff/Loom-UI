@@ -54,7 +54,7 @@ export default function HoldButtonDemo() {
           duration={1100}
           onHold={handleHold}
           color="color-mix(in oklch, var(--destructive) 22%, transparent)"
-          className="text-destructive px-4 py-2 text-sm font-medium"
+          className="text-destructive px-4 py-3 text-sm font-medium"
           tabIndex={done ? -1 : undefined}
           inert={done}
         >

@@ -199,9 +199,14 @@ export function TrendStack({
     const running = labels.map(() => 0)
     const bands = series.map((entry) => {
       const lower = running.slice()
-      entry.values.forEach((value, i) => {
-        running[i] += value
-      })
+      // Walked over the labels, not over the series. A series carrying more
+      // values than the axis has slots wrote past the end of the running
+      // total, and `undefined + n` is NaN: one long series took the scale,
+      // every gridline and every path down with it. A short series is padded
+      // with zero for the same reason.
+      for (let i = 0; i < running.length; i++) {
+        running[i] += entry.values[i] ?? 0
+      }
       return { lower, upper: running.slice() }
     })
 
@@ -225,8 +230,10 @@ export function TrendStack({
     color: entry.color ?? chartColor(index),
     value: format(
       focus === null
-        ? entry.values.reduce((a, b) => a + b, 0)
-        : entry.values[focus]
+        ? // Only what the axis actually plots, so the tile agrees with the
+          // band above it rather than counting points nobody can see.
+          entry.values.slice(0, labels.length).reduce((a, b) => a + (b ?? 0), 0)
+        : (entry.values[focus] ?? 0)
     ),
   }))
 
@@ -260,7 +267,7 @@ export function TrendStack({
             same flex child as the month labels, the column would be as tall as
             both and every tick would be spread over a height the gridlines do
             not use. */}
-        <div ref={plot} className="flex gap-3">
+        <div ref={plot} className="flex gap-2">
           {/* Ticks are HTML rather than SVG text: inside the viewBox they would
               scale with the container and end up a different size on every
               screen. */}
@@ -269,7 +276,10 @@ export function TrendStack({
               would sit a little below the rule it names. */}
           <div
             style={{ height: `${tall}px` }}
-            className="text-muted-foreground relative w-9 shrink-0 self-start text-[10px] tabular-nums"
+            // Only as wide as four characters need. The ticks are right
+            // aligned in it, so every pixel they do not use is dead space
+            // between the card's edge and the first thing printed in it.
+            className="text-muted-foreground relative w-7 shrink-0 self-start text-[10px] tabular-nums"
           >
             {Array.from({ length: ROWS + 1 }, (_, row) => (
               <span

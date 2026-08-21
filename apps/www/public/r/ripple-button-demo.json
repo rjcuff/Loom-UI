@@ -10,7 +10,7 @@
   "files": [
     {
       "path": "registry/example/ripple-button-demo.tsx",
-      "content": "import { RippleButton } from \"@/registry/loomui/ripple-button\"\n\nexport default function RippleButtonDemo() {\n  return (\n    <div className=\"flex flex-wrap items-center justify-center gap-4\">\n      <RippleButton className=\"bg-primary text-primary-foreground rounded-md px-5 py-2.5 text-sm font-medium\">\n        Press anywhere\n      </RippleButton>\n\n      <RippleButton\n        color=\"color-mix(in oklch, var(--accent) 30%, transparent)\"\n        className=\"border-border rounded-md border px-5 py-2.5 text-sm font-medium\"\n      >\n        Tinted\n      </RippleButton>\n\n      <RippleButton\n        duration={1100}\n        className=\"bg-card text-card-foreground rounded-full border px-5 py-2.5 text-sm font-medium\"\n      >\n        Slow\n      </RippleButton>\n    </div>\n  )\n}\n",
+      "content": "import { RippleButton } from \"@/registry/loomui/ripple-button\"\n\nexport default function RippleButtonDemo() {\n  return (\n    <div className=\"flex flex-wrap items-center justify-center gap-4\">\n      <RippleButton className=\"bg-primary text-primary-foreground rounded-md px-5 py-3 text-sm font-medium\">\n        Press anywhere\n      </RippleButton>\n\n      <RippleButton\n        color=\"color-mix(in oklch, var(--accent) 30%, transparent)\"\n        className=\"border-border rounded-md border px-5 py-3 text-sm font-medium\"\n      >\n        Tinted\n      </RippleButton>\n\n      <RippleButton\n        duration={1100}\n        className=\"bg-card text-card-foreground rounded-full border px-5 py-3 text-sm font-medium\"\n      >\n        Slow\n      </RippleButton>\n    </div>\n  )\n}\n",
       "type": "registry:example"
     }
   ]

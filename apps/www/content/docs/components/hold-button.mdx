@@ -98,13 +98,14 @@ solid one takes the label with it:
 
 ## Props
 
-| Prop        | Type         | Default         | Description                                    |
-| ----------- | ------------ | --------------- | ---------------------------------------------- |
-| `duration`  | `number`     | `1200`          | Milliseconds the button has to be held.        |
-| `onHold`    | `() => void` | none            | Called once, when a hold runs the whole way.   |
-| `color`     | `string`     | 22% `--primary` | Fill that sweeps across the button.            |
-| `disabled`  | `boolean`    | `false`         | Ignore presses entirely.                       |
-| `className` | `string`     | none            | Merged onto the button. Padding and type here. |
+| Prop        | Type         | Default               | Description                                      |
+| ----------- | ------------ | --------------------- | ------------------------------------------------ |
+| `duration`  | `number`     | `1200`                | Milliseconds the button has to be held.          |
+| `onHold`    | `() => void` | none                  | Called once, when a hold runs the whole way.     |
+| `color`     | `string`     | 22% `--primary`       | Fill that sweeps across the button.              |
+| `hint`      | `ReactNode`  | built from `duration` | Read after the label. `null` to supply your own. |
+| `disabled`  | `boolean`    | `false`               | Ignore presses entirely.                         |
+| `className` | `string`     | none                  | Merged onto the button. Padding and type here.   |
 
 Any other `<button>` prop is forwarded.
 

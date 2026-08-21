@@ -11,6 +11,13 @@ export interface HoldButtonProps extends React.ComponentProps<"button"> {
   onHold?: () => void
   /** Fill that sweeps across the button. Keep it translucent so the label survives. */
   color?: string
+  /**
+   * The sentence read out after the label. The fill is the only thing telling
+   * a sighted person to keep holding, and it says nothing to a screen reader,
+   * so the requirement has to be spoken. Pass `null` to supply your own
+   * through `aria-describedby`.
+   */
+  hint?: React.ReactNode | null
 }
 
 /** How long the fill takes to run back out when a hold is abandoned. */
@@ -31,12 +38,14 @@ export function HoldButton({
   duration = 1200,
   onHold,
   color = "color-mix(in oklch, var(--primary, currentColor) 22%, transparent)",
+  hint,
   disabled,
   style,
   ref: forwardedRef,
   ...props
 }: HoldButtonProps) {
   const ref = React.useRef<HTMLButtonElement>(null)
+  const hintId = React.useId()
 
   // The button needs its own ref to write the fill to, so a caller's ref is
   // pointed at the same node rather than replacing it.
@@ -199,6 +208,7 @@ export function HoldButton({
       type="button"
       data-slot="hold-button"
       data-holding={holding || settling ? "" : undefined}
+      aria-describedby={hint === null ? undefined : hintId}
       disabled={disabled}
       onPointerDown={press}
       onPointerUp={release}
@@ -237,6 +247,16 @@ export function HoldButton({
       </span>
 
       <span className="relative">{children}</span>
+
+      {/* Read after the label, never shown. Without it the button announces as
+          an ordinary one, and a press that does nothing is indistinguishable
+          from a button that is broken. */}
+      {hint === null ? null : (
+        <span id={hintId} hidden>
+          {hint ??
+            `Press and hold for ${Math.round(duration / 100) / 10} seconds to confirm.`}
+        </span>
+      )}
     </button>
   )
 }

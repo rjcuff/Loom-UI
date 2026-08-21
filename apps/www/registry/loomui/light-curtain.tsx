@@ -65,6 +65,40 @@ function createRandom(seed: number) {
  * render. Fed real randomness, the whole wash would rearrange itself the next
  * time anything above it re-rendered.
  */
+/**
+ * Warns, in development only, when the parent is not a containing block.
+ *
+ * The layer is `absolute inset-0`, so it fills the nearest positioned
+ * ancestor. Give it a `static` parent and it does not fail — it quietly finds
+ * whatever is positioned further up and covers that instead, usually the whole
+ * page. Nothing on screen says which parent is at fault.
+ */
+function useContainingBlock(
+  ref: React.RefObject<HTMLDivElement | null>,
+  name: string
+) {
+  React.useEffect(() => {
+    if (process.env.NODE_ENV === "production") {
+      return
+    }
+
+    const parent = ref.current?.parentElement
+    if (!parent) {
+      return
+    }
+
+    const { position } = getComputedStyle(parent)
+    if (position === "static") {
+      console.warn(
+        `<${name}> is absolutely positioned and its parent is \`position: static\`, ` +
+          `so it is filling some ancestor further up instead of that parent. ` +
+          `Add \`relative\` (and usually \`overflow-hidden\`) to the parent.`,
+        parent
+      )
+    }
+  }, [ref, name])
+}
+
 export function LightCurtain({
   bands = 5,
   colors = DEFAULT_COLORS,
@@ -81,9 +115,14 @@ export function LightCurtain({
   ...props
 }: LightCurtainProps) {
   const ref = React.useRef<HTMLDivElement>(null)
+  useContainingBlock(ref, "LightCurtain")
   const visible = useInViewport(ref)
 
   const veils = React.useMemo(() => {
+    // Guarded like the other backdrops. An empty array indexed into gives
+    // `undefined`, which lands in the gradient string, makes it invalid, and
+    // leaves every band painted with nothing at all.
+    const palette = colors.length > 0 ? colors : DEFAULT_COLORS
     const random = createRandom(seed)
 
     return Array.from({ length: bands }, (_, index) => {
@@ -97,7 +136,7 @@ export function LightCurtain({
         left: lane + (random() - 0.5) * (100 / bands) - width / 2,
         width,
         height: 70 + random() * 45,
-        color: colors[Math.floor(random() * colors.length) % colors.length],
+        color: palette[Math.floor(random() * palette.length)],
         // Never a whole number of seconds apart, so the bands do not fall into
         // step and start breathing as one.
         duration: duration * (0.7 + random() * 0.7),
