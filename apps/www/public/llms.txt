@@ -1,6 +1,6 @@
 # Loom UI
 
-> Free, open-source animated React components built with TypeScript, Tailwind CSS and Motion. Copy any one into your project. No runtime, no dependency to track.
+> A free, open-source React design system of animated components in TypeScript and Tailwind CSS. Copy each one into your project. No runtime, nothing to track.
 
 Install any component with `npx shadcn@latest add @loomui/<name>`.
 

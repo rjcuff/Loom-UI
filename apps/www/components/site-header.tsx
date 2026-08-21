@@ -7,7 +7,7 @@ import { GitHubStars } from "@/components/github-stars"
 import { Logo } from "@/components/logo"
 import { ModeToggle } from "@/components/mode-toggle"
 
-/** The mark itself. Lucide dropped its brand icons, so this is the path. */
+/** Lucide dropped its brand icons, so this is the path. */
 function GitHubIcon() {
   return (
     <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
@@ -16,16 +16,10 @@ function GitHubIcon() {
   )
 }
 
-/**
- * The row itself: brand, nav, controls. Shared by both headers so the marks
- * land in exactly the same place whichever one a page is wearing, and so there
- * is one file to change when a link is added.
- */
+/** Brand, nav, controls. Shared by both headers. */
 function HeaderRow() {
   return (
     <>
-      {/* Full bleed rather than a centered container, so the brand and the
-          controls sit near the corners with only a gutter holding them off. */}
       <div className="flex h-14 w-full items-center gap-6 px-6">
         <Link
           href="/"
@@ -55,8 +49,6 @@ function HeaderRow() {
               rel="noreferrer"
               aria-label={`${siteConfig.name} on GitHub`}
             >
-              {/* The mark and the count travel together as one group, which
-                  the button then centers as a whole. */}
               <span className="flex flex-row items-center gap-2">
                 <GitHubIcon />
                 <GitHubStars />
@@ -70,10 +62,7 @@ function HeaderRow() {
   )
 }
 
-/**
- * The docs header. Pinned, with a surface under it, because a page of prose
- * scrolls beneath it and has to stay readable while it does.
- */
+/** Pinned, with a surface: docs prose scrolls beneath it. */
 export function SiteHeader() {
   return (
     <header className="border-border bg-background/80 sticky top-0 z-50 w-full border-b backdrop-blur">
@@ -83,17 +72,9 @@ export function SiteHeader() {
 }
 
 /**
- * The landing page header. No surface and no pin: it scrolls away with the
- * page like anything else on it.
- *
- * Taken out of the flow so the hero can start at the very top and the marks
- * can sit straight on the aurora. In the flow it pushed the hero down by its
- * own height and left a white strip above it, which is a bar with a background
- * by another name.
- *
- * `absolute`, not `fixed`: it has to travel with the page rather than stay
- * with the viewport. Nothing scrolls underneath it, which is the only reason a
- * bar with no background of its own is safe here and not on the docs.
+ * No surface and no pin: it scrolls away with the page. Out of the flow so the
+ * hero starts at the very top, and `absolute` rather than `fixed` so nothing
+ * scrolls underneath a bar that has no background of its own.
  */
 export function MarketingHeader() {
   return (

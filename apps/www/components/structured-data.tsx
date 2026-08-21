@@ -57,8 +57,23 @@ export function siteSchema(): Schema {
         name: siteConfig.name,
         url: siteConfig.url,
         applicationCategory: "DeveloperApplication",
+        // Says what kind of developer tool this is rather than leaving it at
+        // the top-level category every npm package also claims.
+        applicationSubCategory: "Design System",
+        alternateName: "loom",
         operatingSystem: "Any",
         description: siteConfig.description,
+        // What a result can list underneath the name. Written as capabilities,
+        // not marketing: each one is something the library actually ships.
+        featureList: [
+          "Animated React components",
+          "Charts and data visualisation",
+          "Text and typography effects",
+          "Backgrounds and device frames",
+          "Copy-paste source, no runtime dependency",
+          "Light and dark themes",
+          "Reduced-motion support",
+        ],
         author: { "@id": AUTHOR_ID },
         license: "https://opensource.org/licenses/MIT",
         isAccessibleForFree: true,

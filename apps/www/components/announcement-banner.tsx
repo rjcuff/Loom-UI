@@ -3,19 +3,14 @@ import { ChevronRightIcon } from "lucide-react"
 
 import { announcement } from "@/config/site"
 
-/**
- * The strip above the header. It sits in normal flow rather than in the sticky
- * header, so it rides away on the first scroll and never eats viewport height
- * for the rest of the visit.
- */
+/** In normal flow, not the sticky header, so it rides away on first scroll. */
 export function AnnouncementBanner() {
   if (!announcement) return null
 
   return (
     <Link
       href={announcement.href}
-      // Left-aligned on a phone, where the line wraps and centred text would
-      // leave a ragged second row; centred once it fits on one line.
+      // Left-aligned while the line wraps; centred once it fits on one.
       className="group flex w-full items-start justify-start gap-1.5 bg-[oklch(0.54_0.14_246)] px-4 py-3.5 text-left text-[13px] leading-snug font-medium text-white sm:items-center sm:justify-center sm:text-center"
     >
       <span aria-hidden className="shrink-0">

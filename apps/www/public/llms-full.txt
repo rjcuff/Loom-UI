@@ -40,6 +40,40 @@ function createRandom(seed: number) {
   }
 }
 
+/**
+ * Warns, in development only, when the parent is not a containing block.
+ *
+ * The layer is `absolute inset-0`, so it fills the nearest positioned
+ * ancestor. Give it a `static` parent and it does not fail — it quietly finds
+ * whatever is positioned further up and covers that instead, usually the whole
+ * page. Nothing on screen says which parent is at fault.
+ */
+function useContainingBlock(
+  ref: React.RefObject<HTMLDivElement | null>,
+  name: string
+) {
+  React.useEffect(() => {
+    if (process.env.NODE_ENV === "production") {
+      return
+    }
+
+    const parent = ref.current?.parentElement
+    if (!parent) {
+      return
+    }
+
+    const { position } = getComputedStyle(parent)
+    if (position === "static") {
+      console.warn(
+        `<${name}> is absolutely positioned and its parent is \`position: static\`, ` +
+          `so it is filling some ancestor further up instead of that parent. ` +
+          `Add \`relative\` (and usually \`overflow-hidden\`) to the parent.`,
+        parent
+      )
+    }
+  }, [ref, name])
+}
+
 export function AuroraBackdrop({
   colors = DEFAULT_COLORS,
   blur = "72px",
@@ -71,6 +105,7 @@ export function AuroraBackdrop({
   }, [colors, seed, duration])
 
   const root = React.useRef<HTMLDivElement>(null)
+  useContainingBlock(root, "AuroraBackdrop")
   // Large blurred gradients are the most expensive thing here to keep drifting
   // for a viewport nobody is looking at.
   const onScreen = useInViewport(root)
@@ -962,6 +997,10 @@ export function ConfettiButton({
 
   return (
     <button
+      // Native default is `submit`. A burst inside a form would be cut off by
+      // the navigation it triggered. `...props` below still lets a caller ask
+      // for a submit button explicitly.
+      type="button"
       data-slot="confetti-button"
       disabled={disabled}
       onClick={(event) => {
@@ -1028,7 +1067,7 @@ import { ConfettiButton } from "@/registry/loomui/confetti-button"
 export default function ConfettiButtonDemo() {
   return (
     <div className="flex flex-wrap items-center justify-center gap-4">
-      <ConfettiButton className="bg-primary text-primary-foreground rounded-md px-5 py-2.5 text-sm font-medium">
+      <ConfettiButton className="bg-primary text-primary-foreground rounded-md px-5 py-3 text-sm font-medium">
         Ship it
       </ConfettiButton>
 
@@ -1036,7 +1075,7 @@ export default function ConfettiButtonDemo() {
         count={34}
         spread={140}
         duration={1200}
-        className="border-border rounded-full border px-5 py-2.5 text-sm font-medium"
+        className="border-border rounded-full border px-5 py-3 text-sm font-medium"
       >
         Bigger party
       </ConfettiButton>
@@ -1045,7 +1084,7 @@ export default function ConfettiButtonDemo() {
         count={10}
         spread={60}
         colors={["#f472b6", "#c084fc", "#818cf8"]}
-        className="bg-card text-card-foreground rounded-md border px-5 py-2.5 text-sm font-medium"
+        className="bg-card text-card-foreground rounded-md border px-5 py-3 text-sm font-medium"
       >
         Just a little
       </ConfettiButton>
@@ -2422,7 +2461,11 @@ export function FunnelRows({
                   className="ease-out-quart absolute inset-y-0 left-0 origin-left rounded-full transition-transform motion-reduce:transition-none"
                   style={{
                     background: color,
-                    width: `${share(stage.value) * 100}%`,
+                    // Clamped, though the percentage beside it is not. A stage
+                    // larger than the first is bad data, and the honest thing
+                    // is to say 400% and draw a full bar — not to lay out an
+                    // element four times the width of the track it is in.
+                    width: `${Math.min(1, Math.max(0, share(stage.value))) * 100}%`,
                     transitionDuration: disabled ? "0ms" : `${duration}ms`,
                     transitionDelay: disabled ? "0ms" : `${index * stagger}ms`,
                     transform: `scaleX(${arrived ? 1 : 0})`,
@@ -2894,6 +2937,40 @@ function createRandom(seed: number) {
   }
 }
 
+/**
+ * Warns, in development only, when the parent is not a containing block.
+ *
+ * The layer is `absolute inset-0`, so it fills the nearest positioned
+ * ancestor. Give it a `static` parent and it does not fail — it quietly finds
+ * whatever is positioned further up and covers that instead, usually the whole
+ * page. Nothing on screen says which parent is at fault.
+ */
+function useContainingBlock(
+  ref: React.RefObject<SVGSVGElement | null>,
+  name: string
+) {
+  React.useEffect(() => {
+    if (process.env.NODE_ENV === "production") {
+      return
+    }
+
+    const parent = ref.current?.parentElement
+    if (!parent) {
+      return
+    }
+
+    const { position } = getComputedStyle(parent)
+    if (position === "static") {
+      console.warn(
+        `<${name}> is absolutely positioned and its parent is \`position: static\`, ` +
+          `so it is filling some ancestor further up instead of that parent. ` +
+          `Add \`relative\` (and usually \`overflow-hidden\`) to the parent.`,
+        parent
+      )
+    }
+  }, [ref, name])
+}
+
 export function GridBackdrop({
   width = 40,
   height = 40,
@@ -2907,20 +2984,51 @@ export function GridBackdrop({
 }: GridBackdropProps) {
   const id = React.useId()
 
+  const root = React.useRef<SVGSVGElement>(null)
+  useContainingBlock(root, "GridBackdrop")
+  const [box, setBox] = React.useState({ width: 0, height: 0 })
+
+  // The cells were spread over a fixed 30 by 20 patch of the pattern, which is
+  // only the whole grid on a container of exactly that size. Anything wider
+  // than about 1200px got every pulse crowded into its left-hand side and a
+  // dead margin down the rest — and a backdrop is usually the widest thing on
+  // the page. Measured instead, so they cover whatever box they are actually in.
+  React.useEffect(() => {
+    const node = root.current
+    if (!node) {
+      return
+    }
+
+    const observer = new ResizeObserver(([entry]) => {
+      const { width, height } = entry.contentRect
+      setBox((previous) =>
+        previous.width === width && previous.height === height
+          ? previous
+          : { width, height }
+      )
+    })
+
+    observer.observe(node)
+    return () => observer.disconnect()
+  }, [])
+
   const cells = React.useMemo(() => {
-    if (disabled || squares <= 0) {
+    const columns = Math.floor(box.width / width)
+    const rows = Math.floor(box.height / height)
+
+    if (disabled || squares <= 0 || columns < 1 || rows < 1) {
       return []
     }
+
     const random = createRandom(seed)
     return Array.from({ length: squares }, (_, index) => ({
       key: index,
-      x: Math.floor(random() * 30) * width,
-      y: Math.floor(random() * 20) * height,
+      x: Math.floor(random() * columns) * width,
+      y: Math.floor(random() * rows) * height,
       delay: random() * duration * 2,
     }))
-  }, [disabled, squares, seed, width, height, duration])
+  }, [disabled, squares, seed, width, height, duration, box.width, box.height])
 
-  const root = React.useRef<SVGSVGElement>(null)
   const onScreen = useInViewport(root)
 
   return (
@@ -3053,6 +3161,40 @@ function createRandom(seed: number) {
   }
 }
 
+/**
+ * Warns, in development only, when the parent is not a containing block.
+ *
+ * The layer is `absolute inset-0`, so it fills the nearest positioned
+ * ancestor. Give it a `static` parent and it does not fail — it quietly finds
+ * whatever is positioned further up and covers that instead, usually the whole
+ * page. Nothing on screen says which parent is at fault.
+ */
+function useContainingBlock(
+  ref: React.RefObject<HTMLDivElement | null>,
+  name: string
+) {
+  React.useEffect(() => {
+    if (process.env.NODE_ENV === "production") {
+      return
+    }
+
+    const parent = ref.current?.parentElement
+    if (!parent) {
+      return
+    }
+
+    const { position } = getComputedStyle(parent)
+    if (position === "static") {
+      console.warn(
+        `<${name}> is absolutely positioned and its parent is \`position: static\`, ` +
+          `so it is filling some ancestor further up instead of that parent. ` +
+          `Add \`relative\` (and usually \`overflow-hidden\`) to the parent.`,
+        parent
+      )
+    }
+  }, [ref, name])
+}
+
 export function GridBeams({
   cellSize = 64,
   beams = 7,
@@ -3070,6 +3212,7 @@ export function GridBeams({
   ...props
 }: GridBeamsProps) {
   const ref = React.useRef<HTMLDivElement>(null)
+  useContainingBlock(ref, "GridBeams")
   const [box, setBox] = React.useState({ width: 0, height: 0 })
 
   // Grid lines land on fixed pixel multiples, so which of them are actually
@@ -3256,6 +3399,13 @@ export interface HoldButtonProps extends React.ComponentProps<"button"> {
   onHold?: () => void
   /** Fill that sweeps across the button. Keep it translucent so the label survives. */
   color?: string
+  /**
+   * The sentence read out after the label. The fill is the only thing telling
+   * a sighted person to keep holding, and it says nothing to a screen reader,
+   * so the requirement has to be spoken. Pass `null` to supply your own
+   * through `aria-describedby`.
+   */
+  hint?: React.ReactNode | null
 }
 
 /** How long the fill takes to run back out when a hold is abandoned. */
@@ -3276,12 +3426,14 @@ export function HoldButton({
   duration = 1200,
   onHold,
   color = "color-mix(in oklch, var(--primary, currentColor) 22%, transparent)",
+  hint,
   disabled,
   style,
   ref: forwardedRef,
   ...props
 }: HoldButtonProps) {
   const ref = React.useRef<HTMLButtonElement>(null)
+  const hintId = React.useId()
 
   // The button needs its own ref to write the fill to, so a caller's ref is
   // pointed at the same node rather than replacing it.
@@ -3444,6 +3596,7 @@ export function HoldButton({
       type="button"
       data-slot="hold-button"
       data-holding={holding || settling ? "" : undefined}
+      aria-describedby={hint === null ? undefined : hintId}
       disabled={disabled}
       onPointerDown={press}
       onPointerUp={release}
@@ -3482,6 +3635,16 @@ export function HoldButton({
       </span>
 
       <span className="relative">{children}</span>
+
+      {/* Read after the label, never shown. Without it the button announces as
+          an ordinary one, and a press that does nothing is indistinguishable
+          from a button that is broken. */}
+      {hint === null ? null : (
+        <span id={hintId} hidden>
+          {hint ??
+            `Press and hold for ${Math.round(duration / 100) / 10} seconds to confirm.`}
+        </span>
+      )}
     </button>
   )
 }
@@ -3547,7 +3710,7 @@ export default function HoldButtonDemo() {
           duration={1100}
           onHold={handleHold}
           color="color-mix(in oklch, var(--destructive) 22%, transparent)"
-          className="text-destructive px-4 py-2 text-sm font-medium"
+          className="text-destructive px-4 py-3 text-sm font-medium"
           tabIndex={done ? -1 : undefined}
           inert={done}
         >
@@ -4197,7 +4360,15 @@ export function IPad({
   return (
     <div
       data-slot="ipad"
-      className={cn("relative w-full", className)}
+      className={cn(
+        // `self-start` so a flex or grid parent does not stretch the frame.
+        // The whole shape is an `aspect-ratio` on an auto height, and a
+        // stretched item has a definite one, which the ratio then loses to:
+        // the device silently comes out the height of its tallest sibling.
+        // Override with `self-center` and friends through `className`.
+        "relative w-full self-start",
+        className
+      )}
       style={{
         maxWidth: width,
         aspectRatio: `${deviceWidth} / ${deviceHeight}`,
@@ -4302,7 +4473,15 @@ export function IPhone({
   return (
     <div
       data-slot="iphone"
-      className={cn("relative w-full", className)}
+      className={cn(
+        // `self-start` so a flex or grid parent does not stretch the frame.
+        // The whole shape is an `aspect-ratio` on an auto height, and a
+        // stretched item has a definite one, which the ratio then loses to:
+        // the device silently comes out the height of its tallest sibling.
+        // Override with `self-center` and friends through `className`.
+        "relative w-full self-start",
+        className
+      )}
       style={{
         maxWidth: width,
         aspectRatio: `${DEVICE_WIDTH} / ${DEVICE_HEIGHT}`,
@@ -4770,6 +4949,40 @@ function createRandom(seed: number) {
  * render. Fed real randomness, the whole wash would rearrange itself the next
  * time anything above it re-rendered.
  */
+/**
+ * Warns, in development only, when the parent is not a containing block.
+ *
+ * The layer is `absolute inset-0`, so it fills the nearest positioned
+ * ancestor. Give it a `static` parent and it does not fail — it quietly finds
+ * whatever is positioned further up and covers that instead, usually the whole
+ * page. Nothing on screen says which parent is at fault.
+ */
+function useContainingBlock(
+  ref: React.RefObject<HTMLDivElement | null>,
+  name: string
+) {
+  React.useEffect(() => {
+    if (process.env.NODE_ENV === "production") {
+      return
+    }
+
+    const parent = ref.current?.parentElement
+    if (!parent) {
+      return
+    }
+
+    const { position } = getComputedStyle(parent)
+    if (position === "static") {
+      console.warn(
+        `<${name}> is absolutely positioned and its parent is \`position: static\`, ` +
+          `so it is filling some ancestor further up instead of that parent. ` +
+          `Add \`relative\` (and usually \`overflow-hidden\`) to the parent.`,
+        parent
+      )
+    }
+  }, [ref, name])
+}
+
 export function LightCurtain({
   bands = 5,
   colors = DEFAULT_COLORS,
@@ -4786,9 +4999,14 @@ export function LightCurtain({
   ...props
 }: LightCurtainProps) {
   const ref = React.useRef<HTMLDivElement>(null)
+  useContainingBlock(ref, "LightCurtain")
   const visible = useInViewport(ref)
 
   const veils = React.useMemo(() => {
+    // Guarded like the other backdrops. An empty array indexed into gives
+    // `undefined`, which lands in the gradient string, makes it invalid, and
+    // leaves every band painted with nothing at all.
+    const palette = colors.length > 0 ? colors : DEFAULT_COLORS
     const random = createRandom(seed)
 
     return Array.from({ length: bands }, (_, index) => {
@@ -4802,7 +5020,7 @@ export function LightCurtain({
         left: lane + (random() - 0.5) * (100 / bands) - width / 2,
         width,
         height: 70 + random() * 45,
-        color: colors[Math.floor(random() * colors.length) % colors.length],
+        color: palette[Math.floor(random() * palette.length)],
         // Never a whole number of seconds apart, so the bands do not fall into
         // step and start breathing as one.
         duration: duration * (0.7 + random() * 0.7),
@@ -5578,7 +5796,15 @@ export function MacBook({
   return (
     <div
       data-slot="macbook"
-      className={cn("relative w-full", className)}
+      className={cn(
+        // `self-start` so a flex or grid parent does not stretch the frame.
+        // The whole shape is an `aspect-ratio` on an auto height, and a
+        // stretched item has a definite one, which the ratio then loses to:
+        // the device silently comes out the height of its tallest sibling.
+        // Override with `self-center` and friends through `className`.
+        "relative w-full self-start",
+        className
+      )}
       style={{
         maxWidth: width,
         aspectRatio: `${BASE_WIDTH} / ${height}`,
@@ -5882,7 +6108,7 @@ export function Marquee({
       ref={root}
       data-slot="marquee"
       className={cn(
-        "group flex overflow-hidden",
+        "group/marquee flex overflow-hidden",
         vertical ? "flex-col" : "flex-row",
         className
       )}
@@ -5911,7 +6137,7 @@ export function Marquee({
               : "animate-marquee flex-row",
             reverse && "[animation-direction:reverse]",
             (paused || !onScreen) && "[animation-play-state:paused]",
-            pauseOnHover && "group-hover:[animation-play-state:paused]",
+            pauseOnHover && "group-hover/marquee:[animation-play-state:paused]",
             // A marquee that stops dead for reduced motion leaves half a row
             // cut off, so the whole track is frozen at its start instead.
             "motion-reduce:animate-none"
@@ -6305,7 +6531,7 @@ export function PhotoStamp({
             WebkitTapHighlightColor: "transparent",
             borderRadius: `${radius}px`,
           }}
-          className="focus-visible:outline-ring group block focus-visible:outline-2 focus-visible:outline-offset-4"
+          className="focus-visible:outline-ring group/stamp block focus-visible:outline-2 focus-visible:outline-offset-4"
         >
           {/* The shadow is the only thing hover changes. Anything that moved
               the photo would change what `getBoundingClientRect` reports, and
@@ -6320,7 +6546,7 @@ export function PhotoStamp({
               visibility: mounted ? "hidden" : undefined,
             }}
             className={cn(
-              "ease-out-quart block h-24 w-32 object-cover shadow-[0_2px_6px_rgb(0_0_0/0.18)] transition-shadow duration-180 select-none group-hover:shadow-[0_4px_14px_rgb(0_0_0/0.24)] motion-reduce:transition-none",
+              "ease-out-quart block h-24 w-32 object-cover shadow-[0_2px_6px_rgb(0_0_0/0.18)] transition-shadow duration-180 select-none group-hover/stamp:shadow-[0_4px_14px_rgb(0_0_0/0.24)] motion-reduce:transition-none",
               imageClassName
             )}
           />
@@ -6849,6 +7075,11 @@ export function RippleButton({
 
   return (
     <button
+      // Native default is `submit`. A decorated button dropped into a form
+      // would post it, and the press it was reacting to would navigate the
+      // page out from under its own ripple. A caller who wants a submit
+      // button still passes `type` through `...props` below.
+      type="button"
       data-slot="ripple-button"
       disabled={disabled}
       onPointerDown={(event) => {
@@ -6908,20 +7139,20 @@ import { RippleButton } from "@/registry/loomui/ripple-button"
 export default function RippleButtonDemo() {
   return (
     <div className="flex flex-wrap items-center justify-center gap-4">
-      <RippleButton className="bg-primary text-primary-foreground rounded-md px-5 py-2.5 text-sm font-medium">
+      <RippleButton className="bg-primary text-primary-foreground rounded-md px-5 py-3 text-sm font-medium">
         Press anywhere
       </RippleButton>
 
       <RippleButton
         color="color-mix(in oklch, var(--accent) 30%, transparent)"
-        className="border-border rounded-md border px-5 py-2.5 text-sm font-medium"
+        className="border-border rounded-md border px-5 py-3 text-sm font-medium"
       >
         Tinted
       </RippleButton>
 
       <RippleButton
         duration={1100}
-        className="bg-card text-card-foreground rounded-full border px-5 py-2.5 text-sm font-medium"
+        className="bg-card text-card-foreground rounded-full border px-5 py-3 text-sm font-medium"
       >
         Slow
       </RippleButton>
@@ -8058,7 +8289,7 @@ export function SpotlightCard({
     `radial-gradient(var(--spotlight-size) circle at var(--spotlight-x, 50%) var(--spotlight-y, 50%), ${fill}, transparent 70%)`
 
   const layer =
-    "pointer-events-none absolute inset-0 rounded-[inherit] opacity-0 transition-opacity duration-[180ms] ease-[var(--ease-out-quart)] group-hover:opacity-100 group-focus-within:opacity-100 motion-reduce:transition-none"
+    "pointer-events-none absolute inset-0 rounded-[inherit] opacity-0 transition-opacity duration-[180ms] ease-[var(--ease-out-quart)] group-hover/spotlight:opacity-100 group-focus-within/spotlight:opacity-100 motion-reduce:transition-none"
 
   return (
     <div
@@ -8066,7 +8297,7 @@ export function SpotlightCard({
       data-slot="spotlight-card"
       onPointerMove={handlePointerMove}
       className={cn(
-        "group relative isolate overflow-hidden rounded-xl border",
+        "group/spotlight relative isolate overflow-hidden rounded-xl border",
         interactive &&
           "focus-within:ring-ring/50 cursor-pointer focus-within:ring-2",
         className
@@ -9047,7 +9278,7 @@ export function TestimonialWall({
     <div
       ref={root}
       data-slot="testimonial-wall"
-      className={cn("group flex h-[32rem] overflow-hidden", className)}
+      className={cn("group/wall flex h-[32rem] overflow-hidden", className)}
       style={{
         gap,
         WebkitMaskImage: mask,
@@ -9086,7 +9317,8 @@ export function TestimonialWall({
                 // never travel together and the wall reads as depth.
                 index % 2 === 1 && "[animation-direction:reverse]",
                 paused && "[animation-play-state:paused]",
-                pauseOnHover && "group-hover:[animation-play-state:paused]",
+                pauseOnHover &&
+                  "group-hover/wall:[animation-play-state:paused]",
                 // A column that stops dead leaves half a card cut off, so the
                 // whole wall is frozen at its start instead.
                 "motion-reduce:animate-none"
@@ -9906,9 +10138,14 @@ export function TrendStack({
     const running = labels.map(() => 0)
     const bands = series.map((entry) => {
       const lower = running.slice()
-      entry.values.forEach((value, i) => {
-        running[i] += value
-      })
+      // Walked over the labels, not over the series. A series carrying more
+      // values than the axis has slots wrote past the end of the running
+      // total, and `undefined + n` is NaN: one long series took the scale,
+      // every gridline and every path down with it. A short series is padded
+      // with zero for the same reason.
+      for (let i = 0; i < running.length; i++) {
+        running[i] += entry.values[i] ?? 0
+      }
       return { lower, upper: running.slice() }
     })
 
@@ -9932,8 +10169,10 @@ export function TrendStack({
     color: entry.color ?? chartColor(index),
     value: format(
       focus === null
-        ? entry.values.reduce((a, b) => a + b, 0)
-        : entry.values[focus]
+        ? // Only what the axis actually plots, so the tile agrees with the
+          // band above it rather than counting points nobody can see.
+          entry.values.slice(0, labels.length).reduce((a, b) => a + (b ?? 0), 0)
+        : (entry.values[focus] ?? 0)
     ),
   }))
 
@@ -9967,7 +10206,7 @@ export function TrendStack({
             same flex child as the month labels, the column would be as tall as
             both and every tick would be spread over a height the gridlines do
             not use. */}
-        <div ref={plot} className="flex gap-3">
+        <div ref={plot} className="flex gap-2">
           {/* Ticks are HTML rather than SVG text: inside the viewBox they would
               scale with the container and end up a different size on every
               screen. */}
@@ -9976,7 +10215,10 @@ export function TrendStack({
               would sit a little below the rule it names. */}
           <div
             style={{ height: `${tall}px` }}
-            className="text-muted-foreground relative w-9 shrink-0 self-start text-[10px] tabular-nums"
+            // Only as wide as four characters need. The ticks are right
+            // aligned in it, so every pixel they do not use is dead space
+            // between the card's edge and the first thing printed in it.
+            className="text-muted-foreground relative w-7 shrink-0 self-start text-[10px] tabular-nums"
           >
             {Array.from({ length: ROWS + 1 }, (_, row) => (
               <span

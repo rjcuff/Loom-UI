@@ -3,13 +3,6 @@ import Link from "next/link"
 import { siteConfig } from "@/config/site"
 import { Button } from "@/components/ui/button"
 
-/**
- * The line at the top of the section, tinted the way the docs tint code.
- *
- * It is text rather than a copy button on purpose. There is one of those on
- * every component page, next to the component it actually installs, and a
- * button here would be offering to copy an example.
- */
 function InstallLine() {
   return (
     <code className="text-muted-foreground font-mono text-sm sm:text-base">
@@ -22,10 +15,6 @@ function InstallLine() {
   )
 }
 
-/**
- * The close of the page: what to type, what you get, and the two places to go
- * next. Centred, because there is nothing else on the row to line up with.
- */
 export function SiteCta() {
   return (
     <section className="border-border/60 border-t">
@@ -41,9 +30,6 @@ export function SiteCta() {
           each, no runtime, and yours the moment they land.
         </p>
 
-        {/* Half each on a phone. A grid rather than `flex-1`, since a flex
-            item will not shrink past its own content and the longer label
-            would keep the larger half. */}
         <div className="mt-8 grid w-full grid-cols-2 gap-3 sm:flex sm:w-auto">
           <Button asChild size="lg" className="min-w-0">
             <Link href="/docs/installation">Install free</Link>
