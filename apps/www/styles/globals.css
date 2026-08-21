@@ -35,8 +35,13 @@
   --destructive: oklch(0.58 0.21 27);
   --destructive-foreground: oklch(0.99 0 0);
 
-  --border: oklch(0.905 0.008 250);
-  --input: oklch(0.905 0.008 250);
+  /* Ink at low alpha rather than a solid step, which is what the dark theme
+     already does. A solid line is mixed against one assumed backdrop and looks
+     pasted on over anything else — over the hero's aurora, over a tinted
+     surface, over an image. The alpha version takes whatever is behind it.
+     Composited over the card these land where the old solid values did. */
+  --border: oklch(0.18 0.015 255 / 14%);
+  --input: oklch(0.18 0.015 255 / 18%);
   --ring: oklch(0.62 0.13 215);
 
   --surface: oklch(0.975 0.004 250);
@@ -669,6 +674,12 @@
     animation-duration: 0.01ms;
     animation-iteration-count: 1;
     transition-duration: 0.01ms;
+    /* Delays as well as durations. A staggered entrance keeps its offsets
+       otherwise, so a tile written to arrive a second into the sequence sits
+       at its first frame — usually invisible — for that whole second, and the
+       reader is shown a hole where the reveal used to be. */
+    animation-delay: 0s;
+    transition-delay: 0s;
     scroll-behavior: auto;
   }
 }
@@ -681,6 +692,23 @@
   html {
     scroll-behavior: smooth;
     -webkit-text-size-adjust: 100%;
+  }
+
+  /* Anything an anchor can land on clears the sticky header rather than
+     sitting under it. The docs headings carry `scroll-m-20` of their own;
+     this is for everything else a link can point at. */
+  [id] {
+    scroll-margin-top: 5rem;
+  }
+
+  /* A heading is short enough that the browser will balance it, and a two-word
+     last line on a three-line heading reads as a mistake. Body copy is left
+     alone: balancing is capped at a few lines and is the wrong shape for a
+     paragraph anyway. */
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
   }
 
   body {
@@ -770,6 +798,12 @@
      of a long line chains the scroll to the page and, on iOS, into the
      back-navigation gesture. */
   overscroll-behavior-x: contain;
+  /* The one place a scrollbar is worth restyling. A page scrollbar is the
+     reader's, but this one is a 15px slab of system chrome across the bottom
+     of every wide snippet on Windows, and it is inside a box the design owns. */
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in oklch, var(--muted-foreground) 35%, transparent)
+    transparent;
   border-radius: var(--radius-lg);
   border: 1px solid var(--border);
   background-color: var(--code) !important;

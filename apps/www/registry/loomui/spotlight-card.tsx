@@ -70,7 +70,7 @@ export function SpotlightCard({
     `radial-gradient(var(--spotlight-size) circle at var(--spotlight-x, 50%) var(--spotlight-y, 50%), ${fill}, transparent 70%)`
 
   const layer =
-    "pointer-events-none absolute inset-0 rounded-[inherit] opacity-0 transition-opacity duration-[180ms] ease-[var(--ease-out-quart)] group-hover:opacity-100 group-focus-within:opacity-100 motion-reduce:transition-none"
+    "pointer-events-none absolute inset-0 rounded-[inherit] opacity-0 transition-opacity duration-[180ms] ease-[var(--ease-out-quart)] group-hover/spotlight:opacity-100 group-focus-within/spotlight:opacity-100 motion-reduce:transition-none"
 
   return (
     <div
@@ -78,7 +78,7 @@ export function SpotlightCard({
       data-slot="spotlight-card"
       onPointerMove={handlePointerMove}
       className={cn(
-        "group relative isolate overflow-hidden rounded-xl border",
+        "group/spotlight relative isolate overflow-hidden rounded-xl border",
         interactive &&
           "focus-within:ring-ring/50 cursor-pointer focus-within:ring-2",
         className

@@ -77,7 +77,7 @@ export function Marquee({
       ref={root}
       data-slot="marquee"
       className={cn(
-        "group flex overflow-hidden",
+        "group/marquee flex overflow-hidden",
         vertical ? "flex-col" : "flex-row",
         className
       )}
@@ -106,7 +106,7 @@ export function Marquee({
               : "animate-marquee flex-row",
             reverse && "[animation-direction:reverse]",
             (paused || !onScreen) && "[animation-play-state:paused]",
-            pauseOnHover && "group-hover:[animation-play-state:paused]",
+            pauseOnHover && "group-hover/marquee:[animation-play-state:paused]",
             // A marquee that stops dead for reduced motion leaves half a row
             // cut off, so the whole track is frozen at its start instead.
             "motion-reduce:animate-none"

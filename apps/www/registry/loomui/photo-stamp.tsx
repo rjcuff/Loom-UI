@@ -340,7 +340,7 @@ export function PhotoStamp({
             WebkitTapHighlightColor: "transparent",
             borderRadius: `${radius}px`,
           }}
-          className="focus-visible:outline-ring group block focus-visible:outline-2 focus-visible:outline-offset-4"
+          className="focus-visible:outline-ring group/stamp block focus-visible:outline-2 focus-visible:outline-offset-4"
         >
           {/* The shadow is the only thing hover changes. Anything that moved
               the photo would change what `getBoundingClientRect` reports, and
@@ -355,7 +355,7 @@ export function PhotoStamp({
               visibility: mounted ? "hidden" : undefined,
             }}
             className={cn(
-              "ease-out-quart block h-24 w-32 object-cover shadow-[0_2px_6px_rgb(0_0_0/0.18)] transition-shadow duration-180 select-none group-hover:shadow-[0_4px_14px_rgb(0_0_0/0.24)] motion-reduce:transition-none",
+              "ease-out-quart block h-24 w-32 object-cover shadow-[0_2px_6px_rgb(0_0_0/0.18)] transition-shadow duration-180 select-none group-hover/stamp:shadow-[0_4px_14px_rgb(0_0_0/0.24)] motion-reduce:transition-none",
               imageClassName
             )}
           />

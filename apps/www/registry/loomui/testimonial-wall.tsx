@@ -77,7 +77,7 @@ export function TestimonialWall({
     <div
       ref={root}
       data-slot="testimonial-wall"
-      className={cn("group flex h-[32rem] overflow-hidden", className)}
+      className={cn("group/wall flex h-[32rem] overflow-hidden", className)}
       style={{
         gap,
         WebkitMaskImage: mask,
@@ -116,7 +116,8 @@ export function TestimonialWall({
                 // never travel together and the wall reads as depth.
                 index % 2 === 1 && "[animation-direction:reverse]",
                 paused && "[animation-play-state:paused]",
-                pauseOnHover && "group-hover:[animation-play-state:paused]",
+                pauseOnHover &&
+                  "group-hover/wall:[animation-play-state:paused]",
                 // A column that stops dead leaves half a card cut off, so the
                 // whole wall is frozen at its start instead.
                 "motion-reduce:animate-none"

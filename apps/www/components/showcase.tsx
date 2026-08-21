@@ -15,11 +15,7 @@ import { ProgressRing } from "@/registry/loomui/progress-ring"
 import { ScrambleText } from "@/registry/loomui/scramble-text"
 import { SplitFlap } from "@/registry/loomui/split-flap"
 import { Spool, SpoolItem } from "@/registry/loomui/spool"
-import {
-  Terminal,
-  TerminalCommand,
-  TerminalOutput,
-} from "@/registry/loomui/terminal"
+import { TestimonialWall } from "@/registry/loomui/testimonial-wall"
 import { TrendStack } from "@/registry/loomui/trend-stack"
 import { Typewriter } from "@/registry/loomui/typewriter"
 
@@ -29,7 +25,6 @@ const TALLY = [48291, 1204, 99640]
 const SPOOL_STATES = ["idle", "playing", "saved"]
 const SCRAMBLE = ["Woven in place", "One file, yours", "No runtime"]
 
-/** Advances an index on an interval. */
 function useCycle(length: number, every: number) {
   const [index, setIndex] = React.useState(0)
 
@@ -44,28 +39,7 @@ function useCycle(length: number, every: number) {
   return index
 }
 
-/** The mark printed beside a finished step. */
-function Tick() {
-  return (
-    <IconMorph
-      set="chevron"
-      active
-      className="text-accent inline-block size-3 align-[-1px]"
-    />
-  )
-}
-
-/**
- * True on a phone.
- *
- * The grid holds its arrival until it is scrolled to, which is right on a
- * desktop where it is about one screen tall and wrong on a phone where it is
- * six. There the whole section sits blank behind the fold, and the first thing
- * anyone scrolling gets is a wall of nothing.
- *
- * Matches Tailwind's `sm`, so the breakpoint here and the one the grid lays
- * itself out on cannot drift apart.
- */
+/** Matches the `sm` the grid lays itself out on, so the two cannot drift. */
 function useSmallScreen() {
   const [small, setSmall] = React.useState(false)
 
@@ -80,7 +54,6 @@ function useSmallScreen() {
   return small
 }
 
-/** The caption under a tile. The component itself is the argument above it. */
 function Caption({ name, line }: { name: string; line: string }) {
   return (
     <div className="mt-4">
@@ -90,11 +63,7 @@ function Caption({ name, line }: { name: string; line: string }) {
   )
 }
 
-/**
- * A tile. The preview fills what is left after the caption, and clips, so a
- * piece bigger than its cell is cut off at the edge rather than pushing the
- * grid around.
- */
+/** Preview fills what is left after the caption, and clips. */
 function Tile({
   name,
   line,
@@ -116,17 +85,23 @@ function Tile({
       <Link
         href={href}
         aria-label={name}
-        className="focus-visible:ring-ring/60 flex h-full flex-col p-5 focus-visible:ring-2 focus-visible:outline-none"
+        className="focus-visible:ring-ring/60 flex h-full flex-col focus-visible:ring-2 focus-visible:outline-none"
       >
+        {/* A piece with its own card gets nearly the whole tile: it is
+            already padded, and stacking the tile's on top inset it twice.
+            Tighter on the left than the right, because the last x-axis label
+            is centred on the plot's right edge and hangs past it. */}
         <div
           className={cn(
             "relative min-h-0 flex-1 overflow-hidden",
-            frame && "grid place-items-center"
+            frame ? "grid place-items-center p-5 pb-0" : "pt-3 pr-4 pl-2"
           )}
         >
           {children}
         </div>
-        <Caption name={name} line={line} />
+        <div className="px-5 pb-5">
+          <Caption name={name} line={line} />
+        </div>
       </Link>
     </BentoCard>
   )
@@ -185,7 +160,9 @@ function SpoolPreview() {
   const value = SPOOL_STATES[useCycle(SPOOL_STATES.length, 2400)]
 
   return (
-    <Spool value={value}>
+    // No shadow: the tile is already a card, and a second one under the pill
+    // reads as a layer that is not there.
+    <Spool value={value} className="shadow-none">
       <SpoolItem value="idle">
         <span className="bg-muted-foreground/40 size-2 rounded-full" />
         <span className="text-sm font-medium">Idle</span>
@@ -219,6 +196,49 @@ const FUNNEL = [
   { name: "Finished", value: 640 },
 ]
 
+const QUOTES = [
+  {
+    name: "Ada",
+    handle: "@ada",
+    body: "Shipped the landing page in an afternoon.",
+  },
+  {
+    name: "Ren",
+    handle: "@ren",
+    body: "Motion I can hand to a designer without a meeting.",
+  },
+  {
+    name: "Kofi",
+    handle: "@kofi",
+    body: "The off switch is the reason I kept it.",
+  },
+  {
+    name: "Mira",
+    handle: "@mira",
+    body: "Reads like code I would have written myself.",
+  },
+  {
+    name: "Otto",
+    handle: "@otto",
+    body: "One file. No package to babysit for a year.",
+  },
+  {
+    name: "Suki",
+    handle: "@suki",
+    body: "Reduced motion was already handled.",
+  },
+  {
+    name: "Iris",
+    handle: "@iris",
+    body: "Every timing I wanted to change was a prop.",
+  },
+  {
+    name: "Bo",
+    handle: "@bo",
+    body: "Dark mode looked right on the first try.",
+  },
+]
+
 const SOURCES = [
   { name: "Search", value: 4820 },
   { name: "Direct", value: 2140 },
@@ -226,20 +246,20 @@ const SOURCES = [
   { name: "Newsletter", value: 890 },
 ]
 
-/**
- * The grid under the marquee. Everything here runs on its own clock, which is
- * why it is here and not on the row above: nothing in this grid is being
- * translated while it animates.
- */
 export function Showcase() {
   const small = useSmallScreen()
 
   return (
-    <section aria-label="Components, running">
+    <section aria-labelledby="showcase-heading">
       <div className="mx-auto w-full max-w-6xl px-5 pb-20 sm:pb-24">
-        {/* On a phone the tiles are simply there. The charts inside still
-            wait for their own moment, so nothing is spent on a reveal nobody
-            is looking at. */}
+        {/* The tiles are the argument, so the heading is not drawn. It is
+            still a heading: the section had only an `aria-label`, which names
+            a region without placing it in the document outline. */}
+        <h2 id="showcase-heading" className="sr-only">
+          Components in the loom React design system
+        </h2>
+        {/* On a phone the tiles are simply there: the grid is six screens
+            tall, so holding them for a scroll leaves the section blank. */}
         <BentoGrid startOnView={!small} className="sm:grid-cols-4">
           <Tile
             name="Trend Stack"
@@ -333,33 +353,37 @@ export function Showcase() {
           </Tile>
 
           <Tile
-            name="Terminal"
-            line="Types its commands, then prints the answer."
-            href="/docs/components/terminal"
+            name="Testimonial Wall"
+            line="Columns that drift at their own speeds."
+            href="/docs/components/testimonial-wall"
             frame={false}
             className="sm:col-span-2 sm:row-span-2"
           >
-            <Terminal title="~/acme-app" className="h-full">
-              <TerminalCommand>
-                npx shadcn@latest add @loomui/gauge-arc
-              </TerminalCommand>
-              <TerminalOutput delay={420}>
-                Checking registry at loomui.design
-              </TerminalOutput>
-              <TerminalOutput delay={320}>
-                <Tick /> Installed gauge-arc.tsx
-              </TerminalOutput>
-              <TerminalOutput delay={220}>
-                <Tick /> Installed chart-frame.tsx
-              </TerminalOutput>
-              <TerminalOutput delay={220}>
-                <Tick /> Updated app/globals.css
-              </TerminalOutput>
-              <TerminalCommand>pnpm dev</TerminalCommand>
-              <TerminalOutput delay={380}>
-                ready on http://localhost:3000
-              </TerminalOutput>
-            </Terminal>
+            {/* `h-full` deadlocks against `auto` rows. Out of flow it fills
+                whatever the tile beside it settles the row at. */}
+            <TestimonialWall
+              // Its own padding: `inset-0` resolves against the padding box,
+              // so a pad on the tile is ignored here.
+              className="h-72 w-full p-3 sm:absolute sm:inset-0 sm:h-auto sm:w-auto"
+              columns={2}
+              duration={38}
+              speeds={[1, 1.35]}
+            >
+              {QUOTES.map((quote) => (
+                <figure
+                  key={quote.handle}
+                  className="bg-card rounded-xl border p-4"
+                >
+                  <blockquote className="text-sm text-pretty">
+                    {quote.body}
+                  </blockquote>
+                  <figcaption className="text-muted-foreground mt-3 text-xs">
+                    {quote.name}{" "}
+                    <span className="opacity-70">{quote.handle}</span>
+                  </figcaption>
+                </figure>
+              ))}
+            </TestimonialWall>
           </Tile>
 
           <Tile

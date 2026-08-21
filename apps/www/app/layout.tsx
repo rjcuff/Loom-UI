@@ -87,6 +87,10 @@ export default function RootLayout({
           attribute="class"
           defaultTheme="light"
           enableSystem={false}
+          // Flipping the theme changes hundreds of colours at once, and every
+          // element carrying a colour transition would animate its own way
+          // across. The switch should read as the page already being dark.
+          disableTransitionOnChange
         >
           <TooltipProvider>{children}</TooltipProvider>
         </ThemeProvider>
