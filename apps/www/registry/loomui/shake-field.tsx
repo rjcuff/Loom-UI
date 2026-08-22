@@ -96,22 +96,25 @@ export function ShakeField({
         {children}
       </div>
 
-      {/* `0fr` to `1fr` on a grid row: the panel opens to whatever height the
-          message happens to be, with nothing measured and nothing hardcoded. */}
+      {/* Two moves, in order. The row opens first, then the message fades
+          up into the space that is already there.
+
+          Sliding the text while the row is still opening drags it through the
+          clip edge, and that hard line reading across the message is the part
+          that looks wrong. Waiting for the room means nothing is ever half cut
+          off, and the delay is shorter than the open so the two still read as
+          one movement.
+
+          The row itself is `0fr` to `1fr`, so the panel takes whatever height
+          the message turns out to be with nothing measured and no fixed height
+          to keep in sync when the copy changes. */}
       <div
         className={cn(
           "ease-out-quart grid transition-[grid-template-rows] duration-200 motion-reduce:transition-none",
           error ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
         )}
       >
-        <div className="overflow-hidden">
-          {/* Opacity, offset and blur together. Any one of the three on its
-              own reads as a fade; all three read as something arriving, and
-              the message should look like it came from the field rather than
-              like it was always there at zero opacity.
-
-              The blur stays small. A wide one spreads badly and costs more
-              than it is worth, worst of all in Safari. */}
+        <div className="min-h-0">
           <p
             id={`${id}-error`}
             // Announced when it appears, and not before. `alert` interrupts,
@@ -119,11 +122,11 @@ export function ShakeField({
             role="alert"
             className={cn(
               "text-destructive ease-out-quart pt-1.5 text-sm",
-              "transition-[opacity,translate,filter] duration-200",
-              "motion-reduce:translate-y-0 motion-reduce:blur-none motion-reduce:transition-none",
+              "transition-[opacity,filter] duration-150",
+              "motion-reduce:blur-none motion-reduce:transition-none",
               error
-                ? "translate-y-0 opacity-100 blur-none"
-                : "-translate-y-1 opacity-0 blur-[2px]"
+                ? "opacity-100 blur-none delay-100"
+                : "opacity-0 blur-[2px] delay-0"
             )}
           >
             {error}

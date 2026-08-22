@@ -900,6 +900,7 @@ Install: npx shadcn@latest add @loomui/confetti-button
 "use client"
 
 import * as React from "react"
+import { createPortal } from "react-dom"
 
 import { cn } from "@/lib/utils"
 
@@ -945,8 +946,17 @@ export function ConfettiButton({
   ...props
 }: ConfettiButtonProps) {
   const [pieces, setPieces] = React.useState<Piece[]>([])
+  // Where on the screen the burst is thrown from, measured at the moment of
+  // the press.
+  const [origin, setOrigin] = React.useState<{ x: number; y: number } | null>(
+    null
+  )
+  const button = React.useRef<HTMLButtonElement>(null)
   const nextId = React.useRef(0)
   const timers = React.useRef<number[]>([])
+  const [mounted, setMounted] = React.useState(false)
+
+  React.useEffect(() => setMounted(true), [])
 
   React.useEffect(() => {
     const pending = timers.current
@@ -960,6 +970,11 @@ export function ConfettiButton({
   const burst = React.useCallback(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       return
+    }
+
+    const box = button.current?.getBoundingClientRect()
+    if (box) {
+      setOrigin({ x: box.left + box.width / 2, y: box.top + box.height / 2 })
     }
 
     const palette = colors.length > 0 ? colors : DEFAULT_COLORS
@@ -995,8 +1010,9 @@ export function ConfettiButton({
     timers.current.push(timer)
   }, [colors, count, duration, spread])
 
-  return (
+  const node = (
     <button
+      ref={button}
       // Native default is `submit`. A burst inside a form would be cut off by
       // the navigation it triggered. `...props` below still lets a caller ask
       // for a submit button explicitly.
@@ -1017,43 +1033,65 @@ export function ConfettiButton({
       style={style}
       {...props}
     >
-      {/* Pinned to the middle of the button and not clipped by it, so the
-          throw carries past the edge the way it should. */}
-      <span
-        aria-hidden="true"
-        className="pointer-events-none absolute top-1/2 left-1/2 z-10 size-0"
-      >
-        {pieces.map((piece) => (
-          <span
-            key={piece.id}
-            className="animate-confetti-drift absolute block motion-reduce:hidden"
-            style={
-              {
-                "--confetti-duration": `${duration}ms`,
-                "--drift": `${piece.drift}px`,
-              } as React.CSSProperties
-            }
-          >
-            <span
-              className="animate-confetti-fall block"
-              style={
-                {
-                  width: piece.size,
-                  height: piece.size,
-                  background: piece.color,
-                  borderRadius: piece.radius,
-                  "--confetti-duration": `${duration}ms`,
-                  "--rise": `${piece.rise}px`,
-                  "--fall": `${piece.fall}px`,
-                  "--spin": `${piece.spin}deg`,
-                } as React.CSSProperties
-              }
-            />
-          </span>
-        ))}
-      </span>
       {children}
     </button>
+  )
+
+  return (
+    <>
+      {node}
+      {/* Thrown from a fixed layer at the top of the document rather than from
+          inside the button.
+
+          An absolutely positioned piece still counts toward the page's
+          scrollable area, so a burst near the bottom of a short page pushed the
+          document taller for the length of the animation: a scrollbar appeared,
+          the layout reflowed around it, and it vanished again when the pieces
+          were cleared. Measured overhang was 142px below the document. A fixed
+          layer contributes nothing to scroll overflow, in any browser.
+
+          It also escapes any `overflow: hidden` between here and the body,
+          which is the other thing that used to cut a burst in half. */}
+      {mounted && origin && pieces.length > 0
+        ? createPortal(
+            <span
+              aria-hidden="true"
+              className="pointer-events-none fixed z-50 size-0"
+              style={{ left: origin.x, top: origin.y }}
+            >
+              {pieces.map((piece) => (
+                <span
+                  key={piece.id}
+                  className="animate-confetti-drift absolute block motion-reduce:hidden"
+                  style={
+                    {
+                      "--confetti-duration": `${duration}ms`,
+                      "--drift": `${piece.drift}px`,
+                    } as React.CSSProperties
+                  }
+                >
+                  <span
+                    className="animate-confetti-fall block"
+                    style={
+                      {
+                        width: piece.size,
+                        height: piece.size,
+                        background: piece.color,
+                        borderRadius: piece.radius,
+                        "--confetti-duration": `${duration}ms`,
+                        "--rise": `${piece.rise}px`,
+                        "--fall": `${piece.fall}px`,
+                        "--spin": `${piece.spin}deg`,
+                      } as React.CSSProperties
+                    }
+                  />
+                </span>
+              ))}
+            </span>,
+            document.body
+          )
+        : null}
+    </>
   )
 }
 
@@ -1838,7 +1876,11 @@ export interface ElasticTabsProps extends Omit<
   defaultValue?: string
   /** Called with the value of the tab moved to. */
   onValueChange?: (value: string) => void
-  /** Length of the whole travel, in milliseconds. */
+  /**
+   * Length of the whole travel, in milliseconds. The stretch takes the first
+   * part of it and the contraction the rest, so this is the number you feel
+   * rather than the length of either half.
+   */
   duration?: number
 }
 
@@ -1849,7 +1891,7 @@ export function ElasticTabs({
   value,
   defaultValue,
   onValueChange,
-  duration = 280,
+  duration = 200,
   className,
   ...props
 }: ElasticTabsProps) {
@@ -1915,9 +1957,12 @@ export function ElasticTabs({
     const end = Math.max(from.left + from.width, target.left + target.width)
     setPill({ left: start, width: end - start })
 
+    // The stretch is allowed to finish before the contraction starts. Cutting
+    // it off part way meant the pill was still accelerating when it was handed
+    // a new target, and that change of speed is what read as a stutter.
     const timer = window.setTimeout(
       () => setPill(measure(index)),
-      duration * 0.4
+      duration * 0.45
     )
     return () => window.clearTimeout(timer)
   }, [index, measure, duration])
@@ -1975,12 +2020,15 @@ export function ElasticTabs({
         className={cn(
           "bg-background absolute inset-y-1 rounded-full shadow-sm",
           settled &&
-            "transition-[left,width] ease-[var(--ease-out-quart)] motion-reduce:transition-none"
+            // Leaves hard and lands soft, which is what a shape stretching
+            // across a gap and gathering back up wants. Quart is the house
+            // default and is a little too even for this one.
+            "transition-[left,width] ease-[var(--ease-out-expo)] motion-reduce:transition-none"
         )}
         style={{
           left: pill.left,
           width: pill.width,
-          transitionDuration: `${duration * 0.62}ms`,
+          transitionDuration: `${duration * 0.45}ms`,
         }}
       />
 
@@ -7450,22 +7498,25 @@ export function ShakeField({
         {children}
       </div>
 
-      {/* `0fr` to `1fr` on a grid row: the panel opens to whatever height the
-          message happens to be, with nothing measured and nothing hardcoded. */}
+      {/* Two moves, in order. The row opens first, then the message fades
+          up into the space that is already there.
+
+          Sliding the text while the row is still opening drags it through the
+          clip edge, and that hard line reading across the message is the part
+          that looks wrong. Waiting for the room means nothing is ever half cut
+          off, and the delay is shorter than the open so the two still read as
+          one movement.
+
+          The row itself is `0fr` to `1fr`, so the panel takes whatever height
+          the message turns out to be with nothing measured and no fixed height
+          to keep in sync when the copy changes. */}
       <div
         className={cn(
           "ease-out-quart grid transition-[grid-template-rows] duration-200 motion-reduce:transition-none",
           error ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
         )}
       >
-        <div className="overflow-hidden">
-          {/* Opacity, offset and blur together. Any one of the three on its
-              own reads as a fade; all three read as something arriving, and
-              the message should look like it came from the field rather than
-              like it was always there at zero opacity.
-
-              The blur stays small. A wide one spreads badly and costs more
-              than it is worth, worst of all in Safari. */}
+        <div className="min-h-0">
           <p
             id={`${id}-error`}
             // Announced when it appears, and not before. `alert` interrupts,
@@ -7473,11 +7524,11 @@ export function ShakeField({
             role="alert"
             className={cn(
               "text-destructive ease-out-quart pt-1.5 text-sm",
-              "transition-[opacity,translate,filter] duration-200",
-              "motion-reduce:translate-y-0 motion-reduce:blur-none motion-reduce:transition-none",
+              "transition-[opacity,filter] duration-150",
+              "motion-reduce:blur-none motion-reduce:transition-none",
               error
-                ? "translate-y-0 opacity-100 blur-none"
-                : "-translate-y-1 opacity-0 blur-[2px]"
+                ? "opacity-100 blur-none delay-100"
+                : "opacity-0 blur-[2px] delay-0"
             )}
           >
             {error}

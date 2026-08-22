@@ -21,7 +21,11 @@ export interface ElasticTabsProps extends Omit<
   defaultValue?: string
   /** Called with the value of the tab moved to. */
   onValueChange?: (value: string) => void
-  /** Length of the whole travel, in milliseconds. */
+  /**
+   * Length of the whole travel, in milliseconds. The stretch takes the first
+   * part of it and the contraction the rest, so this is the number you feel
+   * rather than the length of either half.
+   */
   duration?: number
 }
 
@@ -32,7 +36,7 @@ export function ElasticTabs({
   value,
   defaultValue,
   onValueChange,
-  duration = 280,
+  duration = 200,
   className,
   ...props
 }: ElasticTabsProps) {
@@ -98,9 +102,12 @@ export function ElasticTabs({
     const end = Math.max(from.left + from.width, target.left + target.width)
     setPill({ left: start, width: end - start })
 
+    // The stretch is allowed to finish before the contraction starts. Cutting
+    // it off part way meant the pill was still accelerating when it was handed
+    // a new target, and that change of speed is what read as a stutter.
     const timer = window.setTimeout(
       () => setPill(measure(index)),
-      duration * 0.4
+      duration * 0.45
     )
     return () => window.clearTimeout(timer)
   }, [index, measure, duration])
@@ -158,12 +165,15 @@ export function ElasticTabs({
         className={cn(
           "bg-background absolute inset-y-1 rounded-full shadow-sm",
           settled &&
-            "transition-[left,width] ease-[var(--ease-out-quart)] motion-reduce:transition-none"
+            // Leaves hard and lands soft, which is what a shape stretching
+            // across a gap and gathering back up wants. Quart is the house
+            // default and is a little too even for this one.
+            "transition-[left,width] ease-[var(--ease-out-expo)] motion-reduce:transition-none"
         )}
         style={{
           left: pill.left,
           width: pill.width,
-          transitionDuration: `${duration * 0.62}ms`,
+          transitionDuration: `${duration * 0.45}ms`,
         }}
       />
 

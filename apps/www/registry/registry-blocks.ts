@@ -109,8 +109,6 @@ export const blocks: Registry["items"] = [
     categories: ["authentication"],
     registryDependencies: [
       "@loomui/confetti-button",
-      "@loomui/icon-morph",
-      "@loomui/progress-ring",
       "@loomui/shake-field",
       "@loomui/unfold-list",
     ],

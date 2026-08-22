@@ -4,33 +4,27 @@ import * as React from "react"
 
 import { cn } from "@/lib/utils"
 import { ConfettiButton } from "@/registry/loomui/confetti-button"
-import { IconMorph } from "@/registry/loomui/icon-morph"
-import { ProgressRing } from "@/registry/loomui/progress-ring"
 import { ShakeField } from "@/registry/loomui/shake-field"
 import { UnfoldItem, UnfoldList } from "@/registry/loomui/unfold-list"
 
 /**
- * A sign-up screen with a password meter that springs.
+ * A sign-up screen with a four segment password meter.
  *
- * The ring is driven by a spring rather than a transition, so typing a long
- * password does not queue five animations behind each other: each keystroke
- * retargets the one that is already running and carries its velocity into the
- * next. Strength is also named, never colour alone.
+ * The meter is four segments because there are four rules, so the shape says
+ * how much is left without anyone reading a percentage. Strength is named as
+ * well as drawn, and only the rules still outstanding are written out.
  */
 
+/** Worded to drop into "Still needs 12 characters and a symbol." */
 const RULES = [
-  {
-    id: "length",
-    label: "12 characters or more",
-    test: (v: string) => v.length >= 12,
-  },
+  { id: "length", short: "12 characters", test: (v: string) => v.length >= 12 },
   {
     id: "case",
-    label: "Upper and lower case",
+    short: "upper and lower case",
     test: (v: string) => /[a-z]/.test(v) && /[A-Z]/.test(v),
   },
-  { id: "number", label: "A number", test: (v: string) => /\d/.test(v) },
-  { id: "symbol", label: "A symbol", test: (v: string) => /[^\w\s]/.test(v) },
+  { id: "number", short: "a number", test: (v: string) => /\d/.test(v) },
+  { id: "symbol", short: "a symbol", test: (v: string) => /[^\w\s]/.test(v) },
 ]
 
 const STRENGTH = ["Too short", "Weak", "Fair", "Good", "Strong"]
@@ -140,7 +134,13 @@ export default function SignupForm() {
 
   const passed = RULES.filter((rule) => rule.test(password))
   const score = passed.length
-  const percent = (score / RULES.length) * 100
+  const unmet = RULES.filter((rule) => !rule.test(password)).map((r) => r.short)
+  const missing =
+    unmet.length === 0
+      ? null
+      : unmet.length === 1
+        ? unmet[0]
+        : `${unmet.slice(0, -1).join(", ")} and ${unmet[unmet.length - 1]}`
   const ready = score === RULES.length
 
   return (
@@ -224,55 +224,39 @@ export default function SignupForm() {
                 </button>
               </Field>
 
-              {/* Strength is named as well as drawn. A ring alone asks the reader
-                to guess what a three-quarter ring means. */}
-              <div className="mt-4 flex items-center gap-4">
-                <ProgressRing
-                  value={percent}
-                  size={56}
-                  label="Password strength"
-                  className="shrink-0"
-                />
-                <div className="min-w-0">
-                  <p className="text-sm font-medium">{STRENGTH[score]}</p>
-                  <ul className="mt-1.5 space-y-1">
-                    {RULES.map((rule) => {
-                      const ok = rule.test(password)
-                      return (
-                        <li
-                          key={rule.id}
-                          className={cn(
-                            "flex items-center gap-1.5 text-xs transition-colors duration-150",
-                            ok ? "text-foreground" : "text-muted-foreground"
-                          )}
-                        >
-                          {/* A dot until the rule is met, then the tick morphs
-                            in over it. The shape IconMorph starts from is a
-                            chevron, and a row of faint chevrons reads as a
-                            list of links. */}
-                          <span className="relative grid size-3 shrink-0 place-items-center">
-                            <span
-                              aria-hidden
-                              className={cn(
-                                "bg-muted-foreground/40 ease-out-quart absolute size-1.5 rounded-full transition-opacity duration-150",
-                                ok ? "opacity-0" : "opacity-100"
-                              )}
-                            />
-                            <IconMorph
-                              set="chevron"
-                              active={ok}
-                              className={cn(
-                                "text-accent ease-out-quart size-3 transition-opacity duration-150",
-                                ok ? "opacity-100" : "opacity-0"
-                              )}
-                            />
-                          </span>
-                          {rule.label}
-                        </li>
-                      )
-                    })}
-                  </ul>
+              {/* Four segments, because there are four rules. The shape says
+                  how many are left without anyone reading a percentage off a
+                  ring, and only what is still missing is written out: four
+                  permanent ticks are four things to read every time, and three
+                  of them are already done. */}
+              <div className="mt-3">
+                <div className="flex items-center gap-3">
+                  <div className="flex min-w-0 flex-1 gap-1">
+                    {RULES.map((rule, position) => (
+                      <span
+                        key={rule.id}
+                        className={cn(
+                          "ease-out-quart h-1 flex-1 rounded-full transition-colors duration-200",
+                          position < score ? "bg-accent" : "bg-muted"
+                        )}
+                      />
+                    ))}
+                  </div>
+                  <span
+                    className={cn(
+                      "shrink-0 text-xs font-medium",
+                      ready ? "text-accent" : "text-muted-foreground"
+                    )}
+                  >
+                    {STRENGTH[score]}
+                  </span>
                 </div>
+
+                {missing ? (
+                  <p className="text-muted-foreground mt-2 text-xs">
+                    Still needs {missing}.
+                  </p>
+                ) : null}
               </div>
             </ShakeField>
           </Row>

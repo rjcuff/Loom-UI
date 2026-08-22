@@ -299,8 +299,6 @@
       "description": "A sign-up screen with a password meter driven by a spring, so each keystroke retargets the ring rather than queueing behind the last one.",
       "registryDependencies": [
         "@loomui/confetti-button",
-        "@loomui/icon-morph",
-        "@loomui/progress-ring",
         "@loomui/shake-field",
         "@loomui/unfold-list"
       ],

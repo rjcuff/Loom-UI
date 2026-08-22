@@ -31,7 +31,11 @@ export const docsConfig: DocsConfig = {
         { title: "Introduction", href: "/docs/introduction" },
         { title: "Installation", href: "/docs/installation" },
         { title: "Theming", href: "/docs/theming" },
-        { title: "Blocks", href: "/blocks" },
+        {
+          title: "Blocks",
+          href: "/blocks",
+          badge: { text: "New", variant: "new" },
+        },
         { title: "All Components", href: DOCS_ENTRY },
       ],
     },
@@ -50,22 +54,18 @@ export const docsConfig: DocsConfig = {
         {
           title: "Spool",
           href: "/docs/components/spool",
-          badge: { text: "New", variant: "new" },
         },
         {
           title: "Photo Stamp",
           href: "/docs/components/photo-stamp",
-          badge: { text: "New", variant: "new" },
         },
         {
           title: "Icon Morph",
           href: "/docs/components/icon-morph",
-          badge: { text: "New", variant: "new" },
         },
         {
           title: "Progress Ring",
           href: "/docs/components/progress-ring",
-          badge: { text: "New", variant: "new" },
         },
         {
           title: "Elastic Tabs",
@@ -131,7 +131,6 @@ export const docsConfig: DocsConfig = {
     },
     {
       title: "Charts",
-      badge: { text: "New", variant: "new" },
       items: [
         {
           title: "Trend Stack",
@@ -236,7 +235,6 @@ export const docsConfig: DocsConfig = {
         {
           title: "Light Curtain",
           href: "/docs/components/light-curtain",
-          badge: { text: "New", variant: "new" },
         },
         {
           title: "Grid Beams",

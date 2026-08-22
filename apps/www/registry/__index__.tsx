@@ -69,7 +69,7 @@ export const Index: Record<string, any> = {
     title: "Signup",
     description: "A sign-up screen with a password meter driven by a spring, so each keystroke retargets the ring rather than queueing behind the last one.",
     dependencies: [],
-    registryDependencies: ["@loomui/confetti-button","@loomui/icon-morph","@loomui/progress-ring","@loomui/shake-field","@loomui/unfold-list"],
+    registryDependencies: ["@loomui/confetti-button","@loomui/shake-field","@loomui/unfold-list"],
     categories: ["authentication"],
     files: [{"path":"registry/blocks/signup-form.tsx","type":"registry:block","target":""}],
     component: React.lazy(async () => {

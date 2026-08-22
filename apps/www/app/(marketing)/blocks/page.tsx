@@ -54,7 +54,7 @@ export default function BlocksPage() {
             a narrow column gives every line a different start and the eye has
             to find each one. Centred from `sm`, where the lines are long
             enough for the shape to read as deliberate. */}
-        <div className="mx-auto flex w-full max-w-5xl flex-col items-start px-5 pt-16 pb-10 text-left sm:items-center sm:pt-24 sm:pb-12 sm:text-center">
+        <div className="mx-auto flex w-full max-w-5xl flex-col items-start px-5 pt-22 pb-14 text-left sm:items-center sm:pt-34 sm:pb-16 sm:text-center">
           <h1 className="animate-rise text-display font-semibold text-balance sm:text-5xl">
             Blocks, already assembled
           </h1>
