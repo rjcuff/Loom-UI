@@ -92,10 +92,11 @@ function Stat({
   return (
     <div>
       <p className="text-muted-foreground text-xs">{label}</p>
-      {/* Wraps rather than clips. At two columns on a phone a long figure and
-          its delta do not fit on one line, and the badge was being cut off at
-          the card's edge. */}
-      <p className="mt-1 flex flex-wrap items-baseline gap-x-2 gap-y-1">
+      {/* Stacked on a phone, side by side from `sm`. At two columns a long
+          figure and its delta do not share a line, and stacking them puts the
+          three parts in the order they should be read: what it counts, the
+          number, then how it moved. */}
+      <p className="mt-1 flex flex-col items-start gap-1 sm:flex-row sm:items-baseline sm:gap-2">
         <span className="text-xl font-semibold tabular-nums sm:text-2xl">
           {prefix}
           <CountUp value={value} />

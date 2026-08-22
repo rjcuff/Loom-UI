@@ -154,6 +154,28 @@ function Block({ entry }: { entry: BlockEntry }) {
  */
 export function BlockBrowser({ blocks }: { blocks: BlockEntry[] }) {
   const [name, setName] = React.useState(blocks[0]?.name ?? "")
+  const rail = React.useRef<HTMLDivElement>(null)
+  const [overflowing, setOverflowing] = React.useState(false)
+
+  // A tab sliced off at the edge reads as broken rather than as more to come.
+  //
+  // The scroller is the tab group itself, not this wrapper: ElasticTabs is
+  // `max-w-full overflow-x-auto`, so the wrapper never overflows and measuring
+  // it always said no. Measured rather than assumed, so the fade is never
+  // painted over the last tab when everything already fits.
+  React.useEffect(() => {
+    const node = rail.current?.querySelector<HTMLElement>(
+      "[data-slot='elastic-tabs']"
+    )
+    if (!node || typeof ResizeObserver === "undefined") return
+
+    const read = () => setOverflowing(node.scrollWidth > node.clientWidth + 1)
+    read()
+
+    const observer = new ResizeObserver(read)
+    observer.observe(node)
+    return () => observer.disconnect()
+  }, [blocks])
 
   const items = React.useMemo(
     () => blocks.map((block) => ({ value: block.name, label: block.title })),
@@ -167,11 +189,16 @@ export function BlockBrowser({ blocks }: { blocks: BlockEntry[] }) {
     <>
       {/* The pill stretches across both tabs before it lands on the one you
           picked, which is the whole reason this is not three buttons. */}
-      <div className="no-scrollbar -mx-5 flex justify-start overflow-x-auto px-5 sm:justify-center">
+      <div ref={rail} className="flex justify-start">
         <ElasticTabs
           items={items}
           value={active.name}
           onValueChange={setName}
+          className={cn(
+            "no-scrollbar",
+            overflowing &&
+              "[mask-image:linear-gradient(to_right,#000_calc(100%-2.5rem),transparent)]"
+          )}
         />
       </div>
 

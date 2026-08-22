@@ -7459,14 +7459,25 @@ export function ShakeField({
         )}
       >
         <div className="overflow-hidden">
+          {/* Opacity, offset and blur together. Any one of the three on its
+              own reads as a fade; all three read as something arriving, and
+              the message should look like it came from the field rather than
+              like it was always there at zero opacity.
+
+              The blur stays small. A wide one spreads badly and costs more
+              than it is worth, worst of all in Safari. */}
           <p
             id={`${id}-error`}
             // Announced when it appears, and not before. `alert` interrupts,
             // which is right for a message the reader asked for by submitting.
             role="alert"
             className={cn(
-              "text-destructive ease-out-quart pt-1.5 text-sm transition-opacity duration-200 motion-reduce:transition-none",
-              error ? "opacity-100" : "opacity-0"
+              "text-destructive ease-out-quart pt-1.5 text-sm",
+              "transition-[opacity,translate,filter] duration-200",
+              "motion-reduce:translate-y-0 motion-reduce:blur-none motion-reduce:transition-none",
+              error
+                ? "translate-y-0 opacity-100 blur-none"
+                : "-translate-y-1 opacity-0 blur-[2px]"
             )}
           >
             {error}

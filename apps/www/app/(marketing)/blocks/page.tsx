@@ -49,8 +49,12 @@ function blocks(): BlockEntry[] {
 export default function BlocksPage() {
   return (
     <>
-      <section className="border-border/60 border-b">
-        <div className="mx-auto flex w-full max-w-5xl flex-col items-start px-5 pt-20 pb-14 text-left sm:items-center sm:pt-28 sm:text-center">
+      <section>
+        {/* Left aligned on a phone. Centred text over three or four lines on
+            a narrow column gives every line a different start and the eye has
+            to find each one. Centred from `sm`, where the lines are long
+            enough for the shape to read as deliberate. */}
+        <div className="mx-auto flex w-full max-w-5xl flex-col items-start px-5 pt-16 pb-10 text-left sm:items-center sm:pt-24 sm:pb-12 sm:text-center">
           <h1 className="animate-rise text-display font-semibold text-balance sm:text-5xl">
             Blocks, already assembled
           </h1>
