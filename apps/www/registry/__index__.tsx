@@ -4,6 +4,61 @@
 import * as React from "react"
 
 export const Index: Record<string, any> = {
+  "theme": {
+    name: "theme",
+    type: "registry:theme",
+    title: "loom design tokens",
+    description: "The whole token layer: colour for both themes, the type scale with its paired line height and letter spacing, elevation, blur, the stacking scale, durations and easing curves. Install this for loom's design system without any particular component.",
+    dependencies: [],
+    registryDependencies: [],
+    files: [],
+    component: null,
+  },
+  "analytics-dashboard": {
+    name: "analytics-dashboard",
+    type: "registry:block",
+    title: "Analytics Dashboard",
+    description: "A dashboard built from loom's charts: four counted stats, a stacked trend, a source gauge and an onboarding funnel, with a range control that replays the reveal.",
+    dependencies: [],
+    registryDependencies: ["@loomui/bento-grid","@loomui/count-up","@loomui/elastic-tabs","@loomui/funnel-rows","@loomui/gauge-arc","@loomui/trend-stack"],
+    files: [{"path":"registry/blocks/analytics-dashboard.tsx","type":"registry:block","target":""}],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/blocks/analytics-dashboard")
+      const exportName =
+        Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
+      return { default: mod.default ?? mod[exportName] }
+    }),
+  },
+  "onboarding-flow": {
+    name: "onboarding-flow",
+    type: "registry:block",
+    title: "Onboarding Flow",
+    description: "A setup checklist with a progress ring, morphing tick marks, a drawer of answers, and a finish button that only celebrates once every step is done.",
+    dependencies: [],
+    registryDependencies: ["@loomui/confetti-button","@loomui/drawer","@loomui/icon-morph","@loomui/progress-ring","@loomui/unfold-list"],
+    files: [{"path":"registry/blocks/onboarding-flow.tsx","type":"registry:block","target":""}],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/blocks/onboarding-flow")
+      const exportName =
+        Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
+      return { default: mod.default ?? mod[exportName] }
+    }),
+  },
+  "marketing-hero": {
+    name: "marketing-hero",
+    type: "registry:block",
+    title: "Marketing Hero",
+    description: "A landing section at marketing pace: an aurora behind a woven headline, a staggered entrance, a logo band that keeps moving, and a bento of counted facts.",
+    dependencies: [],
+    registryDependencies: ["@loomui/bento-grid","@loomui/count-up","@loomui/light-curtain","@loomui/marquee","@loomui/scramble-text","@loomui/weave-text"],
+    files: [{"path":"registry/blocks/marketing-hero.tsx","type":"registry:block","target":""}],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/blocks/marketing-hero")
+      const exportName =
+        Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
+      return { default: mod.default ?? mod[exportName] }
+    }),
+  },
   "weave-text": {
     name: "weave-text",
     type: "registry:ui",

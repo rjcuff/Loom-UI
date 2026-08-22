@@ -3,7 +3,7 @@
   "name": "marquee",
   "type": "registry:ui",
   "title": "Marquee",
-  "description": "A scrolling row or column that loops with no visible seam, in either direction, and pauses on hover.",
+  "description": "A seamless scrolling row or column, in either direction, that pauses on hover.",
   "registryDependencies": [
     "utils",
     "use-in-viewport"

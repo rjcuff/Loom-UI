@@ -3,6 +3,7 @@ import type { MDXComponents } from "mdx/types"
 
 import { cn } from "@/lib/utils"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { BlockPreview } from "@/components/block-preview"
 import { Callout } from "@/components/callout"
 import { CodeBlock } from "@/components/code-block"
 import { ComponentGrid } from "@/components/component-grid"
@@ -170,6 +171,7 @@ export const mdxComponents: MDXComponents = {
   ),
   Callout,
   ComponentGrid,
+  BlockPreview,
   AccentPicker,
   SwatchGrid,
   TypeSpecimen,

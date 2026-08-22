@@ -36,8 +36,8 @@ type RegistryItem = Registry["items"][number]
 const toPosix = (value: string) => value.split(path.sep).join("/")
 
 async function loadRegistry(): Promise<Registry> {
-  const { registry } = await import("../registry/index.ts")
-  return registry
+  const { buildRegistry } = await import("../registry/index.ts")
+  return buildRegistry()
 }
 
 /**

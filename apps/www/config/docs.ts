@@ -21,6 +21,7 @@ export const DOCS_ENTRY = "/docs/components"
 export const docsConfig: DocsConfig = {
   mainNav: [
     { title: "Components", href: DOCS_ENTRY },
+    { title: "Blocks", href: "/docs/blocks" },
     { title: "Installation", href: "/docs/installation" },
   ],
   sidebarNav: [
@@ -30,6 +31,7 @@ export const docsConfig: DocsConfig = {
         { title: "Introduction", href: "/docs/introduction" },
         { title: "Installation", href: "/docs/installation" },
         { title: "Theming", href: "/docs/theming" },
+        { title: "Blocks", href: "/docs/blocks" },
         { title: "All Components", href: DOCS_ENTRY },
       ],
     },

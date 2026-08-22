@@ -11,7 +11,8 @@ function priorityFor(url: string) {
   if (
     url === "/docs/introduction" ||
     url === "/docs/installation" ||
-    url === "/docs/theming"
+    url === "/docs/theming" ||
+    url === "/docs/blocks"
   )
     return 0.9
   if (url === "/docs/components") return 0.9

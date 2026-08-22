@@ -1,0 +1,82 @@
+---
+title: Blocks
+description: Complete sections built from loom components. Install one and get every piece it uses, wired together and ready to edit.
+---
+
+A component shows you what one piece does. A block shows you what they do
+together: which pace suits which surface, when a reveal earns its place, and
+where the pieces stop and your own code starts.
+
+Install a block and the CLI brings every component it uses along with it.
+
+## Analytics Dashboard
+
+Product pace. Nothing here runs longer than `--duration-panel`, and the only
+motion is each chart arriving once when it is scrolled to. A dashboard is read
+every day, and a reveal that was charming on the first visit is a delay on the
+two hundredth.
+
+The range control is the one thing on the page a person touches repeatedly, so
+it is the one thing given a pill that moves. Changing the range remounts the
+trend chart rather than interpolating, because the two ranges are different
+shapes and morphing between them would show a line that was never true.
+
+<BlockPreview
+  name="analytics-dashboard"
+  title="Analytics Dashboard"
+  height={860}
+/>
+
+```bash
+npx shadcn@latest add @loomui/analytics-dashboard
+```
+
+## Onboarding Flow
+
+Mixed pace, deliberately. Ticking a step is something a person does several
+times in a row, so it stays at the UI step and the tick morphs rather than
+crossfading. Finishing happens once, which is the one moment worth spending
+motion on, and nothing is thrown until every step is actually done.
+
+The drawer holds the questions people ask at that exact point. It is a drawer
+rather than a page so the checklist stays behind it, still visible, still where
+it was.
+
+<BlockPreview name="onboarding-flow" title="Onboarding Flow" height={760} />
+
+```bash
+npx shadcn@latest add @loomui/onboarding-flow
+```
+
+## Marketing Hero
+
+Marketing pace, which is the opposite call to the dashboard. This is read once
+and not operated, so the entrance takes its time: each element lands a beat
+after the one above it, because everything arriving together reads mechanical
+and an offset reads as a wave.
+
+The aurora is held well back from what it ships with. A wash that reads as
+ambience across a demo panel is a wall of colour across a whole viewport, and
+everything sitting on it has to fight to stay legible.
+
+<BlockPreview name="marketing-hero" title="Marketing Hero" height={900} />
+
+```bash
+npx shadcn@latest add @loomui/marketing-hero
+```
+
+## What a block brings with it
+
+Every block lists its components as registry dependencies, so installing one
+installs those too, along with the tokens and keyframes each of them needs.
+
+Blocks follow the same rule as components: a block may only use a token its own
+manifest ships. Two of these need nothing beyond what their components already
+bring. `marketing-hero` is the exception, and it declares the two it reaches
+for.
+
+<Callout type="tip" title="They are a starting point">
+  A block is one file. Copy it in, delete the half you do not want, and swap the
+  data for yours. It is not a component with props, and it is not meant to be
+  kept in sync with anything upstream.
+</Callout>

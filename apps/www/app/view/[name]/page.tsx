@@ -15,7 +15,9 @@ export const revalidate = false
 
 export function generateStaticParams() {
   return Object.keys(Index)
-    .filter((name) => name.endsWith("-demo"))
+    .filter(
+      (name) => name.endsWith("-demo") || Index[name].type === "registry:block"
+    )
     .map((name) => ({ name }))
 }
 
@@ -34,6 +36,19 @@ export default async function ViewPage({
 
   if (!Component) {
     notFound()
+  }
+
+  // A block is a whole page and brings its own padding, background and
+  // heading order. Centring it in a padded box the way a single demo is
+  // centred would inset a layout that is meant to run to the edges.
+  const isBlock = Index[name]?.type === "registry:block"
+
+  if (isBlock) {
+    return (
+      <div data-view={name}>
+        <Component />
+      </div>
+    )
   }
 
   return (
