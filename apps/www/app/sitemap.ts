@@ -11,8 +11,7 @@ function priorityFor(url: string) {
   if (
     url === "/docs/introduction" ||
     url === "/docs/installation" ||
-    url === "/docs/theming" ||
-    url === "/docs/blocks"
+    url === "/docs/theming"
   )
     return 0.9
   if (url === "/docs/components") return 0.9
@@ -33,6 +32,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     }))
 
   return [
+    {
+      url: `${siteConfig.url}/blocks`,
+      lastModified,
+      changeFrequency: "weekly" as const,
+      priority: 0.9,
+    },
     {
       url: siteConfig.url,
       lastModified,

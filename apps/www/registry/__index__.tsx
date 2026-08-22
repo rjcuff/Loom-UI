@@ -11,6 +11,7 @@ export const Index: Record<string, any> = {
     description: "The whole token layer: colour for both themes, the type scale with its paired line height and letter spacing, elevation, blur, the stacking scale, durations and easing curves. Install this for loom's design system without any particular component.",
     dependencies: [],
     registryDependencies: [],
+    categories: [],
     files: [],
     component: null,
   },
@@ -21,6 +22,7 @@ export const Index: Record<string, any> = {
     description: "A dashboard built from loom's charts: four counted stats, a stacked trend, a source gauge and an onboarding funnel, with a range control that replays the reveal.",
     dependencies: [],
     registryDependencies: ["@loomui/bento-grid","@loomui/count-up","@loomui/elastic-tabs","@loomui/funnel-rows","@loomui/gauge-arc","@loomui/trend-stack"],
+    categories: ["dashboard"],
     files: [{"path":"registry/blocks/analytics-dashboard.tsx","type":"registry:block","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/blocks/analytics-dashboard")
@@ -36,6 +38,7 @@ export const Index: Record<string, any> = {
     description: "A setup checklist with a progress ring, morphing tick marks, a drawer of answers, and a finish button that only celebrates once every step is done.",
     dependencies: [],
     registryDependencies: ["@loomui/confetti-button","@loomui/drawer","@loomui/icon-morph","@loomui/progress-ring","@loomui/unfold-list"],
+    categories: ["onboarding"],
     files: [{"path":"registry/blocks/onboarding-flow.tsx","type":"registry:block","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/blocks/onboarding-flow")
@@ -44,16 +47,33 @@ export const Index: Record<string, any> = {
       return { default: mod.default ?? mod[exportName] }
     }),
   },
-  "marketing-hero": {
-    name: "marketing-hero",
+  "login-form": {
+    name: "login-form",
     type: "registry:block",
-    title: "Marketing Hero",
-    description: "A landing section at marketing pace: an aurora behind a woven headline, a staggered entrance, a logo band that keeps moving, and a bento of counted facts.",
+    title: "Login",
+    description: "A split sign-in screen. The submit button changes shape through idle, working and done rather than swapping a label for a spinner.",
     dependencies: [],
-    registryDependencies: ["@loomui/bento-grid","@loomui/count-up","@loomui/light-curtain","@loomui/marquee","@loomui/scramble-text","@loomui/weave-text"],
-    files: [{"path":"registry/blocks/marketing-hero.tsx","type":"registry:block","target":""}],
+    registryDependencies: ["@loomui/icon-morph","@loomui/light-curtain","@loomui/ripple-button","@loomui/spool","@loomui/weave-text"],
+    categories: ["authentication"],
+    files: [{"path":"registry/blocks/login-form.tsx","type":"registry:block","target":""}],
     component: React.lazy(async () => {
-      const mod = await import("@/registry/blocks/marketing-hero")
+      const mod = await import("@/registry/blocks/login-form")
+      const exportName =
+        Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
+      return { default: mod.default ?? mod[exportName] }
+    }),
+  },
+  "signup-form": {
+    name: "signup-form",
+    type: "registry:block",
+    title: "Signup",
+    description: "A sign-up screen with a password meter driven by a spring, so each keystroke retargets the ring rather than queueing behind the last one.",
+    dependencies: [],
+    registryDependencies: ["@loomui/confetti-button","@loomui/icon-morph","@loomui/progress-ring","@loomui/unfold-list"],
+    categories: ["authentication"],
+    files: [{"path":"registry/blocks/signup-form.tsx","type":"registry:block","target":""}],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/blocks/signup-form")
       const exportName =
         Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
       return { default: mod.default ?? mod[exportName] }
@@ -66,6 +86,7 @@ export const Index: Record<string, any> = {
     description: "Text filled with a slow-drifting gradient, woven from a palette you control.",
     dependencies: [],
     registryDependencies: ["utils","use-in-viewport"],
+    categories: [],
     files: [{"path":"registry/loomui/weave-text.tsx","type":"registry:ui","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/loomui/weave-text")
@@ -81,6 +102,7 @@ export const Index: Record<string, any> = {
     description: "Words or characters that rise into place one after another, on mount or on scroll.",
     dependencies: [],
     registryDependencies: ["utils"],
+    categories: [],
     files: [{"path":"registry/loomui/stagger-text.tsx","type":"registry:ui","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/loomui/stagger-text")
@@ -96,6 +118,7 @@ export const Index: Record<string, any> = {
     description: "Phrases typed out and deleted in a loop, with a caret and no layout shift.",
     dependencies: [],
     registryDependencies: ["utils"],
+    categories: [],
     files: [{"path":"registry/loomui/typewriter.tsx","type":"registry:ui","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/loomui/typewriter")
@@ -111,6 +134,7 @@ export const Index: Record<string, any> = {
     description: "A string that resolves out of random glyphs, left to right, on mount, on scroll, or on hover.",
     dependencies: [],
     registryDependencies: ["utils"],
+    categories: [],
     files: [{"path":"registry/loomui/scramble-text.tsx","type":"registry:ui","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/loomui/scramble-text")
@@ -126,6 +150,7 @@ export const Index: Record<string, any> = {
     description: "A number that counts to its value when it scrolls into view, without a render per frame.",
     dependencies: [],
     registryDependencies: ["utils"],
+    categories: [],
     files: [{"path":"registry/loomui/count-up.tsx","type":"registry:ui","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/loomui/count-up")
@@ -141,6 +166,7 @@ export const Index: Record<string, any> = {
     description: "Text held out of focus until the pointer passes over it like a magnifying glass.",
     dependencies: [],
     registryDependencies: ["utils"],
+    categories: [],
     files: [{"path":"registry/loomui/lens-text.tsx","type":"registry:ui","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/loomui/lens-text")
@@ -156,6 +182,7 @@ export const Index: Record<string, any> = {
     description: "A departure board that flaps through its glyphs, one cell behind the last, until it lands on the value.",
     dependencies: [],
     registryDependencies: ["utils"],
+    categories: [],
     files: [{"path":"registry/loomui/split-flap.tsx","type":"registry:ui","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/loomui/split-flap")
@@ -171,6 +198,7 @@ export const Index: Record<string, any> = {
     description: "An SVG grid with cells that fade in and out at a deterministic, seeded scatter.",
     dependencies: [],
     registryDependencies: ["utils","use-in-viewport"],
+    categories: [],
     files: [{"path":"registry/loomui/grid-backdrop.tsx","type":"registry:ui","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/loomui/grid-backdrop")
@@ -186,6 +214,7 @@ export const Index: Record<string, any> = {
     description: "A surface with a soft highlight that follows the pointer and fades out on leave.",
     dependencies: [],
     registryDependencies: ["utils"],
+    categories: [],
     files: [{"path":"registry/loomui/spotlight-card.tsx","type":"registry:ui","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/loomui/spotlight-card")
@@ -201,6 +230,7 @@ export const Index: Record<string, any> = {
     description: "An aurora hanging from the top edge, broad bands of colour leaning across each other and falling away down the page.",
     dependencies: [],
     registryDependencies: ["utils","use-in-viewport"],
+    categories: [],
     files: [{"path":"registry/loomui/light-curtain.tsx","type":"registry:ui","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/loomui/light-curtain")
@@ -216,6 +246,7 @@ export const Index: Record<string, any> = {
     description: "A ruled grid with neon beams running down random lines, fading out toward the edges.",
     dependencies: [],
     registryDependencies: ["utils","use-in-viewport"],
+    categories: [],
     files: [{"path":"registry/loomui/grid-beams.tsx","type":"registry:ui","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/loomui/grid-beams")
@@ -231,6 +262,7 @@ export const Index: Record<string, any> = {
     description: "A wash of blurred colour that drifts behind content on cycles that never line up.",
     dependencies: [],
     registryDependencies: ["utils","use-in-viewport"],
+    categories: [],
     files: [{"path":"registry/loomui/aurora-backdrop.tsx","type":"registry:ui","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/loomui/aurora-backdrop")
@@ -246,6 +278,7 @@ export const Index: Record<string, any> = {
     description: "A running stitch sewn along an SVG path as the page scrolls, following the holes it is laid over.",
     dependencies: [],
     registryDependencies: ["utils"],
+    categories: [],
     files: [{"path":"registry/loomui/stitch-path.tsx","type":"registry:ui","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/loomui/stitch-path")
@@ -261,6 +294,7 @@ export const Index: Record<string, any> = {
     description: "A surface that leans away from the pointer in 3D and settles back on leave.",
     dependencies: [],
     registryDependencies: ["utils"],
+    categories: [],
     files: [{"path":"registry/loomui/tilt-card.tsx","type":"registry:ui","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/loomui/tilt-card")
@@ -276,6 +310,7 @@ export const Index: Record<string, any> = {
     description: "A card with two faces that turns in 3D when it is clicked, controlled or on its own.",
     dependencies: [],
     registryDependencies: ["utils"],
+    categories: [],
     files: [{"path":"registry/loomui/flip-card.tsx","type":"registry:ui","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/loomui/flip-card")
@@ -291,6 +326,7 @@ export const Index: Record<string, any> = {
     description: "A button that fires only after a deliberate press and hold, with a fill sweeping across to count out the wait.",
     dependencies: [],
     registryDependencies: ["utils"],
+    categories: [],
     files: [{"path":"registry/loomui/hold-button.tsx","type":"registry:ui","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/loomui/hold-button")
@@ -306,6 +342,7 @@ export const Index: Record<string, any> = {
     description: "A button that sends a circle out from wherever it was pressed, sized to reach the furthest corner.",
     dependencies: [],
     registryDependencies: ["utils"],
+    categories: [],
     files: [{"path":"registry/loomui/ripple-button.tsx","type":"registry:ui","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/loomui/ripple-button")
@@ -321,6 +358,7 @@ export const Index: Record<string, any> = {
     description: "A button that throws a handful of paper into the air on press, each piece lobbed on its own arc.",
     dependencies: [],
     registryDependencies: ["utils"],
+    categories: [],
     files: [{"path":"registry/loomui/confetti-button.tsx","type":"registry:ui","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/loomui/confetti-button")
@@ -336,6 +374,7 @@ export const Index: Record<string, any> = {
     description: "A tab group whose pill stretches to cover both tabs before it contracts onto the one you picked.",
     dependencies: [],
     registryDependencies: ["utils"],
+    categories: [],
     files: [{"path":"registry/loomui/elastic-tabs.tsx","type":"registry:ui","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/loomui/elastic-tabs")
@@ -351,6 +390,7 @@ export const Index: Record<string, any> = {
     description: "A card torn along a perforation, with a notch bitten out of the paper at each end of it.",
     dependencies: [],
     registryDependencies: ["utils"],
+    categories: [],
     files: [{"path":"registry/loomui/ticket-stub.tsx","type":"registry:ui","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/loomui/ticket-stub")
@@ -366,6 +406,7 @@ export const Index: Record<string, any> = {
     description: "Two versions of the same frame, split by a divider you drag, or move with the arrow keys.",
     dependencies: [],
     registryDependencies: ["utils"],
+    categories: [],
     files: [{"path":"registry/loomui/compare-slider.tsx","type":"registry:ui","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/loomui/compare-slider")
@@ -381,6 +422,7 @@ export const Index: Record<string, any> = {
     description: "A card whose corner lifts off the page on hover, folded back over the crease to show its backing.",
     dependencies: [],
     registryDependencies: ["utils"],
+    categories: [],
     files: [{"path":"registry/loomui/sticker-peel.tsx","type":"registry:ui","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/loomui/sticker-peel")
@@ -396,6 +438,7 @@ export const Index: Record<string, any> = {
     description: "A wrapper that pulls its child toward the pointer as the pointer gets close.",
     dependencies: ["@radix-ui/react-slot"],
     registryDependencies: ["utils"],
+    categories: [],
     files: [{"path":"registry/loomui/magnetic.tsx","type":"registry:ui","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/loomui/magnetic")
@@ -411,6 +454,7 @@ export const Index: Record<string, any> = {
     description: "A seamless scrolling row or column, in either direction, that pauses on hover.",
     dependencies: [],
     registryDependencies: ["utils","use-in-viewport"],
+    categories: [],
     files: [{"path":"registry/loomui/marquee.tsx","type":"registry:ui","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/loomui/marquee")
@@ -426,6 +470,7 @@ export const Index: Record<string, any> = {
     description: "A pinned bar that tracks how far through the page, or a chosen element, the reader is.",
     dependencies: [],
     registryDependencies: ["utils"],
+    categories: [],
     files: [{"path":"registry/loomui/reading-progress.tsx","type":"registry:ui","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/loomui/reading-progress")
@@ -441,6 +486,7 @@ export const Index: Record<string, any> = {
     description: "Columns of quotes drifting past each other at different speeds, faded at both ends.",
     dependencies: [],
     registryDependencies: ["utils","use-in-viewport"],
+    categories: [],
     files: [{"path":"registry/loomui/testimonial-wall.tsx","type":"registry:ui","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/loomui/testimonial-wall")
@@ -456,6 +502,7 @@ export const Index: Record<string, any> = {
     description: "A logo row woven into place, every other mark arriving from the other side of the thread.",
     dependencies: [],
     registryDependencies: ["utils"],
+    categories: [],
     files: [{"path":"registry/loomui/logo-loom.tsx","type":"registry:ui","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/loomui/logo-loom")
@@ -471,6 +518,7 @@ export const Index: Record<string, any> = {
     description: "A device frame drawn from the real measurements, with a screen you put anything in.",
     dependencies: [],
     registryDependencies: ["utils"],
+    categories: [],
     files: [{"path":"registry/loomui/iphone.tsx","type":"registry:ui","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/loomui/iphone")
@@ -486,6 +534,7 @@ export const Index: Record<string, any> = {
     description: "A tablet frame drawn from the real measurements, upright or on its side, with a screen you put anything in.",
     dependencies: [],
     registryDependencies: ["utils"],
+    categories: [],
     files: [{"path":"registry/loomui/ipad.tsx","type":"registry:ui","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/loomui/ipad")
@@ -501,6 +550,7 @@ export const Index: Record<string, any> = {
     description: "A laptop frame with the camera housing cut into the display and the scoop cut into its base.",
     dependencies: [],
     registryDependencies: ["utils"],
+    categories: [],
     files: [{"path":"registry/loomui/macbook.tsx","type":"registry:ui","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/loomui/macbook")
@@ -516,6 +566,7 @@ export const Index: Record<string, any> = {
     description: "A timeline whose thread is sewn down the page as you read, lighting each node as it reaches it.",
     dependencies: [],
     registryDependencies: ["utils"],
+    categories: [],
     files: [{"path":"registry/loomui/thread-timeline.tsx","type":"registry:ui","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/loomui/thread-timeline")
@@ -531,6 +582,7 @@ export const Index: Record<string, any> = {
     description: "Threads drawn through a frame and pulled off the far side, with a shuttle crossing them.",
     dependencies: [],
     registryDependencies: ["utils"],
+    categories: [],
     files: [{"path":"registry/loomui/loom-loader.tsx","type":"registry:ui","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/loomui/loom-loader")
@@ -546,6 +598,7 @@ export const Index: Record<string, any> = {
     description: "A row of dashes where the one you are holding stands tallest, with the rise travelling the track as you drag.",
     dependencies: [],
     registryDependencies: ["utils"],
+    categories: [],
     files: [{"path":"registry/loomui/loom-slider.tsx","type":"registry:ui","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/loomui/loom-slider")
@@ -561,6 +614,7 @@ export const Index: Record<string, any> = {
     description: "A circular progress ring whose value springs to its target, so a number that changes mid travel keeps the speed it already had.",
     dependencies: [],
     registryDependencies: ["utils","use-spring"],
+    categories: [],
     files: [{"path":"registry/loomui/progress-ring.tsx","type":"registry:ui","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/loomui/progress-ring")
@@ -576,6 +630,7 @@ export const Index: Record<string, any> = {
     description: "A container that changes shape to fit whatever it is showing, on a spring that carries its velocity through an interruption.",
     dependencies: [],
     registryDependencies: ["utils","use-spring"],
+    categories: [],
     files: [{"path":"registry/loomui/spool.tsx","type":"registry:ui","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/loomui/spool")
@@ -591,6 +646,7 @@ export const Index: Record<string, any> = {
     description: "One icon that turns into another by moving its own pieces, so there is never a frame with both glyphs on screen.",
     dependencies: [],
     registryDependencies: ["utils"],
+    categories: [],
     files: [{"path":"registry/loomui/icon-morph.tsx","type":"registry:ui","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/loomui/icon-morph")
@@ -606,6 +662,7 @@ export const Index: Record<string, any> = {
     description: "A photo that lifts off the page at full size over a blurred backdrop, the same element the whole way.",
     dependencies: [],
     registryDependencies: ["utils","use-spring"],
+    categories: [],
     files: [{"path":"registry/loomui/photo-stamp.tsx","type":"registry:ui","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/loomui/photo-stamp")
@@ -621,6 +678,7 @@ export const Index: Record<string, any> = {
     description: "Stacked series under a line each, revealed left to right, with the headline and the legend following the pointer.",
     dependencies: [],
     registryDependencies: ["utils","chart-frame"],
+    categories: [],
     files: [{"path":"registry/loomui/trend-stack.tsx","type":"registry:ui","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/loomui/trend-stack")
@@ -636,6 +694,7 @@ export const Index: Record<string, any> = {
     description: "Half a ring divided into segments, drawn one after another, with the share of whichever one is in focus in the middle.",
     dependencies: [],
     registryDependencies: ["utils","chart-frame"],
+    categories: [],
     files: [{"path":"registry/loomui/gauge-arc.tsx","type":"registry:ui","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/loomui/gauge-arc")
@@ -651,6 +710,7 @@ export const Index: Record<string, any> = {
     description: "A funnel as a row per stage, each bar scaled to its share of the first, growing one after another.",
     dependencies: [],
     registryDependencies: ["utils","chart-frame"],
+    categories: [],
     files: [{"path":"registry/loomui/funnel-rows.tsx","type":"registry:ui","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/loomui/funnel-rows")
@@ -666,6 +726,7 @@ export const Index: Record<string, any> = {
     description: "A panel that comes in from any edge and covers most of the screen, dragged anywhere on its face to send it back out.",
     dependencies: ["@radix-ui/react-dialog"],
     registryDependencies: ["utils"],
+    categories: [],
     files: [{"path":"registry/loomui/drawer.tsx","type":"registry:ui","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/loomui/drawer")
@@ -681,6 +742,7 @@ export const Index: Record<string, any> = {
     description: "A placeholder block with a shimmer that passes across it while the real thing loads.",
     dependencies: [],
     registryDependencies: ["utils"],
+    categories: [],
     files: [{"path":"registry/loomui/shimmer-skeleton.tsx","type":"registry:ui","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/loomui/shimmer-skeleton")
@@ -696,6 +758,7 @@ export const Index: Record<string, any> = {
     description: "Cards that pin one behind another as the page scrolls, each settling behind the next.",
     dependencies: [],
     registryDependencies: ["utils"],
+    categories: [],
     files: [{"path":"registry/loomui/card-stack.tsx","type":"registry:ui","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/loomui/card-stack")
@@ -711,6 +774,7 @@ export const Index: Record<string, any> = {
     description: "Images dropped along the pointer's path, spaced by distance travelled rather than by time.",
     dependencies: [],
     registryDependencies: ["utils"],
+    categories: [],
     files: [{"path":"registry/loomui/image-trail.tsx","type":"registry:ui","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/loomui/image-trail")
@@ -726,6 +790,7 @@ export const Index: Record<string, any> = {
     description: "A grid of tiles of different sizes that arrive one after another when the grid is reached.",
     dependencies: [],
     registryDependencies: ["utils"],
+    categories: [],
     files: [{"path":"registry/loomui/bento-grid.tsx","type":"registry:ui","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/loomui/bento-grid")
@@ -741,6 +806,7 @@ export const Index: Record<string, any> = {
     description: "A window that types its commands out and prints their output a beat later.",
     dependencies: [],
     registryDependencies: ["utils"],
+    categories: [],
     files: [{"path":"registry/loomui/terminal.tsx","type":"registry:ui","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/loomui/terminal")
@@ -756,6 +822,7 @@ export const Index: Record<string, any> = {
     description: "A disclosure list whose panels turn down onto the page from their top edge.",
     dependencies: [],
     registryDependencies: ["utils"],
+    categories: [],
     files: [{"path":"registry/loomui/unfold-list.tsx","type":"registry:ui","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/loomui/unfold-list")
@@ -771,6 +838,7 @@ export const Index: Record<string, any> = {
     description: "Weave Text used as a headline accent.",
     dependencies: [],
     registryDependencies: ["@loomui/weave-text"],
+    categories: [],
     files: [{"path":"registry/example/weave-text-demo.tsx","type":"registry:example","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/example/weave-text-demo")
@@ -786,6 +854,7 @@ export const Index: Record<string, any> = {
     description: "A sentence revealed word by word when it scrolls into view.",
     dependencies: [],
     registryDependencies: ["@loomui/stagger-text"],
+    categories: [],
     files: [{"path":"registry/example/stagger-text-demo.tsx","type":"registry:example","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/example/stagger-text-demo")
@@ -801,6 +870,7 @@ export const Index: Record<string, any> = {
     description: "A rotating list of phrases typed into a fixed-width slot.",
     dependencies: [],
     registryDependencies: ["@loomui/typewriter"],
+    categories: [],
     files: [{"path":"registry/example/typewriter-demo.tsx","type":"registry:example","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/example/typewriter-demo")
@@ -816,6 +886,7 @@ export const Index: Record<string, any> = {
     description: "A wordmark decoding out of noise on every hover.",
     dependencies: [],
     registryDependencies: ["@loomui/scramble-text"],
+    categories: [],
     files: [{"path":"registry/example/scramble-text-demo.tsx","type":"registry:example","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/example/scramble-text-demo")
@@ -831,6 +902,7 @@ export const Index: Record<string, any> = {
     description: "Three statistics counting to their values in step.",
     dependencies: [],
     registryDependencies: ["@loomui/count-up"],
+    categories: [],
     files: [{"path":"registry/example/count-up-demo.tsx","type":"registry:example","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/example/count-up-demo")
@@ -846,6 +918,7 @@ export const Index: Record<string, any> = {
     description: "A blurred headline pulled into focus under the pointer.",
     dependencies: [],
     registryDependencies: ["@loomui/lens-text"],
+    categories: [],
     files: [{"path":"registry/example/lens-text-demo.tsx","type":"registry:example","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/example/lens-text-demo")
@@ -861,6 +934,7 @@ export const Index: Record<string, any> = {
     description: "A departure board cycling through four destinations.",
     dependencies: [],
     registryDependencies: ["@loomui/split-flap"],
+    categories: [],
     files: [{"path":"registry/example/split-flap-demo.tsx","type":"registry:example","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/example/split-flap-demo")
@@ -876,6 +950,7 @@ export const Index: Record<string, any> = {
     description: "A grid pulsing behind a headline.",
     dependencies: [],
     registryDependencies: ["@loomui/grid-backdrop"],
+    categories: [],
     files: [{"path":"registry/example/grid-backdrop-demo.tsx","type":"registry:example","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/example/grid-backdrop-demo")
@@ -891,6 +966,7 @@ export const Index: Record<string, any> = {
     description: "Two cards lit by the pointer as it crosses them.",
     dependencies: [],
     registryDependencies: ["@loomui/spotlight-card"],
+    categories: [],
     files: [{"path":"registry/example/spotlight-card-demo.tsx","type":"registry:example","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/example/spotlight-card-demo")
@@ -906,6 +982,7 @@ export const Index: Record<string, any> = {
     description: "An aurora hanging from the top of a panel, leaning across itself.",
     dependencies: [],
     registryDependencies: ["@loomui/light-curtain"],
+    categories: [],
     files: [{"path":"registry/example/light-curtain-demo.tsx","type":"registry:example","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/example/light-curtain-demo")
@@ -921,6 +998,7 @@ export const Index: Record<string, any> = {
     description: "Neon beams running down a ruled grid behind a panel of copy.",
     dependencies: [],
     registryDependencies: ["@loomui/grid-beams"],
+    categories: [],
     files: [{"path":"registry/example/grid-beams-demo.tsx","type":"registry:example","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/example/grid-beams-demo")
@@ -936,6 +1014,7 @@ export const Index: Record<string, any> = {
     description: "A drifting colour wash behind a panel of copy.",
     dependencies: [],
     registryDependencies: ["@loomui/aurora-backdrop"],
+    categories: [],
     files: [{"path":"registry/example/aurora-backdrop-demo.tsx","type":"registry:example","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/example/aurora-backdrop-demo")
@@ -951,6 +1030,7 @@ export const Index: Record<string, any> = {
     description: "A seam sewn between two lines of copy as the page scrolls.",
     dependencies: [],
     registryDependencies: ["@loomui/stitch-path"],
+    categories: [],
     files: [{"path":"registry/example/stitch-path-demo.tsx","type":"registry:example","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/example/stitch-path-demo")
@@ -966,6 +1046,7 @@ export const Index: Record<string, any> = {
     description: "A card that leans away from the pointer with a soft sheen.",
     dependencies: [],
     registryDependencies: ["@loomui/tilt-card"],
+    categories: [],
     files: [{"path":"registry/example/tilt-card-demo.tsx","type":"registry:example","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/example/tilt-card-demo")
@@ -981,6 +1062,7 @@ export const Index: Record<string, any> = {
     description: "A two-by-two matching game played by turning cards over.",
     dependencies: [],
     registryDependencies: ["@loomui/flip-card"],
+    categories: [],
     files: [{"path":"registry/example/flip-card-demo.tsx","type":"registry:example","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/example/flip-card-demo")
@@ -996,6 +1078,7 @@ export const Index: Record<string, any> = {
     description: "A destructive action that only goes through if you keep holding.",
     dependencies: [],
     registryDependencies: ["@loomui/hold-button"],
+    categories: [],
     files: [{"path":"registry/example/hold-button-demo.tsx","type":"registry:example","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/example/hold-button-demo")
@@ -1011,6 +1094,7 @@ export const Index: Record<string, any> = {
     description: "Three buttons, each pressed anywhere on its face.",
     dependencies: [],
     registryDependencies: ["@loomui/ripple-button"],
+    categories: [],
     files: [{"path":"registry/example/ripple-button-demo.tsx","type":"registry:example","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/example/ripple-button-demo")
@@ -1026,6 +1110,7 @@ export const Index: Record<string, any> = {
     description: "The same throw at three different sizes.",
     dependencies: [],
     registryDependencies: ["@loomui/confetti-button"],
+    categories: [],
     files: [{"path":"registry/example/confetti-button-demo.tsx","type":"registry:example","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/example/confetti-button-demo")
@@ -1041,6 +1126,7 @@ export const Index: Record<string, any> = {
     description: "Four categories with a pill that stretches between them.",
     dependencies: [],
     registryDependencies: ["@loomui/elastic-tabs"],
+    categories: [],
     files: [{"path":"registry/example/elastic-tabs-demo.tsx","type":"registry:example","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/example/elastic-tabs-demo")
@@ -1056,6 +1142,7 @@ export const Index: Record<string, any> = {
     description: "A boarding pass torn along its perforation.",
     dependencies: [],
     registryDependencies: ["@loomui/ticket-stub"],
+    categories: [],
     files: [{"path":"registry/example/ticket-stub-demo.tsx","type":"registry:example","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/example/ticket-stub-demo")
@@ -1071,6 +1158,7 @@ export const Index: Record<string, any> = {
     description: "A draft and a shipped page split by a divider you drag.",
     dependencies: [],
     registryDependencies: ["@loomui/compare-slider"],
+    categories: [],
     files: [{"path":"registry/example/compare-slider-demo.tsx","type":"registry:example","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/example/compare-slider-demo")
@@ -1086,6 +1174,7 @@ export const Index: Record<string, any> = {
     description: "Three stickers whose corners lift as the pointer crosses them.",
     dependencies: [],
     registryDependencies: ["@loomui/sticker-peel"],
+    categories: [],
     files: [{"path":"registry/example/sticker-peel-demo.tsx","type":"registry:example","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/example/sticker-peel-demo")
@@ -1101,6 +1190,7 @@ export const Index: Record<string, any> = {
     description: "A button that leans toward the pointer.",
     dependencies: [],
     registryDependencies: ["@loomui/magnetic"],
+    categories: [],
     files: [{"path":"registry/example/magnetic-demo.tsx","type":"registry:example","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/example/magnetic-demo")
@@ -1116,6 +1206,7 @@ export const Index: Record<string, any> = {
     description: "A row of quote cards scrolling on a seamless loop.",
     dependencies: [],
     registryDependencies: ["@loomui/marquee"],
+    categories: [],
     files: [{"path":"registry/example/marquee-demo.tsx","type":"registry:example","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/example/marquee-demo")
@@ -1131,6 +1222,7 @@ export const Index: Record<string, any> = {
     description: "The page-level progress bar, live at the top of the screen.",
     dependencies: [],
     registryDependencies: ["@loomui/reading-progress"],
+    categories: [],
     files: [{"path":"registry/example/reading-progress-demo.tsx","type":"registry:example","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/example/reading-progress-demo")
@@ -1146,6 +1238,7 @@ export const Index: Record<string, any> = {
     description: "Nine quotes dealt across three columns going opposite ways.",
     dependencies: [],
     registryDependencies: ["@loomui/testimonial-wall"],
+    categories: [],
     files: [{"path":"registry/example/testimonial-wall-demo.tsx","type":"registry:example","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/example/testimonial-wall-demo")
@@ -1161,6 +1254,7 @@ export const Index: Record<string, any> = {
     description: "Five wordmarks woven onto a thread as the row comes into view.",
     dependencies: [],
     registryDependencies: ["@loomui/logo-loom"],
+    categories: [],
     files: [{"path":"registry/example/logo-loom-demo.tsx","type":"registry:example","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/example/logo-loom-demo")
@@ -1176,6 +1270,7 @@ export const Index: Record<string, any> = {
     description: "A device frame with a screen built out of live markup.",
     dependencies: [],
     registryDependencies: ["@loomui/iphone"],
+    categories: [],
     files: [{"path":"registry/example/iphone-demo.tsx","type":"registry:example","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/example/iphone-demo")
@@ -1191,6 +1286,7 @@ export const Index: Record<string, any> = {
     description: "A blank tablet held upright.",
     dependencies: [],
     registryDependencies: ["@loomui/ipad"],
+    categories: [],
     files: [{"path":"registry/example/ipad-demo.tsx","type":"registry:example","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/example/ipad-demo")
@@ -1206,6 +1302,7 @@ export const Index: Record<string, any> = {
     description: "A blank laptop standing on its base.",
     dependencies: [],
     registryDependencies: ["@loomui/macbook"],
+    categories: [],
     files: [{"path":"registry/example/macbook-demo.tsx","type":"registry:example","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/example/macbook-demo")
@@ -1221,6 +1318,7 @@ export const Index: Record<string, any> = {
     description: "Four entries sewn together as the page scrolls past them.",
     dependencies: [],
     registryDependencies: ["@loomui/thread-timeline"],
+    categories: [],
     files: [{"path":"registry/example/thread-timeline-demo.tsx","type":"registry:example","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/example/thread-timeline-demo")
@@ -1236,6 +1334,7 @@ export const Index: Record<string, any> = {
     description: "The loader at three sizes, with a wider frame on the last.",
     dependencies: [],
     registryDependencies: ["@loomui/loom-loader"],
+    categories: [],
     files: [{"path":"registry/example/loom-loader-demo.tsx","type":"registry:example","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/example/loom-loader-demo")
@@ -1251,6 +1350,7 @@ export const Index: Record<string, any> = {
     description: "A tension control read off the dash standing tallest.",
     dependencies: [],
     registryDependencies: ["@loomui/loom-slider"],
+    categories: [],
     files: [{"path":"registry/example/loom-slider-demo.tsx","type":"registry:example","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/example/loom-slider-demo")
@@ -1266,6 +1366,7 @@ export const Index: Record<string, any> = {
     description: "A ring stepping through five values without ever settling.",
     dependencies: [],
     registryDependencies: ["@loomui/progress-ring"],
+    categories: [],
     files: [{"path":"registry/example/progress-ring-demo.tsx","type":"registry:example","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/example/progress-ring-demo")
@@ -1281,6 +1382,7 @@ export const Index: Record<string, any> = {
     description: "A pill that changes shape to fit three different states, and can be interrupted part way.",
     dependencies: [],
     registryDependencies: ["@loomui/spool"],
+    categories: [],
     files: [{"path":"registry/example/spool-demo.tsx","type":"registry:example","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/example/spool-demo")
@@ -1296,6 +1398,7 @@ export const Index: Record<string, any> = {
     description: "Five icon pairs, each one shape travelling rather than two shapes trading places.",
     dependencies: [],
     registryDependencies: ["@loomui/icon-morph"],
+    categories: [],
     files: [{"path":"registry/example/icon-morph-demo.tsx","type":"registry:example","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/example/icon-morph-demo")
@@ -1311,6 +1414,7 @@ export const Index: Record<string, any> = {
     description: "A stamp that lifts its photo out of the frame at full size over a blurred page.",
     dependencies: [],
     registryDependencies: ["@loomui/photo-stamp"],
+    categories: [],
     files: [{"path":"registry/example/photo-stamp-demo.tsx","type":"registry:example","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/example/photo-stamp-demo")
@@ -1326,6 +1430,7 @@ export const Index: Record<string, any> = {
     description: "A year of visitors split three ways. Point at a month and the card follows.",
     dependencies: [],
     registryDependencies: ["@loomui/trend-stack"],
+    categories: [],
     files: [{"path":"registry/example/trend-stack-demo.tsx","type":"registry:example","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/example/trend-stack-demo")
@@ -1341,6 +1446,7 @@ export const Index: Record<string, any> = {
     description: "Sessions split four ways across half a ring, with the leading share in the middle.",
     dependencies: [],
     registryDependencies: ["@loomui/gauge-arc"],
+    categories: [],
     files: [{"path":"registry/example/gauge-arc-demo.tsx","type":"registry:example","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/example/gauge-arc-demo")
@@ -1356,6 +1462,7 @@ export const Index: Record<string, any> = {
     description: "A six stage pipeline, each bar as long as its share of the first.",
     dependencies: [],
     registryDependencies: ["@loomui/funnel-rows"],
+    categories: [],
     files: [{"path":"registry/example/funnel-rows-demo.tsx","type":"registry:example","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/example/funnel-rows-demo")
@@ -1371,6 +1478,7 @@ export const Index: Record<string, any> = {
     description: "A drawer from the bottom edge, pulled open or swiped away by its notch.",
     dependencies: [],
     registryDependencies: ["@loomui/drawer"],
+    categories: [],
     files: [{"path":"registry/example/drawer-demo.tsx","type":"registry:example","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/example/drawer-demo")
@@ -1386,6 +1494,7 @@ export const Index: Record<string, any> = {
     description: "A card placeholder with the sweep running down it.",
     dependencies: [],
     registryDependencies: ["@loomui/shimmer-skeleton"],
+    categories: [],
     files: [{"path":"registry/example/shimmer-skeleton-demo.tsx","type":"registry:example","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/example/shimmer-skeleton-demo")
@@ -1401,6 +1510,7 @@ export const Index: Record<string, any> = {
     description: "Four cards pinning one behind another inside a panel.",
     dependencies: [],
     registryDependencies: ["@loomui/card-stack"],
+    categories: [],
     files: [{"path":"registry/example/card-stack-demo.tsx","type":"registry:example","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/example/card-stack-demo")
@@ -1416,6 +1526,7 @@ export const Index: Record<string, any> = {
     description: "Swatches dropped behind the pointer as it crosses a panel.",
     dependencies: [],
     registryDependencies: ["@loomui/image-trail"],
+    categories: [],
     files: [{"path":"registry/example/image-trail-demo.tsx","type":"registry:example","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/example/image-trail-demo")
@@ -1431,6 +1542,7 @@ export const Index: Record<string, any> = {
     description: "Four tiles of two sizes arriving one after another.",
     dependencies: [],
     registryDependencies: ["@loomui/bento-grid"],
+    categories: [],
     files: [{"path":"registry/example/bento-grid-demo.tsx","type":"registry:example","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/example/bento-grid-demo")
@@ -1446,6 +1558,7 @@ export const Index: Record<string, any> = {
     description: "An install session typed out one command at a time.",
     dependencies: [],
     registryDependencies: ["@loomui/terminal"],
+    categories: [],
     files: [{"path":"registry/example/terminal-demo.tsx","type":"registry:example","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/example/terminal-demo")
@@ -1461,6 +1574,7 @@ export const Index: Record<string, any> = {
     description: "Three questions, one panel open at a time.",
     dependencies: [],
     registryDependencies: ["@loomui/unfold-list"],
+    categories: [],
     files: [{"path":"registry/example/unfold-list-demo.tsx","type":"registry:example","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/example/unfold-list-demo")
@@ -1476,6 +1590,7 @@ export const Index: Record<string, any> = {
     description: "The cn() class merge helper every loom component depends on.",
     dependencies: ["clsx","tailwind-merge"],
     registryDependencies: [],
+    categories: [],
     files: [{"path":"registry/lib/utils.ts","type":"registry:lib","target":""}],
     component: null,
   },
@@ -1486,6 +1601,7 @@ export const Index: Record<string, any> = {
     description: "A spring over named numbers, driven onto a callback rather than through state, that carries velocity across every retarget.",
     dependencies: [],
     registryDependencies: [],
+    categories: [],
     files: [{"path":"registry/lib/use-spring.ts","type":"registry:lib","target":""}],
     component: null,
   },
@@ -1496,6 +1612,7 @@ export const Index: Record<string, any> = {
     description: "The card every loom chart sits in: label, headline, delta, the plot, and a named tile per series.",
     dependencies: [],
     registryDependencies: ["utils"],
+    categories: [],
     files: [{"path":"registry/lib/chart-frame.tsx","type":"registry:lib","target":""}],
     component: null,
   },
@@ -1506,6 +1623,7 @@ export const Index: Record<string, any> = {
     description: "Tells a component whether it is on screen, so a looping animation can stop while nobody is watching it.",
     dependencies: [],
     registryDependencies: [],
+    categories: [],
     files: [{"path":"registry/lib/use-in-viewport.ts","type":"registry:lib","target":""}],
     component: null,
   },

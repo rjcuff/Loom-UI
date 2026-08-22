@@ -1,8 +1,5 @@
 import { type Registry } from "shadcn/schema"
 
-/** The house easing, repeated by any item that reaches for it directly. */
-const EASE_OUT_QUART = "cubic-bezier(0.165, 0.84, 0.44, 1)"
-
 /**
  * Blocks: whole sections rather than single pieces.
  *
@@ -12,8 +9,7 @@ const EASE_OUT_QUART = "cubic-bezier(0.165, 0.84, 0.44, 1)"
  * The same rule components follow applies here. A block may only use a token
  * its own manifest ships, because it lands in someone else's project and a
  * missing token does not error, it silently falls back to an inherited value.
- * Two of these need nothing past their dependencies; `marketing-hero` declares
- * the two it reaches for.
+ * None of these reach past what their dependencies already bring.
  */
 export const blocks: Registry["items"] = [
   {
@@ -22,6 +18,7 @@ export const blocks: Registry["items"] = [
     title: "Analytics Dashboard",
     description:
       "A dashboard built from loom's charts: four counted stats, a stacked trend, a source gauge and an onboarding funnel, with a range control that replays the reveal.",
+    categories: ["dashboard"],
     registryDependencies: [
       "@loomui/bento-grid",
       "@loomui/count-up",
@@ -43,6 +40,7 @@ export const blocks: Registry["items"] = [
     title: "Onboarding Flow",
     description:
       "A setup checklist with a progress ring, morphing tick marks, a drawer of answers, and a finish button that only celebrates once every step is done.",
+    categories: ["onboarding"],
     registryDependencies: [
       "@loomui/confetti-button",
       "@loomui/drawer",
@@ -58,41 +56,44 @@ export const blocks: Registry["items"] = [
     ],
   },
   {
-    name: "marketing-hero",
+    name: "login-form",
     type: "registry:block",
-    title: "Marketing Hero",
+    title: "Login",
     description:
-      "A landing section at marketing pace: an aurora behind a woven headline, a staggered entrance, a logo band that keeps moving, and a bento of counted facts.",
+      "A split sign-in screen. The submit button changes shape through idle, working and done rather than swapping a label for a spinner.",
+    categories: ["authentication"],
     registryDependencies: [
-      "@loomui/bento-grid",
-      "@loomui/count-up",
+      "@loomui/icon-morph",
       "@loomui/light-curtain",
-      "@loomui/marquee",
-      "@loomui/scramble-text",
+      "@loomui/ripple-button",
+      "@loomui/spool",
       "@loomui/weave-text",
     ],
     files: [
       {
-        path: "blocks/marketing-hero.tsx",
+        path: "blocks/login-form.tsx",
         type: "registry:block",
       },
     ],
-    // The entrance and the display step are loom's own, and nothing this block
-    // installs brings them along.
-    cssVars: {
-      theme: {
-        "ease-out-quart": EASE_OUT_QUART,
-        "animate-rise": "rise 600ms var(--ease-out-quart) both",
-        "text-display": "2rem",
-        "text-display--line-height": "1.1",
-        "text-display--letter-spacing": "-0.022em",
+  },
+  {
+    name: "signup-form",
+    type: "registry:block",
+    title: "Signup",
+    description:
+      "A sign-up screen with a password meter driven by a spring, so each keystroke retargets the ring rather than queueing behind the last one.",
+    categories: ["authentication"],
+    registryDependencies: [
+      "@loomui/confetti-button",
+      "@loomui/icon-morph",
+      "@loomui/progress-ring",
+      "@loomui/unfold-list",
+    ],
+    files: [
+      {
+        path: "blocks/signup-form.tsx",
+        type: "registry:block",
       },
-    },
-    css: {
-      "@keyframes rise": {
-        from: { opacity: "0", transform: "translateY(12px)" },
-        to: { opacity: "1", transform: "none" },
-      },
-    },
+    ],
   },
 ]

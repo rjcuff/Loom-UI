@@ -84,6 +84,7 @@ async function buildRegistryIndex(registry: Registry) {
     description: ${JSON.stringify(item.description ?? "")},
     dependencies: ${JSON.stringify(item.dependencies ?? [])},
     registryDependencies: ${JSON.stringify(item.registryDependencies ?? [])},
+    categories: ${JSON.stringify(item.categories ?? [])},
     files: ${JSON.stringify(files)},
     component: ${component},
   },`

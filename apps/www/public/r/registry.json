@@ -223,6 +223,9 @@
           "path": "registry/blocks/analytics-dashboard.tsx",
           "type": "registry:block"
         }
+      ],
+      "categories": [
+        "dashboard"
       ]
     },
     {
@@ -242,48 +245,53 @@
           "path": "registry/blocks/onboarding-flow.tsx",
           "type": "registry:block"
         }
+      ],
+      "categories": [
+        "onboarding"
       ]
     },
     {
-      "name": "marketing-hero",
+      "name": "login-form",
       "type": "registry:block",
-      "title": "Marketing Hero",
-      "description": "A landing section at marketing pace: an aurora behind a woven headline, a staggered entrance, a logo band that keeps moving, and a bento of counted facts.",
+      "title": "Login",
+      "description": "A split sign-in screen. The submit button changes shape through idle, working and done rather than swapping a label for a spinner.",
       "registryDependencies": [
-        "@loomui/bento-grid",
-        "@loomui/count-up",
+        "@loomui/icon-morph",
         "@loomui/light-curtain",
-        "@loomui/marquee",
-        "@loomui/scramble-text",
+        "@loomui/ripple-button",
+        "@loomui/spool",
         "@loomui/weave-text"
       ],
       "files": [
         {
-          "path": "registry/blocks/marketing-hero.tsx",
+          "path": "registry/blocks/login-form.tsx",
           "type": "registry:block"
         }
       ],
-      "cssVars": {
-        "theme": {
-          "ease-out-quart": "cubic-bezier(0.165, 0.84, 0.44, 1)",
-          "animate-rise": "rise 600ms var(--ease-out-quart) both",
-          "text-display": "2rem",
-          "text-display--line-height": "1.1",
-          "text-display--letter-spacing": "-0.022em"
+      "categories": [
+        "authentication"
+      ]
+    },
+    {
+      "name": "signup-form",
+      "type": "registry:block",
+      "title": "Signup",
+      "description": "A sign-up screen with a password meter driven by a spring, so each keystroke retargets the ring rather than queueing behind the last one.",
+      "registryDependencies": [
+        "@loomui/confetti-button",
+        "@loomui/icon-morph",
+        "@loomui/progress-ring",
+        "@loomui/unfold-list"
+      ],
+      "files": [
+        {
+          "path": "registry/blocks/signup-form.tsx",
+          "type": "registry:block"
         }
-      },
-      "css": {
-        "@keyframes rise": {
-          "from": {
-            "opacity": "0",
-            "transform": "translateY(12px)"
-          },
-          "to": {
-            "opacity": "1",
-            "transform": "none"
-          }
-        }
-      }
+      ],
+      "categories": [
+        "authentication"
+      ]
     },
     {
       "name": "weave-text",
