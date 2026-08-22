@@ -60,21 +60,25 @@ export function SiteFaq() {
     >
       <JsonLd schema={faqSchema()} />
 
-      <div className="mx-auto w-full max-w-2xl px-5 py-16 sm:py-24">
+      {/* Left aligned on a phone, centred from `sm`, matching the hero and the
+          CTA above it. Centred text over three or four lines on a narrow
+          column gives every line a different start and the eye has to find
+          each one. */}
+      <div className="mx-auto w-full max-w-2xl px-5 py-16 text-left sm:py-24 sm:text-center">
         <h2
           id="faq-heading"
-          className="text-display-sm text-center font-semibold text-balance sm:text-4xl"
+          className="text-display-sm font-semibold text-balance sm:text-4xl"
         >
           Frequently asked questions
         </h2>
 
-        <p className="text-muted-foreground mt-4 text-center text-pretty sm:text-lg">
+        <p className="text-muted-foreground mt-4 text-pretty sm:text-lg">
           Everything worth knowing before you copy the first file in.
         </p>
 
-        {/* The rows stay left aligned inside the centred column. A question and
-            its answer are read left to right, and centring the text would give
-            every line of every answer a different starting point. */}
+        {/* The rows stay left aligned at every size, centred column or not. A
+            question and its answer are read left to right, and centring them
+            would give every line of every answer a different starting point. */}
         <UnfoldList type="single" className="mt-10 text-left">
           {FAQ.map((entry) => (
             <UnfoldItem key={entry.q} value={entry.q} title={entry.q}>
@@ -83,7 +87,7 @@ export function SiteFaq() {
           ))}
         </UnfoldList>
 
-        <p className="text-muted-foreground mt-8 text-center text-sm">
+        <p className="text-muted-foreground mt-8 text-sm">
           Still stuck?{" "}
           <Link
             href={siteConfig.links.github}

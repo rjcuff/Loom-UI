@@ -5,6 +5,7 @@ import { siteConfig } from "@/config/site"
 import { Button } from "@/components/ui/button"
 import { BlockBrowser, type BlockEntry } from "@/components/block-browser"
 import { Index } from "@/registry/__index__"
+import { LightCurtain } from "@/registry/loomui/light-curtain"
 
 export const metadata: Metadata = {
   title: `Blocks | ${siteConfig.titleSuffix}`,
@@ -49,12 +50,16 @@ function blocks(): BlockEntry[] {
 export default function BlocksPage() {
   return (
     <>
-      <section>
+      <section className="relative overflow-hidden">
+        {/* The same wash the landing page opens with, at the same settings, so
+            the two entrances read as one site. */}
+        <LightCurtain className="-z-10" intensity={0.3} reach="58%" blur={80} />
+
         {/* Left aligned on a phone. Centred text over three or four lines on
             a narrow column gives every line a different start and the eye has
             to find each one. Centred from `sm`, where the lines are long
             enough for the shape to read as deliberate. */}
-        <div className="mx-auto flex w-full max-w-5xl flex-col items-start px-5 pt-22 pb-14 text-left sm:items-center sm:pt-34 sm:pb-16 sm:text-center">
+        <div className="relative mx-auto flex w-full max-w-5xl flex-col items-start px-5 pt-22 pb-14 text-left sm:items-center sm:pt-34 sm:pb-16 sm:text-center">
           <h1 className="animate-rise text-display font-semibold text-balance sm:text-5xl">
             Blocks, already assembled
           </h1>
