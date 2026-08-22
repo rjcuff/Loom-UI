@@ -8,6 +8,14 @@ import { CodeBlock } from "@/components/code-block"
 import { ComponentGrid } from "@/components/component-grid"
 import { ComponentPreview } from "@/components/component-preview"
 import { ComponentSource } from "@/components/component-source"
+import { AccentPicker } from "@/components/theme/accent-picker"
+import {
+  DurationScale,
+  EasingGallery,
+  ElevationScale,
+} from "@/components/theme/motion-tokens"
+import { SwatchGrid } from "@/components/theme/swatch-grid"
+import { TypeSpecimen, WeightSpecimen } from "@/components/theme/type-specimen"
 
 export const mdxComponents: MDXComponents = {
   h1: ({ className, ...props }: React.ComponentProps<"h1">) => (
@@ -162,6 +170,13 @@ export const mdxComponents: MDXComponents = {
   ),
   Callout,
   ComponentGrid,
+  AccentPicker,
+  SwatchGrid,
+  TypeSpecimen,
+  WeightSpecimen,
+  ElevationScale,
+  EasingGallery,
+  DurationScale,
   ComponentPreview,
   ComponentSource,
 }

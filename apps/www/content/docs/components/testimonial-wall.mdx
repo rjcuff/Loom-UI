@@ -92,7 +92,7 @@ it per column when you want to set the drift yourself instead of taking the
 default spread.
 
 Each column is two copies of its cards travelling exactly one copy plus one gap,
-which is what makes the loop seamless. The whole thing is `transform` on a
+which is what hides the seam in the loop. The whole thing is `transform` on a
 handful of elements, so the cost does not grow with the number of quotes.
 
 ### Height and edges
@@ -130,7 +130,7 @@ than stopping mid-travel with half a card cut off.
 Any other `<div>` prop is forwarded.
 
 <Callout type="tip" title="Accessibility">
-  Only the first copy of each column is read. The duplicate that makes the loop
-  seamless is `aria-hidden`, so no quote is announced twice. `pauseOnHover` is
-  on by default, which is what makes a quote readable at all without chasing it.
+  Only the first copy of each column is read. The duplicate that hides the seam
+  is `aria-hidden`, so no quote is announced twice. `pauseOnHover` is on by
+  default, which is what makes a quote readable at all without chasing it.
 </Callout>

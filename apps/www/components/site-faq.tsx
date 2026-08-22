@@ -63,7 +63,7 @@ export function SiteFaq() {
       <div className="mx-auto w-full max-w-2xl px-5 py-16 sm:py-24">
         <h2
           id="faq-heading"
-          className="text-center text-[1.75rem] leading-[1.15] font-semibold tracking-tight text-balance sm:text-4xl"
+          className="text-display-sm text-center font-semibold text-balance sm:text-4xl"
         >
           Frequently asked questions
         </h2>

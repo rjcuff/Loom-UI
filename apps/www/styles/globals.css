@@ -3,11 +3,25 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* ---------------------------------------------------------------------------
+/* ==========================================================================
    loom design tokens
-   Cool neutral base with a teal-blue accent. All values in oklch so light and
-   dark stay perceptually matched.
---------------------------------------------------------------------------- */
+
+   Everything below the TOKENS heading is the theming surface: override any
+   custom property in :root / .dark and the whole system follows.
+   
+   The `@theme` blocks are plumbing. They map tokens onto Tailwind utility
+   names. Editing them is not how you change how something looks.
+   
+   `@theme inline` is used wherever a value differs between light and dark, so
+   the utility references the variable rather than baking one value in.
+   
+   Consumers can install this whole layer on its own:
+       npx shadcn@latest add @loomui/theme
+   ========================================================================== */
+
+/* ==========================================================================
+   TOKENS · Colour
+   ========================================================================== */
 
 :root {
   --radius: 0.5rem;
@@ -37,7 +51,7 @@
 
   /* Ink at low alpha rather than a solid step, which is what the dark theme
      already does. A solid line is mixed against one assumed backdrop and looks
-     pasted on over anything else — over the hero's aurora, over a tinted
+     pasted on over anything else: over the hero's aurora, over a tinted
      surface, over an image. The alpha version takes whatever is behind it.
      Composited over the card these land where the old solid values did. */
   --border: oklch(0.18 0.015 255 / 14%);
@@ -77,15 +91,7 @@
   /* Direction of travel on a delta. Reserved: never a series colour. */
   --chart-up: oklch(0.62 0.15 145);
   --chart-down: oklch(0.6 0.19 25);
-
-  /* Duration scale. See .claude/skills/animations/SKILL.md.
-     Product UI stays at or under --duration-3. */
-  --duration-1: 120ms;
-  --duration-2: 180ms;
-  --duration-3: 240ms;
-  --duration-4: 320ms;
 }
-
 .dark {
   --background: oklch(0.17 0.012 255);
   --foreground: oklch(0.96 0.004 250);
@@ -142,7 +148,6 @@
   --chart-up: oklch(0.72 0.16 145);
   --chart-down: oklch(0.68 0.18 25);
 }
-
 @theme inline {
   --font-sans: var(--font-inter);
   --font-mono: var(--font-jetbrains-mono);
@@ -191,11 +196,179 @@
   --color-chart-down: var(--chart-down);
 }
 
-/* ---------------------------------------------------------------------------
-   Component animations
-   Registry items declare their own keyframes via `cssVars` / `css` in the
-   manifest; these are the ones the docs site itself uses.
---------------------------------------------------------------------------- */
+/* ==========================================================================
+   TOKENS · Typography
+   ========================================================================== */
+
+@theme {
+  --text-2xs: 0.625rem;
+  --text-2xs--line-height: 0.875rem;
+  --text-2xs--letter-spacing: 0.02em;
+
+  --text-xs: 0.75rem;
+  --text-xs--line-height: 1rem;
+  --text-xs--letter-spacing: 0.01em;
+
+  --text-sm: 0.875rem;
+  --text-sm--line-height: 1.25rem;
+  --text-sm--letter-spacing: 0.005em;
+
+  --text-base: 1rem;
+  --text-base--line-height: 1.5rem;
+  --text-base--letter-spacing: 0em;
+
+  --text-lg: 1.125rem;
+  --text-lg--line-height: 1.75rem;
+  --text-lg--letter-spacing: -0.005em;
+
+  --text-xl: 1.25rem;
+  --text-xl--line-height: 1.75rem;
+  --text-xl--letter-spacing: -0.01em;
+
+  --text-2xl: 1.5rem;
+  --text-2xl--line-height: 2rem;
+  --text-2xl--letter-spacing: -0.015em;
+
+  --text-3xl: 1.875rem;
+  --text-3xl--line-height: 2.25rem;
+  --text-3xl--letter-spacing: -0.019em;
+
+  --text-4xl: 2.25rem;
+  --text-4xl--line-height: 2.5rem;
+  --text-4xl--letter-spacing: -0.021em;
+
+  --text-5xl: 3rem;
+  --text-5xl--line-height: 1.1;
+  --text-5xl--letter-spacing: -0.024em;
+
+  --text-6xl: 3.75rem;
+  --text-6xl--line-height: 1.05;
+  --text-6xl--letter-spacing: -0.027em;
+
+  /* Marketing headlines. `display-sm` and `display` are the phone-sized steps
+     the hero and the CTA were reaching for with arbitrary values. */
+  --text-display-sm: 1.75rem;
+  --text-display-sm--line-height: 1.15;
+  --text-display-sm--letter-spacing: -0.02em;
+
+  --text-display: 2rem;
+  --text-display--line-height: 1.1;
+  --text-display--letter-spacing: -0.022em;
+
+  --text-display-lg: 2.5rem;
+  --text-display-lg--line-height: 1.08;
+  --text-display-lg--letter-spacing: -0.024em;
+
+  /* Three weights, and no more. A hover or selected state that changes weight
+     reflows the text under the pointer, so state is carried by colour here and
+     the weight never moves. */
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+}
+
+/* ==========================================================================
+   TOKENS · Elevation
+   ========================================================================== */
+
+:root {
+  /* Three stacked shadows rather than one large one. A single blur reads as a
+     grey halo pasted behind the element; a tight contact shadow, plus a mid
+     spread, plus a wide ambient one is how light actually falls, and the eye
+     knows the difference even when it cannot name it.
+
+     The ring is separated out because it is the part that survives on a dark
+     surface, where there is nothing left to darken. */
+  --shadow-ring: 0 0 0 1px oklch(0.18 0.015 255 / 6%);
+  --shadow-raised:
+    var(--shadow-ring), 0 1px 2px -1px oklch(0.18 0.015 255 / 10%),
+    0 2px 6px -2px oklch(0.18 0.015 255 / 8%);
+  --shadow-overlay:
+    var(--shadow-ring), 0 2px 4px -2px oklch(0.18 0.015 255 / 10%),
+    0 8px 20px -6px oklch(0.18 0.015 255 / 12%);
+  --shadow-panel:
+    var(--shadow-ring), 0 4px 8px -4px oklch(0.18 0.015 255 / 12%),
+    0 24px 48px -12px oklch(0.18 0.015 255 / 18%);
+
+  /* Capped on purpose. Past roughly 20px a blur filter spreads badly and gets
+     expensive, worst of all in Safari, so the animated steps stop at
+     `--blur-lg`.
+
+     `--blur-scrim` is deliberately over that line and is for **static** use
+     only: one pass over a container whose children move underneath it, which
+     never re-runs the filter. Never transition or animate this one. */
+  --blur-xs: 2px;
+  --blur-sm: 4px;
+  --blur-md: 8px;
+  --blur-lg: 16px;
+  --blur-scrim: 64px;
+
+  /* A fixed scale, so nothing ever needs `z-index: 9999`. Anything not listed
+     belongs inside a stacking context of its own rather than on this ladder.
+
+     No Tailwind namespace exists for z-index, so reach these the same way as
+     any custom property: `z-(--z-modal)`. */
+  --z-raised: 10;
+  --z-sticky: 20;
+  --z-overlay: 40;
+  --z-modal: 50;
+  --z-popover: 60;
+  --z-toast: 70;
+  --z-tooltip: 80;
+}
+
+.dark {
+  /* Redrawn rather than rescaled. There is nothing to darken on a dark
+     surface, so the ring does most of the lifting and the spread is there to
+     seat the element rather than to be seen. */
+  --shadow-ring: 0 0 0 1px oklch(1 0 0 / 8%);
+  --shadow-raised:
+    var(--shadow-ring), 0 1px 2px -1px oklch(0 0 0 / 40%),
+    0 2px 6px -2px oklch(0 0 0 / 30%);
+  --shadow-overlay:
+    var(--shadow-ring), 0 2px 4px -2px oklch(0 0 0 / 45%),
+    0 8px 20px -6px oklch(0 0 0 / 40%);
+  --shadow-panel:
+    var(--shadow-ring), 0 4px 8px -4px oklch(0 0 0 / 50%),
+    0 24px 48px -12px oklch(0 0 0 / 55%);
+}
+
+/* Inline, so both themes above reach the same utility names. */
+@theme inline {
+  --shadow-raised: var(--shadow-raised);
+  --shadow-overlay: var(--shadow-overlay);
+  --shadow-panel: var(--shadow-panel);
+
+  --blur-xs: var(--blur-xs);
+  --blur-sm: var(--blur-sm);
+  --blur-md: var(--blur-md);
+  --blur-lg: var(--blur-lg);
+  --blur-scrim: var(--blur-scrim);
+}
+
+/* ==========================================================================
+   TOKENS · Motion
+   ========================================================================== */
+
+:root {
+  /* Named for the job rather than numbered, because a number never says which
+     one a dropdown should use. The sizes follow from a bigger thing travelling
+     further needing longer: a checkbox is not a drawer.
+
+     `--duration-marketing` is the deliberate exception, at roughly twice
+     `--duration-page`. It is for entrances on pages that are read once and not
+     operated. Anything a person uses all day stays at `--duration-panel` or
+     under: a product that animates at marketing speed feels slow, and a
+     marketing page that animates at product speed says nothing about itself.
+
+     No Tailwind namespace exists for duration, so reach these the same way as
+     any custom property: `duration-(--duration-ui)`. */
+  --duration-micro: 120ms;
+  --duration-ui: 180ms;
+  --duration-panel: 260ms;
+  --duration-page: 360ms;
+  --duration-marketing: 600ms;
+}
 
 @theme {
   /* Easing tokens. The only curves loom uses.
@@ -270,6 +443,30 @@
   --animate-drawer-overlay-in: drawer-overlay-in 260ms var(--ease-drawer);
   --animate-drawer-overlay-out: drawer-overlay-out 200ms var(--ease-drawer)
     forwards;
+}
+
+/* ==========================================================================
+   Keyframes
+   ========================================================================== */
+
+/* Used by the token gallery on /docs/theming. A dot travelling under a curve
+   is what an easing actually feels like; the graph beside it is only a shape. */
+@keyframes theme-token-travel {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(calc(100cqw - 2.75rem));
+  }
+}
+
+@keyframes theme-token-fill {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
 }
 
 @keyframes weave {
@@ -667,6 +864,10 @@
   }
 }
 
+/* ==========================================================================
+   Base layer
+   ========================================================================== */
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -676,7 +877,7 @@
     transition-duration: 0.01ms;
     /* Delays as well as durations. A staggered entrance keeps its offsets
        otherwise, so a tile written to arrive a second into the sequence sits
-       at its first frame — usually invisible — for that whole second, and the
+       at its first frame, usually invisible, for that whole second, and the
        reader is shown a hole where the reveal used to be. */
     animation-delay: 0s;
     transition-delay: 0s;
@@ -756,6 +957,14 @@
 /* ---------------------------------------------------------------------------
    Numbered install steps (<Steps> / <Step> in MDX)
 --------------------------------------------------------------------------- */
+
+/* ==========================================================================
+   Prose. MDX code blocks and numbered steps
+
+   Must stay last. The small-screen rules here override the base rules
+   above, and a media query adds no specificity, so source order is the
+   only thing deciding it.
+   ========================================================================== */
 
 .loom-steps {
   counter-reset: loom-step;

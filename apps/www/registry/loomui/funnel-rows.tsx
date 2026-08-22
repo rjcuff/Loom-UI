@@ -168,7 +168,7 @@ export function FunnelRows({
                     background: color,
                     // Clamped, though the percentage beside it is not. A stage
                     // larger than the first is bad data, and the honest thing
-                    // is to say 400% and draw a full bar — not to lay out an
+                    // is to say 400% and draw a full bar, not to lay out an
                     // element four times the width of the track it is in.
                     width: `${Math.min(1, Math.max(0, share(stage.value))) * 100}%`,
                     transitionDuration: disabled ? "0ms" : `${duration}ms`,

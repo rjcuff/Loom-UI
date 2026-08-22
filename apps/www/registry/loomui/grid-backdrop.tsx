@@ -38,7 +38,7 @@ function createRandom(seed: number) {
  * Warns, in development only, when the parent is not a containing block.
  *
  * The layer is `absolute inset-0`, so it fills the nearest positioned
- * ancestor. Give it a `static` parent and it does not fail — it quietly finds
+ * ancestor. Give it a `static` parent and it does not fail. It quietly finds
  * whatever is positioned further up and covers that instead, usually the whole
  * page. Nothing on screen says which parent is at fault.
  */
@@ -88,7 +88,7 @@ export function GridBackdrop({
   // The cells were spread over a fixed 30 by 20 patch of the pattern, which is
   // only the whole grid on a container of exactly that size. Anything wider
   // than about 1200px got every pulse crowded into its left-hand side and a
-  // dead margin down the rest — and a backdrop is usually the widest thing on
+  // dead margin down the rest, and a backdrop is usually the widest thing on
   // the page. Measured instead, so they cover whatever box they are actually in.
   React.useEffect(() => {
     const node = root.current

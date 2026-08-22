@@ -3,7 +3,7 @@
   "name": "marquee-demo",
   "type": "registry:example",
   "title": "Marquee Demo",
-  "description": "A row of quote cards scrolling on a seamless loop.",
+  "description": "A row of quote cards that loops with no visible seam.",
   "registryDependencies": [
     "@loomui/marquee"
   ],

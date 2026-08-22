@@ -38,7 +38,7 @@ function createRandom(seed: number) {
  * Warns, in development only, when the parent is not a containing block.
  *
  * The layer is `absolute inset-0`, so it fills the nearest positioned
- * ancestor. Give it a `static` parent and it does not fail — it quietly finds
+ * ancestor. Give it a `static` parent and it does not fail. It quietly finds
  * whatever is positioned further up and covers that instead, usually the whole
  * page. Nothing on screen says which parent is at fault.
  */

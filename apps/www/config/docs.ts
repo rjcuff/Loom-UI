@@ -29,6 +29,7 @@ export const docsConfig: DocsConfig = {
       items: [
         { title: "Introduction", href: "/docs/introduction" },
         { title: "Installation", href: "/docs/installation" },
+        { title: "Theming", href: "/docs/theming" },
         { title: "All Components", href: DOCS_ENTRY },
       ],
     },

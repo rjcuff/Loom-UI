@@ -9,7 +9,7 @@ function Badge({ badge }: { badge: NavBadge }) {
   return (
     <span
       className={cn(
-        "rounded-full px-1.5 py-px text-[10px] leading-4 font-medium",
+        "text-2xs rounded-full px-1.5 py-px leading-4 font-medium",
         badge.variant === "new" && "bg-accent/15 text-accent",
         badge.variant === "pro" && "bg-thread-3/15 text-thread-3"
       )}

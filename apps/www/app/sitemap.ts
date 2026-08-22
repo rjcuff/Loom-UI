@@ -8,7 +8,12 @@ import { source } from "@/lib/source"
  * so rather than letting 38 component pages sit level with the home page.
  */
 function priorityFor(url: string) {
-  if (url === "/docs/introduction" || url === "/docs/installation") return 0.9
+  if (
+    url === "/docs/introduction" ||
+    url === "/docs/installation" ||
+    url === "/docs/theming"
+  )
+    return 0.9
   if (url === "/docs/components") return 0.9
   return 0.7
 }

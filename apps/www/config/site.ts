@@ -6,7 +6,7 @@ export const siteConfig = {
     url: "/og.png",
     width: 1731,
     height: 909,
-    alt: "Loom UI — an animated React design system for Tailwind CSS",
+    alt: "Loom UI, an animated React design system for Tailwind CSS",
   },
   /**
    * The search snippet. Leads with what this is (a design system), then the
@@ -44,7 +44,7 @@ export const siteConfig = {
   /**
    * Google has ignored this tag since 2009. It is here for the crawlers that
    * do not: AI answer engines and a handful of smaller indexes. Ordered by
-   * what the site should be found for, and kept honest — a term here that the
+   * what the site should be found for, and kept honest. A term here that the
    * page does not deliver on buys a visit that bounces.
    */
   keywords: [

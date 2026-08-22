@@ -1,0 +1,194 @@
+---
+title: Theming
+description: loom's design tokens for colour, type, elevation and motion. See the whole system, pick an accent, and take the CSS.
+---
+
+Every loom component reads from one token layer. Change a token and everything
+that uses it follows, including components you install later.
+
+## Pick an accent
+
+Choose a hue. The whole page follows, because nothing here carries a colour of
+its own. Take the CSS when you find one you like.
+
+<AccentPicker />
+
+These are solved rather than picked by eye. For each hue the lightness is the
+highest one that still clears 4.5:1 against `--accent-foreground`, and the
+chroma is as much as sRGB will hold at that lightness. One lightness and chroma
+applied to every hue has to be set low enough for the worst case, and every
+other hue then pays for it by going chalky.
+
+The dark step is lighter and less saturated. The same value on a dark surface
+vibrates, and it no longer has to carry light text.
+
+## Install the tokens
+
+You do not need a component to get the design system.
+
+```bash
+npx shadcn@latest add @loomui/theme
+```
+
+That writes the whole layer into your `globals.css`: both colour themes, the
+type scale, elevation, blur, the stacking scale, durations and easing curves.
+
+<Callout type="tip" title="Installing a component instead">
+  You do not have to do this first. Every component ships the tokens it
+  personally needs in its own manifest, and the CLI merges them into your
+  stylesheet when you install it. This item is for when you want the whole
+  system, or when you are copying files by hand and the CLI is not doing that
+  merging for you.
+</Callout>
+
+## Colour
+
+Every colour is `oklch`, so light and dark stay perceptually matched. To
+retheme a hue, hold chroma and move only lightness.
+
+### Surfaces
+
+<SwatchGrid tokens="background, foreground, card, popover, muted, muted-foreground, secondary, surface" />
+
+### Action and state
+
+<SwatchGrid tokens="primary, accent, destructive, ring" />
+
+### Edges
+
+`--border` and `--input` are ink at low alpha rather than a solid step, so an
+edge recedes over whatever sits behind it instead of reading as pasted on.
+
+<SwatchGrid tokens="border, input" ring />
+
+### Charts
+
+Assigned in this fixed order and never cycled. Past the sixth, loom returns the
+muted ink rather than reusing a hue: a seventh series wearing the first one's
+colour is worse than a seventh series with no colour at all.
+
+<SwatchGrid tokens="chart-1, chart-2, chart-3, chart-4, chart-5, chart-6" />
+
+Direction on a delta is reserved, and never a series colour.
+
+<SwatchGrid tokens="chart-up, chart-down" />
+
+The animated components carry their own palette, used for threads and washes
+rather than for data.
+
+<SwatchGrid tokens="thread-1, thread-2, thread-3, thread-4" />
+
+## Type
+
+Each step carries its own line height **and letter spacing**, because the
+right tracking is a function of the size: large type wants pulling together,
+small type wants opening up. A single `tracking-tight` applied by hand gets one
+size right and the rest wrong.
+
+The numbers beside each line are read off the rendered element, not copied from
+the stylesheet.
+
+<TypeSpecimen />
+
+Sizes follow Tailwind's names from `text-xs` to `text-6xl`. Added at the ends:
+`text-2xs` for dense labels, and three display steps for headlines that sit
+between `text-3xl` and `text-6xl`.
+
+Three weights, and no more. A hover or selected state that changes weight
+reflows the text under the pointer, so state is carried by colour instead.
+
+<WeightSpecimen />
+
+## Elevation
+
+Three stacked shadows rather than one large blur: a tight contact shadow, a mid
+spread, and a wide ambient one. That is how light actually falls, and the eye
+knows the difference even when it cannot name it.
+
+<ElevationScale />
+
+Dark mode is redrawn rather than rescaled. There is nothing to darken on a dark
+surface, so elevation leans on the ring instead of the spread. Flip the theme
+to see it.
+
+## Motion
+
+The curves. Entering or leaving takes an `ease-out`; something already on
+screen moving to a new position takes an `ease-in-out`. The graph is a shape,
+the dot underneath is what the curve feels like. Point at a card to run it
+again.
+
+<EasingGallery />
+
+Durations are named for the job, because a number never tells you which one a
+dropdown should use.
+
+<DurationScale />
+
+Anything a person uses all day should stay at `--duration-panel` or under. A
+product that animates at marketing speed feels slow, and a marketing page that
+animates at product speed says nothing about itself.
+
+## Blur
+
+| Token                 | Value  |                 |
+| --------------------- | ------ | --------------- |
+| `blur-xs` … `blur-lg` | 2–16px | Safe to animate |
+| `blur-scrim`          | 64px   | **Static only** |
+
+The animated steps stop at 16px because past roughly 20px a blur filter spreads
+badly and gets expensive, worst of all in Safari. `blur-scrim` is deliberately
+over that line and is for a single static pass over a container whose children
+move underneath it. Never transition it.
+
+## Stacking
+
+`--z-raised` 10, `--z-sticky` 20, `--z-overlay` 40, `--z-modal` 50,
+`--z-popover` 60, `--z-toast` 70, `--z-tooltip` 80. A fixed ladder, so nothing
+ever needs `z-index: 9999`. Anything not on it belongs in its own stacking
+context.
+
+<Callout title="Reaching duration and z-index">
+  Tailwind v4 has no theme namespace for either, so they are plain custom
+  properties. Use them the same way you would any other:
+
+```tsx
+<div className="z-(--z-modal) duration-(--duration-ui)" />
+```
+
+Colour, type, weight, shadow, blur, easing and radius all do have namespaces
+and generate utilities normally.
+
+</Callout>
+
+## Retheming
+
+Override the primitives. Nothing else.
+
+```css title="app/globals.css"
+:root {
+  --accent: oklch(0.65 0.19 25);
+  --radius: 0.75rem;
+  --duration-ui: 140ms;
+}
+
+.dark {
+  --accent: oklch(0.72 0.17 25);
+}
+```
+
+The `@theme` blocks map tokens onto utility names. They are plumbing. Editing
+them is not how you change how something looks.
+
+## Copying components by hand
+
+If you are not using the CLI, install the tokens first. Components reference
+them, and a component that cannot find the token it needs does not error. It
+silently falls back to an inherited value, which is worse.
+
+<Callout type="warning" title="What each component actually needs">
+  Every component page lists its own requirements under **Installation**. Most
+  need nothing beyond the shadcn base plus one or two easing curves; the
+  animated ones also need their `@keyframes`. Installing `@loomui/theme` covers
+  every token, but not the keyframes, which ship per component.
+</Callout>

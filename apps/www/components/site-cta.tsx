@@ -21,7 +21,7 @@ export function SiteCta() {
       <div className="mx-auto flex w-full max-w-2xl flex-col items-start px-5 py-16 text-left sm:items-center sm:py-24 sm:text-center">
         <InstallLine />
 
-        <h2 className="mt-6 text-[1.75rem] leading-[1.15] font-semibold tracking-tight text-balance sm:text-4xl">
+        <h2 className="text-display-sm mt-6 font-semibold text-balance sm:text-4xl">
           Install as many animated components as you need
         </h2>
 

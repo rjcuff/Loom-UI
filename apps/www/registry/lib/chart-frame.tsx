@@ -115,7 +115,7 @@ export function ChartFrame({
    *
    * Never more columns than there are tiles. A one-series chart was laid out
    * in three, so its only tile took a third of the card and the other two
-   * thirds were closed but empty — and at that width the name it carries, the
+   * thirds were closed but empty. At that width the name it carries, the
    * thing standing in for a colour nobody can be asked to distinguish,
    * truncated to two letters.
    */
