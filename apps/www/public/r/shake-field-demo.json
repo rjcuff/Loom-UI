@@ -1,0 +1,17 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "shake-field-demo",
+  "type": "registry:example",
+  "title": "Shake Field Demo",
+  "description": "A field that refuses an address with no @ in it, and refuses again when the same value is submitted twice.",
+  "registryDependencies": [
+    "@loomui/shake-field"
+  ],
+  "files": [
+    {
+      "path": "registry/example/shake-field-demo.tsx",
+      "content": "\"use client\"\n\nimport * as React from \"react\"\n\nimport { ShakeField } from \"@/registry/loomui/shake-field\"\n\nexport default function ShakeFieldDemo() {\n  const [value, setValue] = React.useState(\"\")\n  const [error, setError] = React.useState<string | null>(null)\n  const [attempt, setAttempt] = React.useState(0)\n\n  const submit = (event: React.FormEvent) => {\n    event.preventDefault()\n    setAttempt((n) => n + 1)\n    setError(\n      value.includes(\"@\") ? null : \"That does not look like an email address.\"\n    )\n  }\n\n  return (\n    <form onSubmit={submit} className=\"w-full max-w-sm space-y-4\">\n      <ShakeField error={error} attempt={attempt}>\n        <label htmlFor=\"shake-demo-email\" className=\"block text-sm font-medium\">\n          Email\n        </label>\n        <input\n          id=\"shake-demo-email\"\n          type=\"email\"\n          value={value}\n          aria-invalid={error ? true : undefined}\n          onChange={(event) => {\n            setValue(event.target.value)\n            setError(null)\n          }}\n          placeholder=\"you@company.com\"\n          className=\"border-input bg-background focus-visible:border-ring focus-visible:ring-ring/40 aria-invalid:border-destructive mt-1.5 w-full rounded-lg border px-3 py-2.5 text-base focus-visible:ring-2 focus-visible:outline-none\"\n        />\n      </ShakeField>\n\n      <button\n        type=\"submit\"\n        className=\"bg-primary text-primary-foreground ease-out-quart w-full rounded-lg px-4 py-2.5 text-sm font-medium transition-transform duration-150 active:scale-[0.97]\"\n      >\n        Submit\n      </button>\n\n      <p className=\"text-muted-foreground text-xs\">\n        Submit an address with no <code className=\"font-mono\">@</code> in it.\n        Submitting the same wrong value again shakes again.\n      </p>\n    </form>\n  )\n}\n",
+      "type": "registry:example"
+    }
+  ]
+}

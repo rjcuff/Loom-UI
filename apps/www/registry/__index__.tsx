@@ -53,7 +53,7 @@ export const Index: Record<string, any> = {
     title: "Login",
     description: "A split sign-in screen. The submit button changes shape through idle, working and done rather than swapping a label for a spinner.",
     dependencies: [],
-    registryDependencies: ["@loomui/icon-morph","@loomui/light-curtain","@loomui/ripple-button","@loomui/spool","@loomui/weave-text"],
+    registryDependencies: ["@loomui/icon-morph","@loomui/light-curtain","@loomui/ripple-button","@loomui/shake-field","@loomui/spool","@loomui/weave-text"],
     categories: ["authentication"],
     files: [{"path":"registry/blocks/login-form.tsx","type":"registry:block","target":""}],
     component: React.lazy(async () => {
@@ -69,7 +69,7 @@ export const Index: Record<string, any> = {
     title: "Signup",
     description: "A sign-up screen with a password meter driven by a spring, so each keystroke retargets the ring rather than queueing behind the last one.",
     dependencies: [],
-    registryDependencies: ["@loomui/confetti-button","@loomui/icon-morph","@loomui/progress-ring","@loomui/unfold-list"],
+    registryDependencies: ["@loomui/confetti-button","@loomui/icon-morph","@loomui/progress-ring","@loomui/shake-field","@loomui/unfold-list"],
     categories: ["authentication"],
     files: [{"path":"registry/blocks/signup-form.tsx","type":"registry:block","target":""}],
     component: React.lazy(async () => {
@@ -618,6 +618,22 @@ export const Index: Record<string, any> = {
     files: [{"path":"registry/loomui/progress-ring.tsx","type":"registry:ui","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/loomui/progress-ring")
+      const exportName =
+        Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
+      return { default: mod.default ?? mod[exportName] }
+    }),
+  },
+  "shake-field": {
+    name: "shake-field",
+    type: "registry:ui",
+    title: "Shake Field",
+    description: "A field that answers back: the control shakes to acknowledge the refusal and a message opens under it to give the reason.",
+    dependencies: [],
+    registryDependencies: ["utils"],
+    categories: [],
+    files: [{"path":"registry/loomui/shake-field.tsx","type":"registry:ui","target":""}],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/loomui/shake-field")
       const exportName =
         Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
       return { default: mod.default ?? mod[exportName] }
@@ -1370,6 +1386,22 @@ export const Index: Record<string, any> = {
     files: [{"path":"registry/example/progress-ring-demo.tsx","type":"registry:example","target":""}],
     component: React.lazy(async () => {
       const mod = await import("@/registry/example/progress-ring-demo")
+      const exportName =
+        Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
+      return { default: mod.default ?? mod[exportName] }
+    }),
+  },
+  "shake-field-demo": {
+    name: "shake-field-demo",
+    type: "registry:example",
+    title: "Shake Field Demo",
+    description: "A field that refuses an address with no @ in it, and refuses again when the same value is submitted twice.",
+    dependencies: [],
+    registryDependencies: ["@loomui/shake-field"],
+    categories: [],
+    files: [{"path":"registry/example/shake-field-demo.tsx","type":"registry:example","target":""}],
+    component: React.lazy(async () => {
+      const mod = await import("@/registry/example/shake-field-demo")
       const exportName =
         Object.keys(mod).find((key) => typeof mod[key] === "function") ?? "default"
       return { default: mod.default ?? mod[exportName] }

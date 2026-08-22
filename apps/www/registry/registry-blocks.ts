@@ -1,5 +1,22 @@
 import { type Registry } from "shadcn/schema"
 
+/** The house easing, and the entrance the auth blocks stagger with. */
+const EASE_OUT_QUART = "cubic-bezier(0.165, 0.84, 0.44, 1)"
+
+const RISE = {
+  theme: {
+    "ease-out-quart": EASE_OUT_QUART,
+    "animate-rise": "rise 600ms var(--ease-out-quart) both",
+  },
+} as const
+
+const RISE_KEYFRAMES = {
+  "@keyframes rise": {
+    from: { opacity: "0", transform: "translateY(12px)" },
+    to: { opacity: "1", transform: "none" },
+  },
+} as const
+
 /**
  * Blocks: whole sections rather than single pieces.
  *
@@ -9,7 +26,9 @@ import { type Registry } from "shadcn/schema"
  * The same rule components follow applies here. A block may only use a token
  * its own manifest ships, because it lands in someone else's project and a
  * missing token does not error, it silently falls back to an inherited value.
- * None of these reach past what their dependencies already bring.
+ * The dashboard and the onboarding flow need nothing past their dependencies.
+ * The two auth blocks stagger their rows with loom's own entrance, so they
+ * declare it.
  */
 export const blocks: Registry["items"] = [
   {
@@ -66,6 +85,7 @@ export const blocks: Registry["items"] = [
       "@loomui/icon-morph",
       "@loomui/light-curtain",
       "@loomui/ripple-button",
+      "@loomui/shake-field",
       "@loomui/spool",
       "@loomui/weave-text",
     ],
@@ -75,6 +95,10 @@ export const blocks: Registry["items"] = [
         type: "registry:block",
       },
     ],
+    // The staggered entrance is loom's own and nothing this block installs
+    // brings it along.
+    cssVars: RISE,
+    css: RISE_KEYFRAMES,
   },
   {
     name: "signup-form",
@@ -87,6 +111,7 @@ export const blocks: Registry["items"] = [
       "@loomui/confetti-button",
       "@loomui/icon-morph",
       "@loomui/progress-ring",
+      "@loomui/shake-field",
       "@loomui/unfold-list",
     ],
     files: [
@@ -95,5 +120,7 @@ export const blocks: Registry["items"] = [
         type: "registry:block",
       },
     ],
+    cssVars: RISE,
+    css: RISE_KEYFRAMES,
   },
 ]

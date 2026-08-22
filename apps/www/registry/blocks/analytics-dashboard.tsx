@@ -92,8 +92,11 @@ function Stat({
   return (
     <div>
       <p className="text-muted-foreground text-xs">{label}</p>
-      <p className="mt-1 flex items-baseline gap-2">
-        <span className="text-2xl font-semibold tabular-nums">
+      {/* Wraps rather than clips. At two columns on a phone a long figure and
+          its delta do not fit on one line, and the badge was being cut off at
+          the card's edge. */}
+      <p className="mt-1 flex flex-wrap items-baseline gap-x-2 gap-y-1">
+        <span className="text-xl font-semibold tabular-nums sm:text-2xl">
           {prefix}
           <CountUp value={value} />
           {suffix}

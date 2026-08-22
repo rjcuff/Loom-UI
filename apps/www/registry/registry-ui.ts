@@ -848,6 +848,46 @@ export const ui: Registry["items"] = [
     // No keyframes. The spring owns every frame.
   },
   {
+    name: "shake-field",
+    type: "registry:ui",
+    title: "Shake Field",
+    description:
+      "A field that answers back: the control shakes to acknowledge the refusal and a message opens under it to give the reason.",
+    registryDependencies: ["utils"],
+    files: [
+      {
+        path: "loomui/shake-field.tsx",
+        type: "registry:ui",
+      },
+    ],
+    cssVars: {
+      theme: {
+        "ease-out-quart": EASE_OUT_QUART,
+        "animate-field-shake": "field-shake 420ms var(--ease-out-quart) both",
+      },
+    },
+    css: {
+      // Sideways and back, decaying. A single throw out and back reads as a
+      // nudge; three passes at shrinking amplitude read as a refusal.
+      "@keyframes field-shake": {
+        "0%, 100%": { transform: "translateX(0)" },
+        "15%": {
+          transform: "translateX(calc(var(--shake-distance, 0.35rem) * -1))",
+        },
+        "30%": { transform: "translateX(var(--shake-distance, 0.35rem))" },
+        "45%": {
+          transform: "translateX(calc(var(--shake-distance, 0.35rem) * -0.6))",
+        },
+        "60%": {
+          transform: "translateX(calc(var(--shake-distance, 0.35rem) * 0.6))",
+        },
+        "80%": {
+          transform: "translateX(calc(var(--shake-distance, 0.35rem) * -0.25))",
+        },
+      },
+    },
+  },
+  {
     name: "spool",
     type: "registry:ui",
     title: "Spool",

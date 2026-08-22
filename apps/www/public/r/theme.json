@@ -79,6 +79,7 @@
       "animate-loom-shuttle": "loom-shuttle var(--loom-duration, 1400ms) var(--ease-in-out-cubic) infinite alternate",
       "animate-skeleton-shimmer": "skeleton-shimmer var(--shimmer-duration, 1600ms) linear var(--shimmer-delay, 0ms) infinite",
       "animate-trail-fade": "trail-fade var(--trail-duration, 900ms) var(--ease-out-quart) forwards",
+      "animate-field-shake": "field-shake 420ms var(--ease-out-quart) both",
       "animate-bento-rise": "bento-rise 360ms var(--ease-out-quart) var(--bento-delay, 0ms) both",
       "animate-terminal-print": "terminal-print 240ms var(--ease-out-quart) both",
       "animate-spool-meter": "spool-meter 1s var(--ease-in-out-cubic) infinite alternate",

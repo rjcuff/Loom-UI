@@ -4,6 +4,7 @@ import * as React from "react"
 
 import { siteConfig } from "@/config/site"
 import { cn } from "@/lib/utils"
+import { ElasticTabs } from "@/registry/loomui/elastic-tabs"
 
 export interface BlockEntry {
   name: string
@@ -15,12 +16,12 @@ export interface BlockEntry {
 }
 
 const VIEWPORTS = [
-  { label: "Desktop", value: 0, icon: "M2 3h12v8H2z M6 13h4" },
-  { label: "Tablet", value: 768, icon: "M4 2h8v12H4z M7 12.5h2" },
-  { label: "Phone", value: 390, icon: "M5 2h6v12H5z M7 12.5h2" },
+  { label: "Desktop", value: 0, paths: ["M2 3h12v8H2z", "M6 13h4"] },
+  { label: "Tablet", value: 768, paths: ["M4 2h8v12H4z", "M7 12.5h2"] },
+  { label: "Phone", value: 390, paths: ["M5 2h6v12H5z", "M7 12.5h2"] },
 ] as const
 
-function ViewportIcon({ path }: { path: string }) {
+function Glyph({ paths }: { paths: readonly string[] }) {
   return (
     <svg
       viewBox="0 0 16 16"
@@ -32,8 +33,8 @@ function ViewportIcon({ path }: { path: string }) {
       className="size-4"
       aria-hidden
     >
-      {path.split(" M").map((segment, index) => (
-        <path key={index} d={index === 0 ? segment : `M${segment}`} />
+      {paths.map((d) => (
+        <path key={d} d={d} />
       ))}
     </svg>
   )
@@ -66,17 +67,13 @@ function Block({ entry }: { entry: BlockEntry }) {
   const [nonce, setNonce] = React.useState(0)
 
   return (
-    <section
-      id={entry.name}
-      aria-labelledby={`${entry.name}-title`}
-      className="scroll-mt-24"
-    >
-      <div className="flex flex-wrap items-center justify-between gap-3">
+    <section aria-labelledby={`${entry.name}-title`}>
+      <div className="flex flex-wrap items-end justify-between gap-3">
         <div className="min-w-0">
           <h2 id={`${entry.name}-title`} className="text-sm font-medium">
             {entry.title}
           </h2>
-          <p className="text-muted-foreground mt-0.5 text-sm text-pretty">
+          <p className="text-muted-foreground mt-0.5 max-w-2xl text-sm text-pretty">
             {entry.description}
           </p>
         </div>
@@ -100,7 +97,7 @@ function Block({ entry }: { entry: BlockEntry }) {
                     : "text-muted-foreground hover:text-foreground"
                 )}
               >
-                <ViewportIcon path={viewport.icon} />
+                <Glyph paths={viewport.paths} />
               </button>
             ))}
           </div>
@@ -112,19 +109,9 @@ function Block({ entry }: { entry: BlockEntry }) {
             title="Replay"
             className="border-border text-muted-foreground hover:text-foreground ease-out-quart grid size-8 place-items-center rounded-lg border transition-colors duration-150"
           >
-            <svg
-              viewBox="0 0 16 16"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.3"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="size-4"
-              aria-hidden
-            >
-              <path d="M13.5 8a5.5 5.5 0 1 1-1.6-3.9" />
-              <path d="M13.5 2.5v3h-3" />
-            </svg>
+            <Glyph
+              paths={["M13.5 8a5.5 5.5 0 1 1-1.6-3.9", "M13.5 2.5v3h-3"]}
+            />
           </button>
 
           <a
@@ -158,45 +145,40 @@ function Block({ entry }: { entry: BlockEntry }) {
   )
 }
 
+/**
+ * One block at a time, picked by a tab.
+ *
+ * Four blocks stacked on one page is four iframes, four sets of scroll
+ * animations and a scrollbar nobody reaches the end of. The tabs are the
+ * navigation, so only the chosen block is in the DOM at all.
+ */
 export function BlockBrowser({ blocks }: { blocks: BlockEntry[] }) {
-  const categories = React.useMemo(
-    () => ["All", ...new Set(blocks.map((block) => block.category))],
+  const [name, setName] = React.useState(blocks[0]?.name ?? "")
+
+  const items = React.useMemo(
+    () => blocks.map((block) => ({ value: block.name, label: block.title })),
     [blocks]
   )
-  const [active, setActive] = React.useState("All")
 
-  const shown =
-    active === "All"
-      ? blocks
-      : blocks.filter((block) => block.category === active)
+  const active = blocks.find((block) => block.name === name) ?? blocks[0]
+  if (!active) return null
 
   return (
     <>
-      <div className="border-border/60 sticky top-0 z-20 -mx-5 border-b px-5 backdrop-blur">
-        <div className="bg-background/80 no-scrollbar -mx-5 flex gap-1 overflow-x-auto px-5 py-3">
-          {categories.map((category) => (
-            <button
-              key={category}
-              type="button"
-              onClick={() => setActive(category)}
-              aria-pressed={active === category}
-              className={cn(
-                "ease-out-quart shrink-0 rounded-lg px-3 py-1.5 text-sm font-medium capitalize transition-colors duration-150",
-                active === category
-                  ? "bg-muted text-foreground"
-                  : "text-muted-foreground hover:text-foreground"
-              )}
-            >
-              {category}
-            </button>
-          ))}
-        </div>
+      {/* The pill stretches across both tabs before it lands on the one you
+          picked, which is the whole reason this is not three buttons. */}
+      <div className="no-scrollbar -mx-5 flex justify-start overflow-x-auto px-5 sm:justify-center">
+        <ElasticTabs
+          items={items}
+          value={active.name}
+          onValueChange={setName}
+        />
       </div>
 
-      <div className="mt-8 space-y-14">
-        {shown.map((block) => (
-          <Block key={block.name} entry={block} />
-        ))}
+      {/* Keyed on the block, so switching replays its arrival rather than
+          swapping the iframe's `src` under a frame that is already settled. */}
+      <div key={active.name} className="animate-rise mt-8">
+        <Block entry={active} />
       </div>
     </>
   )

@@ -451,6 +451,20 @@ export const examples: Registry["items"] = [
     ],
   },
   {
+    name: "shake-field-demo",
+    type: "registry:example",
+    title: "Shake Field Demo",
+    description:
+      "A field that refuses an address with no @ in it, and refuses again when the same value is submitted twice.",
+    registryDependencies: ["@loomui/shake-field"],
+    files: [
+      {
+        path: "example/shake-field-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "spool-demo",
     type: "registry:example",
     title: "Spool Demo",

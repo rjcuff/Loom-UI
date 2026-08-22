@@ -420,6 +420,7 @@
     linear var(--shimmer-delay, 0ms) infinite;
   --animate-trail-fade: trail-fade var(--trail-duration, 900ms)
     var(--ease-out-quart) forwards;
+  --animate-field-shake: field-shake 420ms var(--ease-out-quart) both;
   --animate-bento-rise: bento-rise 360ms var(--ease-out-quart)
     var(--bento-delay, 0ms) both;
   --animate-terminal-print: terminal-print 240ms var(--ease-out-quart) both;
@@ -466,6 +467,30 @@
   }
   to {
     transform: scaleX(1);
+  }
+}
+
+/* Sideways and back, decaying. A single throw out and back reads as a nudge;
+   three passes at shrinking amplitude read as a refusal. */
+@keyframes field-shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  15% {
+    transform: translateX(calc(var(--shake-distance, 0.35rem) * -1));
+  }
+  30% {
+    transform: translateX(var(--shake-distance, 0.35rem));
+  }
+  45% {
+    transform: translateX(calc(var(--shake-distance, 0.35rem) * -0.6));
+  }
+  60% {
+    transform: translateX(calc(var(--shake-distance, 0.35rem) * 0.6));
+  }
+  80% {
+    transform: translateX(calc(var(--shake-distance, 0.35rem) * -0.25));
   }
 }
 

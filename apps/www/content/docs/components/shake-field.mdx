@@ -1,0 +1,119 @@
+---
+title: Shake Field
+description: A field that answers back. The control shakes to acknowledge the refusal and a message opens under it to give the reason.
+---
+
+<ComponentPreview name="shake-field-demo" />
+
+## Installation
+
+<Tabs defaultValue="cli">
+
+<TabsList>
+  <TabsTrigger value="cli">CLI</TabsTrigger>
+  <TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+
+<TabsContent value="cli">
+
+```bash
+npx shadcn@latest add @loomui/shake-field
+```
+
+</TabsContent>
+
+<TabsContent value="manual">
+
+<Steps>
+
+<Step>Copy the component into your project.</Step>
+
+<ComponentSource name="shake-field" />
+
+<Step>Update the import paths to match your setup.</Step>
+
+</Steps>
+
+</TabsContent>
+
+</Tabs>
+
+## Usage
+
+```tsx
+import { ShakeField } from "@/components/ui/shake-field"
+```
+
+```tsx
+<ShakeField error={error} attempt={attempt}>
+  <label htmlFor="email">Email</label>
+  <input id="email" aria-invalid={error ? true : undefined} />
+</ShakeField>
+```
+
+## How it works
+
+### Two halves of one answer
+
+The shake is the acknowledgement and the message is the reason. Either alone is
+worse. A shake with no text says something is wrong without saying what, and
+text with no movement is easy to miss under a control you were already looking
+at.
+
+### The same mistake twice
+
+A form submitted three times with the same wrong password should answer three
+times. React will not restart an animation whose class is already on the
+element, and an error that has not changed is not a new render to key on.
+
+Pass a counter that goes up on every submit:
+
+```tsx
+const [attempt, setAttempt] = React.useState(0)
+
+function submit() {
+  setAttempt((n) => n + 1)
+  setError(check() ? null : "That password does not match.")
+}
+```
+
+Without `attempt`, a repeated identical message is treated as the error already
+on screen and nothing moves.
+
+### The message opens on a grid row
+
+`0fr` to `1fr` on a grid row, not a height. The panel opens to whatever height
+the message turns out to be, with nothing measured first and no fixed height to
+keep in sync when the copy changes. Two lines of error text cost the same code
+as one.
+
+### Typing does not restart it
+
+The effect watches the message and the attempt, not every render. Typing into
+the field re-renders the parent constantly, and a shake that restarted on each
+keystroke would be unusable.
+
+## Props
+
+| Prop        | Type        | Default   | Description                                      |
+| ----------- | ----------- | --------- | ------------------------------------------------ |
+| `error`     | `ReactNode` | none      | The message. Anything falsy clears the last one. |
+| `attempt`   | `number`    | none      | Bump this to shake again for the same message.   |
+| `duration`  | `number`    | `420`     | Milliseconds for one shake.                      |
+| `distance`  | `string`    | `0.35rem` | How far the shake travels.                       |
+| `className` | `string`    | none      | Merged onto the wrapper.                         |
+
+Any other `<div>` prop is forwarded.
+
+<Callout type="tip" title="Accessibility">
+  The message carries `role="alert"`, so it is announced when it appears and not
+  before. Set `aria-invalid` on the control yourself: the field wraps your input
+  rather than rendering it, and only you know which element is the one being
+  described.
+</Callout>
+
+<Callout type="tip" title="Reduced motion">
+  Nothing shakes and nothing slides. The message still appears, because it is
+  the half that carries the meaning. An error someone cannot read is worse than
+  an error that arrives without ceremony.
+</Callout>

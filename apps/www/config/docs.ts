@@ -43,6 +43,11 @@ export const docsConfig: DocsConfig = {
           href: "/docs/components/drawer",
         },
         {
+          title: "Shake Field",
+          href: "/docs/components/shake-field",
+          badge: { text: "New", variant: "new" },
+        },
+        {
           title: "Spool",
           href: "/docs/components/spool",
           badge: { text: "New", variant: "new" },

@@ -37,6 +37,7 @@ Install any component with `npx shadcn@latest add @loomui/<name>`.
 - [Reading Progress](https://loomui.design/docs/components/reading-progress): A pinned bar that tracks how far through the page, or a chosen element, the reader is.
 - [Ripple Button](https://loomui.design/docs/components/ripple-button): A button that sends a circle out from wherever it was pressed, sized to reach the furthest corner.
 - [Scramble Text](https://loomui.design/docs/components/scramble-text): A string that resolves out of random glyphs, left to right, on mount, on scroll, or on hover.
+- [Shake Field](https://loomui.design/docs/components/shake-field): A field that answers back: the control shakes to acknowledge the refusal and a message opens under it to give the reason.
 - [Shimmer Skeleton](https://loomui.design/docs/components/shimmer-skeleton): A placeholder block with a shimmer that passes across it while the real thing loads.
 - [Split Flap](https://loomui.design/docs/components/split-flap): A departure board that flaps through its glyphs, one cell behind the last, until it lands on the value.
 - [Spool](https://loomui.design/docs/components/spool): A container that changes shape to fit whatever it is showing, on a spring that carries its velocity through an interruption.

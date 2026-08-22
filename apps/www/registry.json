@@ -82,6 +82,7 @@
           "animate-loom-shuttle": "loom-shuttle var(--loom-duration, 1400ms) var(--ease-in-out-cubic) infinite alternate",
           "animate-skeleton-shimmer": "skeleton-shimmer var(--shimmer-duration, 1600ms) linear var(--shimmer-delay, 0ms) infinite",
           "animate-trail-fade": "trail-fade var(--trail-duration, 900ms) var(--ease-out-quart) forwards",
+          "animate-field-shake": "field-shake 420ms var(--ease-out-quart) both",
           "animate-bento-rise": "bento-rise 360ms var(--ease-out-quart) var(--bento-delay, 0ms) both",
           "animate-terminal-print": "terminal-print 240ms var(--ease-out-quart) both",
           "animate-spool-meter": "spool-meter 1s var(--ease-in-out-cubic) infinite alternate",
@@ -259,6 +260,7 @@
         "@loomui/icon-morph",
         "@loomui/light-curtain",
         "@loomui/ripple-button",
+        "@loomui/shake-field",
         "@loomui/spool",
         "@loomui/weave-text"
       ],
@@ -268,6 +270,24 @@
           "type": "registry:block"
         }
       ],
+      "cssVars": {
+        "theme": {
+          "ease-out-quart": "cubic-bezier(0.165, 0.84, 0.44, 1)",
+          "animate-rise": "rise 600ms var(--ease-out-quart) both"
+        }
+      },
+      "css": {
+        "@keyframes rise": {
+          "from": {
+            "opacity": "0",
+            "transform": "translateY(12px)"
+          },
+          "to": {
+            "opacity": "1",
+            "transform": "none"
+          }
+        }
+      },
       "categories": [
         "authentication"
       ]
@@ -281,6 +301,7 @@
         "@loomui/confetti-button",
         "@loomui/icon-morph",
         "@loomui/progress-ring",
+        "@loomui/shake-field",
         "@loomui/unfold-list"
       ],
       "files": [
@@ -289,6 +310,24 @@
           "type": "registry:block"
         }
       ],
+      "cssVars": {
+        "theme": {
+          "ease-out-quart": "cubic-bezier(0.165, 0.84, 0.44, 1)",
+          "animate-rise": "rise 600ms var(--ease-out-quart) both"
+        }
+      },
+      "css": {
+        "@keyframes rise": {
+          "from": {
+            "opacity": "0",
+            "transform": "translateY(12px)"
+          },
+          "to": {
+            "opacity": "1",
+            "transform": "none"
+          }
+        }
+      },
       "categories": [
         "authentication"
       ]
@@ -1150,6 +1189,49 @@
           "type": "registry:ui"
         }
       ]
+    },
+    {
+      "name": "shake-field",
+      "type": "registry:ui",
+      "title": "Shake Field",
+      "description": "A field that answers back: the control shakes to acknowledge the refusal and a message opens under it to give the reason.",
+      "registryDependencies": [
+        "utils"
+      ],
+      "files": [
+        {
+          "path": "registry/loomui/shake-field.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "cssVars": {
+        "theme": {
+          "ease-out-quart": "cubic-bezier(0.165, 0.84, 0.44, 1)",
+          "animate-field-shake": "field-shake 420ms var(--ease-out-quart) both"
+        }
+      },
+      "css": {
+        "@keyframes field-shake": {
+          "0%, 100%": {
+            "transform": "translateX(0)"
+          },
+          "15%": {
+            "transform": "translateX(calc(var(--shake-distance, 0.35rem) * -1))"
+          },
+          "30%": {
+            "transform": "translateX(var(--shake-distance, 0.35rem))"
+          },
+          "45%": {
+            "transform": "translateX(calc(var(--shake-distance, 0.35rem) * -0.6))"
+          },
+          "60%": {
+            "transform": "translateX(calc(var(--shake-distance, 0.35rem) * 0.6))"
+          },
+          "80%": {
+            "transform": "translateX(calc(var(--shake-distance, 0.35rem) * -0.25))"
+          }
+        }
+      }
     },
     {
       "name": "spool",
@@ -2087,6 +2169,21 @@
       "files": [
         {
           "path": "registry/example/progress-ring-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "shake-field-demo",
+      "type": "registry:example",
+      "title": "Shake Field Demo",
+      "description": "A field that refuses an address with no @ in it, and refuses again when the same value is submitted twice.",
+      "registryDependencies": [
+        "@loomui/shake-field"
+      ],
+      "files": [
+        {
+          "path": "registry/example/shake-field-demo.tsx",
           "type": "registry:example"
         }
       ]
